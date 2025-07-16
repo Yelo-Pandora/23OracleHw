@@ -1,0 +1,19 @@
+# --- 全局忽略 ---
+# 忽略所有项目的构建输出
+**/bin/
+**/obj/
+
+# 忽略Git的版本控制文件
+.git
+.gitignore
+
+# 忽略Visual Studio的缓存和用户设置
+.vs/
+
+
+# --- 前端项目 (oracle-frontend) 的特定忽略规则 ---
+# 所有路径都必须以文件夹名开头
+oracle-frontend/node_modules
+oracle-frontend/dist
+oracle-frontend/.env.local
+oracle-frontend/.vscode
