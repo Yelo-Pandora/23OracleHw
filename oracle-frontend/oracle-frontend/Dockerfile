@@ -1,7 +1,6 @@
 # --- 阶段 1: 构建阶段 (Build Stage) ---
 # 使用一个包含Node.js的官方镜像作为构建环境。
-# '18-alpine' 是一个轻量级的版本，可以加快构建速度。
-FROM node:16-alpine AS build
+FROM node:18 AS build
 
 # 设置容器内的工作目录
 WORKDIR /app
