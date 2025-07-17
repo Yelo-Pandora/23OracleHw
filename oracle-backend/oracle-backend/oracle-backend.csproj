@@ -7,6 +7,7 @@
     <RootNamespace>oracle_backend</RootNamespace>
     <UserSecretsId>2f3a086d-a0b7-425e-bd95-028853aa8292</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
