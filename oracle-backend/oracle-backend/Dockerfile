@@ -12,7 +12,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["oracle-backend/oracle-backend/oracle-backend.csproj", "oracle-backend/"]
+COPY ["oracle-backend.csproj", "oracle-backend/"]
 RUN dotnet restore "./oracle-backend/oracle-backend.csproj"
 COPY . .
 WORKDIR "/src/oracle-backend"
