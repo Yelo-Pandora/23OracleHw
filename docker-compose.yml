@@ -1,0 +1,78 @@
+# 定义所有服务（容器）
+services:
+
+  # -------------------------------------------
+  # 后端服务 (ASP.NET Core Web API)
+  # -------------------------------------------
+  backend-service:
+    container_name: oracle-backend-api
+    build:
+      # 构建上下文：指向后端 .csproj 和 Dockerfile 所在的实际项目文件夹
+      context: ./oracle-backend/oracle-backend
+      dockerfile: Dockerfile
+    ports:
+      # 将主机的 8081 端口映射到容器的 8080 端口
+      # 访问API: http://localhost:8081
+      - "8081:8080"
+    environment:
+      # 强制应用在容器内部监听 8080 端口
+      - ASPNETCORE_URLS=http://+:8080
+      # 数据库连接字符串，主机名'oracle-db'必须与下面的数据库服务名一致
+      - ConnectionStrings__DefaultConnection=Data Source=oracle-db:1521/ORCLPDB1;User Id=SYSTEM;Password=23OracleServer;
+    depends_on:
+      # 确保在启动此服务前，数据库服务已准备就绪
+      - oracle-db
+    networks:
+      # 将此服务连接到我们定义的应用网络
+      - app-network
+
+  # -------------------------------------------
+  # 前端服务 (Vue.js + Nginx)
+  # -------------------------------------------
+  frontend-service:
+    container_name: oracle-frontend-vue
+    build:
+      # 构建上下文：指向前端 package.json 和 Dockerfile 所在的实际项目文件夹
+      context: ./oracle-frontend/oracle-frontend
+      dockerfile: Dockerfile
+    ports:
+      # 将主机的 8080 端口映射到容器的 80 端口 (Nginx默认端口)
+      # 访问应用: http://localhost:8080
+      - "8080:80"
+    depends_on:
+      # 确保在后端API启动后，再启动前端服务
+      - backend-service
+    networks:
+      - app-network
+
+  # -------------------------------------------
+  # 数据库服务 (Oracle Express Edition)
+  # -------------------------------------------
+  oracle-db:
+    # 服务名 'oracle-db'，用于在容器间进行内部通信
+    container_name: oracle-db-instance
+    image: gvenzl/oracle-xe:latest
+    ports:
+      # 将主机的 1521 端口映射到容器的 1521 端口
+      # 方便使用本地数据库工具 (如DBeaver, SQL Developer) 连接调试
+      - "1521:1521"
+    environment:
+      # 设置数据库的 SYS, SYSTEM 和 PDBADMIN 用户的初始密码
+      - ORACLE_PWD=23OracleServer
+    volumes:
+      # 数据持久化：将容器内的数据目录挂载到Docker管理的数据卷'oracle-data'
+      # 这样即使删除容器，数据库数据也不会丢失
+      - oracle-data:/opt/oracle/oradata
+    networks:
+      - app-network
+
+# 定义网络
+networks:
+  app-network:
+    # 使用默认的桥接网络驱动
+    driver: bridge
+
+# 定义数据卷
+volumes:
+  # Docker将自动创建和管理这个名为'oracle-data'的数据卷
+  oracle-data:
