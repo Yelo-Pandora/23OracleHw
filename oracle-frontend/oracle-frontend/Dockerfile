@@ -1,6 +1,6 @@
 # --- 阶段 1: 构建阶段 (Build Stage) ---
 # 使用一个包含Node.js的官方镜像作为构建环境。
-FROM node:18 AS build
+FROM node:lts-alpine AS build
 
 # 设置容器内的工作目录
 WORKDIR /app
