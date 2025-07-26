@@ -1,52 +1,47 @@
 // Program.cs
 
-// 1. 引入必要的命名空间
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-// using YourApp.Data; // 假设你的DbContext在这个命名空间下
+using Microsoft.Extensions.Hosting;
+using oracle_backend.Dbcontexts;
 
-var builder = WebApplication.CreateBuilder(args);
 
-// --- 服务注册区域 (Add services to the container) ---
-
-// 2. 配置CORS策略
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-builder.Services.AddCors(options =>
+namespace oracle_backend
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("http://localhost:8080") // 允许你的Vue前端地址
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
-                      });
-});
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-// 3. 注册数据库上下文
-// builder.Services.AddDbContext<YourDbContext>(options =>
-//    options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));
+            // Add services to the container.
+            var connectionString = builder.Configuration.GetConnectionString("OracleConnection");
+            builder.Services.AddDbContext<AccountDbContext>(options =>
+            {
+                options.UseOracle(connectionString); // ָ��ʹ�� Oracle �ṩ����������ַ���
+            });
 
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+            var app = builder.Build();
 
-var app = builder.Build();
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
-// --- 中间件配置区域 (Configure the HTTP request pipeline) ---
+            app.UseHttpsRedirection();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+            app.UseAuthorization();
+
+            app.MapControllers();
+
+            app.Run();
+        }
+    }
 }
-
-app.UseHttpsRedirection();
-
-// 4. 启用CORS策略
-app.UseCors(MyAllowSpecificOrigins);
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

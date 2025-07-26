@@ -12,10 +12,9 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["oracle-backend.csproj", "oracle-backend/"]
-RUN dotnet restore "./oracle-backend/oracle-backend.csproj"
+COPY ["oracle-backend.csproj", "."]
+RUN dotnet restore "./oracle-backend.csproj"
 COPY . .
-WORKDIR "/src/oracle-backend"
 RUN dotnet build "./oracle-backend.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # 此阶段用于发布要复制到最终阶段的服务项目

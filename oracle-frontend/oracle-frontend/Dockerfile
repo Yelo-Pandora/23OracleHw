@@ -1,6 +1,6 @@
 # --- 阶段 1: 构建阶段 (Build Stage) ---
 # 使用一个包含Node.js的官方镜像作为构建环境。
-FROM node:lts-alpine AS build
+FROM node:22.17.1 AS build
 
 # 设置容器内的工作目录
 WORKDIR /app
@@ -19,8 +19,8 @@ COPY . .
 RUN npm run build
 
 # --- 阶段 2: 生产阶段 (Production Stage) ---
-# 使用一个非常轻量的官方Nginx镜像作为最终的运行环境。
-FROM nginx:stable-alpine
+# 使用一个官方Nginx镜像作为最终的运行环境。
+FROM nginx:latest
 
 # 将构建阶段生成的静态文件，从 'build' 阶段拷贝到Nginx的默认网站根目录。
 COPY --from=build /app/dist /usr/share/nginx/html

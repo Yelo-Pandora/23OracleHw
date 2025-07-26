@@ -7,7 +7,7 @@ services:
   backend-service:
     container_name: oracle-backend-api
     build:
-      # 构建上下文：指向后端 .csproj 和 Dockerfile 所在的实际项目文件夹
+      # 指向后端 .csproj 和 Dockerfile 所在的实际项目文件夹
       context: ./oracle-backend/oracle-backend
       dockerfile: Dockerfile
     ports:
@@ -18,7 +18,7 @@ services:
       # 强制应用在容器内部监听 8080 端口
       - ASPNETCORE_URLS=http://+:8080
       # 数据库连接字符串，主机名'oracle-db'必须与下面的数据库服务名一致
-      - ConnectionStrings__DefaultConnection=Data Source=oracle-db:1521/ORCLPDB1;User Id=SYSTEM;Password=23OracleServer;
+      - ConnectionStrings__DefaultConnection=Data Source=oracle-db-instance:1521/ORCLPDB1;User Id=ORACLEDBA;Password=23OracleServer;
     depends_on:
       # 确保在启动此服务前，数据库服务已准备就绪
       - oracle-db
@@ -32,7 +32,7 @@ services:
   frontend-service:
     container_name: oracle-frontend-vue
     build:
-      # 构建上下文：指向前端 package.json 和 Dockerfile 所在的实际项目文件夹
+      # 指向前端 package.json 和 Dockerfile 所在的实际项目文件夹
       context: ./oracle-frontend/oracle-frontend
       dockerfile: Dockerfile
     ports:
@@ -58,9 +58,14 @@ services:
       - "1521:1521"
     environment:
       # 设置数据库的 SYS, SYSTEM 和 PDBADMIN 用户的初始密码
-      - ORACLE_PWD=23OracleServer
+      - ORACLE_PASSWORD=23OracleServer
+      # #镜像自动创建用户
+      - APP_USER=ORACLEDBA
+      - APP_USER_PASSWORD=23OracleServer
     volumes:
-      # 数据持久化：将容器内的数据目录挂载到Docker管理的数据卷'oracle-data'
+      # 将你的初始化脚本映射到Oracle的setup目录
+      - ./db-init:/container-entrypoint-initdb.d
+      # 将容器内的数据目录挂载到Docker管理的数据卷'oracle-data'
       # 这样即使删除容器，数据库数据也不会丢失
       - oracle-data:/opt/oracle/oradata
     networks:
