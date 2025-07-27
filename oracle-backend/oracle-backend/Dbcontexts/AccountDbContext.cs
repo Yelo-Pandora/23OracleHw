@@ -23,17 +23,17 @@ namespace oracle_backend.Dbcontexts
         {
             //规定账号对员工账号的级联删除规则，账号删除时，对应员工账号一并删除
             modelBuilder.Entity<StaffAccount>()
-                .HasOne(o => o.ACCOUNT)
+                .HasOne(o => o.accountNavigation)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
             //规定账号对商户账号的级联删除规则，账号删除时，对应商户账号一并删除
             modelBuilder.Entity<StoreAccount>()
-                .HasOne(o => o.ACCOUNT)
+                .HasOne(o => o.accountNavigation)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
             //规定账号对临时权限的级联删除规则，账号删除时，对应临时权限一并删除
             modelBuilder.Entity<TempAuthority>()
-                .HasOne(o => o.ACCOUNT)
+                .HasOne(o => o.accountNavigation)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
         }
