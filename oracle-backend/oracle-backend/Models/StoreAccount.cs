@@ -10,9 +10,12 @@ namespace oracle_backend.Models
     [PrimaryKey(nameof(ACCOUNT), nameof(STORE_ID))]
     public class StoreAccount
     {
+        //账号
         public string ACCOUNT {  get; set; }
+        //店铺ID
         public int STORE_ID { get; set; }
 
+        //外键约束，账号和店铺是一对一关系
         [ForeignKey("ACCOUNT")]
         public Account accountNavigation { get; set; }
 

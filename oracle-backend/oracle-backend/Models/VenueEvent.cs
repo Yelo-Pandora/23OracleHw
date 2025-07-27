@@ -9,20 +9,14 @@ namespace oracle_backend.Models
 {
     public class VenueEvent : Event
     {
-        //[Key]
-        //public int EVENT_ID { get; set; }
+        //活动参与人数
         public int? HEADCOUNT { get; set; }
+        //活动收费，单位：人/次
         public double FEE { get; set; }
+        //活动最大设定人数
         public int CAPACITY { get; set; }
+        //活动花费
         public int EXPENSE { get; set; }
 
-        //[ForeignKey("EVENT_ID")]
-        //public Event evenT {  get; set; }
-
-        //导航属性：一个场地活动可能和多个有临时权限的员工关联
-        public ICollection<TempAuthority> tempAuthorityNavigation { get; set; }
-
-        //导航属性：一个场地活动设定成可能同时在多个活动区域内都举办，同时可能有多个合作方
-        public ICollection<VenueEventDetail> venueEventDetailNavigations { get; set; }
     }
 }

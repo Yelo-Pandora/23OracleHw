@@ -10,15 +10,10 @@ namespace oracle_backend.Models
     [Table("EVENT_AREA")]
     public class EventArea : Area
     {
-        //[Key]
-        //public int AREA_ID { get; set; }
+        //活动区域容量
         public int? CAPACITY { get; set; }
+        //区域租金
         public string AREA_FEE { get; set; }
 
-        //[ForeignKey("AREA_ID")]
-        //public Area area { get; set; }
-
-        //导航属性：一个活动区域可能举办多次活动，与多个合作方相关联
-        public ICollection<VenueEventDetail> venueEventDetailNavigations { get; set; }
     }
 }

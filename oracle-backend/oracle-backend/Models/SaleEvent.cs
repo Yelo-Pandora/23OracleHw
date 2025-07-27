@@ -10,15 +10,10 @@ namespace oracle_backend.Models
     [Table("SALE_EVENT")]
     public class SaleEvent :Event
     {
-        //[Key]
-        //public int EVENT_ID { get; set; }
+        //促销活动花费
         public double COST { get; set; }
+        //促销活动的描述
         public string DESCRIPTION { get; set; }
 
-        //[ForeignKey("EVENT_ID")]
-        //public Event evenT { get; set; }
-
-        //导航属性：一次促销活动中会有多个店铺参与
-        public ICollection<PartStore> partStoreNavigation { get; set; }
     }
 }

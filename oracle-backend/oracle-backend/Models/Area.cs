@@ -11,11 +11,12 @@ namespace oracle_backend.Models
     public class Area
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //区域ID
         public int AREA_ID { get; set; }
+        //是否为空
         public bool ISEMPTY { get; set; }
+        //区域面积
         public int? AREA_SIZE { get; set; }
 
-        // 导航属性：表示一个区域内可以有多个设备
-        public ICollection<EquipmentLocation> equipmentLocationNavigations { get; set; }
     }
 }

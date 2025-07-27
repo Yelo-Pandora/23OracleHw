@@ -11,9 +11,12 @@ namespace oracle_backend.Models
     [PrimaryKey(nameof(STORE_ID), nameof(AREA_ID))]
     public class RentStore
     {
+        //商铺ID
         public int STORE_ID { get; set; }
+        //店面区域ID
         public int AREA_ID { get; set; }
 
+        //外键约束，店铺和店面是一对多关系
         [ForeignKey("STORE_ID")]
         public Store storeNavigation { get; set; }
 

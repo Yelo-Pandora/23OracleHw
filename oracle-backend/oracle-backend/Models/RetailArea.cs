@@ -10,14 +10,9 @@ namespace oracle_backend.Models
     [Table("RETAIL_AREA")]
     public class RetailArea : Area
     {
-        //[Key]
-        //public int AREA_ID { get; set; }
+        //出租状态
         public string RENT_STATUS { get; set; }
+        //基础租金
         public double BASE_RENT {  get; set; }
-
-        //[ForeignKey("AREA_ID")]
-        //public Area area { get; set; }
-        //导航属性：一个店面只能同时被一个店铺持有
-        public RentStore rentStoreNavigation { get; set; }
     }
 }

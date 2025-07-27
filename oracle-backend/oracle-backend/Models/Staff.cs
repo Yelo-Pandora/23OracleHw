@@ -11,21 +11,18 @@ namespace oracle_backend.Models
     public class Staff
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //员工ID
         public int STAFF_ID{ get; set; }
+        //员工名称
         public string STAFF_NAME { get; set; }
+        //员工性别
         public string? STAFF_SEX { get; set; }
+        //员工部门
         public string STAFF_APARTMENT { get; set; }
+        //员工位置（普通员工/经理）
         public string STAFF_POSITION { get; set; }
+        //员工基础薪资
         public double STAFF_SALARY {  get; set; }
-
-        //导航属性：维修工单联系中，一个负责维修的员工可能同时负责多个设备的维修
-        public ICollection<RepairOrder> repairOrderNavigations { get; set; }
-
-        //导航属性：一个员工会上多个月的班，会和多个月的工资总支出产生关系
-        public ICollection<SalarySlip> salarySlipNavigations { get; set; }
-
-        //导航属性：一个员工账号和员工一一对应
-        public StaffAccount staffAccountNavigation { get; set; }
 
     }
 }

@@ -11,13 +11,16 @@ namespace oracle_backend.Models
     public class Collaboration
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //合作方ID
         public int COLLABORATION_ID { get; set; }
+        //合作方名字
         public required string COLLABORATION_NAME { get; set; }
+        //合作方的负责人
         public string? CONTACTOR { get; set; }
+        //合作方的电话号码
         public string? PHONE_NUMBER { get; set; }
+        //合作方的邮箱
         public string? EMAIL { get; set; }
 
-        //导航属性：一个合作方可能参与赞助了多次的场地活动
-        public ICollection<VenueEventDetail> venueEventDetailNavigations { get; set; }
     }
 }
