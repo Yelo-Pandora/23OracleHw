@@ -10,11 +10,7 @@ namespace oracle_backend.Models
     [Table("OTHER_AREA")]
     public class OtherArea : Area
     {
-        //[Key]
-        //public int AREA_ID { get; set; }
+        //区域类型（如卫生间、杂物间、电梯间等）
         public string TYPE {  get; set; }
-
-        //[ForeignKey("AREA_ID")]
-        //public Area area { get; set; }
     }
 }

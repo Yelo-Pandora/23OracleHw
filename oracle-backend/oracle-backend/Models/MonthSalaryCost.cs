@@ -11,10 +11,10 @@ namespace oracle_backend.Models
     public class MonthSalaryCost
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //月度时间
         public DateTime MONTH_TIME {  get; set; }
+        //每月工资总支出
         public int TOTAL_COST { get; set; }
 
-        //导航属性：某个月的工资总支出包含多个员工的当月工资
-        public ICollection<SalarySlip> salarySlipNavigations { get; set; }
     }
 }

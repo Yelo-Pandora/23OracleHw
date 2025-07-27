@@ -11,9 +11,12 @@ namespace oracle_backend.Models
     [PrimaryKey(nameof(EQUIPMENT_ID), nameof(AREA_ID))]
     public class EquipmentLocation
     {
+        //设备ID
         public int EQUIPMENT_ID { get; set; }
+        //区域ID
         public int AREA_ID { get; set; }
 
+        //外键约束，设备和区域是多对一关系
         [ForeignKey("EQUIPMENT_ID")]
         public Equipment equipmentNavigation { get; set; }
 

@@ -11,9 +11,12 @@ namespace oracle_backend.Models
     [PrimaryKey(nameof(ACCOUNT), nameof(STAFF_ID))]
     public class StaffAccount
     {
+        //账号
         public string ACCOUNT { get; set; }
+        //员工ID
         public int STAFF_ID { get; set; }
 
+        //外键约束，账号和员工ID是一对一关系
         [ForeignKey("ACCOUNT")]
         public Account accountNavigation { get; set; }
 

@@ -11,22 +11,21 @@ namespace oracle_backend.Models
     public class Store
     {
         [Key]
+        //商铺ID
         public int STORE_ID { get; set; }
+        //商铺名
         public string STORE_NAME { get; set; }
+        //商铺状态（正常营业/歇业中/翻新中）
         public string STORE_STATUS { get; set; }
+        //商铺种类（个人/企业连锁）
         public string STORE_TYPE { get; set; }
+        //租户名
         public string TENANT_NAME { get; set; }
+        //联系方式
         public string CONTACT_INFO { get; set; }
+        //租赁起始时间
         public DateTime RENT_START { get; set; }
+        //租赁结束时间
         public DateTime RENT_END { get; set; }
-
-        //导航属性：一个店铺能同时参与多个促销活动
-        public PartStore partStoreNavigation { get; set; }
-
-        //导航属性：一个具体店铺可以租下多个店面
-        public ICollection<RentStore> rentStoreNavigation { get; set; }
-
-        //导航属性：一个店铺账号和店铺一一对应
-        public StoreAccount storeAccountNavigation { get; set; }
     }
 }

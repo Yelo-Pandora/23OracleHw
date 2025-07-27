@@ -11,18 +11,19 @@ namespace oracle_backend.Models
     public class Equipment
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //设备ID
         public required int EQUIPMENT_ID { get; set; }
+        //设备类型
         public string EQUIPMENT_TYPE { get; set; }
+        //设备状态
         public string EQUIPMENT_STATUS { get; set; }
+        //设备接口
         public string? PORT { get; set; }
+        //设备购入花费
         public int? EQUIPMENT_COST { get; set; }
+        //购买时间
         public DateTime BUY_TIME { get; set; }
 
-        // 导航属性：表示一个设备只有一个确定的位置
-        public EquipmentLocation equipmentLocationNavigation { get; set; }
-        
-        //导航属性：在维修工单联系中，一个设备可以同时被多个人一起维修
-        public ICollection<RepairOrder> repairOrderNavigations { get; set; }
 
     }
 }

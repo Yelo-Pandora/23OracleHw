@@ -11,12 +11,18 @@ namespace oracle_backend.Models
     [PrimaryKey(nameof(STAFF_ID), nameof(MONTH_TIME))]
     public class SalarySlip
     {
+        //员工ID
         public int STAFF_ID { get; set; }
+        //月度时间
         public DateTime MONTH_TIME { get; set; }
+        //出勤次数
         public int ATD_COUNT { get; set; }
+        //奖金
         public double BONUS { get; set; }
+        //罚金
         public double FIRE {  get; set; }
 
+        //外键约束，员工和每月工资总支出是多对多关系
         [ForeignKey("STAFF_ID")]
         public Staff staffNavigation { get; set; }
 

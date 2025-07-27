@@ -11,10 +11,14 @@ namespace oracle_backend.Models
     [PrimaryKey(nameof(LICENSE_PLATE_NUMBER), nameof(PARKING_SPACE_ID),nameof(PARK_START))]
     public class Park
     {
+        //车牌号
         public string LICENSE_PLATE_NUMBER { get; set; }
+        //车位ID
         public string PARKING_SPACE_ID { get; set; }
+        //停车开始时间
         public DateTime PARK_START {  get; set; }
 
+        //外键约束，车辆和车位是多对多关系
         [ForeignKey("LICENSE_PLATE_NUMBER")]
         public Car carNavigation { get; set; }
 

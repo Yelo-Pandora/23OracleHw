@@ -10,14 +10,8 @@ namespace oracle_backend.Models
     [Table("PARKING_LOT")]
     public class ParkingLot : Area
     {
-        //[Key]
-        //public int AREA_ID { get; set; }
+        //停车费
         public int PARKING_FEE { get; set; }
 
-        //[ForeignKey("AREA_ID")]
-        //public Area area { get; set; }
-
-        //导航属性：表明一个停车场中有多个车位
-        public ICollection<ParkingSpaceDistribution> parkingSpaceDistributionNavigations { get; set; }
     }
 }

@@ -10,13 +10,11 @@ namespace oracle_backend.Models
     [Table("PARKING_SPACE")]
     public class ParkingSpace
     {
+        
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //车位ID
         public int PARKING_SPACE_ID { get; set; }
+        //是否有车
         public bool OCCUPIED { get; set; }
-
-        //导航属性：表明一个停车位上可以多次停车
-        public ICollection<Park> parkNavigations { get; set; }
-        //导航属性：表明一个停车位只可能位于某一个停车场
-        public ParkingSpaceDistribution parkingSpaceDistributionNavigation { get; set; }
     }
 }

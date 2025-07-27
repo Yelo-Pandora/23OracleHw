@@ -11,9 +11,12 @@ namespace oracle_backend.Models
     [PrimaryKey(nameof(EVENT_ID), nameof(STORE_ID))]
     public class PartStore
     {
+        //促销活动ID
         public int EVENT_ID { get; set; }
+        //参与的商铺ID
         public int STORE_ID { get; set; }
 
+        //外键约束，促销活动和参与活动的商铺是多对多关系
         [ForeignKey("EVENT_ID")]
         public SaleEvent saleEventNavigation { get; set; }
 

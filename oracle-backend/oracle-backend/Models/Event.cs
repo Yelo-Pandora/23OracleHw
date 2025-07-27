@@ -11,9 +11,13 @@ namespace oracle_backend.Models
     public class Event
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //活动ID
         public int EVENT_ID { get; set; }
+        //活动名称
         public string EVENT_NAME { get; set; }
+        //活动开始时间
         public DateTime EVENT_START { get; set; }
+        //活动结束时间
         public DateTime? EVENT_END { get; set; }
     }
 }
