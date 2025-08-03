@@ -18,7 +18,13 @@ namespace oracle_backend
             var connectionString = builder.Configuration.GetConnectionString("OracleConnection");
             builder.Services.AddDbContext<AccountDbContext>(options =>
             {
-                options.UseOracle(connectionString); // Ö¸¶¨Ê¹ÓÃ Oracle Ìá¹©³ÌĞòºÍÁ¬½Ó×Ö·û´®
+                options.UseOracle(connectionString); // Ö¸ï¿½ï¿½Ê¹ï¿½ï¿½ Oracle ï¿½á¹©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+            });
+
+            // æ·»åŠ å¯¹ ComplexDbContext çš„ä¾èµ–æ³¨å…¥
+            builder.Services.AddDbContext<ComplexDbContext>(options =>
+            {
+                options.UseOracle(connectionString);
             });
 
             builder.Services.AddControllers();
