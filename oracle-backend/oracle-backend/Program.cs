@@ -18,7 +18,7 @@ namespace oracle_backend
             var connectionString = builder.Configuration.GetConnectionString("OracleConnection");
             builder.Services.AddDbContext<AccountDbContext>(options =>
             {
-                options.UseOracle(connectionString); // 指定使用 Oracle 提供程序和连接字符串
+                options.UseOracle(connectionString); // 鎸囧畾浣跨敤 Oracle 鎻愪緵绋嬪簭鍜岃繛鎺ュ瓧绗︿覆
             });
 
             builder.Services.AddControllers();
