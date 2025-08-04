@@ -18,9 +18,9 @@ namespace oracle_backend.Models
 
         //外键约束，店铺和店面是一对多关系
         [ForeignKey("STORE_ID")]
-        public Store storeNavigation { get; set; }
+        public Store? storeNavigation { get; set; }
 
         [ForeignKey("AREA_ID")]
-        public RetailArea retailAreaNavigation { get; set; }
+        public Area? areaNavigation { get; set; }
     }
 }

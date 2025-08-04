@@ -20,6 +20,11 @@ namespace oracle_backend
             {
                 options.UseOracle(connectionString); // 指定使用 Oracle 提供程序和连接字符串
             });
+            
+            builder.Services.AddDbContext<StoreDbContext>(options =>
+            {
+                options.UseOracle(connectionString); // 添加商店相关的数据库上下文
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

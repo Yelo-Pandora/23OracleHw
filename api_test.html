@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>商户管理API测试这个还没有完成！！！！</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .result { margin-top: 10px; padding: 10px; background: #f8f9fa; border-left: 4px solid #007bff; white-space: pre-wrap; border-radius: 4px; max-height: 300px; overflow-y: auto; }
+        .error { border-left-color: #dc3545; background: #f8d7da; }
+        .success { border-left-color: #28a745; background: #d4edda; }
+        input, select { padding: 8px; margin: 5px; width: 200px; border: 1px solid #ddd; border-radius: 4px; }
+        .form-row { margin: 10px 0; }
+        .form-row label { display: inline-block; width: 120px; font-weight: bold; }
+        .status { padding: 5px 10px; border-radius: 3px; font-size: 12px; }
+        .status.online { background: #d4edda; color: #155724; }
+        .status.offline { background: #f8d7da; color: #721c24; }
+        h3 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 商户管理API测试页面</h1>
+        <p><strong>API地址：</strong><span id="apiUrl">http://localhost:1521</span> 
+        <span id="apiStatus" class="status offline">离线</span></p>
+        
+        <div class="test-section">
+            <h3>🔧 系统状态检查</h3>
+            <button onclick="checkApiStatus()">检查API状态</button>
+            <div id="statusResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🏪 获取可用店面</h3>
+            <button onclick="testAvailableAreas()">获取可用店面</button>
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>➕ 创建新商户</h3>
+            <div>
+                <div class="form-row">
+                    <label>店铺名称：</label>
+                    <input type="text" id="storeName" placeholder="店铺名称" value="测试餐厅">
+                </div>
+                <div class="form-row">
+                    <label>租户类型：</label>
+                    <select id="storeType">
+                        <option value="个人">个人</option>
+                        <option value="企业连锁">企业连锁</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>租户名称：</label>
+                    <input type="text" id="tenantName" placeholder="租户名称" value="张三">
+                </div>
+                <div class="form-row">
+                    <label>联系方式：</label>
+                    <input type="text" id="contactInfo" placeholder="联系方式" value="13800138000">
+                </div>
+                <div class="form-row">
+                    <label>区域ID：</label>
+                    <input type="number" id="areaId" placeholder="区域ID" value="1" min="1">
+                </div>
+                <div class="form-row">
+                    <label>操作员账号：</label>
+                    <input type="text" id="operatorAccount" placeholder="操作员账号" value="admin_test">
+                </div>
+            </div>
+            <button onclick="testCreateMerchant()">创建商户</button>
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 获取所有商户</h3>
+            <button onclick="testAllStores()">获取所有商户</button>
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 查询单个商户</h3>
+            <input type="number" id="searchStoreId" placeholder="商户ID" value="1" min="1">
+            <button onclick="testGetStoreById()">查询商户</button>
+            <div id="result4" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>✏️ 更新商户状态</h3>
+            <input type="number" id="updateStoreId" placeholder="商户ID" value="1" min="1">
+            <select id="newStatus">
+                <option value="正常营业">正常营业</option>
+                <option value="歇业中">歇业中</option>
+                <option value="翻新中">翻新中</option>
+            </select>
+            <button onclick="testUpdateStoreStatus()">更新状态</button>
+            <div id="result5" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://localhost:1521/api';
+
+        function showResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = 'result ' + (isError ? 'error' : 'success');
+            
+            if (typeof data === 'string') {
+                element.textContent = data;
+            } else {
+                element.textContent = JSON.stringify(data, null, 2);
+            }
+        }
+
+        async function checkApiStatus() {
+            try {
+                const response = await fetch(`${baseUrl}/Store/AvailableAreas`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    document.getElementById('apiStatus').textContent = '在线';
+                    document.getElementById('apiStatus').className = 'status online';
+                    showResult('statusResult', '✅ API服务正常运行');
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = '离线';
+                document.getElementById('apiStatus').className = 'status offline';
+                showResult('statusResult', `❌ API连接失败: ${error.message}`, true);
+            }
+        }
+
+        async function testAvailableAreas() {
+            try {
+                const response = await fetch(`${baseUrl}/Store/AvailableAreas`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('result1', {
+                        status: '✅ 成功获取可用店面',
+                        count: data.length,
+                        data: data
+                    });
+                } else {
+                    showResult('result1', data, true);
+                }
+            } catch (error) {
+                showResult('result1', { error: `请求失败: ${error.message}` }, true);
+            }
+        }
+
+        async function testCreateMerchant() {
+            try {
+                const requestData = {
+                    storeName: document.getElementById('storeName').value,
+                    storeType: document.getElementById('storeType').value,
+                    tenantName: document.getElementById('tenantName').value,
+                    contactInfo: document.getElementById('contactInfo').value,
+                    areaId: parseInt(document.getElementById('areaId').value),
+                    rentStart: "2024-01-01T00:00:00",
+                    rentEnd: "2025-12-31T23:59:59",
+                    operatorAccount: document.getElementById('operatorAccount').value
+                };
+
+                const response = await fetch(`${baseUrl}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                showResult('result2', data, !response.ok);
+            } catch (error) {
+                showResult('result2', { error: `创建商户失败: ${error.message}` }, true);
+            }
+        }
+
+        async function testAllStores() {
+            try {
+                const operatorAccount = document.getElementById('operatorAccount').value;
+                const response = await fetch(`${baseUrl}/Store/AllStores?operatorAccount=${operatorAccount}`);
+                const data = await response.json();
+                showResult('result3', data, !response.ok);
+            } catch (error) {
+                showResult('result3', { error: `获取商户列表失败: ${error.message}` }, true);
+            }
+        }
+
+        async function testGetStoreById() {
+            try {
+                const storeId = document.getElementById('searchStoreId').value;
+                const response = await fetch(`${baseUrl}/Store/${storeId}`);
+                const data = await response.json();
+                showResult('result4', data, !response.ok);
+            } catch (error) {
+                showResult('result4', { error: `查询商户失败: ${error.message}` }, true);
+            }
+        }
+
+        async function testUpdateStoreStatus() {
+            try {
+                const storeId = document.getElementById('updateStoreId').value;
+                const newStatus = document.getElementById('newStatus').value;
+                const operatorAccount = document.getElementById('operatorAccount').value;
+                
+                const response = await fetch(`${baseUrl}/Store/UpdateStoreStatus/${storeId}?newStatus=${encodeURIComponent(newStatus)}&operatorAccount=${operatorAccount}`, {
+                    method: 'PATCH'
+                });
+                
+                const data = await response.json();
+                showResult('result5', data, !response.ok);
+            } catch (error) {
+                showResult('result5', { error: `更新状态失败: ${error.message}` }, true);
+            }
+        }
+
+        // 页面加载时检查API状态
+        window.onload = function() {
+            checkApiStatus();
+        };
+    </script>
+</body>
+</html>
