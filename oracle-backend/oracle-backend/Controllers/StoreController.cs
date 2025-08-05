@@ -318,7 +318,7 @@ namespace oracle_backend.Controllers
                     var hasPermission = await _accountContext.CheckAuthority(operatorAccount, 2);
                     if (!hasPermission)
                     {
-                        return BadRequest("权限不足，需要管理员或部门经理权限");
+                        return BadRequest(new { error = "权限不足，需要管理员或部门经理权限" });
                     }
                 }
 
@@ -528,7 +528,7 @@ namespace oracle_backend.Controllers
                         var validStatuses = new[] { "正常营业", "歇业中", "翻新中" };
                         if (!validStatuses.Contains(dto.StoreStatus))
                         {
-                            return BadRequest($"无效的店铺状态。有效值为：{string.Join(", ", validStatuses)}");
+                            return BadRequest(new { error = $"无效的店铺状态。有效值为：{string.Join(", ", validStatuses)}" });
                         }
                         store.STORE_STATUS = dto.StoreStatus;
                         hasChanges = true;
@@ -585,7 +585,14 @@ namespace oracle_backend.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "更新商户信息时发生错误：{StoreId}", dto.StoreId);
-                return StatusCode(500, "服务器内部错误");
+                
+                // 检查是否是数据库字段长度限制错误
+                if (ex.InnerException?.Message?.Contains("ORA-12899") == true)
+                {
+                    return BadRequest(new { error = "输入的数据长度超过了字段限制，请检查联系方式等字段长度" });
+                }
+                
+                return StatusCode(500, new { error = "服务器内部错误，请稍后重试" });
             }
         }
 
@@ -612,7 +619,7 @@ namespace oracle_backend.Controllers
 
                 if (!isAdmin && !isMerchant)
                 {
-                    return BadRequest("无权限访问该商户信息");
+                    return BadRequest(new { error = "无权限访问该商户信息" });
                 }
 
                 var editableFields = new

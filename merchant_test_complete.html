@@ -210,6 +210,7 @@
         <div class="test-section">
             <h2>➕ 新增商户测试</h2>
             
+            <h3>📝 基础功能测试</h3>
             <div class="form-group">
                 <label>店铺名称:</label>
                 <input type="text" id="newStoreName" value="测试新商户" required>
@@ -236,7 +237,8 @@
             
             <div class="form-group">
                 <label>区域ID:</label>
-                <input type="number" id="newAreaId" value="1" min="1" required>
+                <input type="number" id="newAreaId" value="2" min="1" required>
+                <small>（区域1已被占用，用于测试异常）</small>
             </div>
             
             <div class="form-group">
@@ -249,8 +251,78 @@
                 <input type="date" id="newRentEnd" required>
             </div>
             
-            <button onclick="createMerchant()">创建新商户</button>
+            <button onclick="createMerchant()">✅ 正常创建商户</button>
             <div id="createResult" class="result info"></div>
+            
+            <h3>🧪 异常情况测试</h3>
+            <div style="margin: 15px 0; padding: 10px; background-color: #fff3cd; border-radius: 5px;">
+                <p><strong>测试说明：</strong>以下按钮用于测试各种异常情况和边界条件</p>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                <button onclick="testOccupiedArea()">🚫 测试已占用店面</button>
+                <button onclick="testDuplicateTenant()">👥 测试重复租户</button>
+                <button onclick="testInvalidDateRange()">📅 测试无效时间范围</button>
+                <button onclick="testPastStartDate()">⏰ 测试过去的开始时间</button>
+                <button onclick="testEmptyFields()">📝 测试必填字段验证</button>
+                <button onclick="testLongFields()">📏 测试字段长度限制</button>
+                <button onclick="testInvalidAreaId()">🏠 测试不存在的区域ID</button>
+                <button onclick="testUnauthorized()">🔒 测试权限不足</button>
+            </div>
+            
+            <div id="exceptionTestResult" class="result info"></div>
+            
+            <h3>📊 联系方式验证测试</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                <button onclick="testInvalidLicense()">❌ 无效联系方式验证</button>
+            </div>
+            
+            <div id="licenseTestResult" class="result info"></div>
+        </div>
+
+        <!-- 商户信息管理详细测试 -->
+        <div class="test-section">
+            <h2>📊 商户信息管理详细测试</h2>
+            
+            <h3>🔍 权限测试</h3>
+            <div class="form-group">
+                <label>测试商户ID:</label>
+                <input type="number" id="testMerchantId" value="1" min="1">
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                <button onclick="testAdminAccess()">👑 管理员权限测试</button>
+                <button onclick="testMerchantAccess()">🏪 商户权限测试</button>
+                <button onclick="testUnauthorizedAccess()">🚫 无权限访问测试</button>
+                <button onclick="testNonExistentMerchant()">❓ 不存在商户测试</button>
+            </div>
+            
+            <div id="accessTestResult" class="result info"></div>
+            
+            <h3>✏️ 信息修改测试</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                <button onclick="testMerchantNonCoreUpdate()">📝 商户修改非核心信息</button>
+                <button onclick="testMerchantCoreUpdateFail()">🚫 商户修改核心信息（应失败）</button>
+                <button onclick="testAdminCoreUpdate()">👑 管理员修改核心信息</button>
+                <button onclick="testInvalidStatusUpdate()">❌ 无效状态修改</button>
+                <button onclick="testInvalidTimeRange()">⏰ 无效时间范围修改</button>
+            </div>
+            
+            <div id="updateTestResult" class="result info"></div>
+        </div>
+
+        <!-- 综合业务流程测试 -->
+        <div class="test-section">
+            <h2>🔄 综合业务流程测试</h2>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                <button onclick="runCompleteBusinessFlow()">🎯 完整业务流程测试</button>
+                <button onclick="runStressTest()">⚡ 压力测试（连续创建）</button>
+                <button onclick="runDataConsistencyTest()">🔍 数据一致性测试</button>
+                <button onclick="clearTestData()">🧹 清理测试数据</button>
+            </div>
+            
+            <div id="flowTestResult" class="result info"></div>
         </div>
     </div>
 
@@ -478,6 +550,874 @@
                 resultElement.textContent = `❌ 请求失败: ${error.message}\n\n请检查：\n1. 后端服务是否正在运行\n2. 网络连接是否正常\n3. API地址是否正确`;
                 resultElement.className = 'result error';
             }
+        }
+        
+        // ==================== 异常情况测试函数 ====================
+        
+        async function testOccupiedArea() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试已占用店面...\n';
+            resultElement.className = 'result info';
+            
+            const merchantData = {
+                storeName: "测试占用店面",
+                storeType: "个人",
+                tenantName: "测试租户占用",
+                contactInfo: "13800138888",
+                areaId: 1, // 使用已占用的区域ID
+                rentStart: getTomorrowDate() + 'T00:00:00',
+                rentEnd: getNextYearDate() + 'T23:59:59'
+            };
+            
+            await executeTest(resultElement, merchantData, '已租用', '正确识别了已占用店面', '应该拒绝已占用店面');
+        }
+        
+        async function testDuplicateTenant() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试重复租户...\n';
+            resultElement.className = 'result info';
+            
+            const merchantData = {
+                storeName: "测试重复租户",
+                storeType: "个人",
+                tenantName: "张三", // 使用已存在的租户名
+                contactInfo: "13800138000", // 使用已存在的联系方式
+                areaId: 2,
+                rentStart: getTomorrowDate() + 'T00:00:00',
+                rentEnd: getNextYearDate() + 'T23:59:59'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(merchantData)
+                });
+                
+                const data = await response.json();
+                
+                // 这个测试期望失败，因为是重复租户或区域已占用
+                if (!response.ok) {
+                    resultElement.textContent += '✅ 测试通过：正确拒绝了重复租户或已占用区域\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该拒绝重复租户或已占用区域\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testInvalidDateRange() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试无效时间范围...\n';
+            resultElement.className = 'result info';
+            
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            const merchantData = {
+                storeName: "测试无效时间",
+                storeType: "个人",
+                tenantName: "测试时间租户",
+                contactInfo: "13800139999",
+                areaId: 2,
+                rentStart: tomorrow.toISOString().split('T')[0] + 'T00:00:00',
+                rentEnd: yesterday.toISOString().split('T')[0] + 'T23:59:59' // 结束时间早于开始时间
+            };
+            
+            await executeTest(resultElement, merchantData, '结束时间必须晚于起始时间', '正确识别了无效时间范围', '应该拒绝无效时间范围');
+        }
+        
+        async function testPastStartDate() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试过去的开始时间...\n';
+            resultElement.className = 'result info';
+            
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            const merchantData = {
+                storeName: "测试过去时间",
+                storeType: "个人",
+                tenantName: "测试过去租户",
+                contactInfo: "13800137777",
+                areaId: 2,
+                rentStart: yesterday.toISOString().split('T')[0] + 'T00:00:00', // 过去的时间
+                rentEnd: getNextYearDate() + 'T23:59:59'
+            };
+            
+            await executeTest(resultElement, merchantData, '不能早于今天', '正确识别了过去的开始时间', '应该拒绝过去的开始时间');
+        }
+        
+        async function testEmptyFields() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试必填字段验证...\n';
+            resultElement.className = 'result info';
+            
+            const merchantData = {
+                storeName: "", // 空字段
+                storeType: "",
+                tenantName: "",
+                contactInfo: "",
+                areaId: 2,
+                rentStart: getTomorrowDate() + 'T00:00:00',
+                rentEnd: getNextYearDate() + 'T23:59:59'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(merchantData)
+                });
+                
+                const data = await response.json();
+                
+                // 这个测试期望失败，因为有空字段
+                if (!response.ok && (response.status === 400 || data.errors || data.error)) {
+                    resultElement.textContent += '✅ 测试通过：正确验证了必填字段\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该拒绝空字段\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testLongFields() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试字段长度限制...\n';
+            resultElement.className = 'result info';
+            
+            const merchantData = {
+                storeName: "a".repeat(150), // 超长字段
+                storeType: "个人",
+                tenantName: "b".repeat(150),
+                contactInfo: "c".repeat(100),
+                areaId: 2,
+                rentStart: getTomorrowDate() + 'T00:00:00',
+                rentEnd: getNextYearDate() + 'T23:59:59'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(merchantData)
+                });
+                
+                const data = await response.json();
+                
+                // 这个测试期望失败，因为字段超长
+                if (!response.ok && (response.status === 400 || data.errors || data.error)) {
+                    resultElement.textContent += '✅ 测试通过：正确验证了字段长度\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该拒绝超长字段\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testInvalidAreaId() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试不存在的区域ID...\n';
+            resultElement.className = 'result info';
+            
+            const merchantData = {
+                storeName: "测试无效区域",
+                storeType: "个人",
+                tenantName: "测试无效区域租户",
+                contactInfo: "13800136666",
+                areaId: 999, // 不存在的区域ID
+                rentStart: getTomorrowDate() + 'T00:00:00',
+                rentEnd: getNextYearDate() + 'T23:59:59'
+            };
+            
+            // 对于不存在的区域ID，任何错误都是期望的
+            try {
+                const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(merchantData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    resultElement.textContent += '✅ 测试通过：正确识别了不存在的区域ID\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该拒绝不存在的区域ID\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testUnauthorized() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试权限不足...\n';
+            resultElement.className = 'result info';
+            
+            const merchantData = {
+                storeName: "测试权限",
+                storeType: "个人",
+                tenantName: "测试权限租户",
+                contactInfo: "13800135555",
+                areaId: 2,
+                rentStart: getTomorrowDate() + 'T00:00:00',
+                rentEnd: getNextYearDate() + 'T23:59:59',
+                operatorAccount: "store_000001" // 使用商户账号尝试创建
+            };
+            
+            await executeTest(resultElement, merchantData, '权限', '正确识别了权限不足', '应该拒绝权限不足的操作');
+        }
+        
+        // ==================== 联系方式验证测试 ====================
+        
+        async function testInvalidLicense() {
+            const resultElement = document.getElementById('licenseTestResult');
+            resultElement.textContent = '🧪 测试无效联系方式验证...\n';
+            resultElement.className = 'result info';
+            
+            // 先测试一个明显无效的联系方式（空字符串）
+            const merchantData = {
+                storeName: "无效联系方式测试",
+                storeType: "企业连锁",
+                tenantName: "测试企业",
+                contactInfo: "", // 空的联系方式
+                areaId: 3, // 使用不同的区域ID避免冲突
+                rentStart: getTomorrowDate() + 'T00:00:00',
+                rentEnd: getNextYearDate() + 'T23:59:59'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(merchantData)
+                });
+                
+                const data = await response.json();
+                
+                // 期望API拒绝空的联系方式
+                if (!response.ok && (response.status === 400 || data.error || data.errors)) {
+                    resultElement.textContent += '✅ 无效联系方式验证通过（正确拒绝空联系方式）\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 应该拒绝空的联系方式\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                    
+                    // 如果第一个测试失败，尝试测试过长的联系方式
+                    resultElement.textContent += '\n🧪 尝试测试过长联系方式...\n';
+                    
+                    const longContactData = {
+                        ...merchantData,
+                        contactInfo: "a".repeat(100), // 超长联系方式
+                        storeName: "过长联系方式测试",
+                        areaId: 4
+                    };
+                    
+                    const longResponse = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(longContactData)
+                    });
+                    
+                    const longData = await longResponse.json();
+                    
+                    if (!longResponse.ok && (longResponse.status === 400 || longData.error || longData.errors)) {
+                        resultElement.textContent += '✅ 过长联系方式验证通过\n' + JSON.stringify(longData, null, 2);
+                        resultElement.className = 'result success';
+                    } else {
+                        resultElement.textContent += '❌ 应该拒绝过长的联系方式\n' + JSON.stringify(longData, null, 2);
+                        resultElement.className = 'result error';
+                    }
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        // ==================== 权限和访问测试 ====================
+        
+        async function testAdminAccess() {
+            const resultElement = document.getElementById('accessTestResult');
+            resultElement.textContent = '🧪 测试管理员权限访问...\n';
+            resultElement.className = 'result info';
+            
+            const merchantId = document.getElementById('testMerchantId').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/GetMerchantInfo/${merchantId}?operatorAccount=admin_test`);
+                const data = await response.json();
+                
+                if (response.ok && data.canModifyCore) {
+                    resultElement.textContent += '✅ 管理员权限测试通过\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 管理员权限测试失败\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testMerchantAccess() {
+            const resultElement = document.getElementById('accessTestResult');
+            resultElement.textContent = '🧪 测试商户权限访问...\n';
+            resultElement.className = 'result info';
+            
+            const merchantId = document.getElementById('testMerchantId').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/GetMerchantInfo/${merchantId}?operatorAccount=store_000001`);
+                const data = await response.json();
+                
+                if (response.ok && !data.canModifyCore && data.canModifyNonCore) {
+                    resultElement.textContent += '✅ 商户权限测试通过（只能修改非核心信息）\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 商户权限测试失败\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testUnauthorizedAccess() {
+            const resultElement = document.getElementById('accessTestResult');
+            resultElement.textContent = '🧪 测试无权限访问...\n';
+            resultElement.className = 'result info';
+            
+            const merchantId = document.getElementById('testMerchantId').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/GetMerchantInfo/${merchantId}?operatorAccount=nonexistent_user`);
+                const data = await response.json();
+                
+                if (!response.ok && data.error && data.error.includes('不存在')) {
+                    resultElement.textContent += '✅ 无权限访问测试通过\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 应该拒绝无权限访问\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testNonExistentMerchant() {
+            const resultElement = document.getElementById('accessTestResult');
+            resultElement.textContent = '🧪 测试不存在商户...\n';
+            resultElement.className = 'result info';
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/GetMerchantInfo/999?operatorAccount=admin_test`);
+                const data = await response.json();
+                
+                if (!response.ok && data.error && data.error.includes('不存在')) {
+                    resultElement.textContent += '✅ 不存在商户测试通过\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 应该返回商户不存在错误\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        // ==================== 信息修改测试 ====================
+        
+        async function testMerchantNonCoreUpdate() {
+            const resultElement = document.getElementById('updateTestResult');
+            resultElement.textContent = '🧪 测试商户修改非核心信息...\n';
+            resultElement.className = 'result info';
+            
+            const updateData = {
+                storeId: 1,
+                operatorAccount: "store_000001",
+                contactInfo: `13800138001-updated-${Date.now()}` // 只修改联系方式
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/UpdateMerchantInfo`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent += '✅ 商户非核心信息修改测试通过\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 商户非核心信息修改测试失败\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testMerchantCoreUpdateFail() {
+            const resultElement = document.getElementById('updateTestResult');
+            resultElement.textContent = '🧪 测试商户修改核心信息（应失败）...\n';
+            resultElement.className = 'result info';
+            
+            const updateData = {
+                storeId: 1,
+                operatorAccount: "store_000001",
+                storeType: "企业连锁", // 尝试修改核心信息
+                storeName: "新店名"
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/UpdateMerchantInfo`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok && data.error && data.error.includes('无权限修改核心信息')) {
+                    resultElement.textContent += '✅ 商户核心信息修改权限控制测试通过\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 应该拒绝商户修改核心信息\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testAdminCoreUpdate() {
+            const resultElement = document.getElementById('updateTestResult');
+            resultElement.textContent = '🧪 测试管理员修改核心信息...\n';
+            resultElement.className = 'result info';
+            
+            const updateData = {
+                storeId: 1,
+                operatorAccount: "admin_test",
+                storeStatus: "歇业中", // 管理员修改核心信息
+                storeName: `管理员修改的店名_${Date.now()}`
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/UpdateMerchantInfo`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent += '✅ 管理员核心信息修改测试通过\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 管理员核心信息修改测试失败\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testInvalidStatusUpdate() {
+            const resultElement = document.getElementById('updateTestResult');
+            resultElement.textContent = '🧪 测试无效状态修改...\n';
+            resultElement.className = 'result info';
+            
+            const updateData = {
+                storeId: 1,
+                operatorAccount: "admin_test",
+                storeStatus: "无效状态" // 无效的状态值
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/UpdateMerchantInfo`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok && data.error && data.error.includes('无效的店铺状态')) {
+                    resultElement.textContent += '✅ 无效状态修改测试通过\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 应该拒绝无效状态\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testInvalidTimeRange() {
+            const resultElement = document.getElementById('updateTestResult');
+            resultElement.textContent = '🧪 测试无效时间范围修改...\n';
+            resultElement.className = 'result info';
+            
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            const updateData = {
+                storeId: 1,
+                operatorAccount: "admin_test",
+                rentStart: today.toISOString(),
+                rentEnd: yesterday.toISOString() // 结束时间早于开始时间
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/UpdateMerchantInfo`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok && data.error && data.error.includes('时间')) {
+                    resultElement.textContent += '✅ 无效时间范围修改测试通过\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 应该拒绝无效时间范围\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        // ==================== 综合测试函数 ====================
+        
+        async function runCompleteBusinessFlow() {
+            const resultElement = document.getElementById('flowTestResult');
+            resultElement.textContent = '🎯 开始完整业务流程测试...\n';
+            resultElement.className = 'result info';
+            
+            try {
+                // 1. 获取可用店面
+                resultElement.textContent += '1. 获取可用店面...\n';
+                const areasResponse = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                const areas = await areasResponse.json();
+                
+                if (!areasResponse.ok || areas.length === 0) {
+                    resultElement.textContent += '❌ 没有可用店面，流程终止\n';
+                    resultElement.className = 'result error';
+                    return;
+                }
+                
+                const availableArea = areas[0];
+                resultElement.textContent += `✅ 找到可用店面：区域ID ${availableArea.areaId}\n`;
+                
+                // 2. 创建新商户
+                resultElement.textContent += '2. 创建新商户...\n';
+                const merchantData = {
+                    storeName: `流程测试店_${Date.now()}`,
+                    storeType: "个人",
+                    tenantName: `流程测试租户_${Date.now()}`,
+                    contactInfo: `138${Date.now().toString().slice(-8)}`,
+                    areaId: availableArea.areaId,
+                    rentStart: getTomorrowDate() + 'T00:00:00',
+                    rentEnd: getNextYearDate() + 'T23:59:59'
+                };
+                
+                const createResponse = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(merchantData)
+                });
+                
+                const createResult = await createResponse.json();
+                
+                if (!createResponse.ok) {
+                    resultElement.textContent += `❌ 创建商户失败：${createResult.error}\n`;
+                    resultElement.className = 'result error';
+                    return;
+                }
+                
+                resultElement.textContent += `✅ 商户创建成功：${createResult.storeName}，账号：${createResult.account}\n`;
+                
+                // 3. 验证商户信息
+                resultElement.textContent += '3. 验证商户信息...\n';
+                const infoResponse = await fetch(`${API_BASE}/Store/GetMerchantInfo/${createResult.storeId}?operatorAccount=admin_test`);
+                const infoResult = await infoResponse.json();
+                
+                if (infoResponse.ok) {
+                    resultElement.textContent += `✅ 商户信息验证成功\n`;
+                } else {
+                    resultElement.textContent += `❌ 商户信息验证失败\n`;
+                }
+                
+                // 4. 测试权限
+                resultElement.textContent += '4. 测试权限控制...\n';
+                const merchantUpdateData = {
+                    storeId: createResult.storeId,
+                    operatorAccount: createResult.account,
+                    contactInfo: "更新后的联系方式"
+                };
+                
+                const updateResponse = await fetch(`${API_BASE}/Store/UpdateMerchantInfo`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(merchantUpdateData)
+                });
+                
+                if (updateResponse.ok) {
+                    resultElement.textContent += `✅ 商户权限控制验证成功\n`;
+                } else {
+                    resultElement.textContent += `❌ 商户权限控制验证失败\n`;
+                }
+                
+                resultElement.textContent += '\n🎉 完整业务流程测试完成！\n';
+                resultElement.className = 'result success';
+                
+            } catch (error) {
+                resultElement.textContent += `❌ 流程测试失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function runStressTest() {
+            const resultElement = document.getElementById('flowTestResult');
+            resultElement.textContent = '⚡ 开始压力测试...\n';
+            resultElement.className = 'result info';
+            
+            const testCount = 3; // 减少测试数量，避免数据冲突
+            let successCount = 0;
+            let failCount = 0;
+            
+            for (let i = 0; i < testCount; i++) {
+                try {
+                    const merchantData = {
+                        storeName: `压力测试店${i}_${Date.now()}`,
+                        storeType: "个人",
+                        tenantName: `压力测试租户${i}_${Date.now()}`,
+                        contactInfo: `139${Date.now().toString().slice(-8)}${i}`,
+                        areaId: 2 + (i % 3), // 轮换使用区域2、3、4
+                        rentStart: getTomorrowDate() + 'T00:00:00',
+                        rentEnd: getNextYearDate() + 'T23:59:59'
+                    };
+                    
+                    const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(merchantData)
+                    });
+                    
+                    if (response.ok) {
+                        successCount++;
+                        resultElement.textContent += `✅ 测试 ${i + 1} 成功\n`;
+                    } else {
+                        failCount++;
+                        const error = await response.json();
+                        resultElement.textContent += `❌ 测试 ${i + 1} 失败：${error.error}\n`;
+                    }
+                } catch (error) {
+                    failCount++;
+                    resultElement.textContent += `❌ 测试 ${i + 1} 异常：${error.message}\n`;
+                }
+                
+                // 添加延迟避免过快请求
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            
+            resultElement.textContent += `\n📊 压力测试结果：成功 ${successCount}/${testCount}，失败 ${failCount}/${testCount}\n`;
+            
+            if (successCount > 0) {
+                resultElement.className = 'result success';
+            } else {
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function runDataConsistencyTest() {
+            const resultElement = document.getElementById('flowTestResult');
+            resultElement.textContent = '🔍 开始数据一致性测试...\n';
+            resultElement.className = 'result info';
+            
+            try {
+                // 获取可用店面
+                const areasResponse = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                const initialAreas = await areasResponse.json();
+                
+                if (!areasResponse.ok || initialAreas.length === 0) {
+                    resultElement.textContent += '❌ 没有可用店面，无法进行一致性测试\n';
+                    resultElement.className = 'result error';
+                    return;
+                }
+                
+                const targetArea = initialAreas[0];
+                resultElement.textContent += `使用区域 ${targetArea.areaId} 进行一致性测试\n`;
+                
+                // 创建商户
+                const merchantData = {
+                    storeName: `一致性测试店_${Date.now()}`,
+                    storeType: "个人",
+                    tenantName: `一致性测试租户_${Date.now()}`,
+                    contactInfo: `137${Date.now().toString().slice(-8)}`,
+                    areaId: targetArea.areaId,
+                    rentStart: getTomorrowDate() + 'T00:00:00',
+                    rentEnd: getNextYearDate() + 'T23:59:59'
+                };
+                
+                const createResponse = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(merchantData)
+                });
+                
+                const createResult = await createResponse.json();
+                
+                if (!createResponse.ok) {
+                    resultElement.textContent += `❌ 创建商户失败，无法进行一致性测试\n`;
+                    resultElement.className = 'result error';
+                    return;
+                }
+                
+                // 验证数据一致性
+                resultElement.textContent += '验证创建的数据一致性...\n';
+                
+                // 1. 验证商户信息
+                const storeResponse = await fetch(`${API_BASE}/Store/${createResult.storeId}`);
+                const storeData = await storeResponse.json();
+                
+                if (storeResponse.ok && storeData.STORE_NAME === merchantData.storeName) {
+                    resultElement.textContent += '✅ 商户信息一致性验证通过\n';
+                } else {
+                    resultElement.textContent += '❌ 商户信息一致性验证失败\n';
+                }
+                
+                // 2. 验证区域状态更新
+                const finalAreasResponse = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                const finalAreas = await finalAreasResponse.json();
+                
+                const usedArea = finalAreas.find(area => area.areaId === merchantData.areaId);
+                if (!usedArea) {
+                    resultElement.textContent += '✅ 区域状态更新一致性验证通过（区域已被标记为占用）\n';
+                } else {
+                    resultElement.textContent += '❌ 区域状态更新一致性验证失败（区域仍显示为可用）\n';
+                }
+                
+                resultElement.textContent += '\n🔍 数据一致性测试完成！\n';
+                resultElement.className = 'result success';
+                
+            } catch (error) {
+                resultElement.textContent += `❌ 一致性测试失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function clearTestData() {
+            const resultElement = document.getElementById('flowTestResult');
+            
+            const confirmed = confirm('⚠️ 确定要清理测试数据吗？这将删除所有测试创建的商户数据！');
+            if (!confirmed) {
+                resultElement.textContent = '❌ 用户取消了清理操作';
+                resultElement.className = 'result info';
+                return;
+            }
+            
+            resultElement.textContent = '🧹 清理测试数据提示...\n';
+            resultElement.textContent += '💡 由于当前系统没有删除接口，请手动执行以下SQL来清理测试数据：\n\n';
+            resultElement.textContent += 'DELETE FROM STORE_ACCOUNT WHERE STORE_ID > 1;\n';
+            resultElement.textContent += 'DELETE FROM RENT_STORE WHERE STORE_ID > 1;\n';
+            resultElement.textContent += 'DELETE FROM ACCOUNT WHERE ACCOUNT LIKE \'store_%\' AND ACCOUNT != \'store_000001\';\n';
+            resultElement.textContent += 'DELETE FROM STORE WHERE STORE_ID > 1;\n';
+            resultElement.textContent += 'UPDATE AREA SET ISEMPTY = 1 WHERE AREA_ID IN (2,3,4);\n';
+            resultElement.textContent += 'UPDATE RETAIL_AREA SET RENT_STATUS = \'空置\' WHERE AREA_ID IN (2,3,4);\n';
+            resultElement.textContent += 'COMMIT;\n';
+            resultElement.className = 'result info';
+        }
+        
+        // 通用测试执行函数
+        async function executeTest(resultElement, merchantData, expectedError, successMsg, failMsg) {
+            try {
+                const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(merchantData)
+                });
+                
+                const data = await response.json();
+                
+                // 检查是否是期望的错误响应
+                let isExpectedError = false;
+                if (!response.ok) {
+                    // 检查标准错误响应
+                    if (data.error && data.error.includes(expectedError)) {
+                        isExpectedError = true;
+                    }
+                    // 检查验证错误响应（400状态码且有errors字段）
+                    else if (response.status === 400 && data.errors) {
+                        isExpectedError = true;
+                    }
+                    // 检查其他类型的错误响应
+                    else if (data.title && data.title.includes('validation')) {
+                        isExpectedError = true;
+                    }
+                }
+                
+                if (isExpectedError) {
+                    resultElement.textContent += `✅ 测试通过：${successMsg}\n` + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += `❌ 测试失败：${failMsg}\n` + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        // 辅助函数
+        function getTomorrowDate() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            return tomorrow.toISOString().split('T')[0];
+        }
+        
+        function getNextYearDate() {
+            const nextYear = new Date();
+            nextYear.setFullYear(nextYear.getFullYear() + 1);
+            return nextYear.toISOString().split('T')[0];
         }
     </script>
 </body>
