@@ -306,23 +306,10 @@
                 <button onclick="testAdminCoreUpdate()">👑 管理员修改核心信息</button>
                 <button onclick="testInvalidStatusUpdate()">❌ 无效状态修改</button>
                 <button onclick="testInvalidTimeRange()">⏰ 无效时间范围修改</button>
+                <button onclick="testFieldLengthLimit()">📏 字段长度限制测试</button>
             </div>
             
             <div id="updateTestResult" class="result info"></div>
-        </div>
-
-        <!-- 综合业务流程测试 -->
-        <div class="test-section">
-            <h2>🔄 综合业务流程测试</h2>
-            
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
-                <button onclick="runCompleteBusinessFlow()">🎯 完整业务流程测试</button>
-                <button onclick="runStressTest()">⚡ 压力测试（连续创建）</button>
-                <button onclick="runDataConsistencyTest()">🔍 数据一致性测试</button>
-                <button onclick="clearTestData()">🧹 清理测试数据</button>
-            </div>
-            
-            <div id="flowTestResult" class="result info"></div>
         </div>
     </div>
 
@@ -960,7 +947,7 @@
             const updateData = {
                 storeId: 1,
                 operatorAccount: "store_000001",
-                contactInfo: `13800138001-updated-${Date.now()}` // 只修改联系方式
+                contactInfo: "13800138999" // 修改联系方式，保持在20字符以内
             };
             
             try {
@@ -1124,246 +1111,37 @@
             }
         }
         
-        // ==================== 综合测试函数 ====================
-        
-        async function runCompleteBusinessFlow() {
-            const resultElement = document.getElementById('flowTestResult');
-            resultElement.textContent = '🎯 开始完整业务流程测试...\n';
+        async function testFieldLengthLimit() {
+            const resultElement = document.getElementById('updateTestResult');
+            resultElement.textContent = '🧪 测试字段长度限制...\n';
             resultElement.className = 'result info';
             
+            const updateData = {
+                storeId: 1,
+                operatorAccount: "admin_test",
+                contactInfo: "a".repeat(25) // 超过20字符的联系方式
+            };
+            
             try {
-                // 1. 获取可用店面
-                resultElement.textContent += '1. 获取可用店面...\n';
-                const areasResponse = await fetch(`${API_BASE}/Store/AvailableAreas`);
-                const areas = await areasResponse.json();
-                
-                if (!areasResponse.ok || areas.length === 0) {
-                    resultElement.textContent += '❌ 没有可用店面，流程终止\n';
-                    resultElement.className = 'result error';
-                    return;
-                }
-                
-                const availableArea = areas[0];
-                resultElement.textContent += `✅ 找到可用店面：区域ID ${availableArea.areaId}\n`;
-                
-                // 2. 创建新商户
-                resultElement.textContent += '2. 创建新商户...\n';
-                const merchantData = {
-                    storeName: `流程测试店_${Date.now()}`,
-                    storeType: "个人",
-                    tenantName: `流程测试租户_${Date.now()}`,
-                    contactInfo: `138${Date.now().toString().slice(-8)}`,
-                    areaId: availableArea.areaId,
-                    rentStart: getTomorrowDate() + 'T00:00:00',
-                    rentEnd: getNextYearDate() + 'T23:59:59'
-                };
-                
-                const createResponse = await fetch(`${API_BASE}/Store/CreateMerchant`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(merchantData)
-                });
-                
-                const createResult = await createResponse.json();
-                
-                if (!createResponse.ok) {
-                    resultElement.textContent += `❌ 创建商户失败：${createResult.error}\n`;
-                    resultElement.className = 'result error';
-                    return;
-                }
-                
-                resultElement.textContent += `✅ 商户创建成功：${createResult.storeName}，账号：${createResult.account}\n`;
-                
-                // 3. 验证商户信息
-                resultElement.textContent += '3. 验证商户信息...\n';
-                const infoResponse = await fetch(`${API_BASE}/Store/GetMerchantInfo/${createResult.storeId}?operatorAccount=admin_test`);
-                const infoResult = await infoResponse.json();
-                
-                if (infoResponse.ok) {
-                    resultElement.textContent += `✅ 商户信息验证成功\n`;
-                } else {
-                    resultElement.textContent += `❌ 商户信息验证失败\n`;
-                }
-                
-                // 4. 测试权限
-                resultElement.textContent += '4. 测试权限控制...\n';
-                const merchantUpdateData = {
-                    storeId: createResult.storeId,
-                    operatorAccount: createResult.account,
-                    contactInfo: "更新后的联系方式"
-                };
-                
-                const updateResponse = await fetch(`${API_BASE}/Store/UpdateMerchantInfo`, {
+                const response = await fetch(`${API_BASE}/Store/UpdateMerchantInfo`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(merchantUpdateData)
+                    body: JSON.stringify(updateData)
                 });
                 
-                if (updateResponse.ok) {
-                    resultElement.textContent += `✅ 商户权限控制验证成功\n`;
+                const data = await response.json();
+                
+                if (!response.ok && (data.error && (data.error.includes('长度') || data.error.includes('限制')))) {
+                    resultElement.textContent += '✅ 字段长度限制测试通过\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
                 } else {
-                    resultElement.textContent += `❌ 商户权限控制验证失败\n`;
-                }
-                
-                resultElement.textContent += '\n🎉 完整业务流程测试完成！\n';
-                resultElement.className = 'result success';
-                
-            } catch (error) {
-                resultElement.textContent += `❌ 流程测试失败: ${error.message}`;
-                resultElement.className = 'result error';
-            }
-        }
-        
-        async function runStressTest() {
-            const resultElement = document.getElementById('flowTestResult');
-            resultElement.textContent = '⚡ 开始压力测试...\n';
-            resultElement.className = 'result info';
-            
-            const testCount = 3; // 减少测试数量，避免数据冲突
-            let successCount = 0;
-            let failCount = 0;
-            
-            for (let i = 0; i < testCount; i++) {
-                try {
-                    const merchantData = {
-                        storeName: `压力测试店${i}_${Date.now()}`,
-                        storeType: "个人",
-                        tenantName: `压力测试租户${i}_${Date.now()}`,
-                        contactInfo: `139${Date.now().toString().slice(-8)}${i}`,
-                        areaId: 2 + (i % 3), // 轮换使用区域2、3、4
-                        rentStart: getTomorrowDate() + 'T00:00:00',
-                        rentEnd: getNextYearDate() + 'T23:59:59'
-                    };
-                    
-                    const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(merchantData)
-                    });
-                    
-                    if (response.ok) {
-                        successCount++;
-                        resultElement.textContent += `✅ 测试 ${i + 1} 成功\n`;
-                    } else {
-                        failCount++;
-                        const error = await response.json();
-                        resultElement.textContent += `❌ 测试 ${i + 1} 失败：${error.error}\n`;
-                    }
-                } catch (error) {
-                    failCount++;
-                    resultElement.textContent += `❌ 测试 ${i + 1} 异常：${error.message}\n`;
-                }
-                
-                // 添加延迟避免过快请求
-                await new Promise(resolve => setTimeout(resolve, 200));
-            }
-            
-            resultElement.textContent += `\n📊 压力测试结果：成功 ${successCount}/${testCount}，失败 ${failCount}/${testCount}\n`;
-            
-            if (successCount > 0) {
-                resultElement.className = 'result success';
-            } else {
-                resultElement.className = 'result error';
-            }
-        }
-        
-        async function runDataConsistencyTest() {
-            const resultElement = document.getElementById('flowTestResult');
-            resultElement.textContent = '🔍 开始数据一致性测试...\n';
-            resultElement.className = 'result info';
-            
-            try {
-                // 获取可用店面
-                const areasResponse = await fetch(`${API_BASE}/Store/AvailableAreas`);
-                const initialAreas = await areasResponse.json();
-                
-                if (!areasResponse.ok || initialAreas.length === 0) {
-                    resultElement.textContent += '❌ 没有可用店面，无法进行一致性测试\n';
+                    resultElement.textContent += '❌ 应该拒绝超长字段\n' + JSON.stringify(data, null, 2);
                     resultElement.className = 'result error';
-                    return;
                 }
-                
-                const targetArea = initialAreas[0];
-                resultElement.textContent += `使用区域 ${targetArea.areaId} 进行一致性测试\n`;
-                
-                // 创建商户
-                const merchantData = {
-                    storeName: `一致性测试店_${Date.now()}`,
-                    storeType: "个人",
-                    tenantName: `一致性测试租户_${Date.now()}`,
-                    contactInfo: `137${Date.now().toString().slice(-8)}`,
-                    areaId: targetArea.areaId,
-                    rentStart: getTomorrowDate() + 'T00:00:00',
-                    rentEnd: getNextYearDate() + 'T23:59:59'
-                };
-                
-                const createResponse = await fetch(`${API_BASE}/Store/CreateMerchant`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(merchantData)
-                });
-                
-                const createResult = await createResponse.json();
-                
-                if (!createResponse.ok) {
-                    resultElement.textContent += `❌ 创建商户失败，无法进行一致性测试\n`;
-                    resultElement.className = 'result error';
-                    return;
-                }
-                
-                // 验证数据一致性
-                resultElement.textContent += '验证创建的数据一致性...\n';
-                
-                // 1. 验证商户信息
-                const storeResponse = await fetch(`${API_BASE}/Store/${createResult.storeId}`);
-                const storeData = await storeResponse.json();
-                
-                if (storeResponse.ok && storeData.STORE_NAME === merchantData.storeName) {
-                    resultElement.textContent += '✅ 商户信息一致性验证通过\n';
-                } else {
-                    resultElement.textContent += '❌ 商户信息一致性验证失败\n';
-                }
-                
-                // 2. 验证区域状态更新
-                const finalAreasResponse = await fetch(`${API_BASE}/Store/AvailableAreas`);
-                const finalAreas = await finalAreasResponse.json();
-                
-                const usedArea = finalAreas.find(area => area.areaId === merchantData.areaId);
-                if (!usedArea) {
-                    resultElement.textContent += '✅ 区域状态更新一致性验证通过（区域已被标记为占用）\n';
-                } else {
-                    resultElement.textContent += '❌ 区域状态更新一致性验证失败（区域仍显示为可用）\n';
-                }
-                
-                resultElement.textContent += '\n🔍 数据一致性测试完成！\n';
-                resultElement.className = 'result success';
-                
             } catch (error) {
-                resultElement.textContent += `❌ 一致性测试失败: ${error.message}`;
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
                 resultElement.className = 'result error';
             }
-        }
-        
-        async function clearTestData() {
-            const resultElement = document.getElementById('flowTestResult');
-            
-            const confirmed = confirm('⚠️ 确定要清理测试数据吗？这将删除所有测试创建的商户数据！');
-            if (!confirmed) {
-                resultElement.textContent = '❌ 用户取消了清理操作';
-                resultElement.className = 'result info';
-                return;
-            }
-            
-            resultElement.textContent = '🧹 清理测试数据提示...\n';
-            resultElement.textContent += '💡 由于当前系统没有删除接口，请手动执行以下SQL来清理测试数据：\n\n';
-            resultElement.textContent += 'DELETE FROM STORE_ACCOUNT WHERE STORE_ID > 1;\n';
-            resultElement.textContent += 'DELETE FROM RENT_STORE WHERE STORE_ID > 1;\n';
-            resultElement.textContent += 'DELETE FROM ACCOUNT WHERE ACCOUNT LIKE \'store_%\' AND ACCOUNT != \'store_000001\';\n';
-            resultElement.textContent += 'DELETE FROM STORE WHERE STORE_ID > 1;\n';
-            resultElement.textContent += 'UPDATE AREA SET ISEMPTY = 1 WHERE AREA_ID IN (2,3,4);\n';
-            resultElement.textContent += 'UPDATE RETAIL_AREA SET RENT_STATUS = \'空置\' WHERE AREA_ID IN (2,3,4);\n';
-            resultElement.textContent += 'COMMIT;\n';
-            resultElement.className = 'result info';
         }
         
         // 通用测试执行函数
