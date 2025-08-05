@@ -53,13 +53,20 @@ namespace oracle_backend.Dbcontexts
         // 检查租户是否已在综合体有店铺
         public async Task<bool> TenantExists(string tenantName, string contactInfo)
         {
-            return await STORE.AnyAsync(s => s.TENANT_NAME == tenantName || s.CONTACT_INFO == contactInfo);
+            var count = await STORE.CountAsync(s => s.TENANT_NAME == tenantName || s.CONTACT_INFO == contactInfo);
+            return count > 0;
         }
 
         // 获取下一个可用的店铺ID
         public async Task<int> GetNextStoreId()
         {
-            var maxId = await STORE.MaxAsync(s => (int?)s.STORE_ID) ?? 0;
+            var storeCount = await STORE.CountAsync();
+            if (storeCount == 0)
+            {
+                return 1; // 如果没有任何店铺，从1开始
+            }
+            
+            var maxId = await STORE.MaxAsync(s => s.STORE_ID);
             return maxId + 1;
         }
 
@@ -99,7 +106,7 @@ namespace oracle_backend.Dbcontexts
                            areaSize = area.AREA_SIZE,
                            baseRent = retailArea.BASE_RENT,
                            rentStatus = retailArea.RENT_STATUS,
-                           isEmpty = area.ISEMPTY == 1
+                           isEmpty = area.ISEMPTY
                        };
             
             return await query.Cast<object>().ToListAsync();

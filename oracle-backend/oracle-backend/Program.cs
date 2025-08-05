@@ -31,6 +31,17 @@ namespace oracle_backend
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // 添加CORS配置
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -41,6 +52,9 @@ namespace oracle_backend
             }
 
             app.UseHttpsRedirection();
+
+            // 启用CORS
+            app.UseCors("AllowAll");
 
             app.UseAuthorization();
 

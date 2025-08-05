@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商户管理功能测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            height: 60px;
+            resize: vertical;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button.danger {
+            background-color: #e74c3c;
+        }
+        button.danger:hover {
+            background-color: #c0392b;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .online {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .offline {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏬 商户管理功能测试</h1>
+        
+        <div class="test-section">
+            <h2>🔧 系统状态检查</h2>
+            <p>API地址：<span id="apiUrl">http://localhost:5263</span> <span id="apiStatus" class="status offline">离线</span></p>
+            <button onclick="checkApiStatus()">检查API状态</button>
+            <div id="statusResult" class="result info"></div>
+        </div>
+
+        <!-- 商户信息管理测试区域 -->
+        <div class="test-section">
+            <h2>📊 商户信息管理测试</h2>
+            
+            <div class="form-group">
+                <label>商户ID:</label>
+                <input type="number" id="merchantId" value="1" min="1">
+            </div>
+            
+            <div class="form-group">
+                <label>操作员账号:</label>
+                <select id="operatorAccount">
+                    <option value="admin_test">admin_test (管理员)</option>
+                    <option value="store_000001">store_000001 (商户)</option>
+                </select>
+            </div>
+            
+            <button onclick="getMerchantInfo()">获取商户信息</button>
+            <button onclick="getEditableFields()">获取可编辑字段</button>
+            <div id="merchantInfoResult" class="result info"></div>
+            
+            <h3>修改商户信息</h3>
+            <div class="form-group">
+                <label>店铺名称:</label>
+                <input type="text" id="storeName" placeholder="新的店铺名称">
+            </div>
+            
+            <div class="form-group">
+                <label>店铺类型:</label>
+                <select id="storeType">
+                    <option value="">不修改</option>
+                    <option value="个人">个人</option>
+                    <option value="企业连锁">企业连锁</option>
+                    <option value="合作社">合作社</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>店铺状态:</label>
+                <select id="storeStatus">
+                    <option value="">不修改</option>
+                    <option value="正常营业">正常营业</option>
+                    <option value="歇业中">歇业中</option>
+                    <option value="翻新中">翻新中</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>联系方式:</label>
+                <input type="text" id="contactInfo" placeholder="新的联系方式">
+            </div>
+            
+            <div class="form-group">
+                <label>店铺简介:</label>
+                <textarea id="description" placeholder="店铺简介或其他非核心信息"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>租用起始:</label>
+                <input type="date" id="rentStart">
+            </div>
+            
+            <div class="form-group">
+                <label>租用结束:</label>
+                <input type="date" id="rentEnd">
+            </div>
+            
+            <button onclick="updateMerchantInfo()">更新商户信息</button>
+            <div id="updateResult" class="result info"></div>
+        </div>
+
+        <!-- 可用店面查询 -->
+        <div class="test-section">
+            <h2>🏪 获取可用店面</h2>
+            <button onclick="getAvailableAreas()">获取可用店面</button>
+            <div id="areasResult" class="result info"></div>
+        </div>
+
+        <!-- 新增商户测试 -->
+        <div class="test-section">
+            <h2>➕ 新增商户测试</h2>
+            
+            <div class="form-group">
+                <label>店铺名称:</label>
+                <input type="text" id="newStoreName" value="测试新商户" required>
+            </div>
+            
+            <div class="form-group">
+                <label>租户类型:</label>
+                <select id="newStoreType" required>
+                    <option value="个人">个人</option>
+                    <option value="企业连锁">企业连锁</option>
+                    <option value="合作社">合作社</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>租户名:</label>
+                <input type="text" id="newTenantName" value="测试租户" required>
+            </div>
+            
+            <div class="form-group">
+                <label>联系方式:</label>
+                <input type="text" id="newContactInfo" value="13800138001" required>
+            </div>
+            
+            <div class="form-group">
+                <label>区域ID:</label>
+                <input type="number" id="newAreaId" value="1" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label>租用起始:</label>
+                <input type="date" id="newRentStart" required>
+            </div>
+            
+            <div class="form-group">
+                <label>租用结束:</label>
+                <input type="date" id="newRentEnd" required>
+            </div>
+            
+            <button onclick="createMerchant()">创建新商户</button>
+            <div id="createResult" class="result info"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5263/api';
+        
+        // 设置默认日期
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const nextYear = new Date(today);
+            nextYear.setFullYear(nextYear.getFullYear() + 1);
+            
+            // 设置为明天，避免时区问题
+            document.getElementById('newRentStart').value = tomorrow.toISOString().split('T')[0];
+            document.getElementById('newRentEnd').value = nextYear.toISOString().split('T')[0];
+            document.getElementById('rentStart').value = tomorrow.toISOString().split('T')[0];
+            document.getElementById('rentEnd').value = nextYear.toISOString().split('T')[0];
+            
+            // 自动检查API状态
+            checkApiStatus();
+        });
+        
+        async function checkApiStatus() {
+            const statusElement = document.getElementById('apiStatus');
+            const resultElement = document.getElementById('statusResult');
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                if (response.ok) {
+                    statusElement.textContent = '在线';
+                    statusElement.className = 'status online';
+                    resultElement.textContent = '✅ API连接成功！';
+                    resultElement.className = 'result success';
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusElement.textContent = '离线';
+                statusElement.className = 'status offline';
+                resultElement.textContent = `❌ API连接失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function getMerchantInfo() {
+            const merchantId = document.getElementById('merchantId').value;
+            const operatorAccount = document.getElementById('operatorAccount').value;
+            const resultElement = document.getElementById('merchantInfoResult');
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/GetMerchantInfo/${merchantId}?operatorAccount=${operatorAccount}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function getEditableFields() {
+            const merchantId = document.getElementById('merchantId').value;
+            const operatorAccount = document.getElementById('operatorAccount').value;
+            const resultElement = document.getElementById('merchantInfoResult');
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/GetEditableFields/${merchantId}?operatorAccount=${operatorAccount}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function updateMerchantInfo() {
+            const merchantId = document.getElementById('merchantId').value;
+            const operatorAccount = document.getElementById('operatorAccount').value;
+            const resultElement = document.getElementById('updateResult');
+            
+            const updateData = {
+                storeId: parseInt(merchantId),
+                operatorAccount: operatorAccount
+            };
+            
+            // 只添加非空字段
+            const storeName = document.getElementById('storeName').value;
+            if (storeName) updateData.storeName = storeName;
+            
+            const storeType = document.getElementById('storeType').value;
+            if (storeType) updateData.storeType = storeType;
+            
+            const storeStatus = document.getElementById('storeStatus').value;
+            if (storeStatus) updateData.storeStatus = storeStatus;
+            
+            const contactInfo = document.getElementById('contactInfo').value;
+            if (contactInfo) updateData.contactInfo = contactInfo;
+            
+            const description = document.getElementById('description').value;
+            if (description) updateData.description = description;
+            
+            const rentStart = document.getElementById('rentStart').value;
+            if (rentStart) updateData.rentStart = rentStart + 'T00:00:00';
+            
+            const rentEnd = document.getElementById('rentEnd').value;
+            if (rentEnd) updateData.rentEnd = rentEnd + 'T23:59:59';
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/UpdateMerchantInfo`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function getAvailableAreas() {
+            const resultElement = document.getElementById('areasResult');
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function createMerchant() {
+            const resultElement = document.getElementById('createResult');
+            
+            const merchantData = {
+                storeName: document.getElementById('newStoreName').value,
+                storeType: document.getElementById('newStoreType').value,
+                tenantName: document.getElementById('newTenantName').value,
+                contactInfo: document.getElementById('newContactInfo').value,
+                areaId: parseInt(document.getElementById('newAreaId').value),
+                rentStart: document.getElementById('newRentStart').value + 'T00:00:00',
+                rentEnd: document.getElementById('newRentEnd').value + 'T23:59:59'
+            };
+            
+            resultElement.textContent = '正在创建商户...';
+            resultElement.className = 'result info';
+            
+            try {
+                console.log('发送请求数据:', merchantData);
+                
+                const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(merchantData)
+                });
+                
+                console.log('响应状态:', response.status);
+                console.log('响应头:', [...response.headers.entries()]);
+                
+                // 检查响应是否为JSON
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    console.log('响应数据:', data);
+                    
+                    if (response.ok) {
+                        resultElement.textContent = `✅ 商户创建成功！\n\n${JSON.stringify(data, null, 2)}`;
+                        resultElement.className = 'result success';
+                    } else {
+                        resultElement.textContent = `❌ 创建失败（HTTP ${response.status}）\n\n${JSON.stringify(data, null, 2)}`;
+                        resultElement.className = 'result error';
+                    }
+                } else {
+                    // 如果不是JSON，读取为文本
+                    const text = await response.text();
+                    console.log('响应文本:', text);
+                    
+                    if (response.ok) {
+                        resultElement.textContent = `✅ 商户创建成功！\n\n${text}`;
+                        resultElement.className = 'result success';
+                    } else {
+                        resultElement.textContent = `❌ 创建失败（HTTP ${response.status}）\n\n${text}`;
+                        resultElement.className = 'result error';
+                    }
+                }
+            } catch (error) {
+                console.error('请求错误:', error);
+                resultElement.textContent = `❌ 请求失败: ${error.message}\n\n请检查：\n1. 后端服务是否正在运行\n2. 网络连接是否正常\n3. API地址是否正确`;
+                resultElement.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>
