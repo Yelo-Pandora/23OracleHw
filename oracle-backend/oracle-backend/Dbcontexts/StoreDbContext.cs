@@ -19,9 +19,12 @@ namespace oracle_backend.Dbcontexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // 配置继承关系，RetailArea继承自Area
+            // 配置RetailArea和Area的外键关系
             modelBuilder.Entity<RetailArea>()
-                .HasBaseType<Area>();
+                .HasOne(r => r.AreaNavigation)
+                .WithMany()
+                .HasForeignKey(r => r.AREA_ID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // 配置RentStore的外键关系
             modelBuilder.Entity<RentStore>()
@@ -31,7 +34,7 @@ namespace oracle_backend.Dbcontexts
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<RentStore>()
-                .HasOne(rs => rs.areaNavigation)
+                .HasOne(rs => rs.retailAreaNavigation)
                 .WithMany()
                 .HasForeignKey(rs => rs.AREA_ID)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -94,6 +97,12 @@ namespace oracle_backend.Dbcontexts
             return await STORE.FirstOrDefaultAsync(s => s.STORE_ID == storeId);
         }
 
+        // 检查区域ID是否已存在
+        public async Task<bool> AreaIdExists(int areaId)
+        {
+            return await AREA.AnyAsync(a => a.AREA_ID == areaId);
+        }
+
         // 获取所有空置的零售区域
         public async Task<List<object>> GetAvailableAreas()
         {
@@ -106,7 +115,7 @@ namespace oracle_backend.Dbcontexts
                            areaSize = area.AREA_SIZE,
                            baseRent = retailArea.BASE_RENT,
                            rentStatus = retailArea.RENT_STATUS,
-                           isEmpty = area.ISEMPTY
+                           isEmpty = area.ISEMPTY  // 直接返回数值，让应用层处理布尔转换
                        };
             
             return await query.Cast<object>().ToListAsync();

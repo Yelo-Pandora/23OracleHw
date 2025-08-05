@@ -21,6 +21,6 @@ namespace oracle_backend.Models
         public Store? storeNavigation { get; set; }
 
         [ForeignKey("AREA_ID")]
-        public Area? areaNavigation { get; set; }
+        public RetailArea? retailAreaNavigation { get; set; }
     }
 }

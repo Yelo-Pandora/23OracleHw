@@ -26,7 +26,12 @@ namespace oracle_backend
                 options.UseOracle(connectionString); // 添加商店相关的数据库上下文
             });
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    // 保持属性名原样，不进行驼峰转换
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

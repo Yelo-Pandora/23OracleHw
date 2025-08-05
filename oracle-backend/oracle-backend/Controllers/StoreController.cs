@@ -23,6 +23,24 @@ namespace oracle_backend.Controllers
             _logger = logger;
         }
 
+        // 新增店面区域的DTO类
+        public class CreateRetailAreaDto
+        {
+            [Required(ErrorMessage = "区域ID为必填项")]
+            public int AreaId { get; set; }
+
+            [Required(ErrorMessage = "区域面积为必填项")]
+            [Range(1, int.MaxValue, ErrorMessage = "区域面积必须大于0")]
+            public int AreaSize { get; set; }
+
+            [Required(ErrorMessage = "基础租金为必填项")]
+            [Range(0.01, double.MaxValue, ErrorMessage = "基础租金必须大于0")]
+            public double BaseRent { get; set; }
+
+            [Required(ErrorMessage = "操作员账号为必填项")]
+            public string OperatorAccount { get; set; } = string.Empty;
+        }
+
         // 新增商户的DTO类
         public class CreateMerchantDto
         {
@@ -83,6 +101,98 @@ namespace oracle_backend.Controllers
 
             [Required(ErrorMessage = "操作员账号为必填项")]
             public string OperatorAccount { get; set; } = string.Empty;
+        }
+
+        // 新增店面区域接口
+        [HttpPost("CreateRetailArea")]
+        public async Task<IActionResult> CreateRetailArea([FromBody] CreateRetailAreaDto dto)
+        {
+            _logger.LogInformation("开始新增店面区域：{AreaId}", dto.AreaId);
+
+            // 检查模型验证
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                _logger.LogWarning("新增店面模型验证失败：{Errors}", string.Join(", ", errors));
+                return BadRequest(new { error = "输入数据验证失败", details = errors });
+            }
+
+            try
+            {
+                // 1. 验证操作员权限（管理员权限）
+                if (!string.IsNullOrEmpty(dto.OperatorAccount))
+                {
+                    var hasPermission = await _accountContext.CheckAuthority(dto.OperatorAccount, 1);
+                    if (!hasPermission)
+                    {
+                        _logger.LogWarning("操作员 {OperatorAccount} 权限不足", dto.OperatorAccount);
+                        return BadRequest(new { error = "操作员权限不足，需要管理员权限" });
+                    }
+                }
+
+                // 2. 校验区域ID唯一性
+                var existingArea = await _storeContext.AREA.FirstOrDefaultAsync(a => a.AREA_ID == dto.AreaId);
+                if (existingArea != null)
+                {
+                    _logger.LogWarning("区域ID {AreaId} 已存在", dto.AreaId);
+                    return BadRequest(new { error = "该区域ID已存在，请重新设置" });
+                }
+
+                // 3. 创建基础区域记录
+                var area = new Area
+                {
+                    AREA_ID = dto.AreaId,
+                    ISEMPTY = 1, // 新建区域默认为空置状态
+                    AREA_SIZE = dto.AreaSize
+                };
+
+                _storeContext.AREA.Add(area);
+                await _storeContext.SaveChangesAsync();
+
+                // 4. 创建零售区域记录
+                var retailArea = new RetailArea
+                {
+                    AREA_ID = dto.AreaId,
+                    RENT_STATUS = "空置", // 新建店面默认为空置状态
+                    BASE_RENT = dto.BaseRent
+                };
+
+                _storeContext.RETAIL_AREA.Add(retailArea);
+                await _storeContext.SaveChangesAsync();
+
+                _logger.LogInformation("成功创建店面区域：{AreaId}，面积：{AreaSize}，租金：{BaseRent}", 
+                    dto.AreaId, dto.AreaSize, dto.BaseRent);
+
+                // 返回创建成功的信息
+                return Ok(new
+                {
+                    message = "店面区域创建成功",
+                    areaId = dto.AreaId,
+                    areaSize = dto.AreaSize,
+                    baseRent = dto.BaseRent,
+                    rentStatus = "空置",
+                    isEmpty = 1  // 返回数值以保持与GetAvailableAreas的一致性
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "创建店面区域时发生错误：{AreaId}", dto.AreaId);
+                
+                // 检查是否是主键冲突错误
+                if (ex.InnerException?.Message?.Contains("ORA-00001") == true || 
+                    ex.InnerException?.Message?.Contains("UNIQUE") == true)
+                {
+                    return BadRequest(new { error = "该区域ID已存在，请重新设置" });
+                }
+                
+                return StatusCode(500, new { 
+                    error = "服务器内部错误，创建店面区域失败",
+                    details = ex.Message
+                });
+            }
         }
 
         // 新增商户接口
