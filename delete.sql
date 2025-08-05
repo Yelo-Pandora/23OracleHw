@@ -1,33 +1,55 @@
--- 逆转删除所有测试数据
--- 注意：删除顺序必须与插入顺序相反，以避免外键约束问题
+-- Switch to the correct schema
+ALTER SESSION SET CURRENT_SCHEMA = ORACLEDBA;
 
--- 1. 先删除租用关系
-DELETE FROM RENT_STORE WHERE STORE_ID IN (SELECT STORE_ID FROM STORE WHERE STORE_NAME LIKE '测试%');
-DELETE FROM RENT_STORE WHERE AREA_ID IN (1,2,3,4);
+-- Disable foreign key constraints temporarily (to avoid issues with deletion order)
+BEGIN
+  FOR c IN (SELECT table_name, constraint_name 
+            FROM user_constraints 
+            WHERE constraint_type = 'R') LOOP
+    EXECUTE IMMEDIATE 'ALTER TABLE ' || c.table_name || 
+                      ' DISABLE CONSTRAINT ' || c.constraint_name;
+  END LOOP;
+END;
+/
 
--- 2. 删除商户账号关联
-DELETE FROM STORE_ACCOUNT WHERE STORE_ID IN (SELECT STORE_ID FROM STORE WHERE STORE_NAME LIKE '测试%');
+-- Delete data from all tables (ordered to respect foreign key relationships)
+DELETE FROM VENUE_EVENT_DETAIL;
+DELETE FROM PART_STORE;
+DELETE FROM TEMP_AUTHORITY;
+DELETE FROM STAFF_ACCOUNT;
+DELETE FROM STORE_ACCOUNT;
+DELETE FROM SALARY_SLIP;
+DELETE FROM REPAIR_ORDER;
+DELETE FROM RENT_STORE;
+DELETE FROM PARKING_SPACE_DISTRIBUTION;
+DELETE FROM PARK;
+DELETE FROM CAR;
+DELETE FROM EQUIPMENT_LOCATION;
+DELETE FROM SALE_EVENT;
+DELETE FROM VENUE_EVENT;
+DELETE FROM EVENT;
+DELETE FROM STORE;
+DELETE FROM STAFF;
+DELETE FROM ACCOUNT;
+DELETE FROM RETAIL_AREA;
+DELETE FROM PARKING_LOT;
+DELETE FROM EVENT_AREA;
+DELETE FROM OTHER_AREA;
+DELETE FROM EQUIPMENT;
+DELETE FROM PARKING_SPACE;
+DELETE FROM COLLABORATION;
+DELETE FROM AREA;
+DELETE FROM MONTH_SALARY_COST;
 
--- 3. 删除商户账号
-DELETE FROM ACCOUNT WHERE ACCOUNT IN ('admin_test', 'store_000001');
+-- Re-enable foreign key constraints
+BEGIN
+  FOR c IN (SELECT table_name, constraint_name 
+            FROM user_constraints 
+            WHERE constraint_type = 'R') LOOP
+    EXECUTE IMMEDIATE 'ALTER TABLE ' || c.table_name || 
+                      ' ENABLE CONSTRAINT ' || c.constraint_name;
+  END LOOP;
+END;
+/
 
--- 4. 删除商户信息
-DELETE FROM STORE WHERE STORE_NAME LIKE '测试%';
-
--- 5. 删除零售区域数据（子表）
-DELETE FROM RETAIL_AREA WHERE AREA_ID IN (1,2,3,4);
-
--- 6. 最后删除基础区域数据（父表）
-DELETE FROM AREA WHERE AREA_ID IN (1,2,3,4);
-
--- 提交更改
 COMMIT;
-
--- 验证删除结果
-SELECT '区域剩余数' as "统计", COUNT(*) as "数量" FROM AREA WHERE AREA_ID IN (1,2,3,4)
-UNION ALL
-SELECT '零售区域剩余数', COUNT(*) FROM RETAIL_AREA WHERE AREA_ID IN (1,2,3,4)
-UNION ALL
-SELECT '商户剩余数', COUNT(*) FROM STORE WHERE STORE_NAME LIKE '测试%'
-UNION ALL
-SELECT '测试账号剩余数', COUNT(*) FROM ACCOUNT WHERE ACCOUNT IN ('admin_test', 'store_000001');
