@@ -782,5 +782,227 @@ namespace oracle_backend.Controllers
             
             return !string.IsNullOrWhiteSpace(contactInfo);
         }
+
+        #region 店面状态管理功能
+
+        // DTO类定义
+        public class StoreStatusChangeRequestDto
+        {
+            public int StoreId { get; set; }
+            public string ChangeType { get; set; } // 退租/维修/暂停营业/恢复营业
+            public string Reason { get; set; }
+            public string TargetStatus { get; set; } // 目标状态
+            public string ApplicantAccount { get; set; }
+        }
+
+        public class StoreStatusApprovalDto
+        {
+            public int StoreId { get; set; }
+            public string ApprovalAction { get; set; } // 通过/驳回
+            public string ApprovalComment { get; set; }
+            public string ApproverAccount { get; set; }
+        }
+
+        // 商户提交状态变更申请
+        [HttpPost("StatusChangeRequest")]
+        public async Task<IActionResult> SubmitStatusChangeRequest([FromBody] StoreStatusChangeRequestDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("开始处理店面状态变更申请：店铺ID {StoreId}, 变更类型 {ChangeType}", 
+                    dto.StoreId, dto.ChangeType);
+
+                // 验证店面是否存在
+                var store = await _storeContext.GetStoreById(dto.StoreId);
+                if (store == null)
+                {
+                    return BadRequest(new { error = "店面不存在" });
+                }
+
+                // 验证前置条件：店面必须有有效租用记录且状态为正常营业
+                if (store.STORE_STATUS != "正常营业")
+                {
+                    return BadRequest(new { error = "只有正常营业状态的店面才能申请状态变更" });
+                }
+
+                // 验证是否有租用记录
+                var rentRecord = await _storeContext.RENT_STORE.FirstOrDefaultAsync(rs => rs.STORE_ID == dto.StoreId);
+                if (rentRecord == null)
+                {
+                    return BadRequest(new { error = "店面没有有效的租用记录" });
+                }
+
+                // 生成申请编号
+                var applicationNo = await GenerateApplicationNumber();
+
+                // 模拟申请记录（因为不能新增表，我们用日志记录申请信息）
+                _logger.LogInformation("状态变更申请详情：申请编号 {ApplicationNo}, 店铺 {StoreName}, " +
+                    "申请类型 {ChangeType}, 申请原因 {Reason}, 目标状态 {TargetStatus}, 申请人 {Applicant}", 
+                    applicationNo, store.STORE_NAME, dto.ChangeType, dto.Reason, dto.TargetStatus, dto.ApplicantAccount);
+
+                return Ok(new
+                {
+                    message = "状态变更申请提交成功，待物业管理人员审批",
+                    applicationNo = applicationNo,
+                    storeId = dto.StoreId,
+                    storeName = store.STORE_NAME,
+                    changeType = dto.ChangeType,
+                    targetStatus = dto.TargetStatus,
+                    status = "待审批"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "提交状态变更申请时发生错误：{StoreId}", dto.StoreId);
+                return StatusCode(500, "服务器内部错误");
+            }
+        }
+
+        // 物业管理人员审批状态变更申请
+        [HttpPost("ApproveStatusChange")]
+        public async Task<IActionResult> ApproveStatusChange([FromBody] StoreStatusApprovalDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("开始处理状态变更审批：店铺ID {StoreId}, 审批动作 {ApprovalAction}", 
+                    dto.StoreId, dto.ApprovalAction);
+
+                // 验证审批人权限（需要管理员或部门经理权限）
+                var hasPermission = await _accountContext.CheckAuthority(dto.ApproverAccount, 2);
+                if (!hasPermission)
+                {
+                    return BadRequest(new { error = "权限不足，需要管理员或部门经理权限进行审批" });
+                }
+
+                // 验证店面是否存在
+                var store = await _storeContext.GetStoreById(dto.StoreId);
+                if (store == null)
+                {
+                    return BadRequest(new { error = "店面不存在" });
+                }
+
+                var originalStatus = store.STORE_STATUS;
+
+                if (dto.ApprovalAction == "通过")
+                {
+                    // 审批通过：更新店面状态
+                    await UpdateStoreStatusInternal(dto.StoreId, dto.ApprovalComment, dto.ApproverAccount);
+                    
+                    _logger.LogInformation("状态变更审批通过：店铺 {StoreName} 状态从 {OriginalStatus} 变更完成, " +
+                        "审批人 {Approver}, 审批意见 {Comment}", 
+                        store.STORE_NAME, originalStatus, dto.ApproverAccount, dto.ApprovalComment);
+
+                    return Ok(new
+                    {
+                        message = "审批通过，店面状态已更新",
+                        storeId = dto.StoreId,
+                        storeName = store.STORE_NAME,
+                        originalStatus = originalStatus,
+                        approvalResult = "通过",
+                        approver = dto.ApproverAccount,
+                        approvalTime = DateTime.Now
+                    });
+                }
+                else
+                {
+                    // 审批驳回
+                    _logger.LogInformation("状态变更审批驳回：店铺 {StoreName}, 审批人 {Approver}, 驳回原因 {Comment}", 
+                        store.STORE_NAME, dto.ApproverAccount, dto.ApprovalComment);
+
+                    return Ok(new
+                    {
+                        message = "审批驳回，商户可补充材料重新申请",
+                        storeId = dto.StoreId,
+                        storeName = store.STORE_NAME,
+                        approvalResult = "驳回",
+                        reason = dto.ApprovalComment,
+                        approver = dto.ApproverAccount,
+                        approvalTime = DateTime.Now
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "处理状态变更审批时发生错误：{StoreId}", dto.StoreId);
+                return StatusCode(500, "服务器内部错误");
+            }
+        }
+
+        // 查询店面当前状态
+        [HttpGet("StoreStatus/{storeId}")]
+        public async Task<IActionResult> GetStoreStatus(int storeId)
+        {
+            try
+            {
+                var store = await _storeContext.GetStoreById(storeId);
+                if (store == null)
+                {
+                    return BadRequest(new { error = "店面不存在" });
+                }
+
+                var rentRecord = await _storeContext.RENT_STORE
+                    .FirstOrDefaultAsync(rs => rs.STORE_ID == storeId);
+
+                return Ok(new
+                {
+                    storeId = store.STORE_ID,
+                    storeName = store.STORE_NAME,
+                    currentStatus = store.STORE_STATUS,
+                    tenantName = store.TENANT_NAME,
+                    hasRentRecord = rentRecord != null,
+                    canApplyStatusChange = store.STORE_STATUS == "正常营业" && rentRecord != null
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "查询店面状态时发生错误：{StoreId}", storeId);
+                return StatusCode(500, "服务器内部错误");
+            }
+        }
+
+        // 辅助方法：生成申请编号
+        private async Task<string> GenerateApplicationNumber()
+        {
+            var today = DateTime.Now.ToString("yyyyMMdd");
+            var random = new Random();
+            var sequence = random.Next(1, 1000).ToString("D3");
+            return $"SA{today}{sequence}";
+        }
+
+        // 辅助方法：更新店面状态
+        private async Task UpdateStoreStatusInternal(int storeId, string changeReason, string approver)
+        {
+            var store = await _storeContext.STORE.FirstOrDefaultAsync(s => s.STORE_ID == storeId);
+            if (store != null)
+            {
+                // 根据申请类型更新状态
+                // 这里简化处理，实际应根据具体的变更类型设置对应状态
+                var newStatus = DetermineNewStatus(changeReason);
+                store.STORE_STATUS = newStatus;
+                
+                await _storeContext.SaveChangesAsync();
+                
+                _logger.LogInformation("店面状态已更新：店铺ID {StoreId}, 新状态 {NewStatus}, 操作人 {Approver}", 
+                    storeId, newStatus, approver);
+            }
+        }
+
+        // 辅助方法：根据变更原因确定新状态
+        private string DetermineNewStatus(string changeReason)
+        {
+            // 简化的状态映射逻辑
+            if (changeReason.Contains("退租"))
+                return "已退租";
+            else if (changeReason.Contains("维修"))
+                return "维修中";
+            else if (changeReason.Contains("暂停"))
+                return "暂停营业";
+            else if (changeReason.Contains("恢复"))
+                return "正常营业";
+            else
+                return "状态变更中";
+        }
+
+        #endregion
     }
 }
