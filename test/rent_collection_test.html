@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商户租金收取功能测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            height: 60px;
+            resize: vertical;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button.success {
+            background-color: #27ae60;
+        }
+        button.success:hover {
+            background-color: #229954;
+        }
+        button.warning {
+            background-color: #f39c12;
+        }
+        button.warning:hover {
+            background-color: #e67e22;
+        }
+        button.danger {
+            background-color: #e74c3c;
+        }
+        button.danger:hover {
+            background-color: #c0392b;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .online {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .offline {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .bill-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: white;
+            font-size: 14px;
+        }
+        .bill-status {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-paid { background: #d4edda; color: #155724; }
+        .status-overdue { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 商户租金收取功能测试</h1>
+        
+        <div class="test-section">
+            <h2>🔧 系统状态检查</h2>
+            <p>API地址：<span id="apiUrl">http://localhost:5263</span> <span id="apiStatus" class="status offline">离线</span></p>
+            <button onclick="checkApiStatus()">检查API状态</button>
+            <div id="statusResult" class="result info"></div>
+        </div>
+
+        <!-- 生成月度租金单 -->
+        <div class="test-section">
+            <h2>📅 生成月度租金单</h2>
+            <div class="form-group">
+                <label>账期 (YYYYMM):</label>
+                <input type="text" id="billPeriod" value="202412" placeholder="如: 202412">
+            </div>
+            <button class="success" onclick="generateMonthlyBills()">生成租金单</button>
+            <div id="generateResult" class="result info"></div>
+        </div>
+
+        <!-- 查询租金单 -->
+        <div class="test-section">
+            <h2>🔍 查询租金单</h2>
+            <div class="form-group">
+                <label>操作员账号:</label>
+                <select id="operatorAccount">
+                    <option value="admin">admin (系统管理员)</option>
+                    <option value="finance_admin">finance_admin (财务管理员)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>账单状态:</label>
+                <select id="billStatus">
+                    <option value="">全部状态</option>
+                    <option value="待缴纳">待缴纳</option>
+                    <option value="已缴纳">已缴纳</option>
+                    <option value="逾期">逾期</option>
+                    <option value="预警">预警</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>账期:</label>
+                <input type="text" id="queryBillPeriod" placeholder="如: 202412">
+            </div>
+            <button onclick="queryRentBills()">查询租金单</button>
+            <div id="queryResult" class="result info"></div>
+            <div id="billsList" style="margin-top: 15px;">
+                <div style="color: #666; text-align: center; padding: 15px;">点击"查询租金单"查看数据</div>
+            </div>
+        </div>
+
+        <!-- 租金支付测试 -->
+        <div class="test-section">
+            <h2>💳 租金支付测试</h2>
+            <div class="form-group">
+                <label>账单ID:</label>
+                <input type="number" id="payBillId" placeholder="输入账单ID">
+            </div>
+            <div class="form-group">
+                <label>支付方式:</label>
+                <select id="paymentMethod">
+                    <option value="银行转账">银行转账</option>
+                    <option value="支付宝">支付宝</option>
+                    <option value="微信">微信</option>
+                    <option value="现金">现金</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>支付流水号:</label>
+                <input type="text" id="paymentReference" placeholder="支付流水号（可选）">
+            </div>
+            <button class="success" onclick="payRent()">支付租金</button>
+            <div id="paymentResult" class="result info"></div>
+        </div>
+
+        <!-- 财务确认支付 -->
+        <div class="test-section">
+            <h2>✅ 财务确认支付</h2>
+            <div class="form-group">
+                <label>账单ID:</label>
+                <input type="number" id="confirmBillId" placeholder="输入账单ID">
+            </div>
+            <div class="form-group">
+                <label>确认人:</label>
+                <select id="confirmedBy">
+                    <option value="finance_admin">finance_admin (财务管理员)</option>
+                    <option value="admin">admin (系统管理员)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>确认备注:</label>
+                <input type="text" id="confirmRemarks" placeholder="确认备注（可选）">
+            </div>
+            <button class="warning" onclick="confirmPayment()">财务确认</button>
+            <div id="confirmResult" class="result info"></div>
+        </div>
+
+        <!-- 租金收取统计 -->
+        <div class="test-section">
+            <h2>📊 租金收取统计</h2>
+            <div class="form-group">
+                <label>统计账期:</label>
+                <input type="text" id="statsPeriod" value="202412" placeholder="如: 202412">
+            </div>
+            <button onclick="getRentStatistics()">获取统计</button>
+            <div id="statisticsDisplay" style="display: none; margin-top: 15px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="text-align: center; padding: 15px; background: #3498db; color: white; border-radius: 5px;">
+                        <h3 id="totalBills" style="margin: 0;">-</h3>
+                        <small>总账单数</small>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #27ae60; color: white; border-radius: 5px;">
+                        <h3 id="paidBills" style="margin: 0;">-</h3>
+                        <small>已缴纳</small>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #e74c3c; color: white; border-radius: 5px;">
+                        <h3 id="overdueBills" style="margin: 0;">-</h3>
+                        <small>逾期账单</small>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #f39c12; color: white; border-radius: 5px;">
+                        <h3 id="totalAmount" style="margin: 0;">¥-</h3>
+                        <small>总金额</small>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #9b59b6; color: white; border-radius: 5px;">
+                        <h3 id="collectionRate" style="margin: 0;">-</h3>
+                        <small>收缴率</small>
+                    </div>
+                </div>
+            </div>
+            <div id="statisticsResult" class="result info"></div>
+        </div>
+
+        <!-- 商户端功能测试 -->
+        <div class="test-section">
+            <h2>👤 商户端功能测试</h2>
+            <div class="form-group">
+                <label>商户账号:</label>
+                <input type="text" id="merchantAccount" value="merchant_001" placeholder="商户账号">
+            </div>
+            <button onclick="getMyRentBills()">查看我的账单</button>
+            <div id="merchantResult" class="result info"></div>
+        </div>
+
+        <!-- 系统维护功能 -->
+        <div class="test-section">
+            <h2>⚙️ 系统维护功能</h2>
+            <button class="warning" onclick="updateOverdueStatus()">更新逾期状态</button>
+            <button onclick="runCompleteTest()">完整功能测试</button>
+            <div id="systemResult" class="result info"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5263/api/Store';
+        
+        // 页面加载时自动检查API状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkApiStatus();
+        });
+        
+        async function checkApiStatus() {
+            const statusElement = document.getElementById('apiStatus');
+            const resultElement = document.getElementById('statusResult');
+            
+            try {
+                const response = await fetch(`${API_BASE}/GetRentBills`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ operatorAccount: 'admin' })
+                });
+                
+                if (response.status !== 404) { // API存在，无论返回什么结果
+                    statusElement.textContent = '在线';
+                    statusElement.className = 'status online';
+                    resultElement.textContent = '✅ API连接成功！';
+                    resultElement.className = 'result success';
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusElement.textContent = '离线';
+                statusElement.className = 'status offline';
+                resultElement.textContent = `❌ API连接失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function generateMonthlyBills() {
+            const billPeriod = document.getElementById('billPeriod').value;
+            const resultElement = document.getElementById('generateResult');
+            
+            if (!billPeriod || billPeriod.length !== 6) {
+                resultElement.textContent = '❌ 账期格式错误，应为YYYYMM格式';
+                resultElement.className = 'result error';
+                return;
+            }
+
+            try {
+                resultElement.textContent = '正在生成月度租金单...';
+                resultElement.className = 'result info';
+                
+                const response = await fetch(`${API_BASE}/GenerateMonthlyRentBills`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(billPeriod)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultElement.textContent = '✅ 租金单生成成功！\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = '❌ ' + (data.error || '生成失败') + '\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+
+        async function queryRentBills() {
+            const operatorAccount = document.getElementById('operatorAccount').value;
+            const billStatus = document.getElementById('billStatus').value;
+            const billPeriod = document.getElementById('queryBillPeriod').value;
+            const resultElement = document.getElementById('queryResult');
+            
+            const requestData = {
+                operatorAccount: operatorAccount,
+                billStatus: billStatus || null,
+                billPeriod: billPeriod || null
+            };
+
+            try {
+                resultElement.textContent = '正在查询租金单...';
+                resultElement.className = 'result info';
+                
+                const response = await fetch(`${API_BASE}/GetRentBills`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultElement.textContent = '✅ 查询成功！\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                    displayBillsList(data.bills || data);
+                } else {
+                    resultElement.textContent = '❌ ' + (data.error || '查询失败') + '\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+
+        async function payRent() {
+            const billId = document.getElementById('payBillId').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const paymentReference = document.getElementById('paymentReference').value;
+            const resultElement = document.getElementById('paymentResult');
+            
+            if (!billId) {
+                resultElement.textContent = '❌ 请输入账单ID';
+                resultElement.className = 'result error';
+                return;
+            }
+
+            const requestData = {
+                billId: parseInt(billId),
+                paymentMethod: paymentMethod,
+                paymentReference: paymentReference || null
+            };
+
+            try {
+                resultElement.textContent = '正在处理支付...';
+                resultElement.className = 'result info';
+                
+                const response = await fetch(`${API_BASE}/PayRent`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultElement.textContent = '✅ 支付成功！\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                    // 自动刷新租金单列表
+                    queryRentBills();
+                } else {
+                    resultElement.textContent = '❌ ' + (data.error || '支付失败') + '\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+
+        async function confirmPayment() {
+            const billId = document.getElementById('confirmBillId').value;
+            const confirmedBy = document.getElementById('confirmedBy').value;
+            const remarks = document.getElementById('confirmRemarks').value;
+            const resultElement = document.getElementById('confirmResult');
+            
+            if (!billId) {
+                resultElement.textContent = '❌ 请输入账单ID';
+                resultElement.className = 'result error';
+                return;
+            }
+
+            const requestData = {
+                billId: parseInt(billId),
+                confirmedBy: confirmedBy,
+                remarks: remarks || null
+            };
+
+            try {
+                resultElement.textContent = '正在确认支付...';
+                resultElement.className = 'result info';
+                
+                const response = await fetch(`${API_BASE}/ConfirmPayment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultElement.textContent = '✅ 确认成功！\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                    // 自动刷新租金单列表
+                    queryRentBills();
+                } else {
+                    resultElement.textContent = '❌ ' + (data.error || '确认失败') + '\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+
+        async function getRentStatistics() {
+            const period = document.getElementById('statsPeriod').value;
+            const resultElement = document.getElementById('statisticsResult');
+            
+            if (!period) {
+                resultElement.textContent = '❌ 请输入统计账期';
+                resultElement.className = 'result error';
+                return;
+            }
+
+            try {
+                resultElement.textContent = '正在获取统计数据...';
+                resultElement.className = 'result info';
+                
+                const response = await fetch(`${API_BASE}/GetRentCollectionStatistics?period=${period}`);
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultElement.textContent = '✅ 获取统计成功！\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                    displayStatistics(data.statistics || data);
+                } else {
+                    resultElement.textContent = '❌ ' + (data.error || '获取统计失败') + '\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+
+        async function getMyRentBills() {
+            const merchantAccount = document.getElementById('merchantAccount').value;
+            const resultElement = document.getElementById('merchantResult');
+            
+            if (!merchantAccount) {
+                resultElement.textContent = '❌ 请输入商户账号';
+                resultElement.className = 'result error';
+                return;
+            }
+
+            try {
+                resultElement.textContent = '正在查询商户租金单...';
+                resultElement.className = 'result info';
+                
+                const response = await fetch(`${API_BASE}/GetMyRentBills?merchantAccount=${merchantAccount}`);
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultElement.textContent = '✅ 查询成功！\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = '❌ ' + (data.error || '查询失败') + '\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+
+        async function updateOverdueStatus() {
+            const resultElement = document.getElementById('systemResult');
+
+            try {
+                resultElement.textContent = '正在更新逾期状态...';
+                resultElement.className = 'result info';
+                
+                const response = await fetch(`${API_BASE}/UpdateOverdueStatus`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultElement.textContent = '✅ 更新成功！\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = '❌ ' + (data.error || '更新失败') + '\n\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+
+        async function runCompleteTest() {
+            const resultElement = document.getElementById('systemResult');
+            resultElement.textContent = '正在执行完整功能测试...\n';
+            resultElement.className = 'result info';
+            
+            try {
+                // 1. 生成租金单
+                resultElement.textContent += '1. 生成租金单...\n';
+                await generateMonthlyBills();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 2. 查询租金单
+                resultElement.textContent += '2. 查询租金单...\n';
+                await queryRentBills();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 3. 获取统计数据
+                resultElement.textContent += '3. 获取统计数据...\n';
+                await getRentStatistics();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 4. 更新逾期状态
+                resultElement.textContent += '4. 更新逾期状态...\n';
+                await updateOverdueStatus();
+                
+                resultElement.textContent = '✅ 完整功能测试完成！\n\n所有功能测试已执行完成\n时间: ' + new Date().toLocaleString();
+                resultElement.className = 'result success';
+            } catch (error) {
+                resultElement.textContent = `❌ 测试执行失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+
+        function displayBillsList(bills) {
+            const billsList = document.getElementById('billsList');
+            
+            if (!bills || bills.length === 0) {
+                billsList.innerHTML = '<div style="color: #666; text-align: center; padding: 15px;">暂无租金单数据</div>';
+                return;
+            }
+
+            let html = '';
+            bills.forEach(bill => {
+                // 处理大小写字段名兼容性
+                const billId = bill.BillId || bill.billId;
+                const storeId = bill.StoreId || bill.storeId;
+                const storeName = bill.StoreName || bill.storeName;
+                const tenantName = bill.TenantName || bill.tenantName;
+                const billPeriod = bill.BillPeriod || bill.billPeriod;
+                const billStatus = bill.BillStatus || bill.billStatus;
+                const totalAmount = bill.TotalAmount || bill.totalAmount || bill.amount;
+                const dueDate = bill.DueDate || bill.dueDate;
+                const paymentTime = bill.PaymentTime || bill.paymentTime;
+                const daysOverdue = bill.DaysOverdue || bill.daysOverdue;
+                
+                const statusClass = getStatusClass(billStatus);
+                const isOverdue = daysOverdue && daysOverdue > 0;
+                
+                html += `
+                    <div class="bill-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                            <div>
+                                <strong>${storeName || '商户' + storeId}</strong><br>
+                                <small style="color: #666;">账期: ${billPeriod} | 租户: ${tenantName || '未知'}</small>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="bill-status ${statusClass}">${billStatus}</span>
+                                ${isOverdue ? `<br><small style="color: #e74c3c;">逾期 ${daysOverdue} 天</small>` : ''}
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; font-size: 12px; color: #666;">
+                            <div>账单ID: ${billId}</div>
+                            <div>金额: ¥${totalAmount ? totalAmount.toLocaleString() : '0'}</div>
+                            <div>截止: ${dueDate ? new Date(dueDate).toLocaleDateString() : '未知'}</div>
+                            <div>${paymentTime ? `支付: ${new Date(paymentTime).toLocaleDateString()}` : ''}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            billsList.innerHTML = html;
+        }
+
+        function displayStatistics(stats) {
+            document.getElementById('statisticsDisplay').style.display = 'block';
+            
+            // 处理大小写字段名兼容性
+            const totalBills = stats.TotalBills || stats.totalBills || 0;
+            const paidBills = stats.PaidBills || stats.paidBills || 0;
+            const overdueBills = stats.OverdueBills || stats.overdueBills || 0;
+            const totalAmount = stats.TotalAmount || stats.totalAmount || 0;
+            const collectionRate = stats.CollectionRate || stats.collectionRate || 0;
+            
+            document.getElementById('totalBills').textContent = totalBills;
+            document.getElementById('paidBills').textContent = paidBills;
+            document.getElementById('overdueBills').textContent = overdueBills;
+            document.getElementById('totalAmount').textContent = `¥${totalAmount.toLocaleString()}`;
+            document.getElementById('collectionRate').textContent = `${collectionRate}%`;
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case '待缴纳': return 'status-pending';
+                case '已缴纳': return 'status-paid';
+                case '逾期': return 'status-overdue';
+                case '预警': return 'status-warning';
+                default: return 'status-pending';
+            }
+        }
+    </script>
+</body>
+</html>

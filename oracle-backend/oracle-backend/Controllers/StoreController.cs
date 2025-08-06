@@ -1257,6 +1257,272 @@ namespace oracle_backend.Controllers
 
         #endregion
 
+        #region 租金收取功能 (用例2.7.6)
+
+        /// <summary>
+        /// 生成月度租金单
+        /// </summary>
+        [HttpPost("GenerateMonthlyRentBills")]
+        public async Task<IActionResult> GenerateMonthlyRentBills([FromBody] string billPeriod)
+        {
+            try
+            {
+                _logger.LogInformation("开始生成月度租金单：账期 {BillPeriod}", billPeriod);
+
+                if (string.IsNullOrEmpty(billPeriod) || billPeriod.Length != 6)
+                {
+                    return BadRequest(new { error = "账期格式错误，应为YYYYMM格式，如202412" });
+                }
+
+                var bills = await _storeContext.GenerateMonthlyRentBills(billPeriod);
+
+                _logger.LogInformation("成功生成 {Count} 张租金单，账期：{BillPeriod}", bills.Count, billPeriod);
+
+                return Ok(new
+                {
+                    message = $"成功生成{bills.Count}张租金单",
+                    billPeriod = billPeriod,
+                    generatedBills = bills.Count,
+                    generateTime = DateTime.Now,
+                    bills = bills.Select(b => new
+                    {
+                        billId = b.BILL_ID,
+                        storeId = b.STORE_ID,
+                        totalAmount = b.TOTAL_AMOUNT,
+                        dueDate = b.DUE_DATE
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "生成月度租金单时发生异常");
+                return StatusCode(500, new { error = "生成租金单失败", details = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 获取租金单列表
+        /// </summary>
+        [HttpPost("GetRentBills")]
+        public async Task<IActionResult> GetRentBills([FromBody] RentBillQueryRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("查询租金单：操作员 {OperatorAccount}", request.OperatorAccount);
+
+                // 验证操作员账号
+                var operator_account = await _accountContext.FindAccount(request.OperatorAccount);
+                if (operator_account == null)
+                {
+                    return BadRequest(new { error = "操作员账号不存在" });
+                }
+
+                var rentBills = await _storeContext.GetRentBillsDetails(request);
+
+                return Ok(new
+                {
+                    message = "查询租金单成功",
+                    totalCount = rentBills.Count,
+                    queryTime = DateTime.Now,
+                    operatorAccount = request.OperatorAccount,
+                    bills = rentBills
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "查询租金单时发生异常");
+                return StatusCode(500, new { error = "查询租金单失败", details = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 商户缴纳租金
+        /// </summary>
+        [HttpPost("PayRent")]
+        public async Task<IActionResult> PayRent([FromBody] PayRentRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("处理租金支付：账单ID {BillId}, 支付方式 {PaymentMethod}", 
+                    request.BillId, request.PaymentMethod);
+
+                var success = await _storeContext.ProcessRentPayment(request.BillId, request);
+
+                if (!success)
+                {
+                    return BadRequest(new { error = "支付失败，账单不存在或已经支付" });
+                }
+
+                _logger.LogInformation("租金支付成功：账单ID {BillId}", request.BillId);
+
+                return Ok(new
+                {
+                    message = "租金支付成功",
+                    billId = request.BillId,
+                    paymentMethod = request.PaymentMethod,
+                    paymentTime = DateTime.Now,
+                    status = "已缴纳"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "处理租金支付时发生异常");
+                return StatusCode(500, new { error = "支付处理失败", details = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 财务确认支付
+        /// </summary>
+        [HttpPost("ConfirmPayment")]
+        public async Task<IActionResult> ConfirmPayment([FromBody] ConfirmPaymentRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("财务确认支付：账单ID {BillId}, 确认人 {ConfirmedBy}", 
+                    request.BillId, request.ConfirmedBy);
+
+                // 验证确认人权限（需要财务权限）
+                var confirmer = await _accountContext.FindAccount(request.ConfirmedBy);
+                if (confirmer == null)
+                {
+                    return BadRequest(new { error = "确认人账号不存在" });
+                }
+
+                bool hasFinancePermission = confirmer.AUTHORITY <= 2; // 管理员或财务权限
+                if (!hasFinancePermission)
+                {
+                    return BadRequest(new { error = "权限不足，需要财务权限确认支付" });
+                }
+
+                var success = await _storeContext.ConfirmPayment(request.BillId, request);
+
+                if (!success)
+                {
+                    return BadRequest(new { error = "确认失败，账单不存在" });
+                }
+
+                _logger.LogInformation("支付确认成功：账单ID {BillId}, 确认人 {ConfirmedBy}", 
+                    request.BillId, request.ConfirmedBy);
+
+                return Ok(new
+                {
+                    message = "支付确认成功",
+                    billId = request.BillId,
+                    confirmedBy = request.ConfirmedBy,
+                    confirmedTime = DateTime.Now
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "确认支付时发生异常");
+                return StatusCode(500, new { error = "确认支付失败", details = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 更新逾期状态（系统定时任务）
+        /// </summary>
+        [HttpPost("UpdateOverdueStatus")]
+        public async Task<IActionResult> UpdateOverdueStatus()
+        {
+            try
+            {
+                _logger.LogInformation("开始更新逾期状态");
+
+                var updatedCount = await _storeContext.UpdateOverdueStatus();
+
+                _logger.LogInformation("逾期状态更新完成，影响 {Count} 条记录", updatedCount);
+
+                return Ok(new
+                {
+                    message = "逾期状态更新成功",
+                    updatedCount = updatedCount,
+                    updateTime = DateTime.Now
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "更新逾期状态时发生异常");
+                return StatusCode(500, new { error = "更新逾期状态失败", details = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 获取租金收取统计
+        /// </summary>
+        [HttpGet("GetRentCollectionStatistics")]
+        public async Task<IActionResult> GetRentCollectionStatistics([FromQuery] string period)
+        {
+            try
+            {
+                _logger.LogInformation("获取租金收取统计：账期 {Period}", period);
+
+                if (string.IsNullOrEmpty(period))
+                {
+                    return BadRequest(new { error = "账期参数不能为空" });
+                }
+
+                var statistics = await _storeContext.GetRentCollectionStatistics(period);
+
+                return Ok(new
+                {
+                    message = "获取租金收取统计成功",
+                    period = period,
+                    queryTime = DateTime.Now,
+                    statistics = statistics
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "获取租金收取统计时发生异常");
+                return StatusCode(500, new { error = "获取统计数据失败", details = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 获取商户自己的租金单（商户端接口）
+        /// </summary>
+        [HttpGet("GetMyRentBills")]
+        public async Task<IActionResult> GetMyRentBills([FromQuery] string merchantAccount)
+        {
+            try
+            {
+                _logger.LogInformation("商户查询自己的租金单：商户账号 {MerchantAccount}", merchantAccount);
+
+                // 验证商户账号并获取关联的店铺ID
+                var storeAccount = await _accountContext.GetStoreAccountByAccount(merchantAccount);
+                if (storeAccount == null)
+                {
+                    return BadRequest(new { error = "商户账号不存在或未关联店铺" });
+                }
+
+                var request = new RentBillQueryRequest
+                {
+                    StoreId = storeAccount.STORE_ID,
+                    OperatorAccount = merchantAccount
+                };
+
+                var rentBills = await _storeContext.GetRentBillsDetails(request);
+
+                return Ok(new
+                {
+                    message = "查询租金单成功",
+                    storeId = storeAccount.STORE_ID,
+                    merchantAccount = merchantAccount,
+                    totalBills = rentBills.Count,
+                    bills = rentBills
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "商户查询租金单时发生异常");
+                return StatusCode(500, new { error = "查询租金单失败", details = ex.Message });
+            }
+        }
+
+        #endregion
+
         #endregion
     }
 }
