@@ -788,10 +788,19 @@ namespace oracle_backend.Controllers
         // DTO类定义
         public class StoreStatusChangeRequestDto
         {
+            [Required(ErrorMessage = "店铺ID为必填项")]
             public int StoreId { get; set; }
+            
+            [Required(ErrorMessage = "变更类型为必填项")]
             public string ChangeType { get; set; } // 退租/维修/暂停营业/恢复营业
+            
+            [Required(ErrorMessage = "申请原因为必填项")]
             public string Reason { get; set; }
+            
+            [Required(ErrorMessage = "目标状态为必填项")]
             public string TargetStatus { get; set; } // 目标状态
+            
+            [Required(ErrorMessage = "申请人账号为必填项")]
             public string ApplicantAccount { get; set; }
         }
 
@@ -799,8 +808,19 @@ namespace oracle_backend.Controllers
         {
             public int StoreId { get; set; }
             public string ApprovalAction { get; set; } // 通过/驳回
+            public string ApprovalComment { get; set; } // 审批意见（可选）
+            public string ApproverAccount { get; set; }
+            public string TargetStatus { get; set; } // 目标状态（可选，系统可以自动确定）
+        }
+
+        // 简化的测试审批DTO（专门用于测试界面）
+        public class TestApprovalDto
+        {
+            public int StoreId { get; set; }
+            public string ApprovalAction { get; set; }
             public string ApprovalComment { get; set; }
             public string ApproverAccount { get; set; }
+            public string TargetStatus { get; set; }
         }
 
         // 商户提交状态变更申请
@@ -867,7 +887,29 @@ namespace oracle_backend.Controllers
                 _logger.LogInformation("开始处理状态变更审批：店铺ID {StoreId}, 审批动作 {ApprovalAction}", 
                     dto.StoreId, dto.ApprovalAction);
 
+                // 基本验证
+                if (dto.StoreId <= 0)
+                {
+                    return BadRequest(new { error = "店铺ID无效" });
+                }
+
+                if (string.IsNullOrEmpty(dto.ApprovalAction))
+                {
+                    return BadRequest(new { error = "审批动作不能为空" });
+                }
+
+                if (string.IsNullOrEmpty(dto.ApproverAccount))
+                {
+                    return BadRequest(new { error = "审批人账号不能为空" });
+                }
+
                 // 验证审批人权限（需要管理员或部门经理权限）
+                var approverAccount = await _accountContext.FindAccount(dto.ApproverAccount);
+                if (approverAccount == null)
+                {
+                    return BadRequest(new { error = $"审批人账号 '{dto.ApproverAccount}' 不存在" });
+                }
+
                 var hasPermission = await _accountContext.CheckAuthority(dto.ApproverAccount, 2);
                 if (!hasPermission)
                 {
@@ -885,12 +927,20 @@ namespace oracle_backend.Controllers
 
                 if (dto.ApprovalAction == "通过")
                 {
+                    // 确定目标状态 - 如果没有明确指定，则根据当前状态进行合理推测
+                    string targetStatus = dto.TargetStatus;
+                    if (string.IsNullOrEmpty(targetStatus))
+                    {
+                        // 根据当前状态和业务逻辑确定默认的目标状态
+                        targetStatus = DetermineDefaultTargetStatus(originalStatus);
+                    }
+
                     // 审批通过：更新店面状态
-                    await UpdateStoreStatusInternal(dto.StoreId, dto.ApprovalComment, dto.ApproverAccount);
+                    await UpdateStoreStatusInternal(dto.StoreId, targetStatus, dto.ApproverAccount);
                     
-                    _logger.LogInformation("状态变更审批通过：店铺 {StoreName} 状态从 {OriginalStatus} 变更完成, " +
+                    _logger.LogInformation("状态变更审批通过：店铺 {StoreName} 状态从 {OriginalStatus} 变更为 {TargetStatus}, " +
                         "审批人 {Approver}, 审批意见 {Comment}", 
-                        store.STORE_NAME, originalStatus, dto.ApproverAccount, dto.ApprovalComment);
+                        store.STORE_NAME, originalStatus, targetStatus, dto.ApproverAccount, dto.ApprovalComment);
 
                     return Ok(new
                     {
@@ -898,6 +948,7 @@ namespace oracle_backend.Controllers
                         storeId = dto.StoreId,
                         storeName = store.STORE_NAME,
                         originalStatus = originalStatus,
+                        newStatus = targetStatus,
                         approvalResult = "通过",
                         approver = dto.ApproverAccount,
                         approvalTime = DateTime.Now
@@ -924,6 +975,72 @@ namespace oracle_backend.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "处理状态变更审批时发生错误：{StoreId}", dto.StoreId);
+                return StatusCode(500, "服务器内部错误");
+            }
+        }
+
+        // 简化的测试审批接口（仅用于测试目的）
+        [HttpPost("TestApproveStatusChange")]
+        public async Task<IActionResult> TestApproveStatusChange([FromBody] TestApprovalDto dto)
+        {
+            try
+            {
+                _logger.LogInformation("测试审批：店铺ID {StoreId}, 审批动作 {ApprovalAction}", 
+                    dto.StoreId, dto.ApprovalAction);
+
+                // 验证审批人权限
+                var hasPermission = await _accountContext.CheckAuthority(dto.ApproverAccount, 2);
+                if (!hasPermission)
+                {
+                    return BadRequest(new { error = "权限不足，需要管理员或部门经理权限进行审批" });
+                }
+
+                // 验证店面是否存在
+                var store = await _storeContext.GetStoreById(dto.StoreId);
+                if (store == null)
+                {
+                    return BadRequest(new { error = "店面不存在" });
+                }
+
+                var originalStatus = store.STORE_STATUS;
+
+                if (dto.ApprovalAction == "通过")
+                {
+                    // 使用指定的目标状态，如果没有则使用默认状态转换
+                    string targetStatus = string.IsNullOrEmpty(dto.TargetStatus) ? 
+                        DetermineDefaultTargetStatus(originalStatus) : dto.TargetStatus;
+
+                    await UpdateStoreStatusInternal(dto.StoreId, targetStatus, dto.ApproverAccount);
+                    
+                    return Ok(new
+                    {
+                        message = "测试审批通过，店面状态已更新",
+                        storeId = dto.StoreId,
+                        storeName = store.STORE_NAME,
+                        originalStatus = originalStatus,
+                        newStatus = targetStatus,
+                        approvalResult = "通过",
+                        approver = dto.ApproverAccount,
+                        approvalTime = DateTime.Now
+                    });
+                }
+                else
+                {
+                    return Ok(new
+                    {
+                        message = "测试审批驳回",
+                        storeId = dto.StoreId,
+                        storeName = store.STORE_NAME,
+                        approvalResult = "驳回",
+                        reason = dto.ApprovalComment ?? "测试驳回",
+                        approver = dto.ApproverAccount,
+                        approvalTime = DateTime.Now
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "处理测试审批时发生错误：{StoreId}", dto.StoreId);
                 return StatusCode(500, "服务器内部错误");
             }
         }
@@ -970,37 +1087,39 @@ namespace oracle_backend.Controllers
         }
 
         // 辅助方法：更新店面状态
-        private async Task UpdateStoreStatusInternal(int storeId, string changeReason, string approver)
+        private async Task UpdateStoreStatusInternal(int storeId, string targetStatus, string approver)
         {
             var store = await _storeContext.STORE.FirstOrDefaultAsync(s => s.STORE_ID == storeId);
             if (store != null)
             {
-                // 根据申请类型更新状态
-                // 这里简化处理，实际应根据具体的变更类型设置对应状态
-                var newStatus = DetermineNewStatus(changeReason);
-                store.STORE_STATUS = newStatus;
+                // 直接使用目标状态
+                _logger.LogInformation("将店铺 {StoreId} 状态从 {CurrentStatus} 更新为 {TargetStatus}", 
+                    storeId, store.STORE_STATUS, targetStatus);
+                
+                store.STORE_STATUS = targetStatus;
                 
                 await _storeContext.SaveChangesAsync();
                 
                 _logger.LogInformation("店面状态已更新：店铺ID {StoreId}, 新状态 {NewStatus}, 操作人 {Approver}", 
-                    storeId, newStatus, approver);
+                    storeId, targetStatus, approver);
             }
         }
 
-        // 辅助方法：根据变更原因确定新状态
-        private string DetermineNewStatus(string changeReason)
+        // 辅助方法：根据当前状态确定默认目标状态（用于测试场景）
+        private string DetermineDefaultTargetStatus(string currentStatus)
         {
-            // 简化的状态映射逻辑
-            if (changeReason.Contains("退租"))
-                return "已退租";
-            else if (changeReason.Contains("维修"))
-                return "维修中";
-            else if (changeReason.Contains("暂停"))
-                return "暂停营业";
-            else if (changeReason.Contains("恢复"))
-                return "正常营业";
-            else
-                return "状态变更中";
+            // 为测试场景提供默认的状态转换逻辑
+            switch (currentStatus)
+            {
+                case "正常营业":
+                    return "维修中"; // 默认申请维修
+                case "维修中":
+                    return "正常营业"; // 维修完成恢复营业
+                case "暂停营业":
+                    return "正常营业"; // 恢复营业
+                default:
+                    return "正常营业"; // 默认恢复到正常营业状态
+            }
         }
 
         #region 商户信息统计报表功能 (用例2.7.5)

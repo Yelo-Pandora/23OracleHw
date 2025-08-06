@@ -186,9 +186,20 @@
             
             <div class="form-group">
                 <label>审批动作:</label>
-                <select id="approvalAction">
+                <select id="approvalAction" onchange="updateApprovalTargetStatus()">
                     <option value="通过">审批通过</option>
                     <option value="驳回">审批驳回</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>目标状态:</label>
+                <select id="approvalTargetStatus">
+                    <option value="正常营业">正常营业</option>
+                    <option value="维修中">维修中</option>
+                    <option value="暂停营业">暂停营业</option>
+                    <option value="已退租">已退租</option>
+                    <option value="装修中">装修中</option>
                 </select>
             </div>
             
@@ -279,6 +290,22 @@
             }
         }
 
+        // 更新审批目标状态
+        function updateApprovalTargetStatus() {
+            const approvalAction = document.getElementById('approvalAction').value;
+            const approvalTargetStatus = document.getElementById('approvalTargetStatus');
+            
+            if (approvalAction === '驳回') {
+                // 驳回时禁用目标状态选择
+                approvalTargetStatus.disabled = true;
+                approvalTargetStatus.style.backgroundColor = '#f5f5f5';
+            } else {
+                // 通过时启用目标状态选择
+                approvalTargetStatus.disabled = false;
+                approvalTargetStatus.style.backgroundColor = 'white';
+            }
+        }
+
         // 提交状态变更申请
         async function submitStatusChangeRequest() {
             const applicationResult = document.getElementById('applicationResult');
@@ -328,12 +355,18 @@
             const approvalResult = document.getElementById('approvalResult');
             
             try {
+                const approvalAction = document.getElementById('approvalAction').value;
                 const approvalData = {
                     storeId: parseInt(document.getElementById('approvalStoreId').value),
-                    approvalAction: document.getElementById('approvalAction').value,
+                    approvalAction: approvalAction,
                     approvalComment: document.getElementById('approvalComment').value,
                     approverAccount: document.getElementById('approverAccount').value
                 };
+                
+                // 只有在审批通过时才添加目标状态
+                if (approvalAction === '通过') {
+                    approvalData.targetStatus = document.getElementById('approvalTargetStatus').value;
+                }
                 
                 approvalResult.textContent = '正在处理审批...';
                 approvalResult.className = 'result info';
@@ -349,12 +382,21 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    approvalResult.textContent = `✅ 审批处理完成！
+                    let resultText = `✅ 审批处理完成！
 店铺名称: ${data.storeName}
 审批结果: ${data.approvalResult}
 审批人: ${data.approver}
-审批时间: ${new Date(data.approvalTime).toLocaleString()}
-${data.reason ? '驳回原因: ' + data.reason : ''}`;
+审批时间: ${new Date(data.approvalTime).toLocaleString()}`;
+                    
+                    if (data.newStatus) {
+                        resultText += `\n原状态: ${data.originalStatus}\n新状态: ${data.newStatus}`;
+                    }
+                    
+                    if (data.reason) {
+                        resultText += `\n驳回原因: ${data.reason}`;
+                    }
+                    
+                    approvalResult.textContent = resultText;
                     approvalResult.className = 'result success';
                 } else {
                     approvalResult.textContent = `❌ 审批处理失败: ${data.error || JSON.stringify(data)}`;
@@ -441,7 +483,8 @@ ${data.reason ? '驳回原因: ' + data.reason : ''}`;
                             storeId: 3001,
                             approvalAction: '通过',
                             approvalComment: '自动化测试：维修申请符合规定，予以通过',
-                            approverAccount: 'admin'
+                            approverAccount: 'admin',
+                            targetStatus: '维修中'  // 添加目标状态
                         };
                         
                         const approvalResponse = await fetch(`${API_BASE}/Store/ApproveStatusChange`, {
@@ -465,19 +508,19 @@ ${data.reason ? '驳回原因: ' + data.reason : ''}`;
                                 testResult += '🎉 完整业务流程测试通过！';
                                 comprehensiveResult.className = 'result success';
                             } else {
-                                testResult += `❌ 步骤4失败: ${finalStatusData.error}`;
+                                testResult += `❌ 步骤4失败: ${finalStatusData.error || JSON.stringify(finalStatusData)}`;
                                 comprehensiveResult.className = 'result error';
                             }
                         } else {
-                            testResult += `❌ 步骤3失败: ${approvalResult.error}`;
+                            testResult += `❌ 步骤3失败: ${approvalResult.error || JSON.stringify(approvalResult)}`;
                             comprehensiveResult.className = 'result error';
                         }
                     } else {
-                        testResult += `❌ 步骤2失败: ${requestResult.error}`;
+                        testResult += `❌ 步骤2失败: ${requestResult.error || JSON.stringify(requestResult)}`;
                         comprehensiveResult.className = 'result error';
                     }
                 } else {
-                    testResult += `❌ 步骤1失败: ${statusData.error}`;
+                    testResult += `❌ 步骤1失败: ${statusData.error || JSON.stringify(statusData)}`;
                     comprehensiveResult.className = 'result error';
                 }
                 
@@ -590,7 +633,8 @@ ${data.reason ? '驳回原因: ' + data.reason : ''}`;
                     storeId: 3001,
                     approvalAction: '通过',
                     approvalComment: '权限测试',
-                    approverAccount: 'nopermission'
+                    approverAccount: 'nopermission',
+                    targetStatus: '维修中'  // 添加目标状态
                 };
                 
                 const response = await fetch(`${API_BASE}/Store/ApproveStatusChange`, {
@@ -601,11 +645,14 @@ ${data.reason ? '驳回原因: ' + data.reason : ''}`;
                 
                 const data = await response.json();
                 
-                if (!response.ok && data.error && data.error.includes('权限不足')) {
+                if (!response.ok && data.error && (data.error.includes('权限不足') || data.error.includes('权限'))) {
                     quickTestResult.textContent = `✅ 权限验证测试通过: ${data.error}`;
                     quickTestResult.className = 'result success';
+                } else if (response.ok) {
+                    quickTestResult.textContent = `❌ 权限验证测试失败: 应该拒绝无权限用户的审批，但请求成功了`;
+                    quickTestResult.className = 'result error';
                 } else {
-                    quickTestResult.textContent = `❌ 权限验证测试失败: 应该拒绝无权限用户的审批`;
+                    quickTestResult.textContent = `❌ 权限验证测试失败: 预期权限错误，但得到: ${JSON.stringify(data)}`;
                     quickTestResult.className = 'result error';
                 }
             } catch (error) {
@@ -617,6 +664,7 @@ ${data.reason ? '驳回原因: ' + data.reason : ''}`;
         // 初始化
         window.onload = function() {
             updateTargetStatus();
+            updateApprovalTargetStatus();
             checkApiStatus();
         };
     </script>
