@@ -833,7 +833,7 @@ namespace oracle_backend.Controllers
                 }
 
                 // 生成申请编号
-                var applicationNo = await GenerateApplicationNumber();
+                var applicationNo = GenerateApplicationNumber();
 
                 // 模拟申请记录（因为不能新增表，我们用日志记录申请信息）
                 _logger.LogInformation("状态变更申请详情：申请编号 {ApplicationNo}, 店铺 {StoreName}, " +
@@ -961,7 +961,7 @@ namespace oracle_backend.Controllers
         }
 
         // 辅助方法：生成申请编号
-        private async Task<string> GenerateApplicationNumber()
+        private string GenerateApplicationNumber()
         {
             var today = DateTime.Now.ToString("yyyyMMdd");
             var random = new Random();
@@ -1002,6 +1002,260 @@ namespace oracle_backend.Controllers
             else
                 return "状态变更中";
         }
+
+        #region 商户信息统计报表功能 (用例2.7.5)
+
+        /// <summary>
+        /// 获取商户信息统计报表
+        /// </summary>
+        /// <param name="operatorAccount">操作员账号</param>
+        /// <param name="dimension">统计维度：type(按类型)/area(按区域)/status(按状态)/all(全部)</param>
+        /// <returns>统计报表数据</returns>
+        [HttpGet("MerchantStatisticsReport")]
+        public async Task<IActionResult> GetMerchantStatisticsReport([FromQuery] string operatorAccount, [FromQuery] string dimension = "all")
+        {
+            try
+            {
+                _logger.LogInformation("开始生成商户统计报表：操作员 {OperatorAccount}, 统计维度 {Dimension}", operatorAccount, dimension);
+
+                // 验证操作员权限（需要管理员权限）
+                _logger.LogInformation("正在验证权限：操作员账号 '{OperatorAccount}'", operatorAccount);
+                
+                var operatorAccount_obj = await _accountContext.FindAccount(operatorAccount);
+                if (operatorAccount_obj == null)
+                {
+                    _logger.LogWarning("账号不存在：'{OperatorAccount}'", operatorAccount);
+                    return BadRequest(new { error = $"账号 '{operatorAccount}' 不存在" });
+                }
+                
+                _logger.LogInformation("找到账号：'{Account}', 权限等级：{Authority}", 
+                    operatorAccount_obj.ACCOUNT, operatorAccount_obj.AUTHORITY);
+                
+                var hasPermission = await _accountContext.CheckAuthority(operatorAccount, 2);
+                if (!hasPermission)
+                {
+                    _logger.LogWarning("权限验证失败：账号 '{Account}', 权限等级：{Authority}，要求权限等级 ≤ 2", 
+                        operatorAccount_obj.ACCOUNT, operatorAccount_obj.AUTHORITY);
+                    return BadRequest(new { error = $"权限不足，需要管理员权限查看统计报表。当前权限等级：{operatorAccount_obj.AUTHORITY}，要求：≤ 2" });
+                }
+                
+                _logger.LogInformation("权限验证成功：账号 '{Account}', 权限等级：{Authority}", 
+                    operatorAccount_obj.ACCOUNT, operatorAccount_obj.AUTHORITY);
+
+                var report = new
+                {
+                    reportTitle = "商户信息统计报表",
+                    generateTime = DateTime.Now,
+                    operatorAccount = operatorAccount,
+                    dimension = dimension,
+                    data = await GenerateReportData(dimension)
+                };
+
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "生成商户统计报表时发生异常");
+                return StatusCode(500, new { error = "生成报表失败", details = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 获取基础统计数据（无权限验证，用于仪表板）
+        /// </summary>
+        [HttpGet("BasicStatistics")]
+        public async Task<IActionResult> GetBasicStatistics()
+        {
+            try
+            {
+                _logger.LogInformation("获取基础统计数据");
+
+                var stats = await _storeContext.GetBasicStatistics();
+                
+                return Ok(new
+                {
+                    totalStores = stats.TotalStores,
+                    activeStores = stats.ActiveStores,
+                    vacantAreas = stats.VacantAreas,
+                    totalAreas = stats.TotalAreas,
+                    occupancyRate = stats.OccupancyRate,
+                    averageRent = stats.AverageRent
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "获取基础统计数据时发生异常");
+                return StatusCode(500, new { error = "获取统计数据失败", details = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 生成报表数据
+        /// </summary>
+        private async Task<object> GenerateReportData(string dimension)
+        {
+            switch (dimension.ToLower())
+            {
+                case "type":
+                    return await GenerateByTypeReport();
+                case "area":
+                    return await GenerateByAreaReport();
+                case "status":
+                    return await GenerateByStatusReport();
+                case "all":
+                default:
+                    return await GenerateCompleteReport();
+            }
+        }
+
+        /// <summary>
+        /// 按租户类型生成报表
+        /// </summary>
+        private async Task<object> GenerateByTypeReport()
+        {
+            var typeStats = await _storeContext.GetStoreStatisticsByType();
+            
+            return new
+            {
+                title = "按租户类型统计",
+                summary = new
+                {
+                    totalTypes = typeStats.Count,
+                    totalStores = typeStats.Sum(t => t.StoreCount),
+                    totalRevenue = typeStats.Sum(t => t.TotalRent)
+                },
+                details = typeStats.Select(t => new
+                {
+                    storeType = t.StoreType,
+                    storeCount = t.StoreCount,
+                    percentage = Math.Round((double)t.StoreCount / typeStats.Sum(x => x.StoreCount) * 100, 2),
+                    totalRent = t.TotalRent,
+                    averageRent = Math.Round(t.TotalRent / (t.StoreCount > 0 ? t.StoreCount : 1), 2),
+                    activeStores = t.ActiveStores,
+                    inactiveStores = t.StoreCount - t.ActiveStores
+                }).ToList()
+            };
+        }
+
+        /// <summary>
+        /// 按店面区域生成报表
+        /// </summary>
+        private async Task<object> GenerateByAreaReport()
+        {
+            var areaStats = await _storeContext.GetStoreStatisticsByArea();
+            
+            return new
+            {
+                title = "按店面区域统计",
+                summary = new
+                {
+                    totalAreas = areaStats.Count,
+                    occupiedAreas = areaStats.Count(a => a.IsOccupied),
+                    vacantAreas = areaStats.Count(a => !a.IsOccupied),
+                    occupancyRate = Math.Round((double)areaStats.Count(a => a.IsOccupied) / areaStats.Count * 100, 2)
+                },
+                details = areaStats.Select(a => new
+                {
+                    areaId = a.AreaId,
+                    areaSize = a.AreaSize,
+                    baseRent = a.BaseRent,
+                    rentStatus = a.RentStatus,
+                    isOccupied = a.IsOccupied,
+                    storeName = a.StoreName,
+                    tenantName = a.TenantName,
+                    storeType = a.StoreType,
+                    rentStart = a.RentStart?.ToString("yyyy-MM-dd"),
+                    rentEnd = a.RentEnd?.ToString("yyyy-MM-dd"),
+                    rentDuration = a.RentStart.HasValue && a.RentEnd.HasValue 
+                        ? (int)(a.RentEnd.Value - a.RentStart.Value).TotalDays 
+                        : 0
+                }).OrderBy(a => a.areaId).ToList()
+            };
+        }
+
+        /// <summary>
+        /// 按店面状态生成报表
+        /// </summary>
+        private async Task<object> GenerateByStatusReport()
+        {
+            var statusStats = await _storeContext.GetStoreStatisticsByStatus();
+            
+            return new
+            {
+                title = "按店面状态统计",
+                summary = new
+                {
+                    totalStatuses = statusStats.Count,
+                    totalStores = statusStats.Sum(s => s.StoreCount)
+                },
+                details = statusStats.Select(s => new
+                {
+                    storeStatus = s.StoreStatus,
+                    storeCount = s.StoreCount,
+                    percentage = Math.Round((double)s.StoreCount / statusStats.Sum(x => x.StoreCount) * 100, 2),
+                    averageRent = s.AverageRent,
+                    totalRent = s.TotalRent,
+                    statusDescription = GetStatusDescription(s.StoreStatus)
+                }).ToList()
+            };
+        }
+
+        /// <summary>
+        /// 生成完整报表
+        /// </summary>
+        private async Task<object> GenerateCompleteReport()
+        {
+            var basicStats = await _storeContext.GetBasicStatistics();
+            var typeReport = await GenerateByTypeReport();
+            var areaReport = await GenerateByAreaReport();
+            var statusReport = await GenerateByStatusReport();
+
+            return new
+            {
+                title = "商户信息完整统计报表",
+                overview = new
+                {
+                    totalStores = basicStats.TotalStores,
+                    activeStores = basicStats.ActiveStores,
+                    inactiveStores = basicStats.TotalStores - basicStats.ActiveStores,
+                    totalAreas = basicStats.TotalAreas,
+                    vacantAreas = basicStats.VacantAreas,
+                    occupiedAreas = basicStats.TotalAreas - basicStats.VacantAreas,
+                    occupancyRate = basicStats.OccupancyRate,
+                    averageRent = basicStats.AverageRent,
+                    totalRevenue = await CalculateTotalRevenue()
+                },
+                byType = typeReport,
+                byArea = areaReport,
+                byStatus = statusReport
+            };
+        }
+
+        /// <summary>
+        /// 计算总收入
+        /// </summary>
+        private async Task<decimal> CalculateTotalRevenue()
+        {
+            return await _storeContext.CalculateTotalRevenue();
+        }
+
+        /// <summary>
+        /// 获取状态描述
+        /// </summary>
+        private string GetStatusDescription(string status)
+        {
+            return status switch
+            {
+                "正常营业" => "店铺正常运营中",
+                "暂停营业" => "店铺暂时停业",
+                "维修中" => "店铺维修装修中",
+                "已退租" => "租约已结束",
+                "装修中" => "店铺装修中",
+                _ => "其他状态"
+            };
+        }
+
+        #endregion
 
         #endregion
     }
