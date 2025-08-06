@@ -151,6 +151,38 @@
     <div class="container">
         <h1>💰 租金收取管理系统测试</h1>
         
+        <div class="test-section" style="background-color: #e8f5e8; border: 1px solid #27ae60;">
+            <h2 style="color: #27ae60;">📋 测试数据说明</h2>
+            <p><strong>测试前请先执行 rent_collection_test_data.sql 初始化测试数据！</strong></p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
+                <div>
+                    <h4>测试店铺信息：</h4>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                        <li>6001 - 租金测试咖啡厅 (张老板) - ¥12,000/月</li>
+                        <li>6002 - 租金测试书店 (李老板) - ¥18,000/月</li>
+                        <li>6003 - 租金测试服装店 (王经理) - ¥15,000/月</li>
+                        <li>6004 - 租金测试餐厅 (赵老板) - ¥22,000/月</li>
+                        <li>6005 - 租金测试便利店 (钱经理) - ¥13,000/月</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>测试账号信息：</h4>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                        <li><strong>finance_admin</strong> - 财务管理员（权限1）</li>
+                        <li><strong>merchant_001</strong> - 商户账号（权限4，关联店铺6001）</li>
+                        <li><strong>admin</strong> - 系统管理员（权限0）</li>
+                    </ul>
+                    <h4>测试租金单状态：</h4>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                        <li>202412月：6001-6003 待缴纳</li>
+                        <li>202411月：6001-6002 已缴纳</li>
+                        <li>202410月：6004 逾期</li>
+                        <li>202409月：6005 预警</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
         <div class="test-section">
             <h2>🔧 系统状态检查</h2>
             <p>API地址：<span id="apiUrl">http://localhost:5263</span> <span id="apiStatus" class="status offline">离线</span></p>
@@ -178,11 +210,24 @@
             </div>
             <div class="form-group">
                 <label>商铺ID (可选):</label>
-                <input type="number" id="queryStoreId" placeholder="留空查询所有">
+                <select id="queryStoreId">
+                    <option value="">全部商铺</option>
+                    <option value="6001">6001 - 租金测试咖啡厅</option>
+                    <option value="6002">6002 - 租金测试书店</option>
+                    <option value="6003">6003 - 租金测试服装店</option>
+                    <option value="6004">6004 - 租金测试餐厅</option>
+                    <option value="6005">6005 - 租金测试便利店</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>查询账期 (可选):</label>
-                <input type="text" id="queryPeriod" placeholder="例如: 202412">
+                <select id="queryPeriod">
+                    <option value="">全部账期</option>
+                    <option value="202412">202412 - 2024年12月</option>
+                    <option value="202411">202411 - 2024年11月</option>
+                    <option value="202410">202410 - 2024年10月</option>
+                    <option value="202409">202409 - 2024年9月</option>
+                </select>
             </div>
             <button onclick="getRentBills()">查询租金单</button>
             <div id="queryResponse" class="result info"></div>
@@ -196,7 +241,13 @@
             <h2>💰 商户缴纳租金</h2>
             <div class="form-group">
                 <label>商铺ID:</label>
-                <input type="number" id="payStoreId" placeholder="例如: 1001" value="1001">
+                <select id="payStoreId">
+                    <option value="6001">6001 - 租金测试咖啡厅</option>
+                    <option value="6002">6002 - 租金测试书店</option>
+                    <option value="6003">6003 - 租金测试服装店</option>
+                    <option value="6004">6004 - 租金测试餐厅</option>
+                    <option value="6005">6005 - 租金测试便利店</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>缴费账期:</label>
@@ -214,11 +265,11 @@
             </div>
             <div class="form-group">
                 <label>支付凭证号 (可选):</label>
-                <input type="text" id="paymentReference" placeholder="例如: WX20241201123456789">
+                <input type="text" id="paymentReference" placeholder="例如: WX20241201123456789 或 TXN20241201001">
             </div>
             <div class="form-group">
                 <label>备注:</label>
-                <textarea id="paymentRemarks" rows="2" placeholder="例如: 2024年12月份店铺租金"></textarea>
+                <textarea id="paymentRemarks" rows="2" placeholder="例如: 2024年12月份店铺租金">2024年12月份店铺租金</textarea>
             </div>
             <button class="success" onclick="payRent()">缴纳租金</button>
             <div id="payResponse" class="result info"></div>
@@ -229,7 +280,13 @@
             <h2>✅ 财务确认支付</h2>
             <div class="form-group">
                 <label>商铺ID:</label>
-                <input type="number" id="confirmStoreId" placeholder="例如: 1001" value="1001">
+                <select id="confirmStoreId">
+                    <option value="6001">6001 - 租金测试咖啡厅</option>
+                    <option value="6002">6002 - 租金测试书店</option>
+                    <option value="6003">6003 - 租金测试服装店</option>
+                    <option value="6004">6004 - 租金测试餐厅</option>
+                    <option value="6005">6005 - 租金测试便利店</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>确认账期:</label>
@@ -241,7 +298,7 @@
             </div>
             <div class="form-group">
                 <label>确认备注:</label>
-                <textarea id="confirmRemarks" rows="2" placeholder="财务确认无误，支付凭证已核实"></textarea>
+                <textarea id="confirmRemarks" rows="2" placeholder="财务确认无误，支付凭证已核实">财务确认无误，支付凭证已核实</textarea>
             </div>
             <button class="warning" onclick="confirmPayment()">确认支付</button>
             <div id="confirmResponse" class="result info"></div>
@@ -288,14 +345,9 @@
             <div class="form-group">
                 <label>商户账号:</label>
                 <select id="merchantAccount">
-                    <option value="fashion_store">时尚女装精品店 (fashion_store)</option>
-                    <option value="mens_store">潮流男装旗舰店 (mens_store)</option>
-                    <option value="hotpot_store">川味香辣火锅 (hotpot_store)</option>
-                    <option value="canteen_store">粤式茶餐厅 (canteen_store)</option>
-                    <option value="vr_store">VR体验馆 (vr_store)</option>
-                    <option value="fresh_store">生鲜超市 (fresh_store)</option>
-                    <option value="import_store">进口食品专卖 (import_store)</option>
-                    <option value="phone_store">智能手机专卖店 (phone_store)</option>
+                    <option value="merchant_001">merchant_001 - 租金测试咖啡厅老板</option>
+                    <option value="admin">admin - 管理员账号（测试用）</option>
+                    <option value="finance_admin">finance_admin - 财务管理员</option>
                 </select>
             </div>
             <button onclick="getMyRentBills()">查询我的租金单</button>
@@ -310,6 +362,7 @@
             <h2>⚙️ 系统维护功能</h2>
             <button class="warning" onclick="updateOverdueStatus()">更新逾期状态</button>
             <button onclick="runCompleteTest()">完整功能测试</button>
+            <button class="success" onclick="runQuickTest()">快速测试（基于测试数据）</button>
             <div id="systemResult" class="result info"></div>
         </div>
     </div>
@@ -386,8 +439,10 @@
 
         async function getRentBills() {
             const operatorAccount = document.getElementById('operatorAccount').value;
-            const storeId = document.getElementById('queryStoreId').value;
-            const period = document.getElementById('queryPeriod').value;
+            const storeIdSelect = document.getElementById('queryStoreId');
+            const storeId = storeIdSelect.value;
+            const periodSelect = document.getElementById('queryPeriod');
+            const period = periodSelect.value;
             const resultElement = document.getElementById('queryResponse');
             
             if (!operatorAccount) {
@@ -438,7 +493,7 @@
             const resultElement = document.getElementById('payResponse');
             
             if (!storeId || !period) {
-                resultElement.textContent = '❌ 请输入商铺ID和缴费账期';
+                resultElement.textContent = '❌ 请选择商铺和缴费账期';
                 resultElement.className = 'result error';
                 resultElement.style.display = 'block';
                 return;
@@ -487,7 +542,7 @@
             const resultElement = document.getElementById('confirmResponse');
             
             if (!storeId || !period || !confirmedBy) {
-                resultElement.textContent = '❌ 请输入完整的确认信息';
+                resultElement.textContent = '❌ 请选择商铺、输入确认账期和确认人账号';
                 resultElement.className = 'result error';
                 resultElement.style.display = 'block';
                 return;
@@ -647,6 +702,48 @@
                 resultElement.className = 'result success';
             } catch (error) {
                 resultElement.textContent = `❌ 测试执行失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+
+        async function runQuickTest() {
+            const resultElement = document.getElementById('systemResult');
+            resultElement.textContent = '正在执行快速测试（基于测试数据）...\n';
+            resultElement.className = 'result info';
+            
+            try {
+                // 1. 设置查询参数并查询租金单
+                document.getElementById('operatorAccount').value = 'finance_admin';
+                document.getElementById('queryStoreId').value = '';
+                document.getElementById('queryPeriod').value = '202412';
+                resultElement.textContent += '1. 查询2024年12月租金单...\n';
+                await getRentBills();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 2. 查询商户租金单
+                document.getElementById('merchantAccount').value = 'merchant_001';
+                resultElement.textContent += '2. 查询商户租金单...\n';
+                await getMyRentBills();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 3. 模拟缴费操作（店铺6001）
+                document.getElementById('payStoreId').value = '6001';
+                document.getElementById('payPeriod').value = '202412';
+                document.getElementById('paymentMethod').value = '微信支付';
+                document.getElementById('paymentReference').value = 'WX' + Date.now();
+                resultElement.textContent += '3. 模拟店铺6001缴费...\n';
+                await payRent();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 4. 获取统计数据
+                document.getElementById('statsPeriod').value = '202412';
+                resultElement.textContent += '4. 获取租金收取统计...\n';
+                await getRentCollectionStatistics();
+                
+                resultElement.textContent = '✅ 快速测试完成！\n\n基于测试数据的快速功能验证已完成\n时间: ' + new Date().toLocaleString();
+                resultElement.className = 'result success';
+            } catch (error) {
+                resultElement.textContent = `❌ 快速测试失败: ${error.message}`;
                 resultElement.className = 'result error';
             }
         }
