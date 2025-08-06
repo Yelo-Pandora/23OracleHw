@@ -1286,10 +1286,11 @@ namespace oracle_backend.Controllers
                     generateTime = DateTime.Now,
                     bills = bills.Select(b => new
                     {
-                        billId = b.BILL_ID,
-                        storeId = b.STORE_ID,
-                        totalAmount = b.TOTAL_AMOUNT,
-                        dueDate = b.DUE_DATE
+                        storeId = b.StoreId,
+                        storeName = b.StoreName,
+                        totalAmount = b.TotalAmount,
+                        dueDate = b.DueDate,
+                        billStatus = b.BillStatus
                     })
                 });
             }
@@ -1343,22 +1344,22 @@ namespace oracle_backend.Controllers
         {
             try
             {
-                _logger.LogInformation("处理租金支付：账单ID {BillId}, 支付方式 {PaymentMethod}", 
-                    request.BillId, request.PaymentMethod);
+                _logger.LogInformation("处理租金支付：商铺ID {StoreId}, 支付方式 {PaymentMethod}", 
+                    request.StoreId, request.PaymentMethod);
 
-                var success = await _storeContext.ProcessRentPayment(request.BillId, request);
+                var success = await _storeContext.ProcessRentPayment(request);
 
                 if (!success)
                 {
-                    return BadRequest(new { error = "支付失败，账单不存在或已经支付" });
+                    return BadRequest(new { error = "支付失败，商铺不存在或租金已经支付" });
                 }
 
-                _logger.LogInformation("租金支付成功：账单ID {BillId}", request.BillId);
+                _logger.LogInformation("租金支付成功：商铺ID {StoreId}", request.StoreId);
 
                 return Ok(new
                 {
                     message = "租金支付成功",
-                    billId = request.BillId,
+                    storeId = request.StoreId,
                     paymentMethod = request.PaymentMethod,
                     paymentTime = DateTime.Now,
                     status = "已缴纳"
@@ -1379,8 +1380,8 @@ namespace oracle_backend.Controllers
         {
             try
             {
-                _logger.LogInformation("财务确认支付：账单ID {BillId}, 确认人 {ConfirmedBy}", 
-                    request.BillId, request.ConfirmedBy);
+                _logger.LogInformation("财务确认支付：商铺ID {StoreId}, 确认人 {ConfirmedBy}", 
+                    request.StoreId, request.ConfirmedBy);
 
                 // 验证确认人权限（需要财务权限）
                 var confirmer = await _accountContext.FindAccount(request.ConfirmedBy);
@@ -1395,28 +1396,28 @@ namespace oracle_backend.Controllers
                     return BadRequest(new { error = "权限不足，需要财务权限确认支付" });
                 }
 
-                var success = await _storeContext.ConfirmPayment(request.BillId, request);
+                var success = await _storeContext.ConfirmPayment(request);
 
                 if (!success)
                 {
-                    return BadRequest(new { error = "确认失败，账单不存在" });
+                    return BadRequest(new { error = "确认失败，商铺不存在或租金未缴纳" });
                 }
 
-                _logger.LogInformation("支付确认成功：账单ID {BillId}, 确认人 {ConfirmedBy}", 
-                    request.BillId, request.ConfirmedBy);
+                _logger.LogInformation("支付确认成功：商铺ID {StoreId}, 确认人 {ConfirmedBy}", 
+                    request.StoreId, request.ConfirmedBy);
 
                 return Ok(new
                 {
                     message = "支付确认成功",
-                    billId = request.BillId,
+                    storeId = request.StoreId,
                     confirmedBy = request.ConfirmedBy,
                     confirmedTime = DateTime.Now
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "确认支付时发生异常");
-                return StatusCode(500, new { error = "确认支付失败", details = ex.Message });
+                _logger.LogError(ex, "财务确认支付时发生异常");
+                return StatusCode(500, new { error = "确认失败", details = ex.Message });
             }
         }
 

@@ -1,95 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace oracle_backend.Models
 {
     /// <summary>
-    /// 租金单表 - 记录商户租金收取信息
-    /// </summary>
-    [Table("RENT_BILL")]
-    public class RentBill
-    {
-        [Key]
-        public int BILL_ID { get; set; }
-
-        /// <summary>
-        /// 店铺ID
-        /// </summary>
-        public int STORE_ID { get; set; }
-
-        /// <summary>
-        /// 账期年月 (格式: YYYYMM)
-        /// </summary>
-        public string BILL_PERIOD { get; set; } = string.Empty;
-
-        /// <summary>
-        /// 基础租金
-        /// </summary>
-        public decimal BASE_RENT { get; set; }
-
-        /// <summary>
-        /// 租用月数
-        /// </summary>
-        public int RENT_MONTHS { get; set; }
-
-        /// <summary>
-        /// 总租金金额
-        /// </summary>
-        public decimal TOTAL_AMOUNT { get; set; }
-
-        /// <summary>
-        /// 账单状态：待缴纳、已缴纳、逾期、预警
-        /// </summary>
-        public string BILL_STATUS { get; set; } = "待缴纳";
-
-        /// <summary>
-        /// 生成时间
-        /// </summary>
-        public DateTime GENERATE_TIME { get; set; }
-
-        /// <summary>
-        /// 缴费截止时间
-        /// </summary>
-        public DateTime DUE_DATE { get; set; }
-
-        /// <summary>
-        /// 支付时间
-        /// </summary>
-        public DateTime? PAYMENT_TIME { get; set; }
-
-        /// <summary>
-        /// 支付方式：现金、银行转账、支付宝、微信
-        /// </summary>
-        public string? PAYMENT_METHOD { get; set; }
-
-        /// <summary>
-        /// 支付流水号
-        /// </summary>
-        public string? PAYMENT_REFERENCE { get; set; }
-
-        /// <summary>
-        /// 确认人员账号
-        /// </summary>
-        public string? CONFIRMED_BY { get; set; }
-
-        /// <summary>
-        /// 确认时间
-        /// </summary>
-        public DateTime? CONFIRMED_TIME { get; set; }
-
-        /// <summary>
-        /// 备注信息
-        /// </summary>
-        public string? REMARKS { get; set; }
-
-        // 导航属性
-        [ForeignKey("STORE_ID")]
-        public Store? StoreNavigation { get; set; }
-    }
-
-    /// <summary>
-    /// 租金收取统计数据模型
+    /// 租金收取统计数据模型 - 基于现有表结构的虚拟租金单
+    /// 使用STORE、RETAIL_AREA、RENT_STORE表组合实现租金管理
     /// </summary>
     public class RentCollectionStatistics
     {
@@ -104,12 +20,39 @@ namespace oracle_backend.Models
     }
 
     /// <summary>
+    /// 虚拟租金单数据模型 - 基于现有表结构计算生成
+    /// </summary>
+    public class VirtualRentBill
+    {
+        public int StoreId { get; set; }
+        public string StoreName { get; set; } = string.Empty;
+        public string TenantName { get; set; } = string.Empty;
+        public string BillPeriod { get; set; } = string.Empty;
+        public decimal BaseRent { get; set; }
+        public int RentMonths { get; set; } = 1;
+        public decimal TotalAmount { get; set; }
+        public string BillStatus { get; set; } = "待缴纳";
+        public DateTime GenerateTime { get; set; }
+        public DateTime DueDate { get; set; }
+        public DateTime? PaymentTime { get; set; }
+        public string? PaymentMethod { get; set; }
+        public string? PaymentReference { get; set; }
+        public string? ConfirmedBy { get; set; }
+        public DateTime? ConfirmedTime { get; set; }
+        public string? Remarks { get; set; }
+        public int DaysOverdue { get; set; }
+    }
+
+    /// <summary>
     /// 租金缴纳请求DTO
     /// </summary>
     public class PayRentRequest
     {
         [Required]
-        public int BillId { get; set; }
+        public int StoreId { get; set; }
+
+        [Required]
+        public string BillPeriod { get; set; } = string.Empty;
 
         [Required]
         public string PaymentMethod { get; set; } = string.Empty;
@@ -125,7 +68,10 @@ namespace oracle_backend.Models
     public class ConfirmPaymentRequest
     {
         [Required]
-        public int BillId { get; set; }
+        public int StoreId { get; set; }
+
+        [Required]
+        public string BillPeriod { get; set; } = string.Empty;
 
         [Required]
         public string ConfirmedBy { get; set; } = string.Empty;
@@ -147,27 +93,17 @@ namespace oracle_backend.Models
     }
 
     /// <summary>
-    /// 租金单详情响应DTO
+    /// 店铺租金状态扩展模型 - 用于存储租金相关状态
+    /// 利用STORE表的现有字段或扩展逻辑
     /// </summary>
-    public class RentBillDetailResponse
+    public class StoreRentStatus
     {
-        public int BillId { get; set; }
         public int StoreId { get; set; }
-        public string StoreName { get; set; } = string.Empty;
-        public string TenantName { get; set; } = string.Empty;
-        public string BillPeriod { get; set; } = string.Empty;
-        public decimal BaseRent { get; set; }
-        public int RentMonths { get; set; }
-        public decimal TotalAmount { get; set; }
-        public string BillStatus { get; set; } = string.Empty;
-        public DateTime GenerateTime { get; set; }
-        public DateTime DueDate { get; set; }
-        public DateTime? PaymentTime { get; set; }
-        public string? PaymentMethod { get; set; }
-        public string? PaymentReference { get; set; }
-        public string? ConfirmedBy { get; set; }
-        public DateTime? ConfirmedTime { get; set; }
+        public string LastPaymentPeriod { get; set; } = string.Empty;
+        public DateTime? LastPaymentTime { get; set; }
+        public string? LastPaymentMethod { get; set; }
+        public string RentStatus { get; set; } = "正常"; // 正常、逾期、预警
+        public int OverdueDays { get; set; } = 0;
         public string? Remarks { get; set; }
-        public int DaysOverdue { get; set; }
     }
 }

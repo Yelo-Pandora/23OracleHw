@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商户租金收取功能测试</title>
+    <title>租金收取管理系统测试 - Oracle商场管理系统</title>
     <style>
         body {
             font-family: 'Microsoft YaHei', Arial, sans-serif;
@@ -149,7 +149,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>💰 商户租金收取功能测试</h1>
+        <h1>💰 租金收取管理系统测试</h1>
         
         <div class="test-section">
             <h2>🔧 系统状态检查</h2>
@@ -165,8 +165,8 @@
                 <label>账期 (YYYYMM):</label>
                 <input type="text" id="billPeriod" value="202412" placeholder="如: 202412">
             </div>
-            <button class="success" onclick="generateMonthlyBills()">生成租金单</button>
-            <div id="generateResult" class="result info"></div>
+            <button class="success" onclick="generateMonthlyRentBills()">生成租金单</button>
+            <div id="generateResponse" class="result info"></div>
         </div>
 
         <!-- 查询租金单 -->
@@ -174,76 +174,77 @@
             <h2>🔍 查询租金单</h2>
             <div class="form-group">
                 <label>操作员账号:</label>
-                <select id="operatorAccount">
-                    <option value="admin">admin (系统管理员)</option>
-                    <option value="finance_admin">finance_admin (财务管理员)</option>
-                </select>
+                <input type="text" id="operatorAccount" placeholder="例如: finance_admin" value="finance_admin">
             </div>
             <div class="form-group">
-                <label>账单状态:</label>
-                <select id="billStatus">
-                    <option value="">全部状态</option>
-                    <option value="待缴纳">待缴纳</option>
-                    <option value="已缴纳">已缴纳</option>
-                    <option value="逾期">逾期</option>
-                    <option value="预警">预警</option>
-                </select>
+                <label>商铺ID (可选):</label>
+                <input type="number" id="queryStoreId" placeholder="留空查询所有">
             </div>
             <div class="form-group">
-                <label>账期:</label>
-                <input type="text" id="queryBillPeriod" placeholder="如: 202412">
+                <label>查询账期 (可选):</label>
+                <input type="text" id="queryPeriod" placeholder="例如: 202412">
             </div>
-            <button onclick="queryRentBills()">查询租金单</button>
-            <div id="queryResult" class="result info"></div>
-            <div id="billsList" style="margin-top: 15px;">
+            <button onclick="getRentBills()">查询租金单</button>
+            <div id="queryResponse" class="result info"></div>
+            <div id="billsTable" style="margin-top: 15px;">
                 <div style="color: #666; text-align: center; padding: 15px;">点击"查询租金单"查看数据</div>
             </div>
         </div>
 
-        <!-- 租金支付测试 -->
+        <!-- 商户缴纳租金 -->
         <div class="test-section">
-            <h2>💳 租金支付测试</h2>
+            <h2>💰 商户缴纳租金</h2>
             <div class="form-group">
-                <label>账单ID:</label>
-                <input type="number" id="payBillId" placeholder="输入账单ID">
+                <label>商铺ID:</label>
+                <input type="number" id="payStoreId" placeholder="例如: 1001" value="1001">
+            </div>
+            <div class="form-group">
+                <label>缴费账期:</label>
+                <input type="text" id="payPeriod" placeholder="例如: 202412" value="202412">
             </div>
             <div class="form-group">
                 <label>支付方式:</label>
                 <select id="paymentMethod">
-                    <option value="银行转账">银行转账</option>
+                    <option value="微信支付">微信支付</option>
                     <option value="支付宝">支付宝</option>
-                    <option value="微信">微信</option>
+                    <option value="银行转账">银行转账</option>
                     <option value="现金">现金</option>
+                    <option value="POS刷卡">POS刷卡</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>支付流水号:</label>
-                <input type="text" id="paymentReference" placeholder="支付流水号（可选）">
+                <label>支付凭证号 (可选):</label>
+                <input type="text" id="paymentReference" placeholder="例如: WX20241201123456789">
             </div>
-            <button class="success" onclick="payRent()">支付租金</button>
-            <div id="paymentResult" class="result info"></div>
+            <div class="form-group">
+                <label>备注:</label>
+                <textarea id="paymentRemarks" rows="2" placeholder="例如: 2024年12月份店铺租金"></textarea>
+            </div>
+            <button class="success" onclick="payRent()">缴纳租金</button>
+            <div id="payResponse" class="result info"></div>
         </div>
 
         <!-- 财务确认支付 -->
         <div class="test-section">
             <h2>✅ 财务确认支付</h2>
             <div class="form-group">
-                <label>账单ID:</label>
-                <input type="number" id="confirmBillId" placeholder="输入账单ID">
+                <label>商铺ID:</label>
+                <input type="number" id="confirmStoreId" placeholder="例如: 1001" value="1001">
             </div>
             <div class="form-group">
-                <label>确认人:</label>
-                <select id="confirmedBy">
-                    <option value="finance_admin">finance_admin (财务管理员)</option>
-                    <option value="admin">admin (系统管理员)</option>
-                </select>
+                <label>确认账期:</label>
+                <input type="text" id="confirmPeriod" placeholder="例如: 202412" value="202412">
+            </div>
+            <div class="form-group">
+                <label>确认人账号:</label>
+                <input type="text" id="confirmedBy" placeholder="例如: finance_admin" value="finance_admin">
             </div>
             <div class="form-group">
                 <label>确认备注:</label>
-                <input type="text" id="confirmRemarks" placeholder="确认备注（可选）">
+                <textarea id="confirmRemarks" rows="2" placeholder="财务确认无误，支付凭证已核实"></textarea>
             </div>
-            <button class="warning" onclick="confirmPayment()">财务确认</button>
-            <div id="confirmResult" class="result info"></div>
+            <button class="warning" onclick="confirmPayment()">确认支付</button>
+            <div id="confirmResponse" class="result info"></div>
         </div>
 
         <!-- 租金收取统计 -->
@@ -253,7 +254,7 @@
                 <label>统计账期:</label>
                 <input type="text" id="statsPeriod" value="202412" placeholder="如: 202412">
             </div>
-            <button onclick="getRentStatistics()">获取统计</button>
+            <button onclick="getRentCollectionStatistics()">获取统计</button>
             <div id="statisticsDisplay" style="display: none; margin-top: 15px;">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                     <div style="text-align: center; padding: 15px; background: #3498db; color: white; border-radius: 5px;">
@@ -278,18 +279,30 @@
                     </div>
                 </div>
             </div>
-            <div id="statisticsResult" class="result info"></div>
+            <div id="statsResponse" class="result info"></div>
         </div>
 
-        <!-- 商户端功能测试 -->
+        <!-- 商户查询租金单 -->
         <div class="test-section">
-            <h2>👤 商户端功能测试</h2>
+            <h2>👤 商户查询租金单</h2>
             <div class="form-group">
                 <label>商户账号:</label>
-                <input type="text" id="merchantAccount" value="merchant_001" placeholder="商户账号">
+                <select id="merchantAccount">
+                    <option value="fashion_store">时尚女装精品店 (fashion_store)</option>
+                    <option value="mens_store">潮流男装旗舰店 (mens_store)</option>
+                    <option value="hotpot_store">川味香辣火锅 (hotpot_store)</option>
+                    <option value="canteen_store">粤式茶餐厅 (canteen_store)</option>
+                    <option value="vr_store">VR体验馆 (vr_store)</option>
+                    <option value="fresh_store">生鲜超市 (fresh_store)</option>
+                    <option value="import_store">进口食品专卖 (import_store)</option>
+                    <option value="phone_store">智能手机专卖店 (phone_store)</option>
+                </select>
             </div>
-            <button onclick="getMyRentBills()">查看我的账单</button>
-            <div id="merchantResult" class="result info"></div>
+            <button onclick="getMyRentBills()">查询我的租金单</button>
+            <div id="myBillsResponse" class="result info"></div>
+            <div id="myBillsTable" style="margin-top: 15px;">
+                <div style="color: #666; text-align: center; padding: 15px;">点击"查询我的租金单"查看数据</div>
+            </div>
         </div>
 
         <!-- 系统维护功能 -->
@@ -335,10 +348,10 @@
                 resultElement.className = 'result error';
             }
         }
-        
-        async function generateMonthlyBills() {
+
+        async function generateMonthlyRentBills() {
             const billPeriod = document.getElementById('billPeriod').value;
-            const resultElement = document.getElementById('generateResult');
+            const resultElement = document.getElementById('generateResponse');
             
             if (!billPeriod || billPeriod.length !== 6) {
                 resultElement.textContent = '❌ 账期格式错误，应为YYYYMM格式';
@@ -349,6 +362,7 @@
             try {
                 resultElement.textContent = '正在生成月度租金单...';
                 resultElement.className = 'result info';
+                resultElement.style.display = 'block';
                 
                 const response = await fetch(`${API_BASE}/GenerateMonthlyRentBills`, {
                     method: 'POST',
@@ -370,21 +384,29 @@
             }
         }
 
-        async function queryRentBills() {
+        async function getRentBills() {
             const operatorAccount = document.getElementById('operatorAccount').value;
-            const billStatus = document.getElementById('billStatus').value;
-            const billPeriod = document.getElementById('queryBillPeriod').value;
-            const resultElement = document.getElementById('queryResult');
+            const storeId = document.getElementById('queryStoreId').value;
+            const period = document.getElementById('queryPeriod').value;
+            const resultElement = document.getElementById('queryResponse');
             
+            if (!operatorAccount) {
+                resultElement.textContent = '❌ 请输入操作员账号';
+                resultElement.className = 'result error';
+                resultElement.style.display = 'block';
+                return;
+            }
+
             const requestData = {
                 operatorAccount: operatorAccount,
-                billStatus: billStatus || null,
-                billPeriod: billPeriod || null
+                storeId: storeId ? parseInt(storeId) : null,
+                billPeriod: period || null
             };
 
             try {
                 resultElement.textContent = '正在查询租金单...';
                 resultElement.className = 'result info';
+                resultElement.style.display = 'block';
                 
                 const response = await fetch(`${API_BASE}/GetRentBills`, {
                     method: 'POST',
@@ -396,7 +418,7 @@
                 if (response.ok) {
                     resultElement.textContent = '✅ 查询成功！\n\n' + JSON.stringify(data, null, 2);
                     resultElement.className = 'result success';
-                    displayBillsList(data.bills || data);
+                    displayBillsList(data.bills || data, 'billsTable');
                 } else {
                     resultElement.textContent = '❌ ' + (data.error || '查询失败') + '\n\n' + JSON.stringify(data, null, 2);
                     resultElement.className = 'result error';
@@ -408,26 +430,32 @@
         }
 
         async function payRent() {
-            const billId = document.getElementById('payBillId').value;
+            const storeId = document.getElementById('payStoreId').value;
+            const period = document.getElementById('payPeriod').value;
             const paymentMethod = document.getElementById('paymentMethod').value;
             const paymentReference = document.getElementById('paymentReference').value;
-            const resultElement = document.getElementById('paymentResult');
+            const remarks = document.getElementById('paymentRemarks').value;
+            const resultElement = document.getElementById('payResponse');
             
-            if (!billId) {
-                resultElement.textContent = '❌ 请输入账单ID';
+            if (!storeId || !period) {
+                resultElement.textContent = '❌ 请输入商铺ID和缴费账期';
                 resultElement.className = 'result error';
+                resultElement.style.display = 'block';
                 return;
             }
 
             const requestData = {
-                billId: parseInt(billId),
+                storeId: parseInt(storeId),
+                billPeriod: period,
                 paymentMethod: paymentMethod,
-                paymentReference: paymentReference || null
+                paymentReference: paymentReference || null,
+                remarks: remarks || null
             };
 
             try {
                 resultElement.textContent = '正在处理支付...';
                 resultElement.className = 'result info';
+                resultElement.style.display = 'block';
                 
                 const response = await fetch(`${API_BASE}/PayRent`, {
                     method: 'POST',
@@ -440,7 +468,7 @@
                     resultElement.textContent = '✅ 支付成功！\n\n' + JSON.stringify(data, null, 2);
                     resultElement.className = 'result success';
                     // 自动刷新租金单列表
-                    queryRentBills();
+                    getRentBills();
                 } else {
                     resultElement.textContent = '❌ ' + (data.error || '支付失败') + '\n\n' + JSON.stringify(data, null, 2);
                     resultElement.className = 'result error';
@@ -452,19 +480,22 @@
         }
 
         async function confirmPayment() {
-            const billId = document.getElementById('confirmBillId').value;
+            const storeId = document.getElementById('confirmStoreId').value;
+            const period = document.getElementById('confirmPeriod').value;
             const confirmedBy = document.getElementById('confirmedBy').value;
             const remarks = document.getElementById('confirmRemarks').value;
-            const resultElement = document.getElementById('confirmResult');
+            const resultElement = document.getElementById('confirmResponse');
             
-            if (!billId) {
-                resultElement.textContent = '❌ 请输入账单ID';
+            if (!storeId || !period || !confirmedBy) {
+                resultElement.textContent = '❌ 请输入完整的确认信息';
                 resultElement.className = 'result error';
+                resultElement.style.display = 'block';
                 return;
             }
 
             const requestData = {
-                billId: parseInt(billId),
+                storeId: parseInt(storeId),
+                billPeriod: period,
                 confirmedBy: confirmedBy,
                 remarks: remarks || null
             };
@@ -472,6 +503,7 @@
             try {
                 resultElement.textContent = '正在确认支付...';
                 resultElement.className = 'result info';
+                resultElement.style.display = 'block';
                 
                 const response = await fetch(`${API_BASE}/ConfirmPayment`, {
                     method: 'POST',
@@ -484,7 +516,7 @@
                     resultElement.textContent = '✅ 确认成功！\n\n' + JSON.stringify(data, null, 2);
                     resultElement.className = 'result success';
                     // 自动刷新租金单列表
-                    queryRentBills();
+                    getRentBills();
                 } else {
                     resultElement.textContent = '❌ ' + (data.error || '确认失败') + '\n\n' + JSON.stringify(data, null, 2);
                     resultElement.className = 'result error';
@@ -495,19 +527,21 @@
             }
         }
 
-        async function getRentStatistics() {
+        async function getRentCollectionStatistics() {
             const period = document.getElementById('statsPeriod').value;
-            const resultElement = document.getElementById('statisticsResult');
+            const resultElement = document.getElementById('statsResponse');
             
             if (!period) {
                 resultElement.textContent = '❌ 请输入统计账期';
                 resultElement.className = 'result error';
+                resultElement.style.display = 'block';
                 return;
             }
 
             try {
                 resultElement.textContent = '正在获取统计数据...';
                 resultElement.className = 'result info';
+                resultElement.style.display = 'block';
                 
                 const response = await fetch(`${API_BASE}/GetRentCollectionStatistics?period=${period}`);
 
@@ -528,17 +562,19 @@
 
         async function getMyRentBills() {
             const merchantAccount = document.getElementById('merchantAccount').value;
-            const resultElement = document.getElementById('merchantResult');
+            const resultElement = document.getElementById('myBillsResponse');
             
             if (!merchantAccount) {
-                resultElement.textContent = '❌ 请输入商户账号';
+                resultElement.textContent = '❌ 请选择商户账号';
                 resultElement.className = 'result error';
+                resultElement.style.display = 'block';
                 return;
             }
 
             try {
                 resultElement.textContent = '正在查询商户租金单...';
                 resultElement.className = 'result info';
+                resultElement.style.display = 'block';
                 
                 const response = await fetch(`${API_BASE}/GetMyRentBills?merchantAccount=${merchantAccount}`);
 
@@ -546,6 +582,7 @@
                 if (response.ok) {
                     resultElement.textContent = '✅ 查询成功！\n\n' + JSON.stringify(data, null, 2);
                     resultElement.className = 'result success';
+                    displayBillsList(data.bills || data, 'myBillsTable');
                 } else {
                     resultElement.textContent = '❌ ' + (data.error || '查询失败') + '\n\n' + JSON.stringify(data, null, 2);
                     resultElement.className = 'result error';
@@ -589,17 +626,17 @@
             try {
                 // 1. 生成租金单
                 resultElement.textContent += '1. 生成租金单...\n';
-                await generateMonthlyBills();
+                await generateMonthlyRentBills();
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 // 2. 查询租金单
                 resultElement.textContent += '2. 查询租金单...\n';
-                await queryRentBills();
+                await getRentBills();
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 // 3. 获取统计数据
                 resultElement.textContent += '3. 获取统计数据...\n';
-                await getRentStatistics();
+                await getRentCollectionStatistics();
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 // 4. 更新逾期状态
@@ -614,8 +651,8 @@
             }
         }
 
-        function displayBillsList(bills) {
-            const billsList = document.getElementById('billsList');
+        function displayBillsList(bills, containerId) {
+            const billsList = document.getElementById(containerId);
             
             if (!bills || bills.length === 0) {
                 billsList.innerHTML = '<div style="color: #666; text-align: center; padding: 15px;">暂无租金单数据</div>';
@@ -625,15 +662,16 @@
             let html = '';
             bills.forEach(bill => {
                 // 处理大小写字段名兼容性
-                const billId = bill.BillId || bill.billId;
                 const storeId = bill.StoreId || bill.storeId;
                 const storeName = bill.StoreName || bill.storeName;
                 const tenantName = bill.TenantName || bill.tenantName;
                 const billPeriod = bill.BillPeriod || bill.billPeriod;
                 const billStatus = bill.BillStatus || bill.billStatus;
-                const totalAmount = bill.TotalAmount || bill.totalAmount || bill.amount;
+                const baseRent = bill.BaseRent || bill.baseRent || 0;
+                const totalAmount = bill.TotalAmount || bill.totalAmount || bill.amount || 0;
                 const dueDate = bill.DueDate || bill.dueDate;
                 const paymentTime = bill.PaymentTime || bill.paymentTime;
+                const paymentMethod = bill.PaymentMethod || bill.paymentMethod;
                 const daysOverdue = bill.DaysOverdue || bill.daysOverdue;
                 
                 const statusClass = getStatusClass(billStatus);
@@ -652,10 +690,12 @@
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; font-size: 12px; color: #666;">
-                            <div>账单ID: ${billId}</div>
-                            <div>金额: ¥${totalAmount ? totalAmount.toLocaleString() : '0'}</div>
+                            <div>商铺ID: ${storeId}</div>
+                            <div>基础租金: ¥${baseRent ? baseRent.toLocaleString() : '0'}</div>
+                            <div>总金额: ¥${totalAmount ? totalAmount.toLocaleString() : '0'}</div>
                             <div>截止: ${dueDate ? new Date(dueDate).toLocaleDateString() : '未知'}</div>
                             <div>${paymentTime ? `支付: ${new Date(paymentTime).toLocaleDateString()}` : ''}</div>
+                            <div>${paymentMethod ? `方式: ${paymentMethod}` : ''}</div>
                         </div>
                     </div>
                 `;
@@ -672,6 +712,7 @@
             const paidBills = stats.PaidBills || stats.paidBills || 0;
             const overdueBills = stats.OverdueBills || stats.overdueBills || 0;
             const totalAmount = stats.TotalAmount || stats.totalAmount || 0;
+            const paidAmount = stats.PaidAmount || stats.paidAmount || 0;
             const collectionRate = stats.CollectionRate || stats.collectionRate || 0;
             
             document.getElementById('totalBills').textContent = totalBills;
