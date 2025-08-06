@@ -532,6 +532,242 @@ namespace oracle_backend.Dbcontexts
             };
         }
 
+        /// <summary>
+        /// 获取租金收缴明细数据
+        /// </summary>
+        public async Task<List<RentCollectionDetail>> GetRentCollectionDetails(string period)
+        {
+            var details = new List<RentCollectionDetail>();
+            
+            var storeData = await (from store in STORE
+                                 join rentStore in RENT_STORE on store.STORE_ID equals rentStore.STORE_ID
+                                 join retailArea in RETAIL_AREA on rentStore.AREA_ID equals retailArea.AREA_ID
+                                 where store.STORE_STATUS == "正常营业"
+                                 select new
+                                 {
+                                     StoreId = store.STORE_ID,
+                                     StoreName = store.STORE_NAME,
+                                     TenantName = store.TENANT_NAME,
+                                     AreaId = retailArea.AREA_ID,
+                                     BaseRent = retailArea.BASE_RENT,
+                                     RentStart = store.RENT_START,
+                                     RentEnd = store.RENT_END,
+                                     ContactInfo = store.CONTACT_INFO
+                                 }).ToListAsync();
+
+            foreach (var store in storeData)
+            {
+                // 模拟收缴明细数据
+                var random = new Random(store.StoreId + int.Parse(period));
+                var status = GenerateCollectionStatus(random);
+                
+                details.Add(new RentCollectionDetail
+                {
+                    Period = period,
+                    StoreId = store.StoreId,
+                    StoreName = store.StoreName,
+                    TenantName = store.TenantName,
+                    AreaId = store.AreaId,
+                    BaseRent = (decimal)store.BaseRent,
+                    ActualAmount = (decimal)store.BaseRent,
+                    Status = status.Status,
+                    DueDate = new DateTime(int.Parse(period.Substring(0, 4)), int.Parse(period.Substring(4, 2)), 15),
+                    PaymentDate = status.PaymentDate,
+                    PaymentMethod = status.PaymentMethod ?? "",
+                    DaysOverdue = status.DaysOverdue,
+                    ContactInfo = store.ContactInfo,
+                    Remarks = status.Remarks
+                });
+            }
+
+            return details;
+        }
+
+        /// <summary>
+        /// 获取历史收缴趋势数据
+        /// </summary>
+        public async Task<List<RentTrendData>> GetRentTrendAnalysis(string startPeriod, string endPeriod)
+        {
+            var trendData = new List<RentTrendData>();
+            
+            // 生成趋势数据
+            int startYear = int.Parse(startPeriod.Substring(0, 4));
+            int startMonth = int.Parse(startPeriod.Substring(4, 2));
+            int endYear = int.Parse(endPeriod.Substring(0, 4));
+            int endMonth = int.Parse(endPeriod.Substring(4, 2));
+            
+            var currentDate = new DateTime(startYear, startMonth, 1);
+            var endDate = new DateTime(endYear, endMonth, 1);
+            
+            while (currentDate <= endDate)
+            {
+                var periodStr = currentDate.ToString("yyyyMM");
+                var stats = await GetRentCollectionStatistics(periodStr);
+                
+                trendData.Add(new RentTrendData
+                {
+                    Period = periodStr,
+                    Year = currentDate.Year,
+                    Month = currentDate.Month,
+                    TotalAmount = stats.TotalAmount,
+                    CollectedAmount = stats.PaidAmount,
+                    CollectionRate = stats.CollectionRate,
+                    TotalBills = stats.TotalBills,
+                    PaidBills = stats.PaidBills,
+                    OverdueBills = stats.OverdueBills
+                });
+                
+                currentDate = currentDate.AddMonths(1);
+            }
+            
+            return trendData;
+        }
+
+        /// <summary>
+        /// 获取月度趋势数据（单个月份的详细分析）
+        /// </summary>
+        public async Task<object> GetMonthlyTrend(string period)
+        {
+            var stats = await GetRentCollectionStatistics(period);
+            var previousMonth = GetPreviousMonth(period);
+            var previousStats = await GetRentCollectionStatistics(previousMonth);
+            
+            // 计算环比变化
+            var amountChange = (decimal)(stats.TotalAmount - previousStats.TotalAmount);
+            var rateChange = stats.CollectionRate - previousStats.CollectionRate;
+            
+            return new
+            {
+                currentPeriod = period,
+                previousPeriod = previousMonth,
+                currentStats = stats,
+                changes = new
+                {
+                    amountChange = amountChange,
+                    rateChange = rateChange,
+                    amountChangePercent = previousStats.TotalAmount != 0 ? Math.Round((double)(amountChange / previousStats.TotalAmount) * 100, 2) : 0,
+                    rateChangePercent = Math.Round(rateChange, 2)
+                },
+                trend = new
+                {
+                    amountTrend = amountChange >= 0 ? "上升" : "下降",
+                    rateTrend = rateChange >= 0 ? "改善" : "恶化"
+                }
+            };
+        }
+
+        /// <summary>
+        /// 生成收缴状态（模拟数据）
+        /// </summary>
+        private (string Status, DateTime? PaymentDate, string? PaymentMethod, int DaysOverdue, string Remarks) GenerateCollectionStatus(Random random)
+        {
+            var statusRandom = random.NextDouble();
+            
+            if (statusRandom < 0.65) // 65% 已缴纳
+            {
+                var paymentMethods = new[] { "微信支付", "支付宝", "银行转账", "现金", "POS刷卡" };
+                return (
+                    Status: "已缴纳",
+                    PaymentDate: DateTime.Now.AddDays(-random.Next(1, 30)),
+                    PaymentMethod: paymentMethods[random.Next(paymentMethods.Length)],
+                    DaysOverdue: 0,
+                    Remarks: "正常缴纳"
+                );
+            }
+            else if (statusRandom < 0.8) // 15% 待缴纳
+            {
+                return (
+                    Status: "待缴纳",
+                    PaymentDate: null,
+                    PaymentMethod: null,
+                    DaysOverdue: 0,
+                    Remarks: "在正常缴费期内"
+                );
+            }
+            else if (statusRandom < 0.95) // 15% 逾期
+            {
+                var daysOverdue = random.Next(1, 30);
+                return (
+                    Status: "逾期",
+                    PaymentDate: null,
+                    PaymentMethod: null,
+                    DaysOverdue: daysOverdue,
+                    Remarks: $"已逾期{daysOverdue}天，需催缴"
+                );
+            }
+            else // 5% 部分缴纳
+            {
+                return (
+                    Status: "部分缴纳",
+                    PaymentDate: DateTime.Now.AddDays(-random.Next(1, 15)),
+                    PaymentMethod: "银行转账",
+                    DaysOverdue: 0,
+                    Remarks: "已缴纳部分金额，尚有余款"
+                );
+            }
+        }
+
+        /// <summary>
+        /// 获取上个月份
+        /// </summary>
+        private string GetPreviousMonth(string period)
+        {
+            var year = int.Parse(period.Substring(0, 4));
+            var month = int.Parse(period.Substring(4, 2));
+            
+            if (month == 1)
+            {
+                year--;
+                month = 12;
+            }
+            else
+            {
+                month--;
+            }
+            
+            return $"{year:D4}{month:D2}";
+        }
+
+        /// <summary>
+        /// 获取按区域的租金统计数据
+        /// </summary>
+        public async Task<List<AreaStatistics>> GetRentStatisticsByArea()
+        {
+            var areaStats = await (from area in AREA
+                                 join retailArea in RETAIL_AREA on area.AREA_ID equals retailArea.AREA_ID
+                                 join rentStore in RENT_STORE on area.AREA_ID equals rentStore.AREA_ID into rs
+                                 from rentStoreLeft in rs.DefaultIfEmpty()
+                                 join store in STORE on rentStoreLeft.STORE_ID equals store.STORE_ID into s
+                                 from storeLeft in s.DefaultIfEmpty()
+                                 select new
+                                 {
+                                     AreaId = area.AREA_ID,
+                                     AreaSize = area.AREA_SIZE,
+                                     BaseRent = retailArea.BASE_RENT,
+                                     RentStatus = retailArea.RENT_STATUS,
+                                     IsEmpty = area.ISEMPTY,  // 先获取原始值
+                                     StoreName = storeLeft != null ? storeLeft.STORE_NAME : null,
+                                     TenantName = storeLeft != null ? storeLeft.TENANT_NAME : null,
+                                     StoreType = storeLeft != null ? storeLeft.STORE_TYPE : null,
+                                     RentStart = storeLeft != null ? storeLeft.RENT_START : (DateTime?)null,
+                                     RentEnd = storeLeft != null ? storeLeft.RENT_END : (DateTime?)null
+                                 }).ToListAsync();
+
+            return areaStats.Select(a => new AreaStatistics
+            {
+                AreaId = a.AreaId,
+                AreaSize = a.AreaSize ?? 0,  // 处理nullable int
+                BaseRent = (decimal)a.BaseRent,  // 处理double到decimal转换
+                RentStatus = a.RentStatus,
+                IsOccupied = a.IsEmpty == 0,  // 在内存中进行布尔转换
+                StoreName = a.StoreName,
+                TenantName = a.TenantName,
+                StoreType = a.StoreType,
+                RentStart = a.RentStart,
+                RentEnd = a.RentEnd
+            }).ToList();
+        }
+
         #endregion
     }
 }
