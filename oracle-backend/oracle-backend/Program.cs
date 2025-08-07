@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using oracle_backend.Dbcontexts;
+using oracle_backend.Services;
 
 
 namespace oracle_backend
@@ -25,6 +26,13 @@ namespace oracle_backend
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // 添加数据库上下文
+            builder.Services.AddDbContext<PromotionDbContext>(options => options.UseOracle(builder.Configuration.GetConnectionString("PromotionDb")));
+
+            // 注册服务
+            builder.Services.AddScoped<PromotionService>();
+            builder.Services.AddScoped<DiscountRuleService>();
 
             var app = builder.Build();
 
