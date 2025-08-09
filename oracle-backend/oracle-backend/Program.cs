@@ -19,7 +19,7 @@ namespace oracle_backend
             var connectionString = builder.Configuration.GetConnectionString("OracleConnection");
             builder.Services.AddDbContext<AccountDbContext>(options =>
             {
-                options.UseOracle(connectionString); // Ö¸¶¨Ê¹ÓÃ Oracle Ìá¹©³ÌĞòºÍÁ¬½Ó×Ö·û´®
+                options.UseOracle(connectionString); // Ö¸ï¿½ï¿½Ê¹ï¿½ï¿½ Oracle ï¿½á¹©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
             });
 
             builder.Services.AddControllers();
@@ -27,12 +27,14 @@ namespace oracle_backend
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Ìí¼ÓÊı¾İ¿âÉÏÏÂÎÄ
+            // æ·»åŠ æ•°æ®åº“ä¸Šä¸‹æ–‡
             builder.Services.AddDbContext<PromotionDbContext>(options => options.UseOracle(builder.Configuration.GetConnectionString("PromotionDb")));
+            builder.Services.AddDbContext<VenueEventDbContext>(options => options.UseOracle(connectionString));
 
-            // ×¢²á·şÎñ
+            // æ³¨å†ŒæœåŠ¡
             builder.Services.AddScoped<PromotionService>();
             builder.Services.AddScoped<DiscountRuleService>();
+            builder.Services.AddScoped<VenueEventService>();
 
             var app = builder.Build();
 
