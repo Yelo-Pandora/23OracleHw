@@ -6,8 +6,8 @@ DELETE FROM RENT_STORE WHERE STORE_ID IN (2001, 2002, 2003);
 DELETE FROM STORE WHERE STORE_ID IN (2001, 2002, 2003);
 COMMIT;
 
--- 验证区域数据是否存在（必须先运行create_retail_area_test_data.sql）
-SELECT '检查区域1003是否存在' as INFO, AREA_ID, AREA_SIZE, ISEMPTY FROM AREA WHERE AREA_ID = 1003;
+-- 验证区域数据是否存在（必须先运行 create_retail_area_test_data.sql）
+SELECT '检查区域1003是否存在' as INFO, AREA_ID, AREA_SIZE, ISEMPTY, CATEGORY FROM AREA WHERE AREA_ID = 1003;
 
 -- 插入一些测试店铺数据
 -- 注意：需要先有区域数据，建议先运行create_retail_area_test_data.sql
@@ -29,7 +29,7 @@ COMMIT;
 SELECT '验证店铺数据' as INFO, STORE_ID, STORE_NAME FROM STORE WHERE STORE_ID IN (2001, 2002, 2003);
 
 -- 验证区域数据存在
-SELECT '验证可用区域' as INFO, a.AREA_ID, a.AREA_SIZE, a.ISEMPTY, r.RENT_STATUS 
+SELECT '验证可用区域' as INFO, a.AREA_ID, a.AREA_SIZE, a.ISEMPTY, a.CATEGORY, r.RENT_STATUS 
 FROM AREA a 
 LEFT JOIN RETAIL_AREA r ON a.AREA_ID = r.AREA_ID 
 WHERE a.AREA_ID IN (1001, 1002, 1003);
