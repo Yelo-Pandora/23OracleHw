@@ -44,6 +44,11 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<VenueEvent>()
                 .ToTable("VENUE_EVENT");
 
+            // 配置EventArea继承自Area，但忽略数据库中不存在的字段
+            modelBuilder.Entity<EventArea>()
+                .Ignore(e => e.ISEMPTY)        // 忽略父类的ISEMPTY属性
+                .Ignore(e => e.AREA_SIZE);     // 忽略父类的AREA_SIZE属性
+
             // 配置VenueEventDetail复合主键
             modelBuilder.Entity<VenueEventDetail>()
                 .HasKey(v => new { v.EVENT_ID, v.AREA_ID, v.COLLABORATION_ID });
@@ -132,6 +137,81 @@ namespace oracle_backend.Dbcontexts
                 .HasOne(r => r.CollaborationNavigation)
                 .WithMany()
                 .HasForeignKey(r => r.COLLABORATION_ID);
+
+            // 配置decimal字段的精度和范围，避免数据精度丢失警告
+            
+            // VenueEventBilling表的decimal字段
+            modelBuilder.Entity<VenueEventBilling>()
+                .Property(b => b.BASE_FEE)
+                .HasPrecision(18, 2);
+                
+            modelBuilder.Entity<VenueEventBilling>()
+                .Property(b => b.ADDITIONAL_FEE)
+                .HasPrecision(18, 2);
+                
+            modelBuilder.Entity<VenueEventBilling>()
+                .Property(b => b.TOTAL_FEE)
+                .HasPrecision(18, 2);
+                
+            modelBuilder.Entity<VenueEventBilling>()
+                .Property(b => b.RENTAL_HOURS)
+                .HasPrecision(10, 2);
+
+            // VenueFeeConfig表的decimal字段
+            modelBuilder.Entity<VenueFeeConfig>()
+                .Property(f => f.HOURLY_RATE)
+                .HasPrecision(18, 2);
+                
+            modelBuilder.Entity<VenueFeeConfig>()
+                .Property(f => f.MIN_HOURS)
+                .HasPrecision(10, 2);
+                
+            modelBuilder.Entity<VenueFeeConfig>()
+                .Property(f => f.OVERTIME_RATE)
+                .HasPrecision(18, 2);
+                
+            modelBuilder.Entity<VenueFeeConfig>()
+                .Property(f => f.WEEKEND_MULTIPLIER)
+                .HasPrecision(5, 2);
+                
+            modelBuilder.Entity<VenueFeeConfig>()
+                .Property(f => f.HOLIDAY_MULTIPLIER)
+                .HasPrecision(5, 2);
+
+            // AdditionalService表的decimal字段
+            modelBuilder.Entity<AdditionalService>()
+                .Property(s => s.SERVICE_FEE)
+                .HasPrecision(18, 2);
+
+            // BillingServiceDetail表的decimal字段
+            modelBuilder.Entity<BillingServiceDetail>()
+                .Property(d => d.QUANTITY)
+                .HasPrecision(10, 2);
+                
+            modelBuilder.Entity<BillingServiceDetail>()
+                .Property(d => d.UNIT_PRICE)
+                .HasPrecision(18, 2);
+                
+            modelBuilder.Entity<BillingServiceDetail>()
+                .Property(d => d.SUBTOTAL)
+                .HasPrecision(18, 2);
+
+            // VenueEventReport表的decimal字段
+            modelBuilder.Entity<VenueEventReport>()
+                .Property(r => r.TOTAL_RENTAL_HOURS)
+                .HasPrecision(18, 2);
+                
+            modelBuilder.Entity<VenueEventReport>()
+                .Property(r => r.TOTAL_REVENUE)
+                .HasPrecision(18, 2);
+                
+            modelBuilder.Entity<VenueEventReport>()
+                .Property(r => r.AVERAGE_ATTENDANCE)
+                .HasPrecision(10, 2);
+                
+            modelBuilder.Entity<VenueEventReport>()
+                .Property(r => r.AVERAGE_OCCUPANCY_RATE)
+                .HasPrecision(5, 4);  // 占用率用4位小数精度
         }
     }
 }
