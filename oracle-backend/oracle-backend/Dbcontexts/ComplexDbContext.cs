@@ -19,6 +19,7 @@ namespace oracle_backend.Dbcontexts
         // 用于检查依赖关系的实体
         public DbSet<RentStore> RentStores { get; set; }
         public DbSet<VenueEventDetail> VenueEventDetails { get; set; }
+        public DbSet<ParkingSpaceDistribution> ParkingSpaceDistributions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,9 +31,12 @@ namespace oracle_backend.Dbcontexts
             // 但为了EF Core能正确工作，我们仍需定义关系。
             modelBuilder.Entity<RetailArea>().HasBaseType<Area>().ToTable("RETAIL_AREA");
             modelBuilder.Entity<EventArea>().HasBaseType<Area>().ToTable("EVENT_AREA");
+            modelBuilder.Entity<ParkingLot>().HasBaseType<Area>().ToTable("PARKING_LOT");
+            modelBuilder.Entity<OtherArea>().HasBaseType<Area>().ToTable("OTHER_AREA");
             // 其他实体的主键配置
             modelBuilder.Entity<RentStore>().HasKey(rs => new { rs.STORE_ID, rs.AREA_ID });
             modelBuilder.Entity<VenueEventDetail>().HasKey(ved => new { ved.EVENT_ID, ved.AREA_ID, ved.COLLABORATION_ID });
+            modelBuilder.Entity<ParkingSpaceDistribution>().HasKey(rs => new { rs.PARKING_SPACE_ID, rs.AREA_ID });
         }
     }
 }
