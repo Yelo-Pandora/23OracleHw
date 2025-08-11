@@ -21,6 +21,9 @@ namespace oracle_backend.Dbcontexts
         public DbSet<VenueEventDetail> VenueEventDetails { get; set; }
         public DbSet<ParkingSpaceDistribution> ParkingSpaceDistributions { get; set; }
 
+        // 合作方和员工相关实体
+        public DbSet<Collaboration> Collaborations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // 定义Area表的主键
