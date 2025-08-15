@@ -25,28 +25,36 @@ namespace oracle_backend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCollaboration([FromBody] CollaborationDto dto)
         {
-            // 检查ID唯一性
-            var exists = await _context.Collaborations
-                .AnyAsync(c => c.COLLABORATION_ID == dto.CollaborationId);
-
-            if (exists)
-                return BadRequest("合作方ID已存在");
-
-            // 创建实体
-            var collaboration = new Collaboration
+            try
             {
-                COLLABORATION_ID = dto.CollaborationId,
-                COLLABORATION_NAME = dto.CollaborationName,
-                CONTACTOR = dto.Contactor,
-                PHONE_NUMBER = dto.PhoneNumber,
-                EMAIL = dto.Email
-            };
+                // 检查ID唯一性 - 使用COUNT避免布尔转换
+                var exists = await _context.Collaborations
+                    .CountAsync(c => c.COLLABORATION_ID == dto.CollaborationId) > 0;
 
-            _context.Collaborations.Add(collaboration);
-            await _context.SaveChangesAsync();
+                if (exists)
+                    return BadRequest("合作方ID已存在");
 
-            _logger.LogInformation($"新增合作方: ID={dto.CollaborationId}");
-            return Ok(new { message = "添加成功", id = collaboration.COLLABORATION_ID });
+                // 创建实体
+                var collaboration = new Collaboration
+                {
+                    COLLABORATION_ID = dto.CollaborationId,
+                    COLLABORATION_NAME = dto.CollaborationName,
+                    CONTACTOR = dto.Contactor,
+                    PHONE_NUMBER = dto.PhoneNumber,
+                    EMAIL = dto.Email
+                };
+
+                _context.Collaborations.Add(collaboration);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"新增合作方: ID={dto.CollaborationId}");
+                return Ok(new { message = "添加成功", id = collaboration.COLLABORATION_ID });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "添加合作方时出错");
+                return StatusCode(500, "内部服务器错误");
+            }
         }
 
         // 2.4.2 合作方信息查询
@@ -75,22 +83,62 @@ namespace oracle_backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCollaboration(int id, [FromBody] CollaborationUpdateDto dto)
         {
-            var collaboration = await _context.Collaborations.FindAsync(id);
-            if (collaboration == null)
-                return NotFound();
+            try
+            {
+                // 查找指定ID的合作方
+                var collaboration = await _context.Collaborations
+                    .FirstOrDefaultAsync(c => c.COLLABORATION_ID == id);
 
-            // 检查活动状态冲突（伪代码）
-            if (await HasActiveEvents(id))
-                return BadRequest("存在进行中的合作活动，无法修改");
+                if (collaboration == null)
+                    return NotFound("合作方不存在");
 
-            // 更新字段
-            collaboration.COLLABORATION_NAME = dto.CollaborationName;
-            collaboration.CONTACTOR = dto.Contactor;
-            collaboration.PHONE_NUMBER = dto.PhoneNumber;
-            collaboration.EMAIL = dto.Email;
+                // 检查活动状态冲突(需要表VenueEventDetails)
+                if (await HasActiveEvents(id))
+                    return BadRequest("存在进行中的合作活动，无法修改");
 
-            await _context.SaveChangesAsync();
-            return Ok();
+                // 更新可修改字段
+                if (!string.IsNullOrEmpty(dto.CollaborationName))
+                    collaboration.COLLABORATION_NAME = dto.CollaborationName;
+
+                if (!string.IsNullOrEmpty(dto.Contactor))
+                    collaboration.CONTACTOR = dto.Contactor;
+
+                if (!string.IsNullOrEmpty(dto.PhoneNumber))
+                    collaboration.PHONE_NUMBER = dto.PhoneNumber;
+
+                if (!string.IsNullOrEmpty(dto.Email))
+                    collaboration.EMAIL = dto.Email;
+
+                // 标记实体为已修改
+                _context.Entry(collaboration).State = EntityState.Modified;
+
+                // 保存更改
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"修改合作方信息: ID={id}");
+                return Ok(new
+                {
+                    message = "更新成功",
+                    id = collaboration.COLLABORATION_ID,
+                    updatedFields = new
+                    {
+                        name = dto.CollaborationName,
+                        contactor = dto.Contactor,
+                        phone = dto.PhoneNumber,
+                        email = dto.Email
+                    }
+                });
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _logger.LogError(ex, "更新合作方时发生并发冲突");
+                return StatusCode(500, "更新失败：数据已被其他操作修改" + ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "更新合作方时出错");
+                return StatusCode(500, "内部服务器错误" + ex);
+            }
         }
 
         // 2.4.4 合作方统计报表
@@ -100,6 +148,14 @@ namespace oracle_backend.Controllers
             [FromQuery] DateTime endDate,
             [FromQuery] string? industry)
         {
+            if (startDate >= endDate)
+            {
+                return BadRequest("开始日期必须早于结束日期");
+            }
+            if (endDate > DateTime.Now)
+            {
+                return BadRequest("结束日期不能晚于当前日期");
+            }
             var report = await _context.VenueEventDetails
                 .Where(ved => ved.RENT_START >= startDate && ved.RENT_END <= endDate)
                 .GroupBy(ved => ved.COLLABORATION_ID)
@@ -107,7 +163,7 @@ namespace oracle_backend.Controllers
                     CollaborationId = g.Key,
                     EventCount = g.Count(),
                     TotalInvestment = g.Sum(x => x.FUNDING),
-                    AvgRevenue = g.Average(x => x.FUNDING * 0.3) // 示例计算逻辑
+                    AvgRevenue = g.Average(x => x.FUNDING)
                 })
                 .ToListAsync();
 
@@ -117,31 +173,48 @@ namespace oracle_backend.Controllers
         // DTO类
         public class CollaborationDto
         {
-            [Required] public int CollaborationId { get; set; }
-            [Required] public string CollaborationName { get; set; }
+            [Required(ErrorMessage = "合作方ID是必填项")]
+            [Range(1, 99999999999, ErrorMessage = "合作方ID必须大于0，且不能超过11位")]
+            public int CollaborationId { get; set; }
+
+            [Required(ErrorMessage = "合作方名称是必填项")]
+            [StringLength(50, ErrorMessage = "名称长度不能超过50个字符")]
+            public string CollaborationName { get; set; }
+
+            [StringLength(50, ErrorMessage = "联系人姓名长度不能超过50个字符")]
             public string Contactor { get; set; }
 
-            [Phone]
+            [Phone(ErrorMessage = "无效的电话号码格式")]
+            [StringLength(20, ErrorMessage = "电话号码长度不能超过20个字符")]
             public string PhoneNumber { get; set; }
 
-            [EmailAddress]
+            [EmailAddress(ErrorMessage = "无效的电子邮件格式")]
+            [StringLength(50, ErrorMessage = "电子邮件长度不能超过50个字符")]
             public string Email { get; set; }
         }
 
         public class CollaborationUpdateDto
         {
+            [StringLength(50, ErrorMessage = "名称长度不能超过50个字符")]
             public string CollaborationName { get; set; }
+
+            [StringLength(50, ErrorMessage = "联系人姓名长度不能超过50个字符")]
             public string Contactor { get; set; }
+
+            [Phone(ErrorMessage = "无效的电话号码格式")]
+            [StringLength(20, ErrorMessage = "电话号码长度不能超过20个字符")]
             public string PhoneNumber { get; set; }
+
+            [EmailAddress(ErrorMessage = "无效的电子邮件格式")]
+            [StringLength(50, ErrorMessage = "电子邮件长度不能超过50个字符")]
             public string Email { get; set; }
         }
 
         private async Task<bool> HasActiveEvents(int collaborationId)
         {
             // 实现检查逻辑
-            return await _context.VenueEventDetails
-                .AnyAsync(v => v.COLLABORATION_ID == collaborationId &&
-                              v.STATUS == "ACTIVE");
+            var query = _context.VenueEventDetails.Where(v => v.COLLABORATION_ID == collaborationId && v.STATUS == "ACTIVE");
+            return await query.CountAsync() > 0;
         }
     }
 }
