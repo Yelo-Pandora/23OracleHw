@@ -33,7 +33,8 @@ namespace oracle_backend
                 options.UseOracle(connectionString);
             });
 
-            builder.Services.AddDbContext<EquipmentDbContext>(options =>
+            // 添加对 CollaborationDbContext 的依赖注入
+            builder.Services.AddDbContext<CollaborationDbContext>(options =>
             {
                 options.UseOracle(connectionString);
             });
