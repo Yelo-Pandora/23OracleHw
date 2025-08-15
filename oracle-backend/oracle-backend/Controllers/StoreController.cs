@@ -1538,6 +1538,29 @@ namespace oracle_backend.Controllers
                     return BadRequest(new { error = "操作员账号不存在" });
                 }
 
+                // 权限控制：
+                // AUTHORITY 数值越小权限越高（0 管理员，<=2 管理/财务可查看全部）；商户权限通常为 4，仅能查看自己关联的店铺
+                if (operator_account.AUTHORITY > 2)
+                {
+                    // 非管理员/财务账号（例如商户）只能查看自己的店铺
+                    var storeAccount = await _accountContext.GetStoreAccountByAccount(request.OperatorAccount);
+                    if (storeAccount == null)
+                    {
+                        _logger.LogWarning("商户账号 {OperatorAccount} 未关联店铺，无法查询租金单", request.OperatorAccount);
+                        return BadRequest(new { error = "商户账号未关联店铺，无法查询租金单" });
+                    }
+
+                    // 如果请求中指定了其他店铺，则拒绝
+                    if (request.StoreId.HasValue && request.StoreId.Value != storeAccount.STORE_ID)
+                    {
+                        _logger.LogWarning("账号 {OperatorAccount} 尝试查询非本人店铺 {RequestedStore}，权限不足", request.OperatorAccount, request.StoreId);
+                        return BadRequest(new { error = "权限不足，无法查询非本人店铺的账单" });
+                    }
+
+                    // 强制将请求的 StoreId 限定为商户自己的店铺
+                    request.StoreId = storeAccount.STORE_ID;
+                }
+
                 var rentBills = await _storeContext.GetRentBillsDetails(request);
 
                 return Ok(new

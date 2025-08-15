@@ -478,23 +478,69 @@
         
         async function createMerchant() {
             const resultElement = document.getElementById('createResult');
-            
+            resultElement.textContent = '正在创建商户...';
+            resultElement.className = 'result info';
+
+            // 读取用户期望的区域ID并验证是否可用
+            const areaInput = document.getElementById('newAreaId');
+            let desiredAreaId = parseInt(areaInput.value, 10);
+
+            try {
+                const availResp = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                if (availResp.ok) {
+                    const areas = await availResp.json();
+                    // 将返回的区域列表规范化为数字ID数组（兼容不同后端返回格式）
+                    let freeAreaIds = [];
+                    if (Array.isArray(areas)) {
+                        freeAreaIds = areas.map(a => {
+                            if (typeof a === 'number') return a;
+                            if (!a) return null;
+                            if (typeof a === 'object') {
+                                return a.areaId || a.id || a.area_id || a.AREA_ID || null;
+                            }
+                            return null;
+                        }).filter(x => Number.isFinite(x));
+                    }
+
+                    if (freeAreaIds.length === 0) {
+                        resultElement.textContent = '❌ 没有可用店面，无法创建新的商户';
+                        resultElement.className = 'result error';
+                        return;
+                    }
+
+                    if (!freeAreaIds.includes(desiredAreaId)) {
+                        // 如果用户选择的区域已被占用，自动改为第一个可用区域
+                        const chosen = freeAreaIds[0];
+                        resultElement.textContent = `⚠️ 选择的区域 ${desiredAreaId} 可能已被占用，自动改为使用可用区域 ${chosen}`;
+                        resultElement.className = 'result info';
+                        areaInput.value = chosen;
+                        desiredAreaId = chosen;
+                    }
+                } else {
+                    // 无法获取列表但不阻止创建；给出提示
+                    resultElement.textContent += `\n⚠️ 无法检查可用店面（HTTP ${availResp.status}），将尝试使用指定区域 ${desiredAreaId}`;
+                }
+            } catch (error) {
+                // 如果检查失败（网络等），仍尝试创建，但提示用户
+                resultElement.textContent += `\n⚠️ 检查可用店面失败: ${error.message}，将尝试使用指定区域 ${desiredAreaId}`;
+            }
+
             const merchantData = {
                 storeName: document.getElementById('newStoreName').value,
                 storeType: document.getElementById('newStoreType').value,
                 tenantName: document.getElementById('newTenantName').value,
                 contactInfo: document.getElementById('newContactInfo').value,
-                areaId: parseInt(document.getElementById('newAreaId').value),
+                areaId: parseInt(desiredAreaId, 10),
                 rentStart: document.getElementById('newRentStart').value + 'T00:00:00',
                 rentEnd: document.getElementById('newRentEnd').value + 'T23:59:59'
             };
-            
-            resultElement.textContent = '正在创建商户...';
+
+            resultElement.textContent += '\n正在创建商户...';
             resultElement.className = 'result info';
-            
+
             try {
                 console.log('发送请求数据:', merchantData);
-                
+
                 const response = await fetch(`${API_BASE}/Store/CreateMerchant`, {
                     method: 'POST',
                     headers: {
@@ -502,16 +548,15 @@
                     },
                     body: JSON.stringify(merchantData)
                 });
-                
+
                 console.log('响应状态:', response.status);
                 console.log('响应头:', [...response.headers.entries()]);
-                
-                // 检查响应是否为JSON
+
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     const data = await response.json();
                     console.log('响应数据:', data);
-                    
+
                     if (response.ok) {
                         resultElement.textContent = `✅ 商户创建成功！\n\n${JSON.stringify(data, null, 2)}`;
                         resultElement.className = 'result success';
@@ -520,10 +565,9 @@
                         resultElement.className = 'result error';
                     }
                 } else {
-                    // 如果不是JSON，读取为文本
                     const text = await response.text();
                     console.log('响应文本:', text);
-                    
+
                     if (response.ok) {
                         resultElement.textContent = `✅ 商户创建成功！\n\n${text}`;
                         resultElement.className = 'result success';
