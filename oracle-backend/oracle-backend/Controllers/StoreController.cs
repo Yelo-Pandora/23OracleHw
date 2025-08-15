@@ -146,7 +146,8 @@ namespace oracle_backend.Controllers
                 {
                     AREA_ID = dto.AreaId,
                     ISEMPTY = 1, // 新建区域默认为空置状态
-                    AREA_SIZE = dto.AreaSize
+                    AREA_SIZE = dto.AreaSize,
+                    CATEGORY = "RETAIL"
                 };
 
                 _storeContext.AREA.Add(area);
