@@ -9,6 +9,7 @@ namespace oracle_backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+<<<<<<< HEAD
     public class StaffController : ControllerBase
     {
     private readonly CollaborationDbContext _collabContext;
@@ -435,4 +436,10 @@ namespace oracle_backend.Controllers
             return Ok("临时权限修改成功");
         }
     }
+=======
+    public class StaffController : ControllerBase{
+      
+    }
+
+>>>>>>> 03702d2 (add CollaborationContext.cs, add StaffController(not completed))
 }
