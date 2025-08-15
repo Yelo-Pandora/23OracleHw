@@ -44,7 +44,9 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<OtherArea>().HasBaseType<Area>().ToTable("OTHER_AREA");
             // 其他实体的主键配置
             modelBuilder.Entity<RentStore>().HasKey(rs => new { rs.STORE_ID, rs.AREA_ID });
-            modelBuilder.Entity<VenueEventDetail>().HasKey(ved => new { ved.EVENT_ID, ved.AREA_ID, ved.COLLABORATION_ID });
+            modelBuilder.Entity<VenueEventDetail>()
+                .ToTable("VENUE_EVENT_DETAIL")
+                .HasKey(ved => new { ved.EVENT_ID, ved.AREA_ID, ved.COLLABORATION_ID });
             modelBuilder.Entity<ParkingSpaceDistribution>().HasKey(rs => new { rs.PARKING_SPACE_ID, rs.AREA_ID });
             
             // 场地活动相关实体主键配置
