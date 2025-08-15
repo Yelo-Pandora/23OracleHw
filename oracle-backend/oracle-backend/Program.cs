@@ -27,6 +27,12 @@ namespace oracle_backend
                 options.UseOracle(connectionString);
             });
 
+            // 添加对 CollaborationDbContext 的依赖注入
+            builder.Services.AddDbContext<CollaborationDbContext>(options =>
+            {
+                options.UseOracle(connectionString);
+            });
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

@@ -21,9 +21,6 @@ namespace oracle_backend.Dbcontexts
         public DbSet<VenueEventDetail> VenueEventDetails { get; set; }
         public DbSet<ParkingSpaceDistribution> ParkingSpaceDistributions { get; set; }
 
-        // 合作方和员工相关实体
-        public DbSet<Collaboration> Collaborations { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // 定义Area表的主键
@@ -38,9 +35,7 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<OtherArea>().HasBaseType<Area>().ToTable("OTHER_AREA");
             // 其他实体的主键配置
             modelBuilder.Entity<RentStore>().HasKey(rs => new { rs.STORE_ID, rs.AREA_ID });
-            modelBuilder.Entity<VenueEventDetail>()
-                .ToTable("VENUE_EVENT_DETAIL")
-                .HasKey(ved => new { ved.EVENT_ID, ved.AREA_ID, ved.COLLABORATION_ID });
+            modelBuilder.Entity<VenueEventDetail>().HasKey(ved => new { ved.EVENT_ID, ved.AREA_ID, ved.COLLABORATION_ID });
             modelBuilder.Entity<ParkingSpaceDistribution>().HasKey(rs => new { rs.PARKING_SPACE_ID, rs.AREA_ID });
         }
     }
