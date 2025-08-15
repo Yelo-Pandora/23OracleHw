@@ -12,10 +12,10 @@ namespace oracle_backend.Controllers
     [ApiController]
     public class CollaborationController : ControllerBase
     {
-        private readonly ComplexDbContext _context;
+        private readonly CollaborationDbContext _context;
         private readonly ILogger<CollaborationController> _logger;
 
-        public CollaborationController(ComplexDbContext context, ILogger<CollaborationController> logger)
+        public CollaborationController(CollaborationDbContext context, ILogger<CollaborationController> logger)
         {
             _context = context;
             _logger = logger;
