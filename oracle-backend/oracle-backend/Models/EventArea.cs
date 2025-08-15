@@ -13,7 +13,7 @@ namespace oracle_backend.Models
         //活动区域容量
         public int? CAPACITY { get; set; }
         //区域租金
-        public string AREA_FEE { get; set; }
+        public int? AREA_FEE { get; set; }
 
     }
 }

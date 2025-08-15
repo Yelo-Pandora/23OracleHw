@@ -17,6 +17,9 @@ namespace oracle_backend.Models
         public int ISEMPTY { get; set; }
         //区域面积
         public int? AREA_SIZE { get; set; }
+        //区域类别（RETAIL, EVENT, PARKING, OTHER等）
+        [Column(TypeName = "VARCHAR2(50)")]
+        public string CATEGORY { get; set; }
 
     }
 }
