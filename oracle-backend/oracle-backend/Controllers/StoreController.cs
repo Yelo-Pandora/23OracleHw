@@ -811,6 +811,7 @@ namespace oracle_backend.Controllers
             public string ApprovalComment { get; set; } // 审批意见（可选）
             public string ApproverAccount { get; set; }
             public string TargetStatus { get; set; } // 目标状态（可选，系统可以自动确定）
+            public string ApplicationNo { get; set; } // 申请编号，审批必须提供
         }
 
         // 简化的测试审批DTO（专门用于测试界面）
@@ -821,7 +822,25 @@ namespace oracle_backend.Controllers
             public string ApprovalComment { get; set; }
             public string ApproverAccount { get; set; }
             public string TargetStatus { get; set; }
+            public string ApplicationNo { get; set; }
         }
+
+        // 简单的内存申请记录（进程内存，仅用于测试环境/demo）
+        private class ApplicationRecord
+        {
+            public string ApplicationNo { get; set; } = string.Empty;
+            public int StoreId { get; set; }
+            public string ChangeType { get; set; } = string.Empty;
+            public string TargetStatus { get; set; } = string.Empty;
+            public string Reason { get; set; } = string.Empty;
+            public string Applicant { get; set; } = string.Empty;
+            public DateTime CreatedAt { get; set; }
+            public string Status { get; set; } = "Pending"; // Pending/Approved/Rejected
+        }
+
+        // 进程内存的申请缓存（线程安全）
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, ApplicationRecord> _applications
+            = new System.Collections.Concurrent.ConcurrentDictionary<string, ApplicationRecord>();
 
         // 商户提交状态变更申请
         [HttpPost("StatusChangeRequest")]
@@ -839,17 +858,39 @@ namespace oracle_backend.Controllers
                     return BadRequest(new { error = "店面不存在" });
                 }
 
-                // 验证前置条件：店面必须有有效租用记录且状态为正常营业
-                if (store.STORE_STATUS != "正常营业")
-                {
-                    return BadRequest(new { error = "只有正常营业状态的店面才能申请状态变更" });
-                }
-
                 // 验证是否有租用记录
                 var rentRecord = await _storeContext.RENT_STORE.FirstOrDefaultAsync(rs => rs.STORE_ID == dto.StoreId);
                 if (rentRecord == null)
                 {
                     return BadRequest(new { error = "店面没有有效的租用记录" });
+                }
+
+                // 验证前置条件：不同的变更类型对当前状态有不同要求
+                // 退租/维修/暂停营业：仅在当前为 正常营业 且有租用记录时可申请
+                // 恢复营业：仅在当前为 维修中/暂停营业/翻新中/装修中 等非正常状态时可申请
+                var current = store.STORE_STATUS;
+                var changeType = dto.ChangeType;
+
+                var allowedForNormal = new[] { "退租", "维修", "暂停营业" };
+                var allowedForNonNormal = new[] { "恢复营业" };
+
+                if (allowedForNormal.Contains(changeType))
+                {
+                    if (current != "正常营业")
+                    {
+                        return BadRequest(new { error = $"当前状态为 '{current}'，仅处于 '正常营业' 状态的店面可申请 '{changeType}'。" });
+                    }
+                }
+                else if (allowedForNonNormal.Contains(changeType))
+                {
+                    if (!(new[] { "维修中", "暂停营业", "翻新中", "装修中" }.Contains(current)))
+                    {
+                        return BadRequest(new { error = $"当前状态为 '{current}'，仅处于 '维修中/暂停营业/翻新中/装修中' 等状态的店面可申请 '{changeType}'。" });
+                    }
+                }
+                else
+                {
+                    return BadRequest(new { error = $"未知的变更类型 '{changeType}'" });
                 }
 
                 // 生成申请编号
@@ -859,6 +900,21 @@ namespace oracle_backend.Controllers
                 _logger.LogInformation("状态变更申请详情：申请编号 {ApplicationNo}, 店铺 {StoreName}, " +
                     "申请类型 {ChangeType}, 申请原因 {Reason}, 目标状态 {TargetStatus}, 申请人 {Applicant}", 
                     applicationNo, store.STORE_NAME, dto.ChangeType, dto.Reason, dto.TargetStatus, dto.ApplicantAccount);
+
+                // 将申请写入内存缓存，供审批接口校验（仅用于测试/演示）
+                var appRecord = new ApplicationRecord
+                {
+                    ApplicationNo = applicationNo,
+                    StoreId = dto.StoreId,
+                    ChangeType = dto.ChangeType,
+                    TargetStatus = dto.TargetStatus,
+                    Reason = dto.Reason,
+                    Applicant = dto.ApplicantAccount,
+                    CreatedAt = DateTime.Now,
+                    Status = "Pending"
+                };
+
+                _applications[applicationNo] = appRecord;
 
                 return Ok(new
                 {
@@ -925,22 +981,42 @@ namespace oracle_backend.Controllers
 
                 var originalStatus = store.STORE_STATUS;
 
+                // 强制要求提供申请编号，审批必须基于存在的申请
+                if (string.IsNullOrEmpty(dto.ApplicationNo))
+                {
+                    return BadRequest(new { error = "审批必须提供申请编号 ApplicationNo" });
+                }
+
+                if (!_applications.TryGetValue(dto.ApplicationNo, out var appRecord))
+                {
+                    return BadRequest(new { error = $"不存在申请编号 {dto.ApplicationNo}，无法审批" });
+                }
+
+                if (appRecord.StoreId != dto.StoreId)
+                {
+                    return BadRequest(new { error = "申请编号与店铺不匹配，无法审批" });
+                }
+
+                if (appRecord.Status != "Pending")
+                {
+                    return BadRequest(new { error = $"申请 {dto.ApplicationNo} 当前状态为 {appRecord.Status}，不可再次审批" });
+                }
+
                 if (dto.ApprovalAction == "通过")
                 {
-                    // 确定目标状态 - 如果没有明确指定，则根据当前状态进行合理推测
-                    string targetStatus = dto.TargetStatus;
+                    // 确定目标状态 - 如果没有明确指定，则根据申请或当前状态进行合理推测
+                    string targetStatus = string.IsNullOrEmpty(dto.TargetStatus) ? appRecord.TargetStatus : dto.TargetStatus;
                     if (string.IsNullOrEmpty(targetStatus))
                     {
-                        // 根据当前状态和业务逻辑确定默认的目标状态
                         targetStatus = DetermineDefaultTargetStatus(originalStatus);
                     }
 
-                    // 审批通过：更新店面状态
+                    // 审批通过：更新店面状态，并标记申请为 Approved
                     await UpdateStoreStatusInternal(dto.StoreId, targetStatus, dto.ApproverAccount);
-                    
-                    _logger.LogInformation("状态变更审批通过：店铺 {StoreName} 状态从 {OriginalStatus} 变更为 {TargetStatus}, " +
-                        "审批人 {Approver}, 审批意见 {Comment}", 
-                        store.STORE_NAME, originalStatus, targetStatus, dto.ApproverAccount, dto.ApprovalComment);
+                    appRecord.Status = "Approved";
+
+                    _logger.LogInformation("状态变更审批通过：申请 {ApplicationNo}，店铺 {StoreName} 状态从 {OriginalStatus} 变更为 {TargetStatus}, 审批人 {Approver}",
+                        dto.ApplicationNo, store.STORE_NAME, originalStatus, targetStatus, dto.ApproverAccount);
 
                     return Ok(new
                     {
@@ -951,14 +1027,17 @@ namespace oracle_backend.Controllers
                         newStatus = targetStatus,
                         approvalResult = "通过",
                         approver = dto.ApproverAccount,
-                        approvalTime = DateTime.Now
+                        approvalTime = DateTime.Now,
+                        applicationNo = dto.ApplicationNo
                     });
                 }
                 else
                 {
-                    // 审批驳回
-                    _logger.LogInformation("状态变更审批驳回：店铺 {StoreName}, 审批人 {Approver}, 驳回原因 {Comment}", 
-                        store.STORE_NAME, dto.ApproverAccount, dto.ApprovalComment);
+                    // 审批驳回：标记申请为 Rejected
+                    appRecord.Status = "Rejected";
+
+                    _logger.LogInformation("状态变更审批驳回：申请 {ApplicationNo}，店铺 {StoreName}, 审批人 {Approver}, 驳回原因 {Comment}",
+                        dto.ApplicationNo, store.STORE_NAME, dto.ApproverAccount, dto.ApprovalComment);
 
                     return Ok(new
                     {
@@ -968,7 +1047,8 @@ namespace oracle_backend.Controllers
                         approvalResult = "驳回",
                         reason = dto.ApprovalComment,
                         approver = dto.ApproverAccount,
-                        approvalTime = DateTime.Now
+                        approvalTime = DateTime.Now,
+                        applicationNo = dto.ApplicationNo
                     });
                 }
             }
@@ -1060,6 +1140,25 @@ namespace oracle_backend.Controllers
                 var rentRecord = await _storeContext.RENT_STORE
                     .FirstOrDefaultAsync(rs => rs.STORE_ID == storeId);
 
+                // 计算前端可用的申请类型
+                var allowedTypes = new List<string>();
+                if (store.STORE_STATUS == "正常营业" && rentRecord != null)
+                {
+                    allowedTypes.AddRange(new[] { "退租", "维修", "暂停营业" });
+                }
+                else if (new[] { "维修中", "暂停营业", "翻新中", "装修中" }.Contains(store.STORE_STATUS))
+                {
+                    allowedTypes.Add("恢复营业");
+                }
+
+                // 记录用于调试：allowedTypes 的计算结果
+                try
+                {
+                    _logger.LogInformation("GetStoreStatus: storeId={StoreId}, currentStatus={Status}, hasRentRecord={HasRent}, allowedChangeTypes={Allowed}",
+                        storeId, store.STORE_STATUS, rentRecord != null, string.Join(',', allowedTypes));
+                }
+                catch { /* logger should always work; swallow to avoid affecting response */ }
+
                 return Ok(new
                 {
                     storeId = store.STORE_ID,
@@ -1067,7 +1166,8 @@ namespace oracle_backend.Controllers
                     currentStatus = store.STORE_STATUS,
                     tenantName = store.TENANT_NAME,
                     hasRentRecord = rentRecord != null,
-                    canApplyStatusChange = store.STORE_STATUS == "正常营业" && rentRecord != null
+                    canApplyStatusChange = allowedTypes.Count > 0,
+                    allowedChangeTypes = allowedTypes
                 });
             }
             catch (Exception ex)

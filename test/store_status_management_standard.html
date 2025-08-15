@@ -144,10 +144,7 @@
             <div class="form-group">
                 <label>变更类型:</label>
                 <select id="changeType" onchange="updateTargetStatus()">
-                    <option value="退租">退租申请</option>
-                    <option value="维修">维修申请</option>
-                    <option value="暂停营业">暂停营业</option>
-                    <option value="恢复营业">恢复营业</option>
+                    <!-- 选项由 JS 动态填充，基于后端 allowedChangeTypes -->
                 </select>
             </div>
             
@@ -182,6 +179,10 @@
                     <option value="3002">3002 - 小米专卖店</option>
                     <option value="3003">3003 - 周大福珠宝</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label>申请编号:</label>
+                <input type="text" id="approvalApplicationNo" placeholder="填写要审批的申请编号 (ApplicationNo)">
             </div>
             
             <div class="form-group">
@@ -306,22 +307,88 @@
             }
         }
 
-        // 提交状态变更申请
+        // 刷新变更类型下拉，基于后端返回的 allowedChangeTypes
+        function refreshChangeTypeOptions(allowedTypes) {
+            const changeTypeSelect = document.getElementById('changeType');
+            if (!changeTypeSelect) return;
+            changeTypeSelect.innerHTML = '';
+
+            const map = {
+                '退租': '退租申请',
+                '维修': '维修申请',
+                '暂停营业': '暂停营业',
+                '恢复营业': '恢复营业'
+            };
+
+            if (!allowedTypes || allowedTypes.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '（无可申请变更）';
+                opt.disabled = true;
+                changeTypeSelect.appendChild(opt);
+                // 清空目标状态
+                document.getElementById('targetStatus').value = '';
+                return;
+            }
+
+            allowedTypes.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t;
+                opt.textContent = map[t] || t;
+                changeTypeSelect.appendChild(opt);
+            });
+
+            // 触发一次目标状态更新
+            updateTargetStatus();
+        }
+
+        // 提交状态变更申请（先获取当前状态与后端允许的申请类型，再提交）
         async function submitStatusChangeRequest() {
             const applicationResult = document.getElementById('applicationResult');
-            
+            const storeId = parseInt(document.getElementById('storeId').value);
+            const changeType = document.getElementById('changeType').value;
+
             try {
+                applicationResult.textContent = '正在校验店面当前状态与可申请类型...';
+                applicationResult.className = 'result info';
+
+                // 先查询店面状态，后端会返回 allowedChangeTypes
+                const statusResp = await fetch(`${API_BASE}/Store/StoreStatus/${storeId}`);
+                if (!statusResp.ok) {
+                    const err = await statusResp.json().catch(() => ({}));
+                    applicationResult.textContent = `❌ 无法获取店面状态: ${err.error || statusResp.status}`;
+                    applicationResult.className = 'result error';
+                    return;
+                }
+
+                const statusData = await statusResp.json();
+
+                // 后端返回 allowedChangeTypes（优先使用），否则按原规则判断
+                const allowed = statusData.allowedChangeTypes || [];
+
+                // 如果后端没有返回 allowedChangeTypes，我们做一个保守判断
+                const fallbackAllowed = (statusData.currentStatus === '正常营业' && statusData.hasRentRecord) ? ['退租','维修','暂停营业'] : (['维修中','暂停营业','翻新中','装修中'].includes(statusData.currentStatus) ? ['恢复营业'] : []);
+
+                const allowedTypes = allowed.length > 0 ? allowed : fallbackAllowed;
+
+                if (!allowedTypes.includes(changeType)) {
+                    applicationResult.textContent = `❌ 当前店面状态为 "${statusData.currentStatus}"，不可提交类型为 "${changeType}" 的申请。可提交类型：${allowedTypes.join(', ') || '无'}`;
+                    applicationResult.className = 'result error';
+                    return;
+                }
+
+                // 构造提交数据并提交
                 const requestData = {
-                    storeId: parseInt(document.getElementById('storeId').value),
-                    changeType: document.getElementById('changeType').value,
+                    storeId: storeId,
+                    changeType: changeType,
                     reason: document.getElementById('reason').value,
                     targetStatus: document.getElementById('targetStatus').value,
                     applicantAccount: document.getElementById('applicantAccount').value
                 };
-                
+
                 applicationResult.textContent = '正在提交状态变更申请...';
                 applicationResult.className = 'result info';
-                
+
                 const response = await fetch(`${API_BASE}/Store/StatusChangeRequest`, {
                     method: 'POST',
                     headers: {
@@ -329,16 +396,11 @@
                     },
                     body: JSON.stringify(requestData)
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
-                    applicationResult.textContent = `✅ 申请提交成功！
-申请编号: ${data.applicationNo}
-店铺名称: ${data.storeName}
-变更类型: ${data.changeType}
-目标状态: ${data.targetStatus}
-当前状态: ${data.status}`;
+                    applicationResult.textContent = `✅ 申请提交成功！\n申请编号: ${data.applicationNo}\n店铺名称: ${data.storeName}\n变更类型: ${data.changeType}\n目标状态: ${data.targetStatus}\n当前状态: ${data.status}`;
                     applicationResult.className = 'result success';
                 } else {
                     applicationResult.textContent = `❌ 申请提交失败: ${data.error || JSON.stringify(data)}`;
@@ -360,7 +422,8 @@
                     storeId: parseInt(document.getElementById('approvalStoreId').value),
                     approvalAction: approvalAction,
                     approvalComment: document.getElementById('approvalComment').value,
-                    approverAccount: document.getElementById('approverAccount').value
+                    approverAccount: document.getElementById('approverAccount').value,
+                    applicationNo: document.getElementById('approvalApplicationNo').value
                 };
                 
                 // 只有在审批通过时才添加目标状态
@@ -421,19 +484,24 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    applicationResult.textContent = `📊 店面状态查询结果:
-店铺ID: ${data.storeId}
-店铺名称: ${data.storeName}
-当前状态: ${data.currentStatus}
-租户名称: ${data.tenantName}
-租用记录: ${data.hasRentRecord ? '有效' : '无'}
-可申请变更: ${data.canApplyStatusChange ? '是' : '否'}`;
+                    applicationResult.textContent = `📊 店面状态查询结果:\n店铺ID: ${data.storeId}\n店铺名称: ${data.storeName}\n当前状态: ${data.currentStatus}\n租户名称: ${data.tenantName}\n租用记录: ${data.hasRentRecord ? '有效' : '无'}\n可申请变更: ${data.canApplyStatusChange ? '是' : '否'}`;
+
+                    // 选择后端返回的 allowedChangeTypes 优先，否则使用保守的 fallback 列表
+                    const allowedFromBackend = data.allowedChangeTypes || [];
+                    const fallbackAllowed = (data.currentStatus === '正常营业' && data.hasRentRecord) ? ['退租','维修','暂停营业'] : (['维修中','暂停营业','翻新中','装修中'].includes(data.currentStatus) ? ['恢复营业'] : []);
+                    const allowedTypesToUse = allowedFromBackend.length > 0 ? allowedFromBackend : fallbackAllowed;
+
+                    // 刷新前端变更类型下拉
+                    refreshChangeTypeOptions(allowedTypesToUse);
+
                     applicationResult.className = 'result success';
                 } else {
                     applicationResult.textContent = `❌ 查询失败: ${data.error || JSON.stringify(data)}`;
                     applicationResult.className = 'result error';
                 }
             } catch (error) {
+                // 出错时也保证变更类型至少显示禁用提示
+                refreshChangeTypeOptions([]);
                 applicationResult.textContent = `❌ 查询时发生错误: ${error.message}`;
                 applicationResult.className = 'result error';
             }
@@ -443,89 +511,106 @@
         async function runComprehensiveTest() {
             const comprehensiveResult = document.getElementById('comprehensiveResult');
             let testResult = '🚀 开始完整业务流程测试...\n\n';
-            
+
             try {
                 comprehensiveResult.textContent = testResult;
                 comprehensiveResult.className = 'result info';
-                
-                // 步骤1: 查询初始状态
-                testResult += '步骤1: 查询店面初始状态...\n';
-                const statusResponse = await fetch(`${API_BASE}/Store/StoreStatus/3001`);
-                const statusData = await statusResponse.json();
-                
-                if (statusResponse.ok) {
-                    testResult += `✅ 步骤1成功: 店面 ${statusData.storeName} 当前状态为 ${statusData.currentStatus}\n\n`;
-                    
-                    // 步骤2: 提交状态变更申请
-                    testResult += '步骤2: 提交状态变更申请...\n';
-                    const requestData = {
-                        storeId: 3001,
-                        changeType: '维修',
-                        reason: '自动化测试：店面设施需要维修',
-                        targetStatus: '维修中',
-                        applicantAccount: 'testmerchant'
-                    };
-                    
-                    const requestResponse = await fetch(`${API_BASE}/Store/StatusChangeRequest`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestData)
-                    });
-                    
-                    const requestResult = await requestResponse.json();
-                    
-                    if (requestResponse.ok) {
-                        testResult += `✅ 步骤2成功: 申请已提交，申请编号 ${requestResult.applicationNo}\n\n`;
-                        
-                        // 步骤3: 管理员审批通过
-                        testResult += '步骤3: 管理员审批申请...\n';
-                        const approvalData = {
-                            storeId: 3001,
-                            approvalAction: '通过',
-                            approvalComment: '自动化测试：维修申请符合规定，予以通过',
-                            approverAccount: 'admin',
-                            targetStatus: '维修中'  // 添加目标状态
-                        };
-                        
-                        const approvalResponse = await fetch(`${API_BASE}/Store/ApproveStatusChange`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(approvalData)
-                        });
-                        
-                        const approvalResult = await approvalResponse.json();
-                        
-                        if (approvalResponse.ok) {
-                            testResult += `✅ 步骤3成功: 审批通过，状态已更新\n\n`;
-                            
-                            // 步骤4: 验证状态更新
-                            testResult += '步骤4: 验证状态更新结果...\n';
-                            const finalStatusResponse = await fetch(`${API_BASE}/Store/StoreStatus/3001`);
-                            const finalStatusData = await finalStatusResponse.json();
-                            
-                            if (finalStatusResponse.ok) {
-                                testResult += `✅ 步骤4成功: 店面状态已更新为 ${finalStatusData.currentStatus}\n\n`;
-                                testResult += '🎉 完整业务流程测试通过！';
-                                comprehensiveResult.className = 'result success';
-                            } else {
-                                testResult += `❌ 步骤4失败: ${finalStatusData.error || JSON.stringify(finalStatusData)}`;
-                                comprehensiveResult.className = 'result error';
-                            }
-                        } else {
-                            testResult += `❌ 步骤3失败: ${approvalResult.error || JSON.stringify(approvalResult)}`;
-                            comprehensiveResult.className = 'result error';
-                        }
-                    } else {
-                        testResult += `❌ 步骤2失败: ${requestResult.error || JSON.stringify(requestResult)}`;
-                        comprehensiveResult.className = 'result error';
-                    }
+
+                // 1) 查询当前店铺状态
+                const storeId = parseInt(document.getElementById('storeId').value);
+                testResult += `步骤1: 查询店铺 ${storeId} 当前状态...\n`;
+
+                const statusResp = await fetch(`${API_BASE}/Store/StoreStatus/${storeId}`);
+                const statusData = await statusResp.json();
+
+                if (!statusResp.ok) {
+                    comprehensiveResult.className = 'result error';
+                    comprehensiveResult.textContent = `❌ 步骤1失败: ${statusData.error || JSON.stringify(statusData)}`;
+                    return;
+                }
+
+                testResult += `✅ 步骤1成功: 当前状态 ${statusData.currentStatus}，可申请: ${statusData.allowedChangeTypes ? statusData.allowedChangeTypes.join(', ') : '无'}\n\n`;
+
+                // 2) 选择第一个可申请的变更提交申请
+                const allowed = statusData.allowedChangeTypes || [];
+                if (allowed.length === 0) {
+                    comprehensiveResult.className = 'result error';
+                    comprehensiveResult.textContent = `❌ 无可提交的变更类型，测试无法继续`;
+                    return;
+                }
+
+                const changeType = allowed[0];
+                const statusMap = {
+                    '退租': '已退租',
+                    '维修': '维修中',
+                    '暂停营业': '暂停营业',
+                    '恢复营业': '正常营业'
+                };
+
+                const requestData = {
+                    storeId: storeId,
+                    changeType: changeType,
+                    reason: `自动化测试提交 ${changeType}`,
+                    targetStatus: statusMap[changeType] || '正常营业',
+                    applicantAccount: document.getElementById('applicantAccount').value || 'merchant001'
+                };
+
+                testResult += `步骤2: 提交申请 (${changeType})...\n`;
+                const requestResponse = await fetch(`${API_BASE}/Store/StatusChangeRequest`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+
+                const requestResult = await requestResponse.json();
+                if (!requestResponse.ok) {
+                    comprehensiveResult.className = 'result error';
+                    comprehensiveResult.textContent = `❌ 步骤2失败: ${requestResult.error || JSON.stringify(requestResult)}`;
+                    return;
+                }
+
+                testResult += `✅ 步骤2成功: 申请已提交，申请编号 ${requestResult.applicationNo}\n\n`;
+
+                // 3) 管理员审批通过
+                testResult += '步骤3: 管理员审批申请...\n';
+                const approvalData = {
+                    storeId: storeId,
+                    approvalAction: '通过',
+                    approvalComment: '自动化测试审批通过',
+                    approverAccount: 'admin',
+                    targetStatus: requestData.targetStatus
+                };
+
+                const approvalResponse = await fetch(`${API_BASE}/Store/ApproveStatusChange`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(approvalData)
+                });
+
+                const approvalResult = await approvalResponse.json();
+                if (!approvalResponse.ok) {
+                    comprehensiveResult.className = 'result error';
+                    comprehensiveResult.textContent = `❌ 步骤3失败: ${approvalResult.error || JSON.stringify(approvalResult)}`;
+                    return;
+                }
+
+                testResult += `✅ 步骤3成功: 审批通过，状态应已更新\n\n`;
+
+                // 4) 验证最终状态
+                testResult += '步骤4: 验证状态更新结果...\n';
+                const finalStatusResponse = await fetch(`${API_BASE}/Store/StoreStatus/${storeId}`);
+                const finalStatusData = await finalStatusResponse.json();
+
+                if (finalStatusResponse.ok) {
+                    testResult += `✅ 步骤4成功: 店面状态已更新为 ${finalStatusData.currentStatus}\n\n`;
+                    testResult += '🎉 完整业务流程测试通过！';
+                    comprehensiveResult.className = 'result success';
                 } else {
-                    testResult += `❌ 步骤1失败: ${statusData.error || JSON.stringify(statusData)}`;
+                    testResult += `❌ 步骤4失败: ${finalStatusData.error || JSON.stringify(finalStatusData)}`;
                     comprehensiveResult.className = 'result error';
                 }
-                
+
                 comprehensiveResult.textContent = testResult;
-                
             } catch (error) {
                 testResult += `❌ 测试过程中发生错误: ${error.message}`;
                 comprehensiveResult.textContent = testResult;
@@ -561,6 +646,81 @@
             } catch (error) {
                 quickTestResult.textContent = `❌ 查询时发生错误: ${error.message}`;
                 quickTestResult.className = 'result error';
+            }
+        }
+
+        // 根据审批用 storeId 刷新审批目标状态选项
+        function refreshApprovalTargetOptions(allowedTypes) {
+            const approvalTargetSelect = document.getElementById('approvalTargetStatus');
+            approvalTargetSelect.innerHTML = '';
+
+            const map = {
+                '退租': '已退租',
+                '维修': '维修中',
+                '暂停营业': '暂停营业',
+                '恢复营业': '正常营业'
+            };
+
+            if (!allowedTypes || allowedTypes.length === 0) {
+                // 保留默认常用选项以便审批人手动选择
+                const defaults = ['正常营业', '维修中', '暂停营业', '已退租', '装修中'];
+                defaults.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s;
+                    approvalTargetSelect.appendChild(opt);
+                });
+                return;
+            }
+
+            // 仅展示与 allowedTypes 对应的目标状态，便于审批
+            const added = new Set();
+            allowedTypes.forEach(t => {
+                const status = map[t] || null;
+                if (status && !added.has(status)) {
+                    const opt = document.createElement('option');
+                    opt.value = status;
+                    opt.textContent = status;
+                    approvalTargetSelect.appendChild(opt);
+                    added.add(status);
+                }
+            });
+
+            // 如果没有映射到任何状态，则保留默认列表
+            if (approvalTargetSelect.children.length === 0) {
+                const defaults = ['正常营业', '维修中', '暂停营业', '已退租', '装修中'];
+                defaults.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s;
+                    approvalTargetSelect.appendChild(opt);
+                });
+            }
+        }
+
+        // 查询店面状态用于审批区域（approvalStoreId）并刷新审批目标选项
+        async function getStoreStatusForApproval() {
+            const approvalResult = document.getElementById('approvalResult');
+            const storeId = document.getElementById('approvalStoreId').value;
+
+            try {
+                approvalResult.textContent = '正在查询店面状态（用于审批）...';
+                approvalResult.className = 'result info';
+
+                const response = await fetch(`${API_BASE}/Store/StoreStatus/${storeId}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    refreshApprovalTargetOptions(data.allowedChangeTypes || []);
+                    approvalResult.textContent = `查询完成：店铺 ${data.storeName}，当前状态 ${data.currentStatus}`;
+                    approvalResult.className = 'result success';
+                } else {
+                    approvalResult.textContent = `❌ 查询失败: ${data.error || JSON.stringify(data)}`;
+                    approvalResult.className = 'result error';
+                }
+            } catch (error) {
+                approvalResult.textContent = `❌ 查询时发生错误: ${error.message}`;
+                approvalResult.className = 'result error';
             }
         }
 
@@ -666,6 +826,24 @@
             updateTargetStatus();
             updateApprovalTargetStatus();
             checkApiStatus();
+
+            // 当 storeId 改变时自动刷新店面状态和可申请类型
+            const storeSelect = document.getElementById('storeId');
+            if (storeSelect) {
+                storeSelect.addEventListener('change', getStoreStatus);
+            }
+
+            // 页面加载时立即刷新一次以填充变更类型
+            getStoreStatus();
+
+            // 绑定审批区域的店铺下拉变化，自动刷新审批目标选项
+            const approvalStoreSelect = document.getElementById('approvalStoreId');
+            if (approvalStoreSelect) {
+                approvalStoreSelect.addEventListener('change', getStoreStatusForApproval);
+            }
+
+            // 页面加载时刷新一次审批目标选项
+            getStoreStatusForApproval();
         };
     </script>
 </body>
