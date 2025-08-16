@@ -53,3 +53,21 @@ PROMPT '- 店铺3001 (麦当劳餐厅): 正常营业状态，可申请状态变�
 PROMPT '- 店铺3002 (小米专卖店): 正常营业状态，可申请状态变更'
 PROMPT '- 店铺3003 (周大福珠宝): 正常营业状态，可申请状态变更'
 PROMPT '所有店铺都有有效租用记录，满足申请前置条件'
+
+-- 管理员账号
+INSERT INTO ACCOUNT (ACCOUNT, PASSWORD, USERNAME, IDENTITY, AUTHORITY) VALUES ('admin', 'adminpass', '系统管理员', '员工', 1);
+INSERT INTO ACCOUNT (ACCOUNT, PASSWORD, USERNAME, IDENTITY, AUTHORITY) VALUES ('admin_test', 'admintest', '测试管理员', '员工', 1);
+
+-- 前端默认申请人 merchant001，关联到店铺3001
+-- 已移除旧的 merchant001，使用系统生成的 store_003001 等账号作为商户账号映射
+
+-- 与店铺 3001/3002/3003 对应的系统生成商户账号（用于兼容已有测试逻辑）
+INSERT INTO ACCOUNT (ACCOUNT, PASSWORD, USERNAME, IDENTITY, AUTHORITY) VALUES ('store_003001', 'initpass1', '麦当劳中国', '商户', 4);
+INSERT INTO ACCOUNT (ACCOUNT, PASSWORD, USERNAME, IDENTITY, AUTHORITY) VALUES ('store_003002', 'initpass2', '小米科技', '商户', 4);
+INSERT INTO ACCOUNT (ACCOUNT, PASSWORD, USERNAME, IDENTITY, AUTHORITY) VALUES ('store_003003', 'initpass3', '周大福集团', '商户', 4);
+
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('store_003001', 3001);
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('store_003002', 3002);
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('store_003003', 3003);
+
+COMMIT;

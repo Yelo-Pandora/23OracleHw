@@ -160,7 +160,7 @@
             
             <div class="form-group">
                 <label>申请人账号:</label>
-                <input type="text" id="applicantAccount" value="merchant001" placeholder="输入申请人账号">
+                <input type="text" id="applicantAccount" value="store_003001" placeholder="输入申请人账号">
             </div>
             
             <button onclick="submitStatusChangeRequest()">提交状态变更申请</button>
@@ -179,6 +179,10 @@
                     <option value="3002">3002 - 小米专卖店</option>
                     <option value="3003">3003 - 周大福珠宝</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <button onclick="fetchPendingApplications()">刷新待审批申请</button>
+                <div id="pendingApplicationsList" class="result info" style="margin-top:10px; max-height:200px; overflow:auto;">暂无待审批申请</div>
             </div>
             <div class="form-group">
                 <label>申请编号:</label>
@@ -647,6 +651,107 @@
                 quickTestResult.textContent = `❌ 查询时发生错误: ${error.message}`;
                 quickTestResult.className = 'result error';
             }
+        }
+
+        // 获取并展示待审批申请（调用后端 /Applications 接口）
+        async function fetchPendingApplications() {
+            const listEl = document.getElementById('pendingApplicationsList');
+            listEl.textContent = '正在加载待审批申请...';
+            listEl.className = 'result info';
+
+            try {
+                const resp = await fetch(`${API_BASE}/Store/Applications?status=Pending`);
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    listEl.textContent = `❌ 获取失败: ${err.error || resp.status}`;
+                    listEl.className = 'result error';
+                    return;
+                }
+
+                const data = await resp.json();
+                renderPendingApplications(data);
+            } catch (error) {
+                listEl.textContent = `❌ 获取失败: ${error.message}`;
+                listEl.className = 'result error';
+            }
+        }
+
+        function renderPendingApplications(apps) {
+            const listEl = document.getElementById('pendingApplicationsList');
+            if (!apps || apps.length === 0) {
+                listEl.textContent = '当前没有待审批的申请';
+                listEl.className = 'result info';
+                return;
+            }
+
+            listEl.innerHTML = '';
+            apps.forEach(a => {
+                const row = document.createElement('div');
+                row.style.padding = '8px';
+                row.style.borderBottom = '1px solid #eee';
+                row.style.cursor = 'pointer';
+                row.title = `点击填充申请编号 ${a.applicationNo}`;
+
+                // 主行信息
+                const headerHtml = `<strong>${a.applicationNo}</strong> — 店铺 ${a.storeId} ${a.storeName || ''} — ${a.changeType} — 申请人: ${a.applicant} — ${new Date(a.createdAt).toLocaleString()}`;
+
+                // 申请原因（截断显示）
+                const reasonFull = a.reason || '';
+                const reasonPreview = reasonFull.length > 120 ? reasonFull.slice(0, 120) + '…' : reasonFull;
+
+                row.innerHTML = `${headerHtml}<div style="margin-top:6px; color:#444; font-size:12px;">原因: <span class='reasonPreview'>${escapeHtml(reasonPreview)}</span><span class='reasonFull' style='display:none;'>${escapeHtml(reasonFull)}</span> <a href='#' class='toggleReason' style='margin-left:8px; font-size:12px;'>查看全文</a></div>`;
+
+                // 点击整行填充审批表单
+                row.addEventListener('click', (ev) => {
+                    // 如果点击的是“查看全文”链接，则不触发填充
+                    if (ev.target && ev.target.classList && ev.target.classList.contains('toggleReason')) {
+                        return;
+                    }
+                    document.getElementById('approvalApplicationNo').value = a.applicationNo;
+                    const approvalStore = document.getElementById('approvalStoreId');
+                    approvalStore.value = a.storeId;
+                    getStoreStatusForApproval();
+                    document.getElementById('approvalAction').focus();
+                });
+
+                // 切换原因全文/预览
+                row.querySelectorAll('.toggleReason').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const parent = e.target.closest('div');
+                        const preview = parent.querySelector('.reasonPreview');
+                        const full = parent.querySelector('.reasonFull');
+                        if (full.style.display === 'none') {
+                            full.style.display = 'inline';
+                            preview.style.display = 'none';
+                            e.target.textContent = '收起';
+                        } else {
+                            full.style.display = 'none';
+                            preview.style.display = '';
+                            e.target.textContent = '查看全文';
+                        }
+                    });
+                });
+
+                listEl.appendChild(row);
+            });
+
+            listEl.className = 'result info';
+        }
+
+        // 简单的 HTML 转义，防止渲染 user-provided 文本时注入
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"] /g, function (s) {
+                switch (s) {
+                    case '&': return '&amp;';
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '"': return '&quot;';
+                    case ' ': return '&nbsp;';
+                    default: return s;
+                }
+            });
         }
 
         // 根据审批用 storeId 刷新审批目标状态选项

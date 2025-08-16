@@ -894,6 +894,31 @@ namespace oracle_backend.Controllers
                     return BadRequest(new { error = $"未知的变更类型 '{changeType}'" });
                 }
 
+                // 验证申请人账号存在及权限/归属
+                if (string.IsNullOrWhiteSpace(dto.ApplicantAccount))
+                {
+                    return BadRequest(new { error = "申请人账号不能为空" });
+                }
+
+                var applicantAccount = await _accountContext.FindAccount(dto.ApplicantAccount);
+                if (applicantAccount == null)
+                {
+                    _logger.LogWarning("提交申请失败：申请人账号不存在：{Applicant}", dto.ApplicantAccount);
+                    return BadRequest(new { error = $"申请人账号 '{dto.ApplicantAccount}' 不存在" });
+                }
+
+                // 仅允许管理员/部门经理（AUTHORITY <= 2）或与店铺绑定的商户账号提交该店铺的申请
+                if (applicantAccount.AUTHORITY > 2)
+                {
+                    // 非管理员，需要校验是否为该店铺的商户账号
+                    var storeAccount = await _accountContext.CheckStore(dto.ApplicantAccount);
+                    if (storeAccount == null || storeAccount.STORE_ID != dto.StoreId)
+                    {
+                        _logger.LogWarning("提交申请失败：申请人账号与店铺不匹配：申请人={Applicant}, 店铺={StoreId}", dto.ApplicantAccount, dto.StoreId);
+                        return BadRequest(new { error = "申请人账号与店铺不匹配，只有商户本人或管理员/部门经理可提交申请" });
+                    }
+                }
+
                 // 生成申请编号
                 var applicationNo = GenerateApplicationNumber();
 
@@ -1220,6 +1245,87 @@ namespace oracle_backend.Controllers
                     return "正常营业"; // 恢复营业
                 default:
                     return "正常营业"; // 默认恢复到正常营业状态
+            }
+        }
+
+        // 列出内存中的申请记录，支持按状态或店铺过滤（仅用于测试/演示）
+        [HttpGet("Applications")]
+        public async Task<IActionResult> ListApplications([FromQuery] string? status = null, [FromQuery] int? storeId = null)
+        {
+            try
+            {
+                var apps = _applications.Values.AsEnumerable();
+                if (!string.IsNullOrEmpty(status))
+                {
+                    apps = apps.Where(a => string.Equals(a.Status, status, StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (storeId.HasValue)
+                {
+                    apps = apps.Where(a => a.StoreId == storeId.Value);
+                }
+
+                var result = new List<object>();
+                foreach (var a in apps.OrderByDescending(x => x.CreatedAt))
+                {
+                    var store = await _storeContext.GetStoreById(a.StoreId);
+                    result.Add(new
+                    {
+                        applicationNo = a.ApplicationNo,
+                        storeId = a.StoreId,
+                        storeName = store?.STORE_NAME,
+                        changeType = a.ChangeType,
+                        targetStatus = a.TargetStatus,
+                        reason = a.Reason,
+                        applicant = a.Applicant,
+                        createdAt = a.CreatedAt,
+                        status = a.Status
+                    });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "列出申请时发生错误");
+                return StatusCode(500, new { error = "列出申请失败" });
+            }
+        }
+
+        // 根据申请编号查询单条申请详情（仅用于测试/演示）
+        [HttpGet("Applications/{applicationNo}")]
+        public async Task<IActionResult> GetApplication(string applicationNo)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(applicationNo))
+                {
+                    return BadRequest(new { error = "申请编号不能为空" });
+                }
+
+                if (!_applications.TryGetValue(applicationNo, out var app))
+                {
+                    return NotFound(new { error = $"找不到申请编号 {applicationNo}" });
+                }
+
+                var store = await _storeContext.GetStoreById(app.StoreId);
+                return Ok(new
+                {
+                    applicationNo = app.ApplicationNo,
+                    storeId = app.StoreId,
+                    storeName = store?.STORE_NAME,
+                    changeType = app.ChangeType,
+                    targetStatus = app.TargetStatus,
+                    reason = app.Reason,
+                    applicant = app.Applicant,
+                    createdAt = app.CreatedAt,
+                    status = app.Status
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "查询申请详情时发生错误：{ApplicationNo}", applicationNo);
+                return StatusCode(500, new { error = "查询申请详情失败" });
             }
         }
 
