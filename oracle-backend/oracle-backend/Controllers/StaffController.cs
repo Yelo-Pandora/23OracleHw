@@ -504,6 +504,29 @@ namespace oracle_backend.Controllers
             return true;
         }
 
+        // 是否有权限修改员工信息
+        private async Task<ActionResult?> CanModifyStaff(string operatorAccount, string apartment){
+            var isAdmin = await CheckPermission(operatorAccount, 1);
+            var isManager = await CheckPermission(operatorAccount, 2);
+            if(!isAdmin && !isManager) {
+                return BadRequest("无权限");
+            }
+            else if (isManager != null){
+                // 查看manager的部门
+                Staff manager = await _collabContext.FindStaffByAccount(operatorAccount);
+                if (manager == null)
+                {
+                    return BadRequest("无效的操作员账号");
+                }
+                // 部门和员工不同则无权操作
+                if (manager.STAFF_APARTMENT != apartment)
+                {
+                    return BadRequest("无权操作该部门员工");
+                }
+            }
+            return null;
+        }
+
         //获取所有员工信息
         [HttpGet("AllStaffs")]
         public async Task<IActionResult> GetAllStaffs()
@@ -519,25 +542,10 @@ namespace oracle_backend.Controllers
             [FromBody] StaffDto dto)
         {
             // 权限检查
-            var isAdmin = await CheckPermission(operatorAccount, 1);
-            var isManager = await CheckPermission(operatorAccount, 2);
-            if(!isAdmin && !isManager) {
-                return BadRequest("无权限");
+            var Permission = await CanModifyStaff(operatorAccount, dto.STAFF_APARTMENT);
+            if (Permission != null){
+                return Permission;
             }
-            else if (isManager != null){
-                // 查看manager的部门
-                Staff manager = await _collabContext.FindStaffByAccount(operatorAccount);
-                if (manager == null)
-                {
-                    return BadRequest("无效的操作员账号");
-                }
-                // 部门和员工不同则无权操作
-                if (manager.STAFF_APARTMENT != dto.STAFF_APARTMENT)
-                {
-                    return BadRequest("无权操作该部门员工");
-                }
-            }
-
             try {
                 // 自动生成员工ID
                 var maxStaffId = await _collabContext.Staffs.MaxAsync(s => (int?)s.STAFF_ID) ?? 0;
