@@ -249,5 +249,20 @@ namespace oracle_backend.Controllers
             return Ok("账号删除成功");
         }
 
+        //查询指定账号的权限
+        [HttpPost("chkauth")]
+        public async Task<IActionResult> ChkAuthority(string account, int goalAuth)
+        {
+            var goalaccount = await _context.FindAccount(account);
+            if (goalaccount == null)
+            {
+                _logger.LogWarning("指定的账号不存在");
+                return BadRequest("账号不存在，请重新指定账号");
+            }
+            else
+            {
+                return Ok(await _context.CheckAuthority(account, goalAuth));
+            }
+        }
     }
 }
