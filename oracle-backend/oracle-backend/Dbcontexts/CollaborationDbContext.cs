@@ -10,10 +10,11 @@ namespace oracle_backend.Dbcontexts
         }
         // 合作方和员工相关实体
         public DbSet<Collaboration> Collaborations { get; set; }
-        public DbSet<Staff> Staff { get; set; }
+        public DbSet<Staff> Staffs { get; set; }
 
         // 用于检查依赖关系的实体
         public DbSet<VenueEventDetail> VenueEventDetails { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
