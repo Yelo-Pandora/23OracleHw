@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using oracle_backend.Dbcontexts;
 using oracle_backend.Models;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace oracle_backend.Controllers
@@ -13,18 +16,63 @@ namespace oracle_backend.Controllers
     public class CollaborationController : ControllerBase
     {
         private readonly CollaborationDbContext _context;
+        private readonly AccountDbContext _accountContext; // 账号相关的功能，注入AccountDbContext
         private readonly ILogger<CollaborationController> _logger;
 
-        public CollaborationController(CollaborationDbContext context, ILogger<CollaborationController> logger)
+        public CollaborationController(
+            CollaborationDbContext context,
+            AccountDbContext accountContext,
+            ILogger<CollaborationController> logger)
         {
             _context = context;
+            _accountContext = accountContext;
             _logger = logger;
+        }
+
+        // 权限验证方法
+        private async Task<ActionResult?> CheckPermission(string operatorAccountId, int requiredAuthority)
+        {
+            if (string.IsNullOrEmpty(operatorAccountId))
+            {
+                return BadRequest("操作员账号不能为空");
+            }
+            // 检查账号是否存在
+            var account = await _accountContext.FindAccount(operatorAccountId);
+            if (account == null)
+            {
+                return BadRequest("操作员账号不存在");
+            }
+            // 检查账号是否被封禁
+            if (account.AUTHORITY == 5)
+            {
+                return BadRequest("账号已被封禁，无法执行操作");
+            }
+            // 检查常驻权限
+            bool hasPermission = await _accountContext.CheckAuthority(operatorAccountId, requiredAuthority);
+            // 如果没有常驻权限，检查临时权限
+            if (!hasPermission)
+            {
+                var tempAuthorities = await _accountContext.FindTempAuthorities(operatorAccountId);
+                hasPermission = tempAuthorities.Any(ta =>
+                    ta.TEMP_AUTHORITY.HasValue &&
+                    ta.TEMP_AUTHORITY.Value <= requiredAuthority);
+            }
+            if (!hasPermission)
+            {
+                return BadRequest($"权限不足，需要权限级别 {requiredAuthority} 或更高");
+            }
+            return null;
         }
 
         // 2.4.1 添加新合作方
         [HttpPost]
-        public async Task<IActionResult> AddCollaboration([FromBody] CollaborationDto dto)
+        public async Task<IActionResult> AddCollaboration(
+            [FromQuery, Required] string operatorAccountId,
+            [FromBody] CollaborationDto dto)
         {
+            // 验证权限 - 需要数据库管理员权限(1)
+            var permissionCheck = await CheckPermission(operatorAccountId, 1);
+            if (permissionCheck != null) return permissionCheck;
             try
             {
                 // 检查ID唯一性 - 使用COUNT避免布尔转换
@@ -47,12 +95,12 @@ namespace oracle_backend.Controllers
                 _context.Collaborations.Add(collaboration);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation($"新增合作方: ID={dto.CollaborationId}");
+                _logger.LogInformation($"操作员 {operatorAccountId} 添加了合作方: ID={dto.CollaborationId}");
                 return Ok(new { message = "添加成功", id = collaboration.COLLABORATION_ID });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "添加合作方时出错");
+                _logger.LogError(ex, $"操作员 {operatorAccountId} 添加合作方时出错");
                 return StatusCode(500, "内部服务器错误");
             }
         }
@@ -60,10 +108,15 @@ namespace oracle_backend.Controllers
         // 2.4.2 合作方信息查询
         [HttpGet]
         public async Task<IActionResult> SearchCollaborations(
+            [FromQuery, Required] string operatorAccountId,
             [FromQuery] int? id,
             [FromQuery] string? name,
             [FromQuery] string? contactor)
         {
+            // 验证权限 - 需要数据库管理员权限(1)或部门经理权限(2)
+            var permissionCheck = await CheckPermission(operatorAccountId, 2);
+            if (permissionCheck != null) return permissionCheck;
+
             var query = _context.Collaborations.AsQueryable();
 
             if (id.HasValue)
@@ -81,8 +134,15 @@ namespace oracle_backend.Controllers
 
         // 2.4.3 修改合作方信息
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCollaboration(int id, [FromBody] CollaborationUpdateDto dto)
+        public async Task<IActionResult> UpdateCollaboration(
+            int id, 
+            [FromQuery, Required] string operatorAccountId,
+            [FromBody] CollaborationUpdateDto dto)
         {
+            // 验证权限 - 需要数据库管理员权限(1)
+            var permissionCheck = await CheckPermission(operatorAccountId, 1);
+            if (permissionCheck != null) return permissionCheck;
+
             try
             {
                 // 查找指定ID的合作方
@@ -115,7 +175,7 @@ namespace oracle_backend.Controllers
                 // 保存更改
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation($"修改合作方信息: ID={id}");
+                _logger.LogInformation($"操作员 {operatorAccountId} 修改了合作方信息: ID={id}");
                 return Ok(new
                 {
                     message = "更新成功",
@@ -131,12 +191,12 @@ namespace oracle_backend.Controllers
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _logger.LogError(ex, "更新合作方时发生并发冲突");
+                _logger.LogError(ex, $"操作员 {operatorAccountId} 更新合作方时发生并发冲突");
                 return StatusCode(500, "更新失败：数据已被其他操作修改" + ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "更新合作方时出错");
+                _logger.LogError(ex, $"操作员 {operatorAccountId} 更新合作方时出错");
                 return StatusCode(500, "内部服务器错误" + ex);
             }
         }
@@ -144,10 +204,15 @@ namespace oracle_backend.Controllers
         // 2.4.4 合作方统计报表
         [HttpGet("report")]
         public async Task<IActionResult> GenerateReport(
+            [FromQuery, Required] string operatorAccountId,
             [FromQuery] DateTime startDate,
             [FromQuery] DateTime endDate,
             [FromQuery] string? industry)
         {
+            // 验证权限 - 需要数据库管理员权限(1)或部门经理权限(2)
+            var permissionCheck = await CheckPermission(operatorAccountId, 2);
+            if (permissionCheck != null) return permissionCheck;
+
             if (startDate >= endDate)
             {
                 return BadRequest("开始日期必须早于结束日期");
@@ -156,11 +221,27 @@ namespace oracle_backend.Controllers
             {
                 return BadRequest("结束日期不能晚于当前日期");
             }
-            var report = await _context.VenueEventDetails
-                .Where(ved => ved.RENT_START >= startDate && ved.RENT_END <= endDate)
-                .GroupBy(ved => ved.COLLABORATION_ID)
-                .Select(g => new {
-                    CollaborationId = g.Key,
+            // 基础查询（时间范围）
+            var query = _context.VenueEventDetails
+                .Where(ved => ved.RENT_START >= startDate && ved.RENT_END <= endDate);
+
+            // 按合作方名称包含 industry 过滤
+            if (!string.IsNullOrWhiteSpace(industry))
+            {
+                // 使用导航属性过滤；EF 会生成相应 JOIN
+                string pattern = $"%{industry.Trim()}%";
+                query = query.Where(ved =>
+                    EF.Functions.Like(ved.collaborationNavigation.COLLABORATION_NAME, pattern));
+            }
+
+            var report = await query
+                .GroupBy(ved => new
+                {
+                    ved.COLLABORATION_ID
+                })
+                .Select(g => new
+                {
+                    CollaborationId = g.Key.COLLABORATION_ID,
                     EventCount = g.Count(),
                     TotalInvestment = g.Sum(x => x.FUNDING),
                     AvgRevenue = g.Average(x => x.FUNDING)
