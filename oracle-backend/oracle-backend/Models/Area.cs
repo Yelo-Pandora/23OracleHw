@@ -1,4 +1,4 @@
-﻿//对应于数据库区域(AREA)表的类
+//对应于数据库区域(AREA)表的类
 
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -21,5 +21,8 @@ namespace oracle_backend.Models
         [Column(TypeName = "VARCHAR2(50)")]
         public string CATEGORY { get; set; }
 
+        //区域类别（RETAIL, EVENT, PARKING, OTHER等）
+        [Column(TypeName = "VARCHAR2(50)")]
+        public string CATEGORY { get; set; }
     }
 }
