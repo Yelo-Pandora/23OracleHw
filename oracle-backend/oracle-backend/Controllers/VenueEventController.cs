@@ -1,383 +1,581 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using oracle_backend.Models.venueEvent;
-using oracle_backend.Services;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using oracle_backend.Dbcontexts;
+using oracle_backend.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace oracle_backend.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class VenueEventController : ControllerBase
     {
-        private readonly VenueEventService _venueEventService;
+        private readonly ComplexDbContext _context;
         private readonly ILogger<VenueEventController> _logger;
 
-        public VenueEventController(
-            VenueEventService venueEventService,
-            ILogger<VenueEventController> logger)
+        public VenueEventController(ComplexDbContext context, ILogger<VenueEventController> logger)
         {
-            _venueEventService = venueEventService;
+            _context = context;
             _logger = logger;
         }
 
-        // POST api/venueevent/reservation - 提交场地预约申请
-        [HttpPost("reservation")]
-        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationRequest request)
+        // DTO for venue event reservation
+        public class VenueEventReservationDto
         {
+            [Required]
+            public int CollaborationId { get; set; }
+            [Required]
+            public int AreaId { get; set; }
+            [Required]
+            public DateTime RentStartTime { get; set; }
+            [Required]
+            public DateTime RentEndTime { get; set; }
+            public string? RentPurpose { get; set; }
+            [Required]
+            public string CollaborationName { get; set; }
+            [Required]
+            public string StaffPosition { get; set; }
+            [Required]
+            public string EventName { get; set; }
+            public int? ExpectedHeadcount { get; set; }
+            public double? ExpectedFee { get; set; }
+            public int? Capacity { get; set; }
+            public int? Expense { get; set; }
+        }
+
+        // DTO for venue event management
+        public class VenueEventUpdateDto
+        {
+            public string? EventName { get; set; }
+            public int? Headcount { get; set; }
+            public string? Description { get; set; }
+            public string? Status { get; set; } // 筹备中/进行中/已结束/已取消
+            public List<string>? ParticipantAccounts { get; set; }
+        }
+
+        // DTO for venue event settlement
+        public class VenueEventSettlementDto
+        {
+            [Required]
+            public int EventId { get; set; }
+            [Required]
+            public double VenueFee { get; set; }
+            public double? AdditionalServiceFee { get; set; }
+            [Required]
+            public string PaymentMethod { get; set; }
+            public string? InvoiceInfo { get; set; }
+        }
+
+        // DTO for venue event report
+        public class VenueEventReportRequestDto
+        {
+            [Required]
+            public DateTime StartDate { get; set; }
+            [Required]
+            public DateTime EndDate { get; set; }
+            public string? ReportType { get; set; } // "daily", "weekly", "monthly"
+        }
+
+        // DTO for venue event report response
+        public class VenueEventReportDto
+        {
+            public int TotalEvents { get; set; }
+            public double TotalRentHours { get; set; }
+            public double TotalRevenue { get; set; }
+            public double AverageOccupancy { get; set; }
+            public List<PopularVenueDto> PopularVenues { get; set; } = new List<PopularVenueDto>();
+            public List<VenueEventSummaryDto> EventDetails { get; set; } = new List<VenueEventSummaryDto>();
+        }
+
+        public class PopularVenueDto
+        {
+            public int AreaId { get; set; }
+            public int EventCount { get; set; }
+            public double TotalRevenue { get; set; }
+        }
+
+        public class VenueEventSummaryDto
+        {
+            public int EventId { get; set; }
+            public string? EventName { get; set; }
+            public int AreaId { get; set; }
+            public DateTime RentStart { get; set; }
+            public DateTime RentEnd { get; set; }
+            public double RentHours { get; set; }
+            public double VenueFee { get; set; }
+            public int? ActualHeadcount { get; set; }
+            public string Status { get; set; }
+        }
+
+        // 1. 场地预约功能 (对应需求 1.1.8)
+        [HttpPost("reservations")]
+        public async Task<IActionResult> CreateReservation([FromBody] VenueEventReservationDto dto)
+        {
+            // 验证时间有效性
+            if (dto.RentEndTime <= dto.RentStartTime)
+            {
+                return BadRequest(new { message = "结束时间需晚于起始时间" });
+            }
+
+            // 验证活动区域ID是否有效且未被占用
+            var eventArea = await _context.EventAreas.FindAsync(dto.AreaId);
+            if (eventArea == null)
+            {
+                return BadRequest(new { message = "活动区域ID无效" });
+            }
+
+            // 检查时间段内是否已被占用
+            var conflictingReservation = await _context.VenueEventDetails
+                .Where(ved => ved.AREA_ID == dto.AreaId &&
+                             ved.STATUS != "已取消" &&
+                             ((ved.RENT_START <= dto.RentStartTime && ved.RENT_END > dto.RentStartTime) ||
+                              (ved.RENT_START < dto.RentEndTime && ved.RENT_END >= dto.RentEndTime) ||
+                              (ved.RENT_START >= dto.RentStartTime && ved.RENT_END <= dto.RentEndTime)))
+                .FirstOrDefaultAsync();
+
+            if (conflictingReservation != null)
+            {
+                return BadRequest(new { message = "该区域在指定时间内已被占用" });
+            }
+
+            // 验证合作方是否存在
+            var collaboration = await _context.Collaborations.FindAsync(dto.CollaborationId);
+            if (collaboration == null)
+            {
+                return BadRequest(new { message = "合作方信息不存在" });
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var result = await _venueEventService.CreateReservationAsync(request.Reservation, request.Event);
-                return CreatedAtAction(nameof(GetReservationByEventId), new { eventId = result.EventId }, result);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "场地预约申请参数验证失败");
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "场地预约申请业务规则验证失败");
-                return Conflict(ex.Message);
+                // 创建场地活动记录
+                var venueEvent = new VenueEvent
+                {
+                    EVENT_NAME = dto.EventName,
+                    EVENT_START = dto.RentStartTime,
+                    EVENT_END = dto.RentEndTime,
+                    HEADCOUNT = dto.ExpectedHeadcount,
+                    FEE = dto.ExpectedFee ?? 0,
+                    CAPACITY = dto.Capacity ?? eventArea.CAPACITY ?? 0,
+                    EXPENSE = dto.Expense ?? 0
+                };
+
+                _context.VenueEvents.Add(venueEvent);
+                await _context.SaveChangesAsync();
+
+                // 创建场地活动详情记录
+                var venueEventDetail = new VenueEventDetail
+                {
+                    EVENT_ID = venueEvent.EVENT_ID,
+                    AREA_ID = dto.AreaId,
+                    COLLABORATION_ID = dto.CollaborationId,
+                    RENT_START = dto.RentStartTime,
+                    RENT_END = dto.RentEndTime,
+                    STATUS = "待审批",
+                    FUNDING = 0 // 初始资金为0，后续可以更新
+                };
+
+                _context.VenueEventDetails.Add(venueEventDetail);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return Ok(new
+                {
+                    message = "场地预约申请提交成功，等待审批",
+                    eventId = venueEvent.EVENT_ID
+                });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "创建场地预约申请时发生错误");
-                return StatusCode(500, "服务器内部错误");
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "创建场地预约失败");
+                return StatusCode(500, new { message = "创建场地预约失败" });
             }
         }
 
-        // PUT api/venueevent/approval - 审批场地预约申请
-        [HttpPut("approval")]
-        public async Task<IActionResult> ApproveReservation([FromBody] VenueReservationApprovalDto approvalDto)
+        // 2. 场地预约审批
+        [HttpPut("reservations/{eventId}/approve")]
+        public async Task<IActionResult> ApproveReservation(int eventId, [FromBody] string? approvalNote)
         {
+            var venueEventDetail = await _context.VenueEventDetails
+                .FirstOrDefaultAsync(ved => ved.EVENT_ID == eventId);
+
+            if (venueEventDetail == null)
+            {
+                return NotFound(new { message = "找不到对应的预约记录" });
+            }
+
+            if (venueEventDetail.STATUS != "待审批")
+            {
+                return BadRequest(new { message = "该预约已处理，无法重复审批" });
+            }
+
             try
             {
-                var result = await _venueEventService.ApproveReservationAsync(approvalDto);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, $"审批场地预约失败: EventId={approvalDto.EventId}");
-                return Conflict(ex.Message);
+                venueEventDetail.STATUS = "已通过";
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "预约审批通过" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"审批场地预约时发生错误: EventId={approvalDto.EventId}");
-                return StatusCode(500, "服务器内部错误");
+                _logger.LogError(ex, $"审批预约 {eventId} 失败");
+                return StatusCode(500, new { message = "审批失败" });
             }
         }
 
-        // GET api/venueevent/reservations - 获取预约申请（支持按状态筛选）
-        [HttpGet("reservations")]
-        public async Task<IActionResult> GetReservations([FromQuery] string status = null)
+        // 3. 场地预约拒绝
+        [HttpPut("reservations/{eventId}/reject")]
+        public async Task<IActionResult> RejectReservation(int eventId, [FromBody] string? rejectionReason)
         {
+            var venueEventDetail = await _context.VenueEventDetails
+                .FirstOrDefaultAsync(ved => ved.EVENT_ID == eventId);
+
+            if (venueEventDetail == null)
+            {
+                return NotFound(new { message = "找不到对应的预约记录" });
+            }
+
+            if (venueEventDetail.STATUS != "待审批")
+            {
+                return BadRequest(new { message = "该预约已处理，无法重复审批" });
+            }
+
             try
             {
-                var reservations = await _venueEventService.GetReservationsByStatusAsync(status);
-                return Ok(reservations);
+                venueEventDetail.STATUS = "已驳回";
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "预约已驳回" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "获取预约申请时发生错误");
-                return StatusCode(500, "服务器内部错误");
+                _logger.LogError(ex, $"驳回预约 {eventId} 失败");
+                return StatusCode(500, new { message = "驳回失败" });
             }
         }
 
-        // GET api/venueevent/reservations/{eventId} - 根据活动ID获取预约信息
-        [HttpGet("reservations/{eventId}")]
-        public async Task<IActionResult> GetReservationByEventId(int eventId)
+        // 4. 场地活动管理功能 (对应需求 1.1.9)
+        [HttpPut("events/{eventId}")]
+        public async Task<IActionResult> UpdateVenueEvent(int eventId, [FromBody] VenueEventUpdateDto dto)
         {
+            var venueEvent = await _context.VenueEvents.FindAsync(eventId);
+            if (venueEvent == null)
+            {
+                return NotFound(new { message = "找不到对应的活动记录" });
+            }
+
+            var venueEventDetail = await _context.VenueEventDetails
+                .FirstOrDefaultAsync(ved => ved.EVENT_ID == eventId);
+
+            if (venueEventDetail == null)
+            {
+                return NotFound(new { message = "找不到对应的活动详情记录" });
+            }
+
+            // 检查活动是否已结束
+            if (venueEventDetail.STATUS == "已结束")
+            {
+                return BadRequest(new { message = "活动已结束，不可修改或取消" });
+            }
+
             try
             {
-                var reservation = await _venueEventService.GetReservationByEventIdAsync(eventId);
-                return reservation != null ? Ok(reservation) : NotFound($"未找到活动ID为{eventId}的预约记录");
+                // 更新活动信息
+                if (!string.IsNullOrEmpty(dto.EventName))
+                    venueEvent.EVENT_NAME = dto.EventName;
+
+                if (dto.Headcount.HasValue)
+                    venueEvent.HEADCOUNT = dto.Headcount.Value;
+
+                if (!string.IsNullOrEmpty(dto.Status))
+                    venueEventDetail.STATUS = dto.Status;
+
+                // 处理批量导入参与人员
+                if (dto.ParticipantAccounts != null && dto.ParticipantAccounts.Any())
+                {
+                    // 删除现有临时权限
+                    var existingTempAuthorities = await _context.TempAuthorities
+                        .Where(ta => ta.EVENT_ID == eventId)
+                        .ToListAsync();
+                    _context.TempAuthorities.RemoveRange(existingTempAuthorities);
+
+                    // 添加新的临时权限
+                    foreach (var account in dto.ParticipantAccounts)
+                    {
+                        var tempAuthority = new TempAuthority
+                        {
+                            ACCOUNT = account,
+                            EVENT_ID = eventId,
+                            TEMP_AUTHORITY = 3 // 普通员工权限
+                        };
+                        _context.TempAuthorities.Add(tempAuthority);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "活动信息更新成功" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"获取预约信息时发生错误: EventId={eventId}");
-                return StatusCode(500, "服务器内部错误");
+                _logger.LogError(ex, $"更新活动 {eventId} 失败");
+                return StatusCode(500, new { message = "更新活动失败" });
             }
         }
 
-        // GET api/venueevent/availability - 检查场地可用性
-        [HttpGet("availability")]
-        public async Task<IActionResult> CheckAreaAvailability([FromQuery] int areaId, [FromQuery] DateTime startTime, [FromQuery] DateTime endTime)
+        // 5. 取消活动
+        [HttpPut("events/{eventId}/cancel")]
+        public async Task<IActionResult> CancelVenueEvent(int eventId)
         {
+            var venueEventDetail = await _context.VenueEventDetails
+                .FirstOrDefaultAsync(ved => ved.EVENT_ID == eventId);
+
+            if (venueEventDetail == null)
+            {
+                return NotFound(new { message = "找不到对应的活动记录" });
+            }
+
+            if (venueEventDetail.STATUS == "已结束")
+            {
+                return BadRequest(new { message = "活动已结束，不可修改或取消" });
+            }
+
             try
             {
-                if (startTime >= endTime)
-                    return BadRequest("结束时间必须晚于起始时间");
+                venueEventDetail.STATUS = "已取消";
+                await _context.SaveChangesAsync();
 
-                var isAvailable = await _venueEventService.CheckAreaAvailabilityAsync(areaId, startTime, endTime);
-                return Ok(new { AreaId = areaId, StartTime = startTime, EndTime = endTime, IsAvailable = isAvailable });
+                return Ok(new { message = "活动已取消，场地资源已释放" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"检查场地可用性时发生错误: AreaId={areaId}");
-                return StatusCode(500, "服务器内部错误");
+                _logger.LogError(ex, $"取消活动 {eventId} 失败");
+                return StatusCode(500, new { message = "取消活动失败" });
             }
         }
 
-        // PUT api/venueevent/{eventId} - 更新场地活动信息
-        [HttpPut("{eventId}")]
-        public async Task<IActionResult> UpdateVenueEvent(int eventId, [FromBody] VenueEventUpdateDto updateDto)
+        // 6. 查询活动列表
+        [HttpGet("events")]
+        public async Task<IActionResult> GetVenueEvents([FromQuery] string? status, [FromQuery] int? areaId)
         {
+            var query = _context.VenueEventDetails
+                .Include(ved => ved.venueEventNavigation)
+                .Include(ved => ved.eventAreaNavigation)
+                .Include(ved => ved.collaborationNavigation)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                query = query.Where(ved => ved.STATUS == status);
+            }
+
+            if (areaId.HasValue)
+            {
+                query = query.Where(ved => ved.AREA_ID == areaId.Value);
+            }
+
+            var events = await query.Select(ved => new
+            {
+                ved.EVENT_ID,
+                EventName = ved.venueEventNavigation.EVENT_NAME,
+                ved.AREA_ID,
+                ved.COLLABORATION_ID,
+                CollaborationName = ved.collaborationNavigation.COLLABORATION_NAME,
+                ved.RENT_START,
+                ved.RENT_END,
+                ved.STATUS,
+                Headcount = ved.venueEventNavigation.HEADCOUNT,
+                Fee = ved.venueEventNavigation.FEE,
+                Capacity = ved.venueEventNavigation.CAPACITY,
+                AreaFee = ved.eventAreaNavigation.AREA_FEE
+            }).ToListAsync();
+
+            return Ok(events);
+        }
+
+        // 7. 场地活动结算收费功能 (对应需求 1.1.10)
+        [HttpPost("events/{eventId}/settlement")]
+        public async Task<IActionResult> CreateSettlement(int eventId, [FromBody] VenueEventSettlementDto dto)
+        {
+            var venueEventDetail = await _context.VenueEventDetails
+                .Include(ved => ved.venueEventNavigation)
+                .Include(ved => ved.eventAreaNavigation)
+                .FirstOrDefaultAsync(ved => ved.EVENT_ID == eventId);
+
+            if (venueEventDetail == null)
+            {
+                return NotFound(new { message = "找不到对应的活动记录" });
+            }
+
+            if (venueEventDetail.STATUS != "已结束")
+            {
+                return BadRequest(new { message = "只有已结束的活动才能进行结算" });
+            }
+
             try
             {
-                var result = await _venueEventService.UpdateVenueEventAsync(eventId, updateDto);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, $"更新活动信息参数错误: EventId={eventId}");
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, $"更新活动信息业务规则验证失败: EventId={eventId}");
-                return Conflict(ex.Message);
+                // 计算租用时长（小时）
+                var rentHours = (venueEventDetail.RENT_END - venueEventDetail.RENT_START).TotalHours;
+
+                // 计算总费用
+                var totalFee = dto.VenueFee + (dto.AdditionalServiceFee ?? 0);
+
+                // 这里可以创建一个结算记录表，暂时返回结算信息
+                var settlementInfo = new
+                {
+                    EventId = eventId,
+                    EventName = venueEventDetail.venueEventNavigation.EVENT_NAME,
+                    AreaId = venueEventDetail.AREA_ID,
+                    RentStart = venueEventDetail.RENT_START,
+                    RentEnd = venueEventDetail.RENT_END,
+                    RentHours = Math.Round(rentHours, 2),
+                    VenueFee = dto.VenueFee,
+                    AdditionalServiceFee = dto.AdditionalServiceFee ?? 0,
+                    TotalFee = totalFee,
+                    PaymentMethod = dto.PaymentMethod,
+                    InvoiceInfo = dto.InvoiceInfo,
+                    SettlementTime = DateTime.Now
+                };
+
+                // 更新活动状态为已结算
+                venueEventDetail.STATUS = "已结算";
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    message = "结算单生成成功",
+                    settlement = settlementInfo
+                });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"更新活动信息时发生错误: EventId={eventId}");
-                return StatusCode(500, "服务器内部错误");
+                _logger.LogError(ex, $"创建结算单 {eventId} 失败");
+                return StatusCode(500, new { message = "创建结算单失败" });
             }
         }
 
-        // DELETE api/venueevent/{eventId} - 取消场地活动
-        [HttpDelete("{eventId}")]
-        public async Task<IActionResult> CancelVenueEvent(int eventId, [FromBody] CancelVenueEventRequest request)
-        {
-            try
-            {
-                var result = await _venueEventService.CancelVenueEventAsync(eventId, request.OperatorId, request.Reason);
-                return result ? NoContent() : NotFound();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, $"取消活动业务规则验证失败: EventId={eventId}");
-                return Conflict(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"取消活动时发生错误: EventId={eventId}");
-                return StatusCode(500, "服务器内部错误");
-            }
-        }
-
-        // GET api/venueevent/{eventId}/logs - 获取活动操作日志
-        [HttpGet("{eventId}/logs")]
-        public async Task<IActionResult> GetEventLogs(int eventId)
-        {
-            try
-            {
-                var logs = await _venueEventService.GetEventLogsAsync(eventId);
-                return Ok(logs);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"获取活动日志时发生错误: EventId={eventId}");
-                return StatusCode(500, "服务器内部错误");
-            }
-        }
-
-        // 用于创建预约申请的复合请求对象
-        public class CreateReservationRequest
-        {
-            public VenueReservationDto Reservation { get; set; }
-            public VenueEventDto Event { get; set; }
-        }
-
-        // POST api/venueevent/billing - 生成结算单
-        [HttpPost("billing")]
-        public async Task<IActionResult> CreateBilling([FromBody] CreateBillingDto billingDto)
-        {
-            try
-            {
-                var result = await _venueEventService.CreateBillingAsync(billingDto);
-                return CreatedAtAction(nameof(GetBilling), new { billingId = result.BillingId }, result);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, $"生成结算单参数错误: EventId={billingDto.EventId}");
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, $"生成结算单业务规则验证失败: EventId={billingDto.EventId}");
-                return Conflict(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"生成结算单时发生错误: EventId={billingDto.EventId}");
-                return StatusCode(500, "服务器内部错误");
-            }
-        }
-
-        // PUT api/venueevent/billing/confirm - 确认结算单
-        [HttpPut("billing/confirm")]
-        public async Task<IActionResult> ConfirmBilling([FromBody] ConfirmBillingDto confirmDto)
-        {
-            try
-            {
-                var result = await _venueEventService.ConfirmBillingAsync(confirmDto);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, $"确认结算单业务规则验证失败: BillingId={confirmDto.BillingId}");
-                return Conflict(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"确认结算单时发生错误: BillingId={confirmDto.BillingId}");
-                return StatusCode(500, "服务器内部错误");
-            }
-        }
-
-        // PUT api/venueevent/billing/payment - 确认支付
-        [HttpPut("billing/payment")]
-        public async Task<IActionResult> ConfirmPayment([FromBody] PaymentConfirmationDto paymentDto)
-        {
-            try
-            {
-                var result = await _venueEventService.ConfirmPaymentAsync(paymentDto);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, $"确认支付业务规则验证失败: BillingId={paymentDto.BillingId}");
-                return Conflict(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"确认支付时发生错误: BillingId={paymentDto.BillingId}");
-                return StatusCode(500, "服务器内部错误");
-            }
-        }
-
-        // GET api/venueevent/billings - 获取结算单列表
-        [HttpGet("billings")]
-        public async Task<IActionResult> GetBillings([FromQuery] string status = null, [FromQuery] int? eventId = null)
-        {
-            try
-            {
-                var billings = await _venueEventService.GetBillingsAsync(status, eventId);
-                return Ok(billings);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "获取结算单列表时发生错误");
-                return StatusCode(500, "服务器内部错误");
-            }
-        }
-
-        // GET api/venueevent/billings/{billingId} - 获取结算单详情
-        [HttpGet("billings/{billingId}")]
-        public async Task<IActionResult> GetBilling(int billingId)
-        {
-            try
-            {
-                var billing = await _venueEventService.GetBillingAsync(billingId);
-                return billing != null ? Ok(billing) : NotFound($"未找到结算单ID为{billingId}的记录");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"获取结算单详情时发生错误: BillingId={billingId}");
-                return StatusCode(500, "服务器内部错误");
-            }
-        }
-
-        // GET api/venueevent/services - 获取可用的附加服务
-        [HttpGet("services")]
-        public async Task<IActionResult> GetAvailableServices()
-        {
-            try
-            {
-                var services = await _venueEventService.GetAvailableServicesAsync();
-                return Ok(services);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "获取附加服务列表时发生错误");
-                return StatusCode(500, "服务器内部错误");
-            }
-        }
-
-        // POST api/venueevent/reports - 生成统计报表
-        [HttpPost("reports")]
-        public async Task<IActionResult> GenerateReport([FromBody] GenerateReportDto reportDto)
-        {
-            try
-            {
-                var result = await _venueEventService.GenerateReportAsync(reportDto);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "生成统计报表参数错误");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "生成统计报表时发生错误");
-                return StatusCode(500, "服务器内部错误");
-            }
-        }
-
-        // GET api/venueevent/reports - 获取报表列表
+        // 8. 场地活动统计报表功能 (对应需求 1.1.11)
         [HttpGet("reports")]
-        public async Task<IActionResult> GetReports()
+        public async Task<IActionResult> GenerateReport([FromQuery] VenueEventReportRequestDto dto)
         {
+            if (dto.EndDate <= dto.StartDate)
+            {
+                return BadRequest(new { message = "结束时间需晚于起始时间" });
+            }
+
             try
             {
-                var reports = await _venueEventService.GetReportsAsync();
-                return Ok(reports);
+                var events = await _context.VenueEventDetails
+                    .Include(ved => ved.venueEventNavigation)
+                    .Include(ved => ved.eventAreaNavigation)
+                    .Where(ved => ved.RENT_START >= dto.StartDate && ved.RENT_END <= dto.EndDate)
+                    .ToListAsync();
+
+                if (!events.Any())
+                {
+                    return Ok(new { message = "该时间段内无场地活动记录" });
+                }
+
+                // 计算统计数据
+                var totalEvents = events.Count;
+                var totalRentHours = events.Sum(e => (e.RENT_END - e.RENT_START).TotalHours);
+                var totalRevenue = events.Sum(e => (e.eventAreaNavigation?.AREA_FEE ?? 0) *
+                                                   (e.RENT_END - e.RENT_START).TotalHours);
+
+                // 计算平均上座率
+                var eventsWithCapacity = events.Where(e => e.venueEventNavigation.CAPACITY > 0).ToList();
+                var averageOccupancy = eventsWithCapacity.Any() ?
+                    eventsWithCapacity.Average(e => (double)(e.venueEventNavigation.HEADCOUNT ?? 0) / e.venueEventNavigation.CAPACITY * 100) : 0;
+
+                // 热门场地排行
+                var popularVenues = events
+                    .GroupBy(e => e.AREA_ID)
+                    .Select(g => new PopularVenueDto
+                    {
+                        AreaId = g.Key,
+                        EventCount = g.Count(),
+                        TotalRevenue = g.Sum(e => (e.eventAreaNavigation?.AREA_FEE ?? 0) *
+                                                  (e.RENT_END - e.RENT_START).TotalHours)
+                    })
+                    .OrderByDescending(p => p.EventCount)
+                    .Take(10)
+                    .ToList();
+
+                // 活动详情
+                var eventDetails = events.Select(e => new VenueEventSummaryDto
+                {
+                    EventId = e.EVENT_ID,
+                    EventName = e.venueEventNavigation.EVENT_NAME,
+                    AreaId = e.AREA_ID,
+                    RentStart = e.RENT_START,
+                    RentEnd = e.RENT_END,
+                    RentHours = Math.Round((e.RENT_END - e.RENT_START).TotalHours, 2),
+                    VenueFee = (e.eventAreaNavigation?.AREA_FEE ?? 0) * (e.RENT_END - e.RENT_START).TotalHours,
+                    ActualHeadcount = e.venueEventNavigation.HEADCOUNT,
+                    Status = e.STATUS
+                }).ToList();
+
+                var report = new VenueEventReportDto
+                {
+                    TotalEvents = totalEvents,
+                    TotalRentHours = Math.Round(totalRentHours, 2),
+                    TotalRevenue = Math.Round(totalRevenue, 2),
+                    AverageOccupancy = Math.Round(averageOccupancy, 2),
+                    PopularVenues = popularVenues,
+                    EventDetails = eventDetails
+                };
+
+                return Ok(report);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "获取报表列表时发生错误");
-                return StatusCode(500, "服务器内部错误");
+                _logger.LogError(ex, "生成统计报表失败");
+                return StatusCode(500, new { message = "生成统计报表失败" });
             }
         }
 
-        // 用于取消活动的请求对象
-        public class CancelVenueEventRequest
+        // 9. 查询单个活动详情
+        [HttpGet("events/{eventId}")]
+        public async Task<IActionResult> GetVenueEventDetail(int eventId)
         {
-            [Required]
-            public string OperatorId { get; set; }
-            
-            [Required]
-            [StringLength(200)]
-            public string Reason { get; set; }
+            var venueEventDetail = await _context.VenueEventDetails
+                .Include(ved => ved.venueEventNavigation)
+                .Include(ved => ved.eventAreaNavigation)
+                .Include(ved => ved.collaborationNavigation)
+                .FirstOrDefaultAsync(ved => ved.EVENT_ID == eventId);
+
+            if (venueEventDetail == null)
+            {
+                return NotFound(new { message = "找不到对应的活动记录" });
+            }
+
+            // 获取参与人员列表
+            var participants = await _context.TempAuthorities
+                .Where(ta => ta.EVENT_ID == eventId)
+                .Select(ta => ta.ACCOUNT)
+                .ToListAsync();
+
+            var result = new
+            {
+                venueEventDetail.EVENT_ID,
+                EventName = venueEventDetail.venueEventNavigation.EVENT_NAME,
+                venueEventDetail.AREA_ID,
+                venueEventDetail.COLLABORATION_ID,
+                CollaborationName = venueEventDetail.collaborationNavigation.COLLABORATION_NAME,
+                venueEventDetail.RENT_START,
+                venueEventDetail.RENT_END,
+                venueEventDetail.STATUS,
+                Headcount = venueEventDetail.venueEventNavigation.HEADCOUNT,
+                Fee = venueEventDetail.venueEventNavigation.FEE,
+                Capacity = venueEventDetail.venueEventNavigation.CAPACITY,
+                Expense = venueEventDetail.venueEventNavigation.EXPENSE,
+                AreaFee = venueEventDetail.eventAreaNavigation?.AREA_FEE,
+                Participants = participants
+            };
+
+            return Ok(result);
         }
     }
 }
