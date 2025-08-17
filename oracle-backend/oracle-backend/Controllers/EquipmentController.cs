@@ -139,7 +139,6 @@ namespace oracle_backend.Controllers
                         actions.Add("重置");
                         break;
                 }
-
                 return Ok(actions);
             }
             catch (Exception ex)
@@ -153,10 +152,9 @@ namespace oracle_backend.Controllers
         {
             public string OperatorID { get; set; }  //操作员
             public string Operation { get; set; }     //操作类型
-            public Dictionary<string, string>? Params { get; set; } //可选参数
         }
 
-        // 操作设备
+        //操作设备
         [HttpPost("{id}/operate")]
         public async Task<IActionResult> OperateEquipment(int id, [FromBody] EquipmentOperationDto dto)
         {
@@ -212,7 +210,6 @@ namespace oracle_backend.Controllers
                     _logger.LogWarning("操作失败: 设备={EquipmentId}, 操作员={Operator}, 操作={Operation}",
                         id, dto.OperatorID, dto.Operation);
                 }
-
                 await _context.SaveChangesAsync();
 
                 return result ?
@@ -276,7 +273,6 @@ namespace oracle_backend.Controllers
                 if (operation == "关机" || operation == "关灯" || operation == "停止")
                     return false;
             }
-
             return true;
         }
 
@@ -309,7 +305,7 @@ namespace oracle_backend.Controllers
                     return BadRequest("该设备正常或正在维修中");
 
                 equipment.EQUIPMENT_STATUS = EquipmentStatus.UnderMaintenance;
-                var STAFF_ID = await GetAvailableStaff();
+                var STAFF_ID = await GetRepairStaff();
                 if (STAFF_ID == 0)
                     return BadRequest("暂无维修人员，无法维修");
                 var repairStart = DateTime.Now;
@@ -326,7 +322,7 @@ namespace oracle_backend.Controllers
 
                 _context.RepairOrders.Add(newOrder); 
                 await _context.SaveChangesAsync();
-
+                _logger.LogInformation("设备账号 {EquipmentId}, 因 {FaultDescription} 处于维修中", dto.EquipmentId, dto.FaultDescription);
                 return Ok(new
                 {
                     message = "工单创建成功",
@@ -348,6 +344,7 @@ namespace oracle_backend.Controllers
         [HttpPut("complete-repair")]
         public async Task<IActionResult> CompleteRepair([FromBody] CompleteRepairDto dto)
         {
+            _logger.LogInformation("正在更新工单");
             try
             {
                 var order = await _context.RepairOrders.FindAsync( 
@@ -410,7 +407,7 @@ namespace oracle_backend.Controllers
                     var newOrder = new RepairOrder
                     {
                         EQUIPMENT_ID = dto.EquipmentId,
-                        STAFF_ID = await GetAvailableStaff(), 
+                        STAFF_ID = await GetRepairStaff(), 
                         REPAIR_START = Start,
                         REPAIR_END = default,
                         REPAIR_COST = 0
@@ -427,39 +424,31 @@ namespace oracle_backend.Controllers
                 return StatusCode(500, "服务器内部错误");
             }
         }
-     
-        private async Task<int> GetAvailableStaff()
+
+        private async Task<int> GetRepairStaff()
         {
             try
             {
-                var repairAccounts = await _accountContext.ACCOUNT
-                    .Where(a => a.AUTHORITY == 3)
-                    .Select(a => a.ACCOUNT)
+                //获取维修部在职员工ID列表
+                var repairStaffIds = await _context.Staffs
+                    .Where(s => s.STAFF_APARTMENT == "维修部")
+                    .Select(s => s.STAFF_ID)
                     .ToListAsync();
 
-                if (repairAccounts.Count == 0)
+                if (repairStaffIds.Count == 0)
                 {
                     _logger.LogWarning("无可用维修人员");
                     throw new Exception("无可用维修人员");
                 }
 
-                var availableStaff = await _accountContext.STAFF_ACCOUNT
-                    .Where(sa => repairAccounts.Contains(sa.ACCOUNT))
-                    .ToListAsync();
-
-                if (availableStaff.Count == 0)
-                {
-                    _logger.LogWarning("没有找到对应的维修人员 STAFF_ID");
-                    throw new Exception("没有找到对应的维修人员");
-                }
-
-                Random rand = new Random();
-                int randomIndex = rand.Next(availableStaff.Count);
-                return availableStaff[randomIndex].STAFF_ID;
+                //随机选择一名员工
+                var random = new Random();
+                int index = random.Next(repairStaffIds.Count);
+                return repairStaffIds[index];
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "获取可用员工失败");
+                _logger.LogError(ex, "随机选择维修人员失败");
                 throw;
             }
         }
@@ -480,7 +469,6 @@ namespace oracle_backend.Controllers
             public DateTime RepairStart { get; set; }
             public double Cost { get; set; }
             public bool Success { get; set; }
-            public string RepairResult { get; set; } //维修结果
         }
 
         public class OrderKeyDto

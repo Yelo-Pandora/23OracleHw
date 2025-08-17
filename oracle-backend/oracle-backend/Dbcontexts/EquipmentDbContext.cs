@@ -15,7 +15,6 @@ namespace oracle_backend.Dbcontexts
         public DbSet<Equipment> Equipments { get; set; }
         public DbSet<EquipmentLocation> EquipmentLocations { get; set; }
         public DbSet<RepairOrder> RepairOrders { get; set; }
-
         public DbSet<Staff> Staffs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -45,7 +44,20 @@ namespace oracle_backend.Dbcontexts
                 .HasForeignKey(ro => ro.STAFF_ID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Equipment>()
+            //员工实体配置
+            modelBuilder.Entity<Staff>(entity =>
+            {
+                entity.ToTable("STAFF");
+                //仅配置查询需要的字段
+                entity.Property(s => s.STAFF_ID).HasColumnName("STAFF_ID");
+                entity.Property(s => s.STAFF_APARTMENT).HasColumnName("STAFF_APARTMENT");
+                entity.Ignore(s => s.STAFF_NAME);
+                entity.Ignore(s => s.STAFF_SEX);
+                entity.Ignore(s => s.STAFF_POSITION);
+                entity.Ignore(s => s.STAFF_SALARY);
+            });
+
+        modelBuilder.Entity<Equipment>()
                 .HasIndex(e => e.EQUIPMENT_STATUS);
 
             modelBuilder.Entity<RepairOrder>()
