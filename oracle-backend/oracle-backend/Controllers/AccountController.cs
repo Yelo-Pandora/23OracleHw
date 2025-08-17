@@ -264,5 +264,20 @@ namespace oracle_backend.Controllers
                 return Ok(await _context.CheckAuthority(account, goalAuth));
             }
         }
+
+        [HttpPost("getauth")]
+        public async Task<IActionResult> GetAuthority(string account)
+        {
+            var goalaccount = await _context.FindAccount(account);
+            if (goalaccount == null)
+            {
+                _logger.LogWarning("指定的账号不存在");
+                return BadRequest("账号不存在，请重新指定账号");
+            }
+            else
+            {
+                return Ok(goalaccount.AUTHORITY);
+            }
+        }
     }
 }

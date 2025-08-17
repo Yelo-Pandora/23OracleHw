@@ -24,6 +24,7 @@ namespace oracle_backend.Dbcontexts
                 .HasKey(ved => new { ved.EVENT_ID, ved.AREA_ID, ved.COLLABORATION_ID });
         }
 
+        // 根据账号查员工信息
         public async Task<Staff?> FindStaffByAccount(string account)
         {
             // 先根据STAFF_ACCOUNT查员工ID
@@ -31,6 +32,12 @@ namespace oracle_backend.Dbcontexts
             if (staffAccount == null) return null;
             // 再根据员工ID查员工信息
             return await Staffs.FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+        }
+
+        // 根据ID查找员工信息
+        public async Task<Staff?> FindStaffById(int staffId)
+        {
+            return await Staffs.FirstOrDefaultAsync(s => s.STAFF_ID == staffId);
         }
     }
 }
