@@ -1237,7 +1237,7 @@ namespace oracle_backend.Controllers
                         ParkRecords = parkRecordsInDb.Count,
                         CarDetails = allCarsInDb.Take(5).Select(c => new
                         {
-                            c.LICENCE_PLATE_NUMBER,
+                            c.LICENSE_PLATE_NUMBER,
                             c.PARK_START,
                             c.PARK_END,
                             Status = c.PARK_END.HasValue ? "已出场" : "在停中"
@@ -1333,13 +1333,13 @@ namespace oracle_backend.Controllers
                 
                 foreach (var car in completedCars)
                 {
-                    Console.WriteLine($"[DEBUG] 处理车辆: {car.LICENCE_PLATE_NUMBER}");
+                    Console.WriteLine($"[DEBUG] 处理车辆: {car.LICENSE_PLATE_NUMBER}");
                     Console.WriteLine($"[DEBUG]   入场时间: {car.PARK_START:yyyy-MM-dd HH:mm}");
                     Console.WriteLine($"[DEBUG]   出场时间: {car.PARK_END:yyyy-MM-dd HH:mm}");
                     
                     // 检查是否已存在支付记录
                     var existingPayment = _parkingContext.PaymentRecords.Values
-                        .FirstOrDefault(p => p.LicensePlateNumber == car.LICENCE_PLATE_NUMBER && 
+                        .FirstOrDefault(p => p.LicensePlateNumber == car.LICENSE_PLATE_NUMBER && 
                                            p.ParkStart == car.PARK_START);
 
                     if (existingPayment == null || dto.ForceRegenerate)
@@ -1348,7 +1348,7 @@ namespace oracle_backend.Controllers
                         if (dto.ForceRegenerate && existingPayment != null)
                         {
                             var existingKey = _parkingContext.PaymentRecords.FirstOrDefault(kvp => 
-                                kvp.Value.LicensePlateNumber == car.LICENCE_PLATE_NUMBER && 
+                                kvp.Value.LicensePlateNumber == car.LICENSE_PLATE_NUMBER && 
                                 kvp.Value.ParkStart == car.PARK_START).Key;
                             
                             if (!string.IsNullOrEmpty(existingKey))
@@ -1364,18 +1364,18 @@ namespace oracle_backend.Controllers
                         
                         // 获取停车场实际费用（从PARK表关联到PARKING_SPACE_DISTRIBUTION再到PARKING_LOT）
                         var parkRecord = await _parkingContext.PARK
-                            .FirstOrDefaultAsync(p => p.LICENSE_PLATE_NUMBER == car.LICENCE_PLATE_NUMBER);
+                            .FirstOrDefaultAsync(p => p.LICENSE_PLATE_NUMBER == car.LICENSE_PLATE_NUMBER);
                         
                         if (parkRecord == null)
                         {
                             // 如果找不到PARK记录，使用默认费用
-                            Console.WriteLine($"[DEBUG]   警告: 无法找到车辆 {car.LICENCE_PLATE_NUMBER} 的PARK记录，使用默认费率¥5/小时");
+                            Console.WriteLine($"[DEBUG]   警告: 无法找到车辆 {car.LICENSE_PLATE_NUMBER} 的PARK记录，使用默认费率¥5/小时");
                             var defaultFee = (decimal)(hours * 5.0);
                             
                             // 生成支付记录（使用默认费用）
                             var defaultPaymentRecord = new Models.ParkingPaymentRecord
                             {
-                                LicensePlateNumber = car.LICENCE_PLATE_NUMBER,
+                                LicensePlateNumber = car.LICENSE_PLATE_NUMBER,
                                 ParkingSpaceId = random.Next(1001, 2000), // 随机车位ID
                                 ParkStart = car.PARK_START,
                                 ParkEnd = car.PARK_END,
@@ -1440,7 +1440,7 @@ namespace oracle_backend.Controllers
                         // 生成支付记录
                         var finalPaymentRecord = new Models.ParkingPaymentRecord
                         {
-                            LicensePlateNumber = car.LICENCE_PLATE_NUMBER,
+                            LicensePlateNumber = car.LICENSE_PLATE_NUMBER,
                             ParkingSpaceId = random.Next(1001, 2000), // 随机车位ID
                             ParkStart = car.PARK_START,
                             ParkEnd = car.PARK_END,
@@ -1459,7 +1459,7 @@ namespace oracle_backend.Controllers
                         Console.WriteLine($"[DEBUG]   当前内存中支付记录总数: {_parkingContext.PaymentRecords.Count}");
                         
                         _logger.LogInformation("为车辆 {LicensePlate} 生成支付记录：费用 {Fee} 元", 
-                            car.LICENCE_PLATE_NUMBER, fee);
+                            car.LICENSE_PLATE_NUMBER, fee);
                     }
                     else
                     {
@@ -1521,12 +1521,12 @@ namespace oracle_backend.Controllers
                 // 合并数据
                 var records = allCars.Select(car => {
                     var parkRecord = parkRecords.FirstOrDefault(p => 
-                        p.LICENSE_PLATE_NUMBER == car.LICENCE_PLATE_NUMBER && 
+                        p.LICENSE_PLATE_NUMBER == car.LICENSE_PLATE_NUMBER && 
                         p.PARK_START == car.PARK_START);
                     
                     return new
                     {
-                        car.LICENCE_PLATE_NUMBER,
+                        car.LICENSE_PLATE_NUMBER,
                         car.PARK_START,
                         car.PARK_END,
                         PARKING_SPACE_ID = parkRecord?.PARKING_SPACE_ID
@@ -1543,12 +1543,12 @@ namespace oracle_backend.Controllers
                     
                     // 获取停车场实际费用
                     var parkRecord = await _parkingContext.PARK
-                        .FirstOrDefaultAsync(p => p.LICENSE_PLATE_NUMBER == record.LICENCE_PLATE_NUMBER && 
+                        .FirstOrDefaultAsync(p => p.LICENSE_PLATE_NUMBER == record.LICENSE_PLATE_NUMBER && 
                                                p.PARK_START == record.PARK_START);
                     
                     if (parkRecord == null)
                     {
-                        throw new Exception($"无法找到车辆 {record.LICENCE_PLATE_NUMBER} 的停车记录");
+                        throw new Exception($"无法找到车辆 {record.LICENSE_PLATE_NUMBER} 的停车记录");
                     }
                     
                     var spaceDistribution = await _parkingContext.PARKING_SPACE_DISTRIBUTION
@@ -2398,13 +2398,13 @@ namespace oracle_backend.Controllers
                 
                 // 查询指定时间范围内的所有停车记录
                 var query = from c in _parkingContext.CAR
-                           join p in _parkingContext.PARK on new { LicensePlate = c.LICENCE_PLATE_NUMBER, ParkStart = c.PARK_START } 
+                           join p in _parkingContext.PARK on new { LicensePlate = c.LICENSE_PLATE_NUMBER, ParkStart = c.PARK_START } 
                            equals new { LicensePlate = p.LICENSE_PLATE_NUMBER, ParkStart = p.PARK_START }
                            join psd in _parkingContext.PARKING_SPACE_DISTRIBUTION on p.PARKING_SPACE_ID equals psd.PARKING_SPACE_ID
                            where c.PARK_START >= startDate && c.PARK_START <= endDate
                            select new
                            {
-                               LicensePlateNumber = c.LICENCE_PLATE_NUMBER,
+                               LicensePlateNumber = c.LICENSE_PLATE_NUMBER,
                                ParkingSpaceId = p.PARKING_SPACE_ID,
                                AreaId = psd.AREA_ID,
                                ParkStart = c.PARK_START,
@@ -2525,7 +2525,7 @@ namespace oracle_backend.Controllers
                         .Select(x => x.LICENSE_PLATE_NUMBER)
                         .ToListAsync();
                     
-                    query = query.Where(c => areaCarIds.Contains(c.LICENCE_PLATE_NUMBER));
+                    query = query.Where(c => areaCarIds.Contains(c.LICENSE_PLATE_NUMBER));
                 }
                 
                 // 计算在该小时内占用车位的车辆数

@@ -102,7 +102,7 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<Park>()
                 .HasOne(p => p.carNavigation)
                 .WithMany()
-                .HasPrincipalKey(c => new { c.LICENCE_PLATE_NUMBER, c.PARK_START })
+                .HasPrincipalKey(c => new { c.LICENSE_PLATE_NUMBER, c.PARK_START })
                 .HasForeignKey(p => new { p.LICENSE_PLATE_NUMBER, p.PARK_START })
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -264,7 +264,7 @@ namespace oracle_backend.Dbcontexts
                         .Where(p => p.PARKING_SPACE_ID == space.ParkingSpaceId)
                         .Join(CAR, 
                               p => new { LicensePlate = p.LICENSE_PLATE_NUMBER, ParkStart = p.PARK_START },
-                              c => new { LicensePlate = c.LICENCE_PLATE_NUMBER, ParkStart = c.PARK_START },
+                              c => new { LicensePlate = c.LICENSE_PLATE_NUMBER, ParkStart = c.PARK_START },
                               (p, c) => new { Park = p, Car = c })
                         .Where(pc => !pc.Car.PARK_END.HasValue)
                         .FirstOrDefaultAsync();
@@ -337,7 +337,7 @@ namespace oracle_backend.Dbcontexts
                     .Where(p => p.PARKING_SPACE_ID == space.ParkingSpaceId)
                     .Join(CAR, 
                           p => new { LicensePlate = p.LICENSE_PLATE_NUMBER, ParkStart = p.PARK_START },
-                          c => new { LicensePlate = c.LICENCE_PLATE_NUMBER, ParkStart = c.PARK_START },
+                          c => new { LicensePlate = c.LICENSE_PLATE_NUMBER, ParkStart = c.PARK_START },
                           (p, c) => new { Park = p, Car = c })
                     .Where(pc => !pc.Car.PARK_END.HasValue)
                     .OrderByDescending(pc => pc.Park.PARK_START)
@@ -399,7 +399,7 @@ namespace oracle_backend.Dbcontexts
                     .Where(p => p.PARKING_SPACE_ID == parkingSpaceId)
                     .Join(CAR, 
                           p => new { LicensePlate = p.LICENSE_PLATE_NUMBER, ParkStart = p.PARK_START },
-                          c => new { LicensePlate = c.LICENCE_PLATE_NUMBER, ParkStart = c.PARK_START },
+                          c => new { LicensePlate = c.LICENSE_PLATE_NUMBER, ParkStart = c.PARK_START },
                           (p, c) => new { Park = p, Car = c })
                     .Where(pc => !pc.Car.PARK_END.HasValue)
                     .FirstOrDefaultAsync();
@@ -412,7 +412,7 @@ namespace oracle_backend.Dbcontexts
                     .Where(p => p.LICENSE_PLATE_NUMBER == licensePlateNumber)
                     .Join(CAR, 
                           p => new { LicensePlate = p.LICENSE_PLATE_NUMBER, ParkStart = p.PARK_START },
-                          c => new { LicensePlate = c.LICENCE_PLATE_NUMBER, ParkStart = c.PARK_START },
+                          c => new { LicensePlate = c.LICENSE_PLATE_NUMBER, ParkStart = c.PARK_START },
                           (p, c) => new { Park = p, Car = c })
                     .Where(pc => !pc.Car.PARK_END.HasValue)
                     .FirstOrDefaultAsync();
@@ -426,7 +426,7 @@ namespace oracle_backend.Dbcontexts
                 // 4. 先插入车辆记录
                 var car = new Car
                 {
-                    LICENCE_PLATE_NUMBER = licensePlateNumber,
+                    LICENSE_PLATE_NUMBER = licensePlateNumber,
                     PARK_START = currentTime,
                     PARK_END = null
                 };
@@ -480,7 +480,7 @@ namespace oracle_backend.Dbcontexts
 
                 // 查找对应的CAR记录（必须是PARK_END为NULL的，即还在停车的）
                 var car = await CAR.FirstOrDefaultAsync(c => 
-                    c.LICENCE_PLATE_NUMBER == licensePlateNumber && 
+                    c.LICENSE_PLATE_NUMBER == licensePlateNumber && 
                     c.PARK_START == park.PARK_START && 
                     !c.PARK_END.HasValue);
 
@@ -551,7 +551,7 @@ namespace oracle_backend.Dbcontexts
                 var exitedCars = await CAR
                     .Where(c => c.PARK_END.HasValue)
                     .Join(PARK,
-                          c => new { LicensePlate = c.LICENCE_PLATE_NUMBER, ParkStart = c.PARK_START },
+                          c => new { LicensePlate = c.LICENSE_PLATE_NUMBER, ParkStart = c.PARK_START },
                           p => new { LicensePlate = p.LICENSE_PLATE_NUMBER, ParkStart = p.PARK_START },
                           (c, p) => new { Car = c, Park = p })
                     .OrderByDescending(cp => cp.Car.PARK_END)
@@ -560,7 +560,7 @@ namespace oracle_backend.Dbcontexts
                 foreach (var record in exitedCars)
                 {
                     // 检查是否已支付
-                    var paymentKey = $"{record.Car.LICENCE_PLATE_NUMBER}_{record.Park.PARKING_SPACE_ID}_{record.Car.PARK_START:yyyyMMddHHmmss}";
+                    var paymentKey = $"{record.Car.LICENSE_PLATE_NUMBER}_{record.Park.PARKING_SPACE_ID}_{record.Car.PARK_START:yyyyMMddHHmmss}";
                     Console.WriteLine($"[DEBUG] 未支付查询 - 检查key: {paymentKey}");
                     Console.WriteLine($"[DEBUG] 是否存在于支付记录: {_paymentRecords.ContainsKey(paymentKey)}");
                     
@@ -581,7 +581,7 @@ namespace oracle_backend.Dbcontexts
 
                         unpaidRecords.Add(new Models.VehicleExitResult
                         {
-                            LicensePlateNumber = record.Car.LICENCE_PLATE_NUMBER,
+                            LicensePlateNumber = record.Car.LICENSE_PLATE_NUMBER,
                             ParkingSpaceId = record.Park.PARKING_SPACE_ID,
                             ParkStart = record.Car.PARK_START,
                             ParkEnd = record.Car.PARK_END.Value,
@@ -614,7 +614,7 @@ namespace oracle_backend.Dbcontexts
                 var exitedCars = await CAR
                     .Where(c => c.PARK_END.HasValue)
                     .Join(PARK,
-                          c => new { LicensePlate = c.LICENCE_PLATE_NUMBER, ParkStart = c.PARK_START },
+                          c => new { LicensePlate = c.LICENSE_PLATE_NUMBER, ParkStart = c.PARK_START },
                           p => new { LicensePlate = p.LICENSE_PLATE_NUMBER, ParkStart = p.PARK_START },
                           (c, p) => new { Car = c, Park = p })
                     .OrderByDescending(cp => cp.Car.PARK_END)
@@ -623,7 +623,7 @@ namespace oracle_backend.Dbcontexts
                 foreach (var record in exitedCars)
                 {
                     // 检查是否已支付
-                    var paymentKey = $"{record.Car.LICENCE_PLATE_NUMBER}_{record.Park.PARKING_SPACE_ID}_{record.Car.PARK_START:yyyyMMddHHmmss}";
+                    var paymentKey = $"{record.Car.LICENSE_PLATE_NUMBER}_{record.Park.PARKING_SPACE_ID}_{record.Car.PARK_START:yyyyMMddHHmmss}";
                     var isPaid = _paymentRecords.ContainsKey(paymentKey);
                     
                     // 根据状态过滤
@@ -651,7 +651,7 @@ namespace oracle_backend.Dbcontexts
 
                         records.Add(new Models.VehicleExitResult
                         {
-                            LicensePlateNumber = record.Car.LICENCE_PLATE_NUMBER,
+                            LicensePlateNumber = record.Car.LICENSE_PLATE_NUMBER,
                             ParkingSpaceId = record.Park.PARKING_SPACE_ID,
                             ParkStart = record.Car.PARK_START,
                             ParkEnd = record.Car.PARK_END.Value,
@@ -936,14 +936,14 @@ namespace oracle_backend.Dbcontexts
                 Console.WriteLine($"[DEBUG] CAR表中在停车辆总数: {carsInParking.Count}");
                 foreach(var car in carsInParking.Take(5)) // 只显示前5个
                 {
-                    Console.WriteLine($"[DEBUG] 在停车辆: {car.LICENCE_PLATE_NUMBER}, 入场时间: {car.PARK_START}");
+                    Console.WriteLine($"[DEBUG] 在停车辆: {car.LICENSE_PLATE_NUMBER}, 入场时间: {car.PARK_START}");
                 }
 
                 // 查找所有在停车辆（已入场但未出场）
                 var parkedCars = await CAR
                     .Where(c => !c.PARK_END.HasValue) // 未出场
                     .Join(PARK,
-                          c => new { LicensePlate = c.LICENCE_PLATE_NUMBER, c.PARK_START },
+                          c => new { LicensePlate = c.LICENSE_PLATE_NUMBER, c.PARK_START },
                           p => new { LicensePlate = p.LICENSE_PLATE_NUMBER, PARK_START = p.PARK_START },
                           (c, p) => new { Car = c, Park = p })
                     .OrderBy(cp => cp.Car.PARK_START)
@@ -970,7 +970,7 @@ namespace oracle_backend.Dbcontexts
 
                         currentVehicles.Add(new Models.VehicleStatusResult
                         {
-                            LicensePlateNumber = record.Car.LICENCE_PLATE_NUMBER,
+                            LicensePlateNumber = record.Car.LICENSE_PLATE_NUMBER,
                             ParkingSpaceId = record.Park.PARKING_SPACE_ID,
                             AreaId = parkingInfo.Area.AREA_ID,
                             ParkStart = record.Car.PARK_START,
@@ -1000,9 +1000,9 @@ namespace oracle_backend.Dbcontexts
             {
                 // 查找指定车牌号的在停车辆
                 var parkedCar = await CAR
-                    .Where(c => c.LICENCE_PLATE_NUMBER == licensePlateNumber && !c.PARK_END.HasValue)
+                    .Where(c => c.LICENSE_PLATE_NUMBER == licensePlateNumber && !c.PARK_END.HasValue)
                     .Join(PARK,
-                          c => new { LicensePlate = c.LICENCE_PLATE_NUMBER, c.PARK_START },
+                          c => new { LicensePlate = c.LICENSE_PLATE_NUMBER, c.PARK_START },
                           p => new { LicensePlate = p.LICENSE_PLATE_NUMBER, PARK_START = p.PARK_START },
                           (c, p) => new { Car = c, Park = p })
                     .FirstOrDefaultAsync();
@@ -1024,7 +1024,7 @@ namespace oracle_backend.Dbcontexts
 
                 return new Models.VehicleStatusResult
                 {
-                    LicensePlateNumber = parkedCar.Car.LICENCE_PLATE_NUMBER,
+                    LicensePlateNumber = parkedCar.Car.LICENSE_PLATE_NUMBER,
                     ParkingSpaceId = parkedCar.Park.PARKING_SPACE_ID,
                     AreaId = parkingInfo.Area.AREA_ID,
                     ParkStart = parkedCar.Car.PARK_START,
@@ -1111,12 +1111,12 @@ namespace oracle_backend.Dbcontexts
                 // 使用原生SQL查询，避免EF Core的布尔值转换问题
                 var sql = @"
                     SELECT 
-                        c.LICENCE_PLATE_NUMBER as LICENCE_PLATE_NUMBER,
+                        c.LICENSE_PLATE_NUMBER as LICENSE_PLATE_NUMBER,
                         c.PARK_START,
                         c.PARK_END,
                         p.PARKING_SPACE_ID
                     FROM CAR c
-                                          INNER JOIN PARK p ON c.LICENCE_PLATE_NUMBER = p.LICENSE_PLATE_NUMBER 
+                                          INNER JOIN PARK p ON c.LICENSE_PLATE_NUMBER = p.LICENSE_PLATE_NUMBER 
                                      AND c.PARK_START = p.PARK_START
                     WHERE c.PARK_END IS NOT NULL 
                       AND c.PARK_START >= {0} 
@@ -1172,7 +1172,7 @@ namespace oracle_backend.Dbcontexts
                 var totalCarsInDb = await Database.SqlQueryRaw<int>("SELECT COUNT(*) as Value FROM CAR").FirstOrDefaultAsync();
                 Console.WriteLine($"[DEBUG] 数据库中CAR表总记录数: {totalCarsInDb}");
 
-                var testCarsInDb = await Database.SqlQueryRaw<int>("SELECT COUNT(*) as Value FROM CAR WHERE LICENCE_PLATE_NUMBER LIKE 'STAT%'").FirstOrDefaultAsync();
+                var testCarsInDb = await Database.SqlQueryRaw<int>("SELECT COUNT(*) as Value FROM CAR WHERE LICENSE_PLATE_NUMBER LIKE 'STAT%'").FirstOrDefaultAsync();
                 Console.WriteLine($"[DEBUG] 数据库中测试记录数: {testCarsInDb}");
 
                 // 执行原生SQL查询
@@ -1195,7 +1195,7 @@ namespace oracle_backend.Dbcontexts
                     try
                     {
                         records = await Database.SqlQueryRaw<ParkingRecord>(
-                            "SELECT LICENCE_PLATE_NUMBER, PARK_START, PARK_END, PARKING_SPACE_ID FROM PARK WHERE ROWNUM <= 5"
+                            "SELECT LICENSE_PLATE_NUMBER, PARK_START, PARK_END, PARKING_SPACE_ID FROM PARK WHERE ROWNUM <= 5"
                         ).ToListAsync();
                         Console.WriteLine($"[DEBUG] 简单查询成功，获取到 {records.Count} 条记录");
                         Console.WriteLine($"[DEBUG] 使用简单查询结果继续处理");
@@ -1209,13 +1209,13 @@ namespace oracle_backend.Dbcontexts
                         try
                         {
                                                     var efRecords = await (from c in CAR
-                                              join p in PARK on new { LicensePlate = c.LICENCE_PLATE_NUMBER, ParkStart = c.PARK_START } equals new { LicensePlate = p.LICENSE_PLATE_NUMBER, ParkStart = p.PARK_START }
+                                              join p in PARK on new { LicensePlate = c.LICENSE_PLATE_NUMBER, ParkStart = c.PARK_START } equals new { LicensePlate = p.LICENSE_PLATE_NUMBER, ParkStart = p.PARK_START }
                                               where c.PARK_END.HasValue
                                                 && c.PARK_START >= startDate
                                                 && c.PARK_END <= endDate
                                               select new ParkingRecord
                                               {
-                                                  LICENSE_PLATE_NUMBER = c.LICENCE_PLATE_NUMBER,
+                                                  LICENSE_PLATE_NUMBER = c.LICENSE_PLATE_NUMBER,
                                                   PARK_START = c.PARK_START,
                                                   PARK_END = c.PARK_END,
                                                   PARKING_SPACE_ID = p.PARKING_SPACE_ID
