@@ -504,6 +504,26 @@ namespace oracle_backend.Controllers
             return true;
         }
 
+        // 目前权限等级(取temp authority与authority中更小值)
+        private async Task<int> GetCurrentAuthorityLevel(string operatorAccountId)
+        {
+            var account = await _accountContext.FindAccount(operatorAccountId);
+            if (account == null)
+            {
+                return 0; // 无权限
+            }
+
+            var tempAuthority = await _accountContext.FindTempAuthorities(operatorAccountId);
+            var currentAuthority = account.AUTHORITY;
+
+            if (tempAuthority.Any())
+            {
+                currentAuthority = Math.Min(currentAuthority, tempAuthority.Min(ta => ta.TEMP_AUTHORITY.Value));
+            }
+
+            return currentAuthority;
+        }
+
         // 是否有权限修改员工信息
         private async Task<ActionResult?> CanModifyStaff(string operatorAccount, string apartment){
             var isAdmin = await CheckPermission(operatorAccount, 1);
@@ -600,6 +620,53 @@ namespace oracle_backend.Controllers
         }
 
         // 2.6.2 员工权限管理
+        [HttpPost("modify staff authority")]
+        public async Task<IActionResult> ModifyStaffAuthority(
+            [FromQuery, Required] string operatorAccount,
+            [FromQuery] int staffId,
+            [FromQuery] int newAuthority)
+        {
+            // 权限检查
+            // 检查被修改的员工是否有临时权限
+            var staffAccount = await _accountContext.AccountFromStaffID(staffId);
+            if (staffAccount != null)
+            {
+                var tempAuthorities = await _accountContext.FindTempAuthorities(staffAccount.ACCOUNT);
+                if (tempAuthorities != null && tempAuthorities.Count > 0)
+                {
+                    return BadRequest("请先收回临时权限再调整长期权限");
+                }
+            }
+
+            var staff = await _collabContext.FindStaffById(staffId);
+            if (staff == null)
+            {
+                return BadRequest("员工不存在");
+            }
+
+            var Permission = await CanModifyStaff(operatorAccount, staff.STAFF_APARTMENT);
+            if (Permission != null) return Permission;
+
+            // 操作员权限要高于被修改员工的权限(值越小权限越高)
+            var currentAuthority = await GetCurrentAuthorityLevel(operatorAccount);
+            var staffAuthority = await GetCurrentAuthorityLevel(staffAccount.ACCOUNT);
+            if (currentAuthority >= staffAuthority)
+            {
+                return BadRequest("操作员权限要高于被修改员工的权限");
+            }
+
+            // newAuthority不可高于修改者的权限
+            if (newAuthority < currentAuthority)
+            {
+                return BadRequest("不可分配高于自身的权限等级");
+            }
+
+            staffAccount.AUTHORITY = newAuthority;
+            await _collabContext.SaveChangesAsync();
+            await _accountContext.SaveChangesAsync();
+
+            return Ok("员工权限修改成功");
+        }
 
     }
 >>>>>>> 629d94e (complete add staff)
