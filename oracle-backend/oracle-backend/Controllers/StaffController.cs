@@ -620,7 +620,7 @@ namespace oracle_backend.Controllers
         }
 
         // 2.6.2 员工权限管理
-        [HttpPost("modify staff authority")]
+        [HttpPatch("modify staff authority")]
         public async Task<IActionResult> ModifyStaffAuthority(
             [FromQuery, Required] string operatorAccount,
             [FromQuery] int staffId,
@@ -668,6 +668,61 @@ namespace oracle_backend.Controllers
             return Ok("员工权限修改成功");
         }
 
+        // 2.6.3 员工/管理员修改自己/下属的信息
+        [HttpPatch("modify staff infomation")]
+        public async Task<IActionResult> UpdateStaff(
+            [FromQuery, Required] int staffId,
+            [FromQuery, Required] string operatorAccount,
+            [FromBody] StaffDto dto)
+        {
+            // 查找员工信息
+            var staff = await _collabContext.FindStaffById(staffId);
+            if (staff == null)
+                return NotFound("员工不存在");
+
+            // 判断操作员身份
+            var operatorAccountObj = await _accountContext.FindAccount(operatorAccount);
+            if (operatorAccountObj == null)
+                return BadRequest("操作员账号不存在");
+
+            // 判断是否为员工本人
+            var staffAccount = await _accountContext.CheckStaff(operatorAccount);
+            bool isSelf = staffAccount != null && staffAccount.STAFF_ID == staffId;
+
+            // 管理员/管理人员权限
+            var isAdmin = await CanModifyStaff(operatorAccount, staff.STAFF_APARTMENT);
+
+            // 员工本人只能改姓名、性别
+            if (isSelf)
+            {
+                // 只允许修改姓名和性别
+                if (staff.STAFF_APARTMENT != dto.STAFF_APARTMENT ||
+                    staff.STAFF_POSITION != dto.STAFF_POSITION ||
+                    staff.STAFF_SALARY != dto.STAFF_SALARY)
+                {
+                    return BadRequest("无权限修改，请联系管理人员");
+                }
+
+                staff.STAFF_NAME = dto.STAFF_NAME;
+                staff.STAFF_SEX = dto.STAFF_SEX;
+                await _collabContext.SaveChangesAsync();
+                return Ok("修改成功");
+            }
+
+            // 管理人员或管理员可修改全部信息
+            if (!isSelf && isAdmin == null)
+            {
+                staff.STAFF_NAME = dto.STAFF_NAME;
+                staff.STAFF_SEX = dto.STAFF_SEX;
+                staff.STAFF_APARTMENT = dto.STAFF_APARTMENT;
+                staff.STAFF_POSITION = dto.STAFF_POSITION;
+                staff.STAFF_SALARY = dto.STAFF_SALARY;
+                await _collabContext.SaveChangesAsync();
+                return Ok("修改成功");
+            }
+
+            return BadRequest("无权限修改");
+        }
     }
 >>>>>>> 629d94e (complete add staff)
 }
