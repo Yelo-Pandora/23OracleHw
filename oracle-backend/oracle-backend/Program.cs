@@ -29,7 +29,6 @@ namespace oracle_backend
 
             // 添加数据库上下文
             builder.Services.AddDbContext<PromotionDbContext>(options => options.UseOracle(builder.Configuration.GetConnectionString("PromotionDb")));
-            builder.Services.AddDbContext<VenueEventDbContext>(options => options.UseOracle(connectionString));
 
             // 注册服务
             builder.Services.AddScoped<PromotionService>();
