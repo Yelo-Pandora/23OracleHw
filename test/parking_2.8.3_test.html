@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>停车场2.8.3出入计费测试页面</title>
+  <style>
+    body { 
+      font-family: 'Microsoft YaHei', Arial, sans-serif; 
+      margin: 0;
+      padding: 20px; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      margin: 0 0 10px 0;
+      font-size: 2.2em;
+    }
+    
+    .header p {
+      margin: 0;
+      opacity: 0.9;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .card { 
+      background: #f8f9fa;
+      border-radius: 12px; 
+      padding: 25px; 
+      margin: 20px 0; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-left: 4px solid #667eea;
+    }
+    
+    .card h3 {
+      margin: 0 0 20px 0;
+      color: #333;
+      font-size: 1.3em;
+    }
+    
+    .row { 
+      display: flex; 
+      gap: 15px; 
+      flex-wrap: wrap; 
+    }
+    
+    .row > * { 
+      flex: 1 1 250px; 
+    }
+    
+    label { 
+      display: block; 
+      font-weight: 600; 
+      margin: 8px 0 6px; 
+      color: #555;
+    }
+    
+    input, select { 
+      width: 100%; 
+      padding: 12px 15px; 
+      border: 2px solid #e9ecef; 
+      border-radius: 8px; 
+      font-size: 14px;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    button { 
+      padding: 12px 20px; 
+      border: 0; 
+      border-radius: 8px; 
+      font-weight: 600; 
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    
+    .btn { 
+      background: #667eea; 
+      color: #fff; 
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn.secondary { 
+      background: #6c757d; 
+    }
+    
+    .btn.success { 
+      background: #28a745; 
+    }
+    
+    .btn.warning { 
+      background: #ffc107; 
+      color: #333; 
+    }
+    
+    .btn.danger {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .log { 
+      font-family: 'Consolas', 'Monaco', monospace; 
+      white-space: pre-wrap; 
+      background: #f8f9fa; 
+      border: 1px solid #e9ecef; 
+      padding: 15px; 
+      border-radius: 8px; 
+      max-height: 400px; 
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    
+    .badge { 
+      padding: 4px 12px; 
+      border-radius: 20px; 
+      font-size: 12px; 
+      font-weight: 600;
+      display: inline-block;
+    }
+    
+    .badge.ok{ 
+      background: #d4edda; 
+      color: #155724; 
+    }
+    
+    .badge.err{ 
+      background: #f8d7da; 
+      color: #721c24; 
+    }
+    
+    .badge.warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .table-container {
+      margin-top: 15px;
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    th {
+      background: #f8f9fa;
+      padding: 12px 8px;
+      border: 1px solid #e9ecef;
+      font-weight: 600;
+      text-align: left;
+      color: #495057;
+    }
+    
+    td {
+      padding: 12px 8px;
+      border: 1px solid #e9ecef;
+      vertical-align: middle;
+    }
+    
+    tr:hover {
+      background: #f8f9fa;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .stat-number {
+      font-size: 2em;
+      font-weight: bold;
+      color: #667eea;
+    }
+    
+    .stat-label {
+      color: #6c757d;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚗 停车场2.8.3功能测试</h1>
+      <p>车辆出入计费功能测试页面</p>
+    </div>
+    
+    <div class="content">
+      <!-- 配置面板 -->
+  <div class="card">
+        <h3>⚙️ 系统配置</h3>
+    <div class="row">
+      <div>
+        <label>API 基础地址</label>
+        <input id="apiBaseUrl" value="http://localhost:5263/api/Parking" />
+      </div>
+      <div>
+        <label>操作员账号</label>
+        <select id="operatorAccount">
+              <option value="admin_test">admin_test (管理员测试)</option>
+              <option value="manager_test">manager_test (经理测试)</option>
+              <option value="staff_test">staff_test (员工测试)</option>
+        </select>
+      </div>
+    </div>
+        <div class="status-bar">
+          <button class="btn" onclick="testApi()">🔗 测试连接</button>
+          <span id="statusBadge" class="badge warning">未测试</span>
+    </div>
+  </div>
+
+      <!-- 车辆入场 -->
+  <div class="card">
+        <h3>🚗 一、车辆入场</h3>
+    <div class="row">
+      <div>
+            <label>车牌号</label>
+        <input id="lpEntry" placeholder="如：TEST888" />
+      </div>
+      <div>
+            <label>车位ID</label>
+            <input id="spaceEntry" type="number" placeholder="如：1001" />
+      </div>
+    </div>
+        <div style="margin-top: 15px;">
+          <button class="btn success" onclick="vehicleEntry()">✅ 车辆入场</button>
+    </div>
+  </div>
+
+      <!-- 车辆出场 -->
+  <div class="card">
+        <h3>🚪 二、车辆出场（计算费用）</h3>
+    <div class="row">
+      <div>
+            <label>车牌号</label>
+        <input id="lpExit" placeholder="与入场一致" />
+      </div>
+    </div>
+        <div style="margin-top: 15px;">
+          <button class="btn warning" onclick="vehicleExit()">💰 计算费用</button>
+    </div>
+  </div>
+
+      <!-- 缴费确认 -->
+  <div class="card">
+        <h3>💳 三、缴费确认</h3>
+    <div class="row">
+      <div>
+        <label>车牌号</label>
+        <input id="lpPay" placeholder="与入场一致" />
+      </div>
+      <div>
+        <label>车位ID</label>
+            <input id="spacePay" type="number" placeholder="出场结果里的车位ID" />
+      </div>
+      <div>
+            <label>停车开始时间</label>
+            <input id="parkStartPay" placeholder="ISO时间格式" />
+      </div>
+      <div>
+            <label>停车结束时间</label>
+            <input id="parkEndPay" placeholder="ISO时间格式" />
+      </div>
+      <div>
+            <label>总金额</label>
+            <input id="feePay" type="number" step="0.01" placeholder="费用金额" />
+      </div>
+      <div>
+            <label>支付方式</label>
+        <select id="methodPay">
+          <option>现金</option>
+          <option>微信支付</option>
+          <option>支付宝</option>
+          <option>银行卡</option>
+          <option>无感支付</option>
+        </select>
+          </div>
+        </div>
+        <div style="margin-top: 15px;">
+          <button class="btn" onclick="pay()">💳 确认支付</button>
+        </div>
+      </div>
+
+      <!-- 统计信息 -->
+      <div class="card">
+        <h3>📊 统计信息</h3>
+        <div class="summary-stats">
+          <div class="stat-card">
+            <div class="stat-number" id="unpaidCount">0</div>
+            <div class="stat-label">未支付记录</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="paidCount">0</div>
+            <div class="stat-label">已支付记录</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="totalRevenue">¥0</div>
+            <div class="stat-label">总收入</div>
+          </div>
+    </div>
+        <div class="action-buttons">
+          <button class="btn secondary" onclick="loadUnpaidRecords()">🔄 刷新未支付记录</button>
+          <button class="btn secondary" onclick="loadPaidRecords()">🔄 刷新已支付记录</button>
+          <button class="btn" onclick="loadAllRecords()">🔄 刷新所有记录</button>
+    </div>
+  </div>
+
+      <!-- 未支付记录 -->
+  <div class="card">
+        <h3>⏳ 未支付记录</h3>
+        <div id="unpaidRecords" class="table-container"></div>
+  </div>
+
+      <!-- 已支付记录 -->
+  <div class="card">
+        <h3>✅ 已支付记录</h3>
+        <div id="paidRecords" class="table-container"></div>
+  </div>
+
+      <!-- 调试输出 -->
+  <div class="card">
+        <h3>🔍 调试输出</h3>
+    <div id="log" class="log"></div>
+        <div style="margin-top: 10px;">
+          <button class="btn secondary btn-small" onclick="clearLog()">清空日志</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const el = id => document.getElementById(id);
+const api = () => (el('apiBaseUrl').value.trim() || 'http://localhost:5263/api/Parking');
+const operator = () => el('operatorAccount').value.trim();
+
+const log = (...args) => { 
+  console.log(...args); 
+  const box = el('log'); 
+  const timestamp = new Date().toLocaleTimeString();
+  const message = args.map(a => typeof a === 'string' ? a : JSON.stringify(a, null, 2)).join(' ');
+  box.textContent = `[${timestamp}] ${message}\n` + box.textContent;
+  box.scrollTop = 0;
+};
+
+const setBadge = (ok, msg) => { 
+  const b = el('statusBadge'); 
+  b.textContent = msg; 
+  b.className = 'badge ' + (ok ? 'ok' : 'err'); 
+};
+
+const clearLog = () => {
+  el('log').textContent = '';
+};
+
+async function testApi(){
+  const url = api() + '/spaces?areaId=1001';
+  try{ 
+    const r = await fetch(url); 
+    setBadge(r.ok, '连接' + (r.ok ? '正常' : '异常')); 
+    const j = await r.json().catch(() => ({raw: '非JSON'})); 
+    log('测试连接', url, r.status, r.statusText, j); 
+  }
+  catch(e){ 
+    setBadge(false, '连接异常'); 
+    log('测试连接异常', url, e.name, e.message); 
+  }
+}
+
+async function vehicleEntry(){
+  const url = api() + '/Entry';
+  const body = {
+    LicensePlateNumber: el('lpEntry').value.trim(),
+    ParkingSpaceId: Number(el('spaceEntry').value),
+    OperatorAccount: operator()
+  };
+  
+  if (!body.LicensePlateNumber || !body.ParkingSpaceId || !body.OperatorAccount) {
+    log('❌ 请填写完整的入场信息');
+    return;
+  }
+  
+  try{
+    const resp = await fetch(url, { 
+      method: 'POST', 
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(body) 
+    });
+    const data = await resp.json().catch(() => ({raw: '非JSON'}));
+    log('Entry 请求', url, body); 
+    log('Entry 响应', resp.status, resp.statusText, data);
+    
+    if (resp.ok && data.Success) {
+      log('✅ 车辆入场成功');
+      // 自动填充出场信息
+      el('lpExit').value = body.LicensePlateNumber;
+    }
+  }catch(e){ 
+    log('Entry 异常', e.name, e.message); 
+  }
+}
+
+async function vehicleExit(){
+  const url = api() + '/Exit';
+  const body = {
+    LicensePlateNumber: el('lpExit').value.trim(),
+    OperatorAccount: operator()
+  };
+  
+  if (!body.LicensePlateNumber || !body.OperatorAccount) {
+    log('❌ 请填写完整的出场信息');
+    return;
+  }
+  
+  try{
+    const resp = await fetch(url, { 
+      method: 'POST', 
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(body) 
+    });
+    const data = await resp.json().catch(() => ({raw: '非JSON'}));
+    log('Exit 请求', url, body); 
+    log('Exit 响应', resp.status, resp.statusText, data);
+    
+    // 自动填充支付信息
+    if(resp.ok && data && data.Data){
+      const r = data.Data;
+      el('lpPay').value = r.LicensePlateNumber;
+      el('spacePay').value = r.ParkingSpaceId;
+      el('parkStartPay').value = new Date(r.ParkStart).toISOString();
+      el('parkEndPay').value = new Date(r.ParkEnd).toISOString();
+      el('feePay').value = r.TotalFee;
+      log('✅ 费用计算完成，已自动填充支付信息');
+    }
+  }catch(e){ 
+    log('Exit 异常', e.name, e.message); 
+    }
+}
+
+async function pay(){
+  const base = api();
+  const op = operator();
+  const url = `${base}/Pay?operatorAccount=${encodeURIComponent(op)}`;
+  const body = {
+    LicensePlateNumber: el('lpPay').value.trim(),
+    ParkingSpaceId: Number(el('spacePay').value),
+    ParkStart: new Date(el('parkStartPay').value),
+    ParkEnd: new Date(el('parkEndPay').value),
+    TotalFee: Number(el('feePay').value),
+    PaymentMethod: el('methodPay').value
+  };
+  
+  if (!body.LicensePlateNumber || !body.ParkingSpaceId || !body.TotalFee) {
+    log('❌ 请填写完整的支付信息');
+    return;
+  }
+  
+  try{
+    const resp = await fetch(url, { 
+      method: 'POST', 
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(body) 
+    });
+    const data = await resp.json().catch(() => ({raw: '非JSON'}));
+    log('Pay 请求', url, body); 
+    log('Pay 响应', resp.status, resp.statusText, data);
+    
+    // 支付成功后刷新记录
+    if(resp.ok && data && data.Success){
+      log('✅ 支付成功，正在刷新记录...');
+      setTimeout(() => {
+        loadAllRecords();
+      }, 500);
+    }
+  }catch(e){ 
+    log('Pay 异常', e.name, e.message); 
+  }
+}
+
+// 加载所有未支付记录
+async function loadUnpaidRecords(){
+  const url = api() + '/PaymentRecords?status=unpaid';
+  try{
+    const resp = await fetch(url);
+    const data = await resp.json();
+    log('UnpaidRecords 请求', url);
+    log('UnpaidRecords 响应', resp.status, resp.statusText, data);
+    
+    if(resp.ok && data && data.Data){
+      displayUnpaidRecords(data.Data);
+      updateStats();
+    }
+  }catch(e){ 
+    log('UnpaidRecords 异常', e.name, e.message); 
+    }
+}
+
+// 加载所有已支付记录
+async function loadPaidRecords(){
+  const url = api() + '/PaymentRecords?status=paid';
+  try{
+    const resp = await fetch(url);
+    const data = await resp.json();
+    log('PaidRecords 请求', url);
+    log('PaidRecords 响应', resp.status, resp.statusText, data);
+    
+    if(resp.ok && data && data.Data){
+      displayPaidRecords(data.Data);
+      updateStats();
+    }
+  }catch(e){ 
+    log('PaidRecords 异常', e.name, e.message); 
+  }
+}
+
+// 加载所有记录
+async function loadAllRecords() {
+  await Promise.all([loadUnpaidRecords(), loadPaidRecords()]);
+}
+
+// 更新统计信息
+function updateStats() {
+  const unpaidContainer = el('unpaidRecords');
+  const paidContainer = el('paidRecords');
+  
+  const unpaidCount = unpaidContainer.querySelectorAll('tr').length - 1; // 减去表头
+  const paidCount = paidContainer.querySelectorAll('tr').length - 1;
+  
+  el('unpaidCount').textContent = Math.max(0, unpaidCount);
+  el('paidCount').textContent = Math.max(0, paidCount);
+  
+  // 计算总收入
+  let totalRevenue = 0;
+  const paidRows = paidContainer.querySelectorAll('tr');
+  paidRows.forEach((row, index) => {
+    if (index > 0) { // 跳过表头
+      const feeCell = row.querySelector('td:nth-child(6)');
+      if (feeCell) {
+        const feeText = feeCell.textContent.replace('¥', '');
+        totalRevenue += parseFloat(feeText) || 0;
+      }
+    }
+  });
+  
+  el('totalRevenue').textContent = `¥${totalRevenue.toFixed(2)}`;
+}
+
+// 显示未支付记录
+function displayUnpaidRecords(records){
+  const container = el('unpaidRecords');
+  if(records.length === 0){
+    container.innerHTML = '<p style="color:#666; text-align:center; padding:20px;">暂无未支付记录</p>';
+    return;
+  }
+  
+  let html = '<table>';
+  html += '<tr><th>车牌号</th><th>车位</th><th>入场时间</th><th>出场时间</th><th>停车时长</th><th>费用</th><th>操作</th></tr>';
+  
+  records.forEach(record => {
+    const parkStart = new Date(record.ParkStart).toLocaleString('zh-CN');
+    const parkEnd = new Date(record.ParkEnd).toLocaleString('zh-CN');
+    const duration = formatDuration(record.ParkingDuration);
+    
+    html += `<tr>
+      <td>${record.LicensePlateNumber}</td>
+      <td>${record.ParkingSpaceId}</td>
+      <td>${parkStart}</td>
+      <td>${parkEnd}</td>
+      <td>${duration}</td>
+      <td>¥${record.TotalFee}</td>
+      <td>
+        <div class="action-buttons">
+          <button class="btn btn-small" onclick="fillPaymentForm('${record.LicensePlateNumber}', ${record.ParkingSpaceId}, '${record.ParkStart}', '${record.ParkEnd}', ${record.TotalFee})">填入表单</button>
+        </div>
+      </td>
+    </tr>`;
+  });
+  
+  html += '</table>';
+  container.innerHTML = html;
+}
+
+// 显示已支付记录
+function displayPaidRecords(records){
+  const container = el('paidRecords');
+  if(records.length === 0){
+    container.innerHTML = '<p style="color:#666; text-align:center; padding:20px;">暂无已支付记录</p>';
+    return;
+  }
+  
+  let html = '<table>';
+  html += '<tr><th>车牌号</th><th>车位</th><th>入场时间</th><th>出场时间</th><th>停车时长</th><th>费用</th><th>状态</th></tr>';
+  
+  records.forEach(record => {
+    const parkStart = new Date(record.ParkStart).toLocaleString('zh-CN');
+    const parkEnd = new Date(record.ParkEnd).toLocaleString('zh-CN');
+    const duration = formatDuration(record.ParkingDuration);
+    
+    html += `<tr>
+      <td>${record.LicensePlateNumber}</td>
+      <td>${record.ParkingSpaceId}</td>
+      <td>${parkStart}</td>
+      <td>${parkEnd}</td>
+      <td>${duration}</td>
+      <td>¥${record.TotalFee}</td>
+      <td><span class="badge ok">已支付</span></td>
+    </tr>`;
+  });
+  
+  html += '</table>';
+  container.innerHTML = html;
+}
+
+// 格式化停车时长
+function formatDuration(duration){
+  const match = duration.match(/(\d+):(\d+):(\d+)/);
+  if(match){
+    const hours = parseInt(match[1]);
+    const minutes = parseInt(match[2]);
+    return `${hours}小时${minutes}分钟`;
+  }
+  return duration;
+}
+
+// 填入支付表单
+function fillPaymentForm(licensePlate, spaceId, parkStart, parkEnd, totalFee){
+  el('lpPay').value = licensePlate;
+  el('spacePay').value = spaceId;
+  el('parkStartPay').value = new Date(parkStart).toISOString();
+  el('parkEndPay').value = new Date(parkEnd).toISOString();
+  el('feePay').value = totalFee;
+  log('✅ 已填入支付表单', licensePlate, spaceId);
+}
+
+// 页面加载时自动加载所有记录
+window.onload = function(){
+  log('🚀 2.8.3测试页面已加载');
+  loadAllRecords();
+};
+</script>
+</body>
+</html>
+
