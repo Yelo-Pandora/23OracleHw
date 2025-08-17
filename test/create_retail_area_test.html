@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增店面功能测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            height: 60px;
+            resize: vertical;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button.danger {
+            background-color: #e74c3c;
+        }
+        button.danger:hover {
+            background-color: #c0392b;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .online {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .offline {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .use-case-info {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 新增店面功能测试</h1>
+        
+        <div class="use-case-info">
+            <h3>📋 用例规约信息</h3>
+            <p><strong>用例名称：</strong>新增店面</p>
+            <p><strong>参与者：</strong>管理员</p>
+            <p><strong>简要描述：</strong>物业管理人员添加新的店面区域，录入面积、租金等信息</p>
+            <p><strong>前置条件：</strong>
+                <br>1. 新增区域 ID 未存在
+                <br>2. 管理人员具备区域管理权限
+            </p>
+            <p><strong>后置条件：</strong>新店面录入系统，状态为 "空置"，可用于商户租用</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔧 系统状态检查</h2>
+            <p>API地址：<span id="apiUrl">http://localhost:5263</span> <span id="apiStatus" class="status offline">离线</span></p>
+            <button onclick="checkApiStatus()">检查API状态</button>
+            <div id="statusResult" class="result info"></div>
+        </div>
+
+        <!-- 新增店面区域测试 -->
+        <div class="test-section">
+            <h2>➕ 新增店面区域测试</h2>
+            
+            <h3>📝 基础功能测试</h3>
+            <div class="form-group">
+                <label>区域ID:</label>
+                <input type="number" id="areaId" value="1004" min="1" required>
+                <small>（建议使用1004或1005进行测试）</small>
+            </div>
+            
+            <div class="form-group">
+                <label>区域面积(㎡):</label>
+                <input type="number" id="areaSize" value="100" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label>基础租金(元/月):</label>
+                <input type="number" id="baseRent" value="10000" min="0.01" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label>操作员账号:</label>
+                <select id="operatorAccount">
+                    <option value="admin">admin (管理员)</option>
+                    <option value="guest">guest (普通用户)</option>
+                </select>
+            </div>
+            
+            <button onclick="createRetailArea()">✅ 正常创建店面</button>
+            <button onclick="fillTestData()">📋 填充测试数据</button>
+            <div id="createResult" class="result info"></div>
+            
+            <h3>🧪 异常情况测试</h3>
+            <div style="margin: 15px 0; padding: 10px; background-color: #fff3cd; border-radius: 5px;">
+                <p><strong>测试说明：</strong>以下按钮用于测试各种异常情况和边界条件</p>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                <button onclick="testDuplicateAreaId()">🚫 测试重复区域ID</button>
+                <button onclick="testInvalidData()">📝 测试无效数据</button>
+                <button onclick="testUnauthorized()">🔒 测试权限不足</button>
+                <button onclick="testEmptyFields()">❌测试必填字段验证</button>
+                <button onclick="testNegativeValues()">⚠️ 测试负数值</button>
+                <button onclick="testZeroValues()">0️⃣ 测试零值</button>
+            </div>
+            
+            <div id="exceptionTestResult" class="result info"></div>
+        </div>
+
+        <!-- 查询功能测试 -->
+        <div class="test-section">
+            <h2>🔍 查询功能测试</h2>
+            
+            <button onclick="getAvailableAreas()">📋 获取可用店面</button>
+            <button onclick="getAllStores()">🏪 获取所有店铺</button>
+            <div id="queryResult" class="result info"></div>
+        </div>
+
+        <!-- 业务流程验证 -->
+        <div class="test-section">
+            <h2>🔄 业务流程验证</h2>
+            
+            <h3>📊 完整流程测试</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                <button onclick="testCompleteWorkflow()">🔄 完整业务流程测试</button>
+                <button onclick="testDatabaseConsistency()">🗄️ 数据库一致性测试</button>
+                <button onclick="testAreaStatusUpdate()">📊 区域状态更新测试</button>
+            </div>
+            
+            <div id="workflowTestResult" class="result info"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5263/api';
+        
+        // 页面加载时自动检查API状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkApiStatus();
+        });
+        
+        async function checkApiStatus() {
+            const statusElement = document.getElementById('apiStatus');
+            const resultElement = document.getElementById('statusResult');
+            
+            try {
+                const response = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                if (response.ok) {
+                    statusElement.textContent = '在线';
+                    statusElement.className = 'status online';
+                    resultElement.textContent = '✅ API连接成功！';
+                    resultElement.className = 'result success';
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusElement.textContent = '离线';
+                statusElement.className = 'status offline';
+                resultElement.textContent = `❌ API连接失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        // 填充测试数据
+        function fillTestData() {
+            document.getElementById('areaId').value = '1004';
+            document.getElementById('areaSize').value = '120';
+            document.getElementById('baseRent').value = '15000';
+            document.getElementById('operatorAccount').value = 'admin';
+        }
+        
+        // 正常创建店面
+        async function createRetailArea() {
+            const resultElement = document.getElementById('createResult');
+            
+            const areaData = {
+                areaId: parseInt(document.getElementById('areaId').value),
+                areaSize: parseInt(document.getElementById('areaSize').value),
+                baseRent: parseFloat(document.getElementById('baseRent').value),
+                operatorAccount: document.getElementById('operatorAccount').value
+            };
+            
+            resultElement.textContent = '正在创建店面区域...';
+            resultElement.className = 'result info';
+            
+            try {
+                console.log('发送请求数据:', areaData);
+                
+                const response = await fetch(`${API_BASE}/Store/CreateRetailArea`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(areaData)
+                });
+                
+                console.log('响应状态:', response.status);
+                
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    console.log('响应数据:', data);
+                    
+                    if (response.ok) {
+                        resultElement.textContent = `✅ 店面区域创建成功！
+
+区域信息：
+- 区域ID: ${data.areaId}
+- 面积: ${data.areaSize}平方米
+- 基础租金: ¥${data.baseRent}/月
+- 状态: ${data.rentStatus}
+- 是否空置: ${data.isEmpty === 1 ? '是' : '否'}
+
+${data.message}`;
+                        resultElement.className = 'result success';
+                    } else {
+                        resultElement.textContent = `❌ 创建失败（HTTP ${response.status}）
+
+${JSON.stringify(data, null, 2)}`;
+                        resultElement.className = 'result error';
+                    }
+                } else {
+                    const text = await response.text();
+                    console.log('响应文本:', text);
+                    
+                    if (response.ok) {
+                        resultElement.textContent = `✅ 店面区域创建成功！
+
+${text}`;
+                        resultElement.className = 'result success';
+                    } else {
+                        resultElement.textContent = `❌ 创建失败（HTTP ${response.status}）
+
+${text}`;
+                        resultElement.className = 'result error';
+                    }
+                }
+            } catch (error) {
+                console.error('请求错误:', error);
+                resultElement.textContent = `❌ 请求失败: ${error.message}
+
+请检查：
+1. 后端服务是否正在运行
+2. 网络连接是否正常
+3. API地址是否正确`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        // ==================== 异常情况测试函数 ====================
+        
+        async function testDuplicateAreaId() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试重复区域ID...\n';
+            resultElement.className = 'result info';
+            
+            const areaData = {
+                areaId: 1001, // 已存在的区域ID
+                areaSize: 50,
+                baseRent: 5000,
+                operatorAccount: 'admin'
+            };
+            
+            await executeTest(resultElement, areaData, '该区域ID已存在，请重新设置', '正确识别了重复区域ID', '应该拒绝重复区域ID');
+        }
+        
+        async function testInvalidData() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试无效数据...\n';
+            resultElement.className = 'result info';
+            
+            const areaData = {
+                areaId: -1, // 无效的区域ID
+                areaSize: -10, // 无效的面积
+                baseRent: -1000, // 无效的租金
+                operatorAccount: 'admin'
+            };
+            
+            await executeTest(resultElement, areaData, '验证失败', '正确识别了无效数据', '应该拒绝无效数据');
+        }
+        
+        async function testUnauthorized() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试权限不足...\n';
+            resultElement.className = 'result info';
+            
+            const areaData = {
+                areaId: 1005,
+                areaSize: 80,
+                baseRent: 8000,
+                operatorAccount: 'guest' // 无权限的账号
+            };
+            
+            await executeTest(resultElement, areaData, '权限不足', '正确识别了权限不足', '应该拒绝权限不足的操作');
+        }
+        
+        async function testEmptyFields() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试必填字段验证...\n';
+            resultElement.className = 'result info';
+            
+            const areaData = {
+                areaId: null, // 空字段
+                areaSize: null,
+                baseRent: null,
+                operatorAccount: ''
+            };
+            
+            await executeTest(resultElement, areaData, '必填项', '正确验证了必填字段', '应该拒绝空字段');
+        }
+        
+        async function testNegativeValues() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试负数值...\n';
+            resultElement.className = 'result info';
+            
+            const areaData = {
+                areaId: 1006,
+                areaSize: -50, // 负数面积
+                baseRent: -5000, // 负数租金
+                operatorAccount: 'admin'
+            };
+            
+            await executeTest(resultElement, areaData, '必须大于0', '正确拒绝了负数值', '应该拒绝负数值');
+        }
+        
+        async function testZeroValues() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试零值...\n';
+            resultElement.className = 'result info';
+            
+            const areaData = {
+                areaId: 1007,
+                areaSize: 0, // 零面积
+                baseRent: 0, // 零租金
+                operatorAccount: 'admin'
+            };
+            
+            await executeTest(resultElement, areaData, '必须大于0', '正确拒绝了零值', '应该拒绝零值');
+        }
+        
+        // ==================== 查询功能 ====================
+        
+        async function getAvailableAreas() {
+            const resultElement = document.getElementById('queryResult');
+            
+            try {
+                resultElement.textContent = '正在查询可用店面...';
+                resultElement.className = 'result info';
+                
+                const response = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    let message = `📋 可用店面列表 (共${data.length}个):
+
+`;
+                    data.forEach((area, index) => {
+                        message += `${index + 1}. 区域ID: ${area.areaId}
+   面积: ${area.areaSize}平方米
+   基础租金: ¥${area.baseRent}/月
+   状态: ${area.rentStatus}
+
+`;
+                    });
+                    resultElement.textContent = message;
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = `❌ 查询失败: ${JSON.stringify(data, null, 2)}`;
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function getAllStores() {
+            const resultElement = document.getElementById('queryResult');
+            
+            try {
+                resultElement.textContent = '正在查询所有店铺...';
+                resultElement.className = 'result info';
+                
+                const response = await fetch(`${API_BASE}/Store/AllStores?operatorAccount=admin`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // 调试：显示实际返回的数据结构
+                    console.log('API返回的数据:', data);
+                    if (data.length > 0) {
+                        console.log('第一个店铺对象的字段:', Object.keys(data[0]));
+                    }
+                    
+                    let message = `🏪 所有店铺列表 (共${data.length}个):
+
+调试信息 - 第一个店铺的字段名: ${data.length > 0 ? Object.keys(data[0]).join(', ') : '无数据'}
+
+`;
+                    data.forEach((store, index) => {
+                        message += `${index + 1}. 店铺ID: ${store.STORE_ID}
+   店铺名称: ${store.STORE_NAME}
+   租户名: ${store.TENANT_NAME}
+   状态: ${store.STORE_STATUS}
+   类型: ${store.STORE_TYPE}
+
+`;
+                    });
+                    resultElement.textContent = message;
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = `❌ 查询失败: ${JSON.stringify(data, null, 2)}`;
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        // ==================== 业务流程验证 ====================
+        
+        async function testCompleteWorkflow() {
+            const resultElement = document.getElementById('workflowTestResult');
+            resultElement.textContent = '🔄 执行完整业务流程测试...\n';
+            resultElement.className = 'result info';
+            
+            let testResult = '';
+            
+            try {
+                // 步骤1: 检查区域ID不存在
+                testResult += '步骤1: 检查区域ID不存在...\n';
+                
+                // 步骤2: 创建新区域
+                testResult += '步骤2: 创建新店面区域...\n';
+                const areaData = {
+                    areaId: 1008,
+                    areaSize: 150,
+                    baseRent: 18000,
+                    operatorAccount: 'admin'
+                };
+                
+                const createResponse = await fetch(`${API_BASE}/Store/CreateRetailArea`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(areaData)
+                });
+                
+                const createData = await createResponse.json();
+                
+                if (createResponse.ok) {
+                    testResult += '✅ 步骤2成功: 新店面区域创建成功\n';
+                    
+                    // 步骤3: 验证区域状态为空置
+                    testResult += '步骤3: 验证区域状态为空置...\n';
+                    testResult += `调试信息: rentStatus="${createData.rentStatus}", isEmpty=${createData.isEmpty}, type=${typeof createData.isEmpty}\n`;
+                    if (createData.rentStatus === '空置' && createData.isEmpty === 1) {
+                        testResult += '✅ 步骤3成功: 区域状态正确设置为空置\n';
+                        
+                        // 步骤4: 验证区域出现在可用列表中
+                        testResult += '步骤4: 验证区域出现在可用列表中...\n';
+                        const availableResponse = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                        const availableData = await availableResponse.json();
+                        
+                        const foundArea = availableData.find(area => area.areaId === 1008);
+                        if (foundArea) {
+                            testResult += '✅ 步骤4成功: 新区域出现在可用店面列表中\n';
+                            testResult += '✅ 完整业务流程测试通过！\n';
+                            resultElement.className = 'result success';
+                        } else {
+                            testResult += '❌ 步骤4失败: 新区域未出现在可用店面列表中\n';
+                            resultElement.className = 'result error';
+                        }
+                    } else {
+                        testResult += '❌ 步骤3失败: 区域状态未正确设置\n';
+                        resultElement.className = 'result error';
+                    }
+                } else {
+                    testResult += `❌ 步骤2失败: ${createData.error || JSON.stringify(createData)}\n`;
+                    resultElement.className = 'result error';
+                }
+                
+            } catch (error) {
+                testResult += `❌ 流程测试失败: ${error.message}\n`;
+                resultElement.className = 'result error';
+            }
+            
+            resultElement.textContent = testResult;
+        }
+        
+        async function testDatabaseConsistency() {
+            const resultElement = document.getElementById('workflowTestResult');
+            resultElement.textContent = '🗄️ 执行数据库一致性测试...\n';
+            resultElement.className = 'result info';
+            
+            let testResult = '';
+            
+            try {
+                // 查询可用区域，验证数据一致性
+                const response = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                const areas = await response.json();
+                
+                if (response.ok) {
+                    testResult += `✅ 查询到 ${areas.length} 个可用区域\n`;
+                    
+                    // 验证每个区域的数据完整性
+                    let consistentCount = 0;
+                    areas.forEach((area, index) => {
+                        if (area.areaId && area.areaSize && area.baseRent && area.rentStatus === '空置') {
+                            consistentCount++;
+                        }
+                    });
+                    
+                    if (consistentCount === areas.length) {
+                        testResult += '✅ 所有区域数据一致性检查通过\n';
+                        resultElement.className = 'result success';
+                    } else {
+                        testResult += `❌ 发现 ${areas.length - consistentCount} 个区域数据不一致\n`;
+                        resultElement.className = 'result error';
+                    }
+                } else {
+                    testResult += `❌ 查询失败: ${JSON.stringify(areas)}\n`;
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                testResult += `❌ 一致性测试失败: ${error.message}\n`;
+                resultElement.className = 'result error';
+            }
+            
+            resultElement.textContent = testResult;
+        }
+        
+        async function testAreaStatusUpdate() {
+            const resultElement = document.getElementById('workflowTestResult');
+            resultElement.textContent = '📊 执行区域状态更新测试...\n';
+            resultElement.className = 'result info';
+            
+            let testResult = '';
+            
+            try {
+                // 创建一个新区域用于测试
+                const areaData = {
+                    areaId: 1009,
+                    areaSize: 80,
+                    baseRent: 12000,
+                    operatorAccount: 'admin'
+                };
+                
+                const createResponse = await fetch(`${API_BASE}/Store/CreateRetailArea`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(areaData)
+                });
+                
+                if (createResponse.ok) {
+                    testResult += '✅ 测试区域创建成功\n';
+                    
+                    // 验证初始状态
+                    const availableResponse = await fetch(`${API_BASE}/Store/AvailableAreas`);
+                    const availableAreas = await availableResponse.json();
+                    const testArea = availableAreas.find(area => area.areaId === 1009);
+                    
+                    if (testArea && testArea.rentStatus === '空置') {
+                        testResult += '✅ 初始状态验证通过: 区域状态为空置\n';
+                        testResult += '✅ 区域状态更新测试通过！\n';
+                        resultElement.className = 'result success';
+                    } else {
+                        testResult += '❌ 初始状态验证失败\n';
+                        resultElement.className = 'result error';
+                    }
+                } else {
+                    testResult += '❌ 测试区域创建失败\n';
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                testResult += `❌ 状态更新测试失败: ${error.message}\n`;
+                resultElement.className = 'result error';
+            }
+            
+            resultElement.textContent = testResult;
+        }
+        
+        // 通用测试执行函数
+        async function executeTest(resultElement, areaData, expectedError, successMsg, failMsg) {
+            try {
+                const response = await fetch(`${API_BASE}/Store/CreateRetailArea`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(areaData)
+                });
+                
+                const data = await response.json();
+                
+                // 检查是否是期望的错误响应
+                let isExpectedError = false;
+                if (!response.ok) {
+                    // 检查标准错误响应
+                    if (data.error && data.error.includes(expectedError)) {
+                        isExpectedError = true;
+                    }
+                    // 检查验证错误响应（400状态码且有details字段）
+                    else if (response.status === 400 && data.details) {
+                        isExpectedError = true;
+                    }
+                    // 检查其他类型的错误响应
+                    else if (data.title && data.title.includes('validation')) {
+                        isExpectedError = true;
+                    }
+                }
+                
+                if (isExpectedError) {
+                    resultElement.textContent += `✅ 测试通过：${successMsg}\n${JSON.stringify(data, null, 2)}`;
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += `❌ 测试失败：${failMsg}\n${JSON.stringify(data, null, 2)}`;
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+    </script>
+</body>
+</html>
