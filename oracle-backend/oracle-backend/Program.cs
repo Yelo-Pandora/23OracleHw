@@ -27,6 +27,11 @@ namespace oracle_backend
                 options.UseOracle(connectionString);
             });
 
+            builder.Services.AddDbContext<EquipmentDbContext>(options =>
+            {
+                options.UseOracle(connectionString);
+            });
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
