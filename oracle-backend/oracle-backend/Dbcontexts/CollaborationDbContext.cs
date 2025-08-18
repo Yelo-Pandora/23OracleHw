@@ -12,6 +12,9 @@ namespace oracle_backend.Dbcontexts
         public DbSet<Collaboration> Collaborations { get; set; }
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<StaffAccount> STAFF_ACCOUNT { get; set; }
+        public DbSet<SalarySlip> SalarySlips { get; set; }
+        public DbSet<MonthSalaryCost> MonthSalaryCosts { get; set; }
+        // public DbSet<TempAuthority> TempAuthorities { get; set; }
 
         // 用于检查依赖关系的实体
         public DbSet<VenueEventDetail> VenueEventDetails { get; set; }
@@ -38,6 +41,26 @@ namespace oracle_backend.Dbcontexts
         public async Task<Staff?> FindStaffById(int staffId)
         {
             return await Staffs.FirstOrDefaultAsync(s => s.STAFF_ID == staffId);
+        }
+
+        // 根据员工ID和monthTime返回唯一的SalarySlip记录
+        public async Task<SalarySlip?> GetSalarySlipByStaffId(int staffId, DateTime monthTime)
+        {
+            // 提取年月份
+            var year = monthTime.Year;
+            var month = monthTime.Month;
+
+            return await SalarySlips.FirstOrDefaultAsync(ss => ss.STAFF_ID == staffId && ss.MONTH_TIME.Year == year && ss.MONTH_TIME.Month == month);
+        }
+
+        // 根据monthTime返回MonthSalaryCost
+        public async Task<MonthSalaryCost?> GetMonthSalaryCostByStaffId(DateTime monthTime)
+        {
+            // 提取年月份
+            var year = monthTime.Year;
+            var month = monthTime.Month;
+
+            return await MonthSalaryCosts.FirstOrDefaultAsync(msc => msc.MONTH_TIME.Year == year && msc.MONTH_TIME.Month == month);
         }
     }
 }

@@ -51,6 +51,17 @@ namespace oracle_backend.Controllers
             public double STAFF_SALARY { get; set; }
         }
 
+        public class SalaryDto{
+            [Range(0, 9999999999.99, ErrorMessage = "薪资必须大于等于0，且不能超过10位整数和2位小数")]
+            public double BASE_SALARY { get; set; }
+
+            [Range(0, 9999999999.99, ErrorMessage = "奖金必须大于等于0，且不能超过10位整数和2位小数")]
+            public double BONUS { get; set; }
+
+            [Range(0, 9999999999.99, ErrorMessage = "罚金必须大于等于0，且不能超过10位整数和2位小数")]
+            public double FINE { get; set; }
+        }
+
         // 权限与临时权限检查
         private async Task<bool> CheckPermission(string operatorAccountId, int requiredAuthority){
             // 检查账号是否存在
@@ -121,6 +132,22 @@ namespace oracle_backend.Controllers
         {
             var staffs = await _collabContext.Staffs.ToListAsync();
             return Ok(staffs);
+        }
+
+        // 获取所有SalarySlip
+        [HttpGet("AllsalarySlip")]
+        public async Task<IActionResult> GetAllsalarySlip()
+        {
+            var salarySlip = await _collabContext.SalarySlips.ToListAsync();
+            return Ok(salarySlip);
+        }
+
+        // 获取所有MonthSalaryCost
+        [HttpGet("AllMonthSalaryCost")]
+        public async Task<IActionResult> GetAllMonthSalaryCost()
+        {
+            var monthSalaryCost = await _collabContext.MonthSalaryCosts.ToListAsync();
+            return Ok(monthSalaryCost);
         }
 
         // 2.6.1 添加新员工
@@ -261,7 +288,7 @@ namespace oracle_backend.Controllers
             var isAdmin = await CanModifyStaff(operatorAccount, staff.STAFF_APARTMENT);
 
             // 员工本人只能改姓名、性别
-            if (isSelf)
+            if (isSelf && isAdmin != null)
             {
                 // 只允许修改姓名和性别
                 if (staff.STAFF_APARTMENT != dto.STAFF_APARTMENT ||
@@ -278,7 +305,7 @@ namespace oracle_backend.Controllers
             }
 
             // 管理人员或管理员可修改全部信息
-            if (!isSelf && isAdmin == null)
+            if (isAdmin == null)
             {
                 staff.STAFF_NAME = dto.STAFF_NAME;
                 staff.STAFF_SEX = dto.STAFF_SEX;
@@ -291,5 +318,73 @@ namespace oracle_backend.Controllers
 
             return BadRequest("无权限修改");
         }
+        // 2.6.5 员工工资管理(底薪，奖金，罚金)
+        [HttpPost("staff salary management")]
+        public async Task<IActionResult> ManageStaffSalary(
+            [FromQuery, Required] string operatorAccount,
+            [FromQuery, Required] int staffId,
+            [FromQuery] DateTime monthTime, // 格式 如 2008-11
+            [FromBody] SalaryDto dto)
+        {
+
+            // 查询员工
+            var staff = await _collabContext.FindStaffById(staffId);
+            if (staff == null) return NotFound("员工不存在");
+            
+            // 权限检查
+            var permission = await CanModifyStaff(operatorAccount, staff.STAFF_APARTMENT);
+            if (permission != null) return permission;
+
+            // 查询SalarySlip
+            var salarySlip = await _collabContext.GetSalarySlipByStaffId(staffId, monthTime);
+            if (salarySlip == null) {
+                // 创建数据
+                salarySlip = new SalarySlip
+                {
+                    STAFF_ID = staffId,
+                    MONTH_TIME = monthTime,
+                    ATD_COUNT = 0,
+                    BONUS = dto.BONUS,
+                    FINE = dto.FINE
+                };
+                staff.STAFF_SALARY = dto.BASE_SALARY;
+                await _collabContext.SalarySlips.AddAsync(salarySlip);
+            }
+            else{
+                // 更新员工工资信息
+                staff.STAFF_SALARY = dto.BASE_SALARY;
+                salarySlip.BONUS = dto.BONUS;
+                salarySlip.FINE = dto.FINE;
+            }
+
+            // 查询MonthSalaryCost
+            var monthSalaryCost = await _collabContext.GetMonthSalaryCostByStaffId(monthTime);
+            if (monthSalaryCost == null)
+            {
+                monthSalaryCost = new MonthSalaryCost
+                {
+                    MONTH_TIME = monthTime,
+                    TOTAL_COST = (int)(staff.STAFF_SALARY + salarySlip.BONUS - salarySlip.FINE)
+                };
+                await _collabContext.MonthSalaryCosts.AddAsync(monthSalaryCost);
+            }
+            else
+            {
+                monthSalaryCost.TOTAL_COST = (int)(staff.STAFF_SALARY + salarySlip.BONUS - salarySlip.FINE);
+            }
+            await _collabContext.SaveChangesAsync();
+
+            return Ok("员工工资信息修改成功");
+        }
+
+        // 2.6.7 临时权限管理功能
+        // [HttpPost("temporary authority")]
+        // public async Task<IActionResult> ManageTemporaryAuthority(
+        //     [FromQuery, Required] string operatorAccount,
+        //     [FromQuery, Required] int staffId,
+        //     [FromQuery, Required] int tempAuthority)
+        // {
+
+        // }
     }
 }
