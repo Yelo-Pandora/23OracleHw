@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace oracle_backend.Models
 {
+    [Table("VENUE_EVENT_DETAIL")]
     [PrimaryKey(nameof(EVENT_ID), nameof(AREA_ID), nameof(COLLABORATION_ID))]
     public class VenueEventDetail
     {

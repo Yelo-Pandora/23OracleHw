@@ -422,7 +422,7 @@ namespace oracle_backend.Controllers
                 // 计算总费用
                 var totalFee = dto.VenueFee + (dto.AdditionalServiceFee ?? 0);
 
-                // 这里可以创建一个结算记录表，暂时返回结算信息
+                // 创建结算信息用于返回
                 var settlementInfo = new
                 {
                     EventId = eventId,
@@ -439,8 +439,9 @@ namespace oracle_backend.Controllers
                     SettlementTime = DateTime.Now
                 };
 
-                // 更新活动状态为已结算
+                // 更新活动状态为已结算，并将总费用存储到FUNDING字段
                 venueEventDetail.STATUS = "已结算";
+                venueEventDetail.FUNDING = totalFee;  // 新增：将总费用存储到FUNDING字段
                 await _context.SaveChangesAsync();
 
                 return Ok(new 

@@ -21,6 +21,11 @@ namespace oracle_backend
             {
                 options.UseOracle(connectionString); // 指定使用 Oracle 提供程序和连接字符串
             });
+            // 添加对 ComplexDbContext 的依赖注入
+            builder.Services.AddDbContext<ComplexDbContext>(options =>
+            {
+                options.UseOracle(connectionString);
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
