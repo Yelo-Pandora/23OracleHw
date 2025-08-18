@@ -8,11 +8,20 @@ namespace oracle_backend.Models.Promotion
 {
     public class SaleEventDto
     {
-        public string PromotionName { get; set; }
-        public decimal PromotionCost { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public List<string> ShopIds { get; set; }
-        public Dictionary<string, object> PromotionRules { get; set; }
+        [Required]
+        public string EventName { get; set; }
+
+        [Required]
+        [Range(0, double.MaxValue)]
+        public double Cost { get; set; }
+
+        [Required]
+        public DateTime EventStart { get; set; }
+
+        [Required]
+        public DateTime EventEnd { get; set; }
+
+        [Required]
+        public string Description { get; set; }
     }
 }

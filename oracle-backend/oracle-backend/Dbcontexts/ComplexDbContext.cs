@@ -54,5 +54,6 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<Account>().HasKey(a => a.ACCOUNT);
             modelBuilder.Entity<TempAuthority>().HasKey(ta => new { ta.ACCOUNT, ta.EVENT_ID });
         }
+
     }
 }

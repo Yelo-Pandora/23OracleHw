@@ -28,11 +28,10 @@ namespace oracle_backend
             builder.Services.AddSwaggerGen();
 
             // 添加数据库上下文
-            builder.Services.AddDbContext<SaleEventDbContext>(options => options.UseOracle(builder.Configuration.GetConnectionString("PromotionDb")));
+            builder.Services.AddDbContext<SaleEventDbContext>(options => options.UseOracle(builder.Configuration.GetConnectionString("SaleEventDb")));
 
             // 注册服务
             builder.Services.AddScoped<SaleEventService>();
-            builder.Services.AddScoped<DiscountRuleService>();
 
             var app = builder.Build();
 
@@ -50,6 +49,7 @@ namespace oracle_backend
             app.MapControllers();
 
             app.Run();
+
         }
     }
 }

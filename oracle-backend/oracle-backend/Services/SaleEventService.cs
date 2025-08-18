@@ -14,6 +14,25 @@ namespace oracle_backend.Services
         private readonly SaleEventDbContext _context;
         private readonly ILogger<SaleEventService> _logger;
 
+        public async Task<List<SaleEvent>> GetAllSaleEventsAsync()
+        {
+            try
+            {
+                _logger.LogInformation("开始获取所有促销活动");
+
+                // 直接使用 Set<SaleEvent>()，不需要 Include
+                var result = await _context.Set<SaleEvent>().ToListAsync();
+
+                _logger.LogInformation($"成功获取 {result.Count} 条促销活动记录");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"获取促销活动列表时出错: {ex.Message}");
+                throw;
+            }
+        }
+
         public SaleEventService(SaleEventDbContext context, ILogger<SaleEventService> logger)
         {
             _context = context;
@@ -22,44 +41,40 @@ namespace oracle_backend.Services
 
         public async Task<SaleEvent> CreateSaleEventAsync(SaleEventDto dto)
         {
-            // 验证时间
-            if (dto.StartTime >= dto.EndTime)
+            if (dto.EventStart > dto.EventEnd)
                 throw new ArgumentException("结束时间必须晚于开始时间");
+
+            // 获取当前最大ID
+            int? maxId = await _context.SaleEvents
+                .MaxAsync(e => (int?)e.EVENT_ID);
+
+            int newId = (maxId ?? 0) + 1;
 
             var saleEvent = new SaleEvent
             {
-                EventName = dto.EventName,
+                EVENT_ID = newId, // 手动设置ID
+                EVENT_NAME = dto.EventName,
                 Cost = dto.Cost,
-                StartTime = dto.StartTime,
-                EndTime = dto.EndTime,
+                EVENT_START = dto.EventStart,
+                EVENT_END = dto.EventEnd,
                 Description = dto.Description,
-                ShopIds = dto.ShopIds,
-                PromotionRules = dto.PromotionRules
             };
 
             _context.SaleEvents.Add(saleEvent);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation($"创建促销活动: {saleEvent.EventId}");
             return saleEvent;
         }
 
-        public async Task<SaleEvent> UpdateSaleEventAsync(string id, SaleEventDto dto)
+        public async Task<SaleEvent> UpdateSaleEventAsync(int id, SaleEventDto dto)
         {
             var saleEvent = await _context.SaleEvents.FindAsync(id);
             if (saleEvent == null)
                 throw new KeyNotFoundException("促销活动不存在");
 
-            // 防止修改已开始的活动
-            if (saleEvent.Status == "ACTIVE" &&
-                (dto.ShopIds != null || dto.PromotionRules != null))
-            {
-                throw new InvalidOperationException("活动进行中，禁止修改规则或店铺列表");
-            }
-
             // 更新字段
             if (!string.IsNullOrEmpty(dto.EventName))
-                saleEvent.EventName = dto.EventName;
+                saleEvent.EVENT_NAME = dto.EventName;
 
             if (dto.Cost > 0)
                 saleEvent.Cost = dto.Cost;
@@ -67,47 +82,32 @@ namespace oracle_backend.Services
             if (!string.IsNullOrEmpty(dto.Description))
                 saleEvent.Description = dto.Description;
 
-            if (dto.ShopIds != null)
-                saleEvent.ShopIds = dto.ShopIds;
+            if (dto.EventStart != default)
+                saleEvent.EVENT_START = dto.EventStart;
 
-            if (dto.PromotionRules != null)
-                saleEvent.PromotionRules = dto.PromotionRules;
-
-            if (dto.StartTime != default)
-                saleEvent.StartTime = dto.StartTime;
-
-            if (dto.EndTime != default)
-                saleEvent.EndTime = dto.EndTime;
+            if (dto.EventEnd != default)
+                saleEvent.EVENT_END = dto.EventEnd;
 
             await _context.SaveChangesAsync();
             return saleEvent;
         }
 
-        public async Task<bool> DeleteSaleEventAsync(string id)
+        public async Task<bool> DeleteSaleEventAsync(int id)
         {
             var saleEvent = await _context.SaleEvents.FindAsync(id);
             if (saleEvent == null) return false;
-
-            // 活动进行中禁止删除
-            if (saleEvent.Status == "ACTIVE")
-                throw new InvalidOperationException("活动进行中，禁止删除");
 
             _context.SaleEvents.Remove(saleEvent);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<SaleEvent> GetSaleEventAsync(string id)
+        public async Task<SaleEvent> GetSaleEventAsync(int id)
         {
             return await _context.SaleEvents.FindAsync(id);
         }
 
-        public async Task<List<SaleEvent>> GetAllSaleEventsAsync()
-        {
-            return await _context.SaleEvents.ToListAsync();
-        }
-
-        public async Task<SaleEventReport> GenerateSaleEventReportAsync(string eventId)
+        public async Task<SaleEventReport> GenerateSaleEventReportAsync(int eventId)
         {
             var saleEvent = await _context.SaleEvents.FindAsync(eventId);
             if (saleEvent == null)
@@ -118,9 +118,8 @@ namespace oracle_backend.Services
 
             return new SaleEventReport
             {
-                EventId = saleEvent.EventId,
-                EventName = saleEvent.EventName,
-                ShopCount = saleEvent.ShopIds.Count,
+                EventId = saleEvent.EVENT_ID,
+                EventName = saleEvent.EVENT_NAME,
                 SalesIncrement = reportData.SalesIncrement,
                 Cost = saleEvent.Cost,
                 ROI = CalculateROI(reportData.SalesIncrement, saleEvent.Cost),

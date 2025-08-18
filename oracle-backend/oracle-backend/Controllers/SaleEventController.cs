@@ -8,21 +8,18 @@ using System.Threading.Tasks;
 
 namespace oracle_backend.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/sale-event")]
     public class SaleEventController : ControllerBase
     {
         private readonly SaleEventService _saleEventService;
-        private readonly DiscountRuleService _discountRuleService;
         private readonly ILogger<SaleEventController> _logger;
 
         public SaleEventController(
             SaleEventService saleEventService,
-            DiscountRuleService discountRuleService,
             ILogger<SaleEventController> logger)
         {
             _saleEventService = saleEventService;
-            _discountRuleService = discountRuleService;
             _logger = logger;
         }
 
@@ -32,7 +29,7 @@ namespace oracle_backend.Controllers
             try
             {
                 var saleEvent = await _saleEventService.CreateSaleEventAsync(dto);
-                return CreatedAtAction(nameof(GetSaleEvent), new { id = saleEvent.EventId }, saleEvent);
+                return CreatedAtAction(nameof(GetSaleEvent), new { id = saleEvent.EVENT_ID }, saleEvent);
             }
             catch (Exception ex)
             {
@@ -42,7 +39,7 @@ namespace oracle_backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateSaleEvent(string id, [FromBody] SaleEventDto dto)
+        public async Task<IActionResult> UpdateSaleEvent(int id, [FromBody] SaleEventDto dto)
         {
             try
             {
@@ -61,7 +58,7 @@ namespace oracle_backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSaleEvent(string id)
+        public async Task<IActionResult> DeleteSaleEvent(int id)
         {
             try
             {
@@ -76,7 +73,7 @@ namespace oracle_backend.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSaleEvent(string id)
+        public async Task<IActionResult> GetSaleEvent(int id)
         {
             try
             {
@@ -86,7 +83,7 @@ namespace oracle_backend.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"获取促销活动错误 {id}");
-                return StatusCode(500, "服务器内部错误");
+                return StatusCode(500, "获取促销活动错误");
             }
         }
 
@@ -101,12 +98,12 @@ namespace oracle_backend.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "获取所有促销活动错误");
-                return StatusCode(500, "服务器内部错误");
+                return StatusCode(500, "获取所有促销活动错误");
             }
         }
 
         [HttpGet("{id}/report")]
-        public async Task<IActionResult> GenerateSaleEventReport(string id)
+        public async Task<IActionResult> GenerateSaleEventReport(int id)
         {
             try
             {
@@ -120,29 +117,8 @@ namespace oracle_backend.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"生成报表错误 {id}");
-                return StatusCode(500, "服务器内部错误");
+                return StatusCode(500, "生成报表错误");
             }
-        }
-
-        [HttpPost("calculate")]
-        public IActionResult CalculateDiscount([FromBody] DiscountCalculationRequest request)
-        {
-            try
-            {
-                var result = _discountRuleService.ApplyDiscount(request.OriginalPrice, request.Rule);
-                return Ok(new { DiscountedPrice = result });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "折扣计算错误");
-                return BadRequest(ex.Message);
-            }
-        }
-
-        public class DiscountCalculationRequest
-        {
-            public double OriginalPrice { get; set; }
-            public Dictionary<string, object> Rule { get; set; }
         }
     }
 }
