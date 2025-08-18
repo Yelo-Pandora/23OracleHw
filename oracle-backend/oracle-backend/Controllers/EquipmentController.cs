@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Microsoft.OpenApi.Models;
 using Oracle.ManagedDataAccess.Client;
 using oracle_backend.Dbcontexts;
 using oracle_backend.Models;
@@ -30,12 +32,13 @@ namespace oracle_backend.Controllers
         //2.9.1 查看设备列表
         public class EquipmentListDto
         {
-            public int equipment_ID { get; set; }  
+            public int equipment_ID { get; set; }
             public string equipment_TYPE { get; set; }
             public string equipment_STATUS { get; set; }
+            public int area_ID { get; set; }
         }
         [HttpGet("EquipmentList")]
-        public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentList(string OperatorID)
+        public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentList([FromQuery] string OperatorID)
         {
             _logger.LogInformation("正在读取设备列表信息");
             try
@@ -46,13 +49,16 @@ namespace oracle_backend.Controllers
 
                 if (operatorAccount.AUTHORITY > 2)
                     return BadRequest("权限不足，需要设备管理权限");
-
                 var list = await _context.Equipments
                     .Select(e => new EquipmentListDto
                     {
                         equipment_ID = e.EQUIPMENT_ID,
                         equipment_TYPE = e.EQUIPMENT_TYPE,
-                        equipment_STATUS = e.EQUIPMENT_STATUS
+                        equipment_STATUS = e.EQUIPMENT_STATUS,
+                        area_ID = _context.EquipmentLocations
+                                    .Where(el => el.EQUIPMENT_ID == e.EQUIPMENT_ID)
+                                    .Select(el => el.AREA_ID)
+                                    .FirstOrDefault()
                     })
                     .ToListAsync();
                 if (!list.Any())
@@ -72,8 +78,24 @@ namespace oracle_backend.Controllers
         }
 
         //查询具体设备
-        [HttpGet("{equipmentID}")]
-        public async Task<ActionResult<Equipment>> GetEquipmentDetail(int equipmentID, string OperatorID)
+        public class EquipmentDetailDto
+        {
+            //设备ID
+            public required int EQUIPMENT_ID { get; set; }
+            //设备类型
+            public string EQUIPMENT_TYPE { get; set; }
+            //设备状态
+            public string EQUIPMENT_STATUS { get; set; }
+            //设备接口
+            public string? PORT { get; set; }
+            //设备购入花费
+            public int? EQUIPMENT_COST { get; set; }
+            //购买时间
+            public DateTime BUY_TIME { get; set; }
+            public int AREA_ID { get; set; }
+        }
+        [HttpGet("EquipmentDetail")]
+        public async Task<ActionResult<Equipment>> GetEquipmentDetail([FromQuery] int equipmentID, [FromQuery] string OperatorID)
         {
             _logger.LogInformation("正在查询设备信息");
             try
@@ -91,8 +113,22 @@ namespace oracle_backend.Controllers
 
                 if (equipment.EQUIPMENT_STATUS == EquipmentStatus.Offline)
                     return BadRequest("该设备离线，无法获取状态");
+                var area_ID = await _context.EquipmentLocations
+                            .Where(el => el.EQUIPMENT_ID == equipment.EQUIPMENT_ID)
+                            .Select(el => el.AREA_ID)
+                            .FirstOrDefaultAsync();
+                var dto = new EquipmentDetailDto
+                {
+                    EQUIPMENT_ID = equipment.EQUIPMENT_ID,
+                    EQUIPMENT_TYPE = equipment.EQUIPMENT_TYPE,
+                    EQUIPMENT_STATUS = equipment.EQUIPMENT_STATUS,
+                    EQUIPMENT_COST = equipment.EQUIPMENT_COST,
+                    PORT = equipment.PORT,
+                    BUY_TIME = equipment.BUY_TIME,
+                    AREA_ID = area_ID
+                };
 
-                return Ok(equipment);
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -112,8 +148,15 @@ namespace oracle_backend.Controllers
         }
 
         //显示可操作列表
-        [HttpGet("{id}/actionsList")]
-        public async Task<IActionResult> GetAvailableActions(int id, string OperatorID)
+        private static readonly string[] AirConditionerActions={ "关机", "制冷模式", "制热模式", "调节温度" };
+        private static readonly string[] LightingActions={ "关灯", "调亮", "调暗" };
+        private static readonly string[] ElevatorActions={ "停止", "开门", "关门","紧急停止"};
+        private static readonly string[] StandbyAirActions={ "开机" };
+        private static readonly string[] StandbyLightActions={ "开灯" };
+        private static readonly string[] StandbyElevatorActions={ "启动" };
+
+        [HttpGet("ActionsList")]
+        public async Task<IActionResult> GetAvailableActions([FromQuery] int id, [FromQuery] string OperatorID)
         {
             _logger.LogInformation($"正在加载设备 {id} 的可操作列表");
             try
@@ -125,7 +168,7 @@ namespace oracle_backend.Controllers
                 if (operatorAccount.AUTHORITY > 2)
                     return BadRequest("权限不足，需要设备管理权限");
 
-                var equipment = await _context.Equipments.FindAsync(id); 
+                var equipment = await _context.Equipments.FindAsync(id);
                 if (equipment == null)
                     return NotFound("设备不存在");
 
@@ -135,26 +178,26 @@ namespace oracle_backend.Controllers
                     case EquipmentStatus.Running:
                         actions.AddRange(equipment.EQUIPMENT_TYPE.ToLower() switch
                         {
-                            "空调" => new[] { "关机", "制冷模式", "制热模式", "调节温度" },
-                            "照明" => new[] { "关灯", "调亮", "调暗" },
-                            "电梯" => new[] { "停止", "开门", "关门", "紧急停止" },
+                            "空调" => AirConditionerActions,
+                            "照明" => LightingActions,
+                            "电梯" => ElevatorActions,
                             _ => Array.Empty<string>()
                         });
                         break;
                     case EquipmentStatus.Standby:
                         actions.AddRange(equipment.EQUIPMENT_TYPE.ToLower() switch
                         {
-                            "空调" => new[] { "开机" },
-                            "照明" => new[] { "开灯" },
-                            "电梯" => new[] { "启动" },
+                            "空调" => StandbyAirActions,
+                            "照明" => StandbyLightActions,
+                            "电梯" => StandbyElevatorActions,
                             _ => Array.Empty<string>()
                         });
                         break;
                     case EquipmentStatus.UnderMaintenance:
-                        actions.AddRange(new[] { "维修完成", "取消维修" });
+                        actions.Add("当前状态不可操作");
                         break;
                     case EquipmentStatus.Faulted:
-                        actions.Add("重置");
+                        actions.Add("当前状态不可操作");
                         break;
                 }
                 return Ok(actions);
@@ -177,7 +220,7 @@ namespace oracle_backend.Controllers
         [HttpPost("operate")]
         public async Task<IActionResult> OperateEquipment([FromBody] EquipmentOperationDto dto)
         {
-            _logger.LogInformation($"正在操作设备 {dto.EquipmentID}: {dto.Operation}");
+            _logger.LogInformation($"正在操作设备{dto.EquipmentID}:{dto.Operation}");
             try
             {
                 var operatorAccount = await _accountContext.FindAccount(dto.OperatorID);
@@ -187,7 +230,7 @@ namespace oracle_backend.Controllers
                 if (operatorAccount.AUTHORITY > 2)
                     return BadRequest("权限不足，需要设备管理权限");
 
-                var equipment = await _context.Equipments.FindAsync(dto.EquipmentID); 
+                var equipment = await _context.Equipments.FindAsync(dto.EquipmentID);
                 if (equipment == null)
                     return NotFound("未找到该设备");
 
@@ -219,14 +262,16 @@ namespace oracle_backend.Controllers
                     if (equipment.EQUIPMENT_STATUS != newStatus)
                     {
                         equipment.EQUIPMENT_STATUS = newStatus;
-                        _logger.LogInformation($"设备 {dto.EquipmentID} 状态变更: {originalStatus} -> {newStatus}");
+                        _context.LogOperation(dto.EquipmentID,dto.OperatorID, dto.Operation,true, originalStatus, newStatus);
+                        _logger.LogInformation($"设备{dto.EquipmentID}状态变更:{originalStatus} -> {newStatus}");
                     }
-                    _logger.LogInformation("操作记录: 设备={EquipmentId}, 操作员={Operator}, 操作={Operation}, 结果=成功",
+                    _logger.LogInformation("操作成功:设备={EquipmentId}, 操作员={Operator}, 操作={Operation}",
                         dto.EquipmentID, dto.OperatorID, dto.Operation);
                 }
                 else
                 {
-                    _logger.LogWarning("操作失败: 设备={EquipmentId}, 操作员={Operator}, 操作={Operation}",
+                    _context.LogOperation(dto.EquipmentID, dto.OperatorID, dto.Operation,false, originalStatus,originalStatus);
+                    _logger.LogWarning("操作失败:设备={EquipmentId},操作员={Operator},操作={Operation}",
                         dto.EquipmentID, dto.OperatorID, dto.Operation);
                 }
                 await _context.SaveChangesAsync();
@@ -273,14 +318,12 @@ namespace oracle_backend.Controllers
 
         private bool IsOperationValidForStatus(string operation, string currentStatus, string equipmentType)
         {
-            if (currentStatus == EquipmentStatus.Offline)
+            if (currentStatus == EquipmentStatus.Offline ||
+                     currentStatus == EquipmentStatus.UnderMaintenance ||
+                     currentStatus == EquipmentStatus.Faulted)
                 return false;
 
-            if (currentStatus == EquipmentStatus.UnderMaintenance)
-                return operation == "维修完成" || operation == "取消维修";
-
             operation = operation.ToLower();
-            equipmentType = equipmentType.ToLower();
 
             if (currentStatus == EquipmentStatus.Running)
             {
@@ -367,7 +410,32 @@ namespace oracle_backend.Controllers
             }
         }
         //2.9.3 创建工单
-        [HttpPost("create-order")]
+        //DTO类
+        public class CreateOrderDto
+        {
+            public string OperatorID { get; set; }
+            public int EquipmentId { get; set; }
+            public string FaultDescription { get; set; } //故障描述
+        }
+
+        public class CompleteRepairDto
+        {
+            public int EquipmentId { get; set; }
+            public int StaffId { get; set; }
+            public DateTime RepairStart { get; set; }
+            public double Cost { get; set; }
+            public bool Success { get; set; }
+        }
+
+        public class OrderKeyDto
+        {
+            public string OperatorID { get; set; }
+            public int EquipmentId { get; set; }
+            public int StaffId { get; set; }
+            public DateTime RepairStart { get; set; }
+        }
+
+        [HttpPost("CreateOrder")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto dto)
         {
             _logger.LogInformation("正在创建工单");
@@ -380,7 +448,7 @@ namespace oracle_backend.Controllers
                 if (operatorAccount.AUTHORITY > 2)
                     return BadRequest("权限不足，需要设备管理权限");
 
-                var equipment = await _context.Equipments.FindAsync(dto.EquipmentId); 
+                var equipment = await _context.Equipments.FindAsync(dto.EquipmentId);
                 if (equipment == null)
                     return NotFound("设备不存在");
 
@@ -403,7 +471,7 @@ namespace oracle_backend.Controllers
                     REPAIR_COST = 0
                 };
 
-                _context.RepairOrders.Add(newOrder); 
+                _context.RepairOrders.Add(newOrder);
                 await _context.SaveChangesAsync();
                 _logger.LogInformation("设备账号 {EquipmentId}, 因 {FaultDescription} 处于维修中", dto.EquipmentId, dto.FaultDescription);
                 return Ok(new
@@ -424,13 +492,13 @@ namespace oracle_backend.Controllers
             }
         }
 
-        [HttpPut("complete-repair")]
+        [HttpPut("CompleteRepair")]
         public async Task<IActionResult> CompleteRepair([FromBody] CompleteRepairDto dto)
         {
             _logger.LogInformation("正在更新工单");
             try
             {
-                var order = await _context.RepairOrders.FindAsync( 
+                var order = await _context.RepairOrders.FindAsync(
                     dto.EquipmentId, dto.StaffId, dto.RepairStart);
 
                 if (order == null)
@@ -442,7 +510,7 @@ namespace oracle_backend.Controllers
                     return BadRequest("维修费用不可为负数");
 
                 order.REPAIR_END = DateTime.Now;
-                order.REPAIR_COST = dto.Success ? Math.Abs(dto.Cost) : -Math.Abs(dto.Cost);
+                order.REPAIR_COST = dto.Success ? Math.Abs(dto.Cost) : -Math.Abs(dto.Cost);//根据正负判断维修成功或失败
                 await _context.SaveChangesAsync();
                 return Ok(dto.Success ? "维修成功结果已提交" : "维修失败结果已提交");
             }
@@ -462,32 +530,33 @@ namespace oracle_backend.Controllers
                 if (confirmer == null)
                     return BadRequest("操作员账号不存在");
 
-                if (confirmer.AUTHORITY >3) 
+                if (confirmer.AUTHORITY > 3)
                     return BadRequest("权限不足，需要设备管理权限");
 
-                var order = await _context.RepairOrders.FindAsync( 
+                var order = await _context.RepairOrders.FindAsync(
                     dto.EquipmentId, dto.StaffId, dto.RepairStart);
 
                 if (order == null)
                     return NotFound("工单不存在");
                 if (order.REPAIR_END == default)
                     return BadRequest("工单尚未完成，无法确认");
-                var equipment = await _context.Equipments.FindAsync(dto.EquipmentId); 
+                var equipment = await _context.Equipments.FindAsync(dto.EquipmentId);
                 if (equipment == null)
                     return NotFound("设备不存在");
-
-                if (order.REPAIR_COST > 0) 
+                //正常维修花销大于0,
+                if (order.REPAIR_COST > 0)
                 {
                     equipment.EQUIPMENT_STATUS = EquipmentStatus.Running;
                     await _context.SaveChangesAsync();
                     return Ok("设备状态已更新为正常运行");
                 }
-                else 
+                else
                 {
                     equipment.EQUIPMENT_STATUS = EquipmentStatus.Faulted;
                     await _context.SaveChangesAsync();
                     return Ok("维修失败，等待再次分配工单");
                 }
+                //同步现金流？
             }
             catch (Exception ex)
             {
@@ -523,31 +592,130 @@ namespace oracle_backend.Controllers
                 throw;
             }
         }
+        //新增添加、删除设备功能
 
-
-        //DTO类
-        public class CreateOrderDto
+        [HttpPost("AddEquipment")]
+        public async Task<ActionResult<Equipment>> AddEquipment([FromBody] Equipment newEquipment, string OperatorID)
         {
-            public string OperatorID { get; set; }
-            public int EquipmentId { get; set; }
-            public string FaultDescription { get; set; } //故障描述
+            _logger.LogInformation("正在添加设备");
+            try
+            {
+                var operatorAccount = await _accountContext.FindAccount(OperatorID);
+                if (operatorAccount == null)
+                    return BadRequest("操作员账号不存在");
+                if (operatorAccount.AUTHORITY > 2)
+                    return BadRequest("权限不足，需要设备管理权限");
+
+                var equipment = await _context.Equipments.FindAsync(newEquipment.EQUIPMENT_ID);
+                if (equipment != null)
+                    return BadRequest("该设备ID已存在，无法新增设备");
+                await _context.Equipments.AddAsync(newEquipment);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"设备添加成功，ID: {newEquipment.EQUIPMENT_ID}");
+                return CreatedAtAction(
+                    nameof(GetEquipmentDetail),
+                    new { equipmentID = newEquipment.EQUIPMENT_ID },
+                    new
+                    {
+                        message = "设备添加成功",
+                        equipment = newEquipment
+                    });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "设备添加失败");
+                return StatusCode(500, "服务器内部错误");
+            }
+        }
+        [HttpPost("AddEquipmentLocation")]
+        public async Task<ActionResult<EquipmentLocation>> AddEquipmentLocation(int equipmentID, int areaID, string OperatorID)
+        {
+            _logger.LogInformation("正在添加设备位置信息");
+            try
+            {
+                var operatorAccount = await _accountContext.FindAccount(OperatorID);
+                if (operatorAccount == null)
+                    return BadRequest("操作员账号不存在");
+                if (operatorAccount.AUTHORITY > 2)
+                    return BadRequest("权限不足，需要设备管理权限");
+
+                var equipment = await _context.Equipments.FindAsync(equipmentID);
+                if (equipment == null)
+                    return BadRequest("该设备ID不存在，无法添加设备位置信息");
+
+                //检查设备位置是否已经存在
+                var locationExists = await _context.EquipmentLocations
+                    .CountAsync(el => el.EQUIPMENT_ID == equipmentID)>0;
+                if (locationExists)
+                    return BadRequest("该设备已经存在位置信息，无法重复添加");
+
+                var count = await _context.Areas
+                     .Where(a => a.AREA_ID == areaID)
+                     .CountAsync();
+                if (count<=0)
+                    return BadRequest($"区域ID {areaID} 不存在，无法添加设备位置信息");
+
+
+                //添加设备位置
+                var newLocation = new EquipmentLocation
+                {
+                    EQUIPMENT_ID = equipmentID,
+                    AREA_ID = areaID
+                };
+
+                await _context.EquipmentLocations.AddAsync(newLocation);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"设备位置添加成功，设备ID: {equipmentID}, 区域ID: {areaID}");
+                return Created("GetEquipmentLocation", new
+                {
+                    message = "设备位置添加成功",
+                    equipmentID = newLocation.EQUIPMENT_ID,
+                    areaID = newLocation.AREA_ID
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "设备位置信息添加失败");
+                return StatusCode(500, "服务器内部错误");
+            }
         }
 
-        public class CompleteRepairDto
-        {
-            public int EquipmentId { get; set; }
-            public int StaffId { get; set; }
-            public DateTime RepairStart { get; set; }
-            public double Cost { get; set; }
-            public bool Success { get; set; }
-        }
 
-        public class OrderKeyDto
+        [HttpDelete("DeleteEquipment")]
+        public async Task<IActionResult> DeleteEquipment(int equipmentID, string OperatorID)
         {
-            public string OperatorID { get; set; }
-            public int EquipmentId { get; set; }
-            public int StaffId { get; set; }
-            public DateTime RepairStart { get; set; }
+            _logger.LogInformation($"正在尝试删除设备ID={equipmentID}");
+            try
+            {
+                var operatorAccount = await _accountContext.FindAccount(OperatorID);
+                if (operatorAccount == null)
+                    return BadRequest("操作员账号不存在");
+                if (operatorAccount.AUTHORITY > 2)
+                    return BadRequest("权限不足，需要设备管理权限");
+
+                var equipment = await _context.Equipments.FindAsync(equipmentID);
+                if (equipment == null)
+                    return NotFound("设备不存在");
+
+                var location = await _context.EquipmentLocations.FirstOrDefaultAsync(el => el.EQUIPMENT_ID == equipmentID);
+                if (location != null)
+                {
+                    _context.EquipmentLocations.Remove(location);
+                    _logger.LogInformation($"删除关联位置记录，设备ID: {equipmentID}");
+                }
+
+                _context.Equipments.Remove(equipment);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"设备删除成功，ID: {equipmentID}");
+                return Ok(new { message = $"设备删除成功，ID: {equipmentID}" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "删除设备失败");
+                return StatusCode(500, "服务器内部错误");
+            }
         }
     }
 }
