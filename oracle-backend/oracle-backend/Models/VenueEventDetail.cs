@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace oracle_backend.Models.venueEvent
+namespace oracle_backend.Models
 {
     [PrimaryKey(nameof(EVENT_ID), nameof(AREA_ID), nameof(COLLABORATION_ID))]
     public class VenueEventDetail
