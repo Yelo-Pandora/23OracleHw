@@ -19,7 +19,7 @@ namespace oracle_backend
             var connectionString = builder.Configuration.GetConnectionString("OracleConnection");
             builder.Services.AddDbContext<AccountDbContext>(options =>
             {
-                options.UseOracle(connectionString); // ָ��ʹ�� Oracle �ṩ����������ַ���
+                options.UseOracle(connectionString); // 指定使用 Oracle 提供程序和连接字符串
             });
 
             builder.Services.AddControllers();
@@ -29,11 +29,13 @@ namespace oracle_backend
 
             // 添加数据库上下文
             builder.Services.AddDbContext<PromotionDbContext>(options => options.UseOracle(builder.Configuration.GetConnectionString("PromotionDb")));
+            
+            // 添加ComplexDbContext数据库上下文
+            builder.Services.AddDbContext<ComplexDbContext>(options => options.UseOracle(connectionString));
 
             // 注册服务
             builder.Services.AddScoped<PromotionService>();
             builder.Services.AddScoped<DiscountRuleService>();
-            builder.Services.AddScoped<VenueEventService>();
 
             var app = builder.Build();
 

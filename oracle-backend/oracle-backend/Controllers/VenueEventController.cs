@@ -180,8 +180,8 @@ namespace oracle_backend.Controllers
 
                 await transaction.CommitAsync();
 
-                return Ok(new
-                {
+                return Ok(new 
+                { 
                     message = "场地预约申请提交成功，等待审批",
                     eventId = venueEvent.EVENT_ID
                 });
@@ -418,7 +418,7 @@ namespace oracle_backend.Controllers
             {
                 // 计算租用时长（小时）
                 var rentHours = (venueEventDetail.RENT_END - venueEventDetail.RENT_START).TotalHours;
-
+                
                 // 计算总费用
                 var totalFee = dto.VenueFee + (dto.AdditionalServiceFee ?? 0);
 
@@ -443,8 +443,8 @@ namespace oracle_backend.Controllers
                 venueEventDetail.STATUS = "已结算";
                 await _context.SaveChangesAsync();
 
-                return Ok(new
-                {
+                return Ok(new 
+                { 
                     message = "结算单生成成功",
                     settlement = settlementInfo
                 });
@@ -481,12 +481,12 @@ namespace oracle_backend.Controllers
                 // 计算统计数据
                 var totalEvents = events.Count;
                 var totalRentHours = events.Sum(e => (e.RENT_END - e.RENT_START).TotalHours);
-                var totalRevenue = events.Sum(e => (e.eventAreaNavigation?.AREA_FEE ?? 0) *
+                var totalRevenue = events.Sum(e => (e.eventAreaNavigation?.AREA_FEE ?? 0) * 
                                                    (e.RENT_END - e.RENT_START).TotalHours);
 
                 // 计算平均上座率
                 var eventsWithCapacity = events.Where(e => e.venueEventNavigation.CAPACITY > 0).ToList();
-                var averageOccupancy = eventsWithCapacity.Any() ?
+                var averageOccupancy = eventsWithCapacity.Any() ? 
                     eventsWithCapacity.Average(e => (double)(e.venueEventNavigation.HEADCOUNT ?? 0) / e.venueEventNavigation.CAPACITY * 100) : 0;
 
                 // 热门场地排行
@@ -496,7 +496,7 @@ namespace oracle_backend.Controllers
                     {
                         AreaId = g.Key,
                         EventCount = g.Count(),
-                        TotalRevenue = g.Sum(e => (e.eventAreaNavigation?.AREA_FEE ?? 0) *
+                        TotalRevenue = g.Sum(e => (e.eventAreaNavigation?.AREA_FEE ?? 0) * 
                                                   (e.RENT_END - e.RENT_START).TotalHours)
                     })
                     .OrderByDescending(p => p.EventCount)
