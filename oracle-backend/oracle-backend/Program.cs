@@ -28,11 +28,11 @@ namespace oracle_backend
             builder.Services.AddSwaggerGen();
 
             // 添加数据库上下文
-            builder.Services.AddDbContext<PromotionDbContext>(options => options.UseOracle(builder.Configuration.GetConnectionString("PromotionDb")));
+            builder.Services.AddDbContext<SaleEventDbContext>(options =>options.UseOracle(builder.Configuration.GetConnectionString("SaleEventDb")));
             builder.Services.AddDbContext<VenueEventDbContext>(options => options.UseOracle(connectionString));
 
             // 注册服务
-            builder.Services.AddScoped<PromotionService>();
+            builder.Services.AddScoped<SaleEventService>();
             builder.Services.AddScoped<DiscountRuleService>();
             builder.Services.AddScoped<VenueEventService>();
 

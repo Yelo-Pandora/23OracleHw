@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
-using oracle_backend.Models.Promotion;
+using oracle_backend.Models;
 
 namespace oracle_backend.Services
 {
     public class DiscountRuleService
     {
-        public decimal ApplyDiscount(decimal originalPrice, string ruleJson)
+        public double ApplyDiscount(double originalPrice, Dictionary<string, object> rule)
         {
-            var rule = JsonSerializer.Deserialize<Dictionary<string, object>>(ruleJson);
-
             if (!rule.ContainsKey("type"))
-                throw new ArgumentException("Invalid discount rule");
+                throw new ArgumentException("无效的折扣规则");
 
             return rule["type"].ToString() switch
             {
@@ -22,25 +19,26 @@ namespace oracle_backend.Services
             };
         }
 
-        private decimal ApplyFullReduction(decimal price, Dictionary<string, object> rule)
+        private double ApplyFullReduction(double price, Dictionary<string, object> rule)
         {
             if (!rule.ContainsKey("threshold") || !rule.ContainsKey("discountValue"))
-                throw new ArgumentException("Invd full reduction rule");
-            decimal threshold = Convert.ToDecimal(rule["threshold"]);
-            decimal discountValue = Convert.ToDecimal(rule["discountValue"]);
+                throw new ArgumentException("无效的满减规则");
+
+            double threshold = Convert.ToDouble(rule["threshold"]);
+            double discountValue = Convert.ToDouble(rule["discountValue"]);
 
             return price >= threshold ? price - discountValue : price;
         }
 
-        private decimal ApplyPercentDiscount(decimal price, Dictionary<string, object> rule)
+        private double ApplyPercentDiscount(double price, Dictionary<string, object> rule)
         {
             if (!rule.ContainsKey("discountValue"))
-                throw new ArgumentException("Invalid percent discount rule");
+                throw new ArgumentException("无效的折扣规则");
 
-            decimal discountValue = Convert.ToDecimal(rule["discountValue"]);
+            double discountValue = Convert.ToDouble(rule["discountValue"]);
 
             if (discountValue <= 0 || discountValue > 1)
-                throw new ArgumentException("Discount value must be between 0 and 1");
+                throw new ArgumentException("折扣值必须在0-1之间");
 
             return price * discountValue;
         }
