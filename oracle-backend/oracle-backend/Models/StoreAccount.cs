@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace oracle_backend.Models
 {
+    [Table("STORE_ACCOUNT")]
     [PrimaryKey(nameof(ACCOUNT), nameof(STORE_ID))]
     public class StoreAccount
     {
