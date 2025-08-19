@@ -15,6 +15,7 @@ namespace oracle_backend.Models
 
         [Column("DESCRIPTION")]
         public string Description { get; set; }
+
     }
 
     public class SaleEventDto

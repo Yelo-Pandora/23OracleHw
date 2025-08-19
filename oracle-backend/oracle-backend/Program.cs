@@ -37,6 +37,7 @@ namespace oracle_backend
 
             // 注册服务
             builder.Services.AddScoped<SaleEventService>();
+            builder.Services.AddScoped<ISaleEventService, SaleEventService>();
 
             var app = builder.Build();
 

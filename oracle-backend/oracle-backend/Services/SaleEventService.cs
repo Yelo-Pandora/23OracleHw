@@ -9,10 +9,21 @@ using Microsoft.Extensions.Logging;
 
 namespace oracle_backend.Services
 {
-    public class SaleEventService
+    public interface ISaleEventService
+    {
+        Task AddStoreToEventAsync(int eventId, int storeId);
+        Task RemoveStoreFromEventAsync(int eventId, int storeId);
+        Task<List<Store>> GetStoresByEventAsync(int eventId);
+        Task<List<SaleEvent>> GetEventsByStoreAsync(int storeId);
+    }
+    public class SaleEventService : ISaleEventService
     {
         private readonly SaleEventDbContext _context;
         private readonly ILogger<SaleEventService> _logger;
+        public SaleEventService(SaleEventDbContext context)
+        {
+            _context = context;
+        }
 
         public async Task<List<SaleEvent>> GetAllSaleEventsAsync()
         {
@@ -143,6 +154,59 @@ namespace oracle_backend.Services
                 SalesIncrement: new Random().Next(1000, 10000),
                 CouponRedemptionRate: new Random().Next(50, 95) / 100.0
             );
+        }
+
+        public async Task AddStoreToEventAsync(int eventId, int storeId)
+        {
+            // 检查是否已存在关联
+            var existing = await _context.PartStores
+                .FirstOrDefaultAsync(ps => ps.EVENT_ID == eventId && ps.STORE_ID == storeId);
+
+            if (existing != null)
+                throw new Exception("商铺已参与该活动");
+
+            var partStore = new PartStore
+            {
+                EVENT_ID = eventId,
+                STORE_ID = storeId
+            };
+
+            _context.PartStores.Add(partStore);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveStoreFromEventAsync(int eventId, int storeId)
+        {
+            var partStore = await _context.PartStores
+                .FirstOrDefaultAsync(ps => ps.EVENT_ID == eventId && ps.STORE_ID == storeId);
+
+            if (partStore == null)
+                throw new Exception("未找到关联记录");
+
+            _context.PartStores.Remove(partStore);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Store>> GetStoresByEventAsync(int eventId)
+        {
+            return await _context.PartStores
+                .Where(ps => ps.EVENT_ID == eventId)
+                .Join(_context.Stores,
+                    ps => ps.STORE_ID,
+                    s => s.STORE_ID,
+                    (ps, s) => s)
+                .ToListAsync();
+        }
+
+        public async Task<List<SaleEvent>> GetEventsByStoreAsync(int storeId)
+        {
+            return await _context.PartStores
+                .Where(ps => ps.STORE_ID == storeId)
+                .Join(_context.SaleEvents,
+                    ps => ps.EVENT_ID,
+                    se => se.EVENT_ID,
+                    (ps, se) => se)
+                .ToListAsync();
         }
     }
 }

@@ -13,6 +13,8 @@ namespace oracle_backend.Dbcontexts
 
         public DbSet<Event> Events { get; set; }
         public DbSet<SaleEvent> SaleEvents { get; set; }
+        public DbSet<Store> Stores { get; set; }
+        public DbSet<PartStore> PartStores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +28,24 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<Event>()
                 .Property(e => e.EVENT_ID)
                 .HasDefaultValueSql("'PROMO-' || TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')");
+
+            base.OnModelCreating(modelBuilder);
+
+            // 配置PartStore的复合主键
+            modelBuilder.Entity<PartStore>()
+                .HasKey(ps => new { ps.EVENT_ID, ps.STORE_ID });
+
+            // 配置PartStore与SaleEvent的关系
+            modelBuilder.Entity<PartStore>()
+                .HasOne(ps => ps.saleEventNavigation)
+                .WithMany()
+                .HasForeignKey(ps => ps.EVENT_ID);
+
+            // 配置PartStore与Store的关系
+            modelBuilder.Entity<PartStore>()
+                .HasOne(ps => ps.storeNavigation)
+                .WithMany()
+                .HasForeignKey(ps => ps.STORE_ID);
         }
     }
 }
