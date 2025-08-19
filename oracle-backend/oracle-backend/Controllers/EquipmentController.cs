@@ -717,5 +717,31 @@ namespace oracle_backend.Controllers
                 return StatusCode(500, "服务器内部错误");
             }
         }
+
+        [HttpDelete("UnbindEquipmentLocation")]
+        public async Task<IActionResult> UnbindEquipmentLocation(int equipmentID, string OperatorID)
+        {
+            _logger.LogInformation($"正在尝试解绑设备位置，设备ID={equipmentID}");
+            try
+            {
+                var operatorAccount = await _accountContext.FindAccount(OperatorID);
+                if (operatorAccount == null)
+                    return BadRequest("操作员账号不存在");
+                if (operatorAccount.AUTHORITY > 2)
+                    return BadRequest("权限不足，需要设备管理权限");
+                var location = await _context.EquipmentLocations.FirstOrDefaultAsync(el => el.EQUIPMENT_ID == equipmentID);
+                if (location == null)
+                    return NotFound("设备位置不存在");
+                _context.EquipmentLocations.Remove(location);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"设备位置解绑成功，设备ID: {equipmentID}");
+                return Ok(new { message = $"设备位置解绑成功，设备ID: {equipmentID}" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "解绑设备位置失败");
+                return StatusCode(500, "服务器内部错误");
+            }
+        }
     }
 }
