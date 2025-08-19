@@ -14,7 +14,7 @@ namespace oracle_backend.Models
         //车牌号
         public string LICENSE_PLATE_NUMBER { get; set; }
         //车位ID
-        public string PARKING_SPACE_ID { get; set; }
+        public int PARKING_SPACE_ID { get; set; }
         //停车开始时间
         public DateTime PARK_START {  get; set; }
 

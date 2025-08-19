@@ -18,7 +18,7 @@ namespace oracle_backend
             var connectionString = builder.Configuration.GetConnectionString("OracleConnection");
             builder.Services.AddDbContext<AccountDbContext>(options =>
             {
-                options.UseOracle(connectionString); // ָ��ʹ�� Oracle �ṩ����������ַ���
+                options.UseOracle(connectionString); // 指定使用 Oracle 提供程序和连接字符串
             });
 
             // 添加对 ComplexDbContext 的依赖注入
@@ -32,10 +32,37 @@ namespace oracle_backend
                 options.UseOracle(connectionString);
             });
 
-            builder.Services.AddControllers();
+            builder.Services.AddDbContext<StoreDbContext>(options =>
+            {
+                options.UseOracle(connectionString); // 添加商店相关的数据库上下文
+            });
+
+            builder.Services.AddDbContext<ParkingContext>(options =>
+            {
+                options.UseOracle(connectionString); // 添加停车场相关的数据库上下文
+            });
+
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    // 保持属性名原样，不进行驼峰转换
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                });
+          
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // 添加CORS配置
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
 
             var app = builder.Build();
 
@@ -47,6 +74,9 @@ namespace oracle_backend
             }
 
             app.UseHttpsRedirection();
+
+            // 启用CORS
+            app.UseCors("AllowAll");
 
             app.UseAuthorization();
 
