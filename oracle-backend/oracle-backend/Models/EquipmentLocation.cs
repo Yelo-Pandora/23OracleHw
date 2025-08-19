@@ -22,5 +22,6 @@ namespace oracle_backend.Models
 
         [ForeignKey("AREA_ID")]
         public Area areaNavigation { get; set; }
+
     }
 }

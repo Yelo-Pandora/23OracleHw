@@ -21,6 +21,7 @@ namespace oracle_backend.Dbcontexts
         public DbSet<VenueEventDetail> VenueEventDetails { get; set; }
         public DbSet<ParkingSpaceDistribution> ParkingSpaceDistributions { get; set; }
 
+
         // 场地活动相关实体
         public DbSet<Event> Events { get; set; }
         public DbSet<VenueEvent> VenueEvents { get; set; }
@@ -54,6 +55,5 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<Account>().HasKey(a => a.ACCOUNT);
             modelBuilder.Entity<TempAuthority>().HasKey(ta => new { ta.ACCOUNT, ta.EVENT_ID });
         }
-
     }
 }

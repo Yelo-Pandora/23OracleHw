@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>停车场管理功能测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            height: 60px;
+            resize: vertical;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button.danger {
+            background-color: #e74c3c;
+        }
+        button.danger:hover {
+            background-color: #c0392b;
+        }
+        button.warning {
+            background-color: #f39c12;
+        }
+        button.warning:hover {
+            background-color: #e67e22;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .online {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .offline {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .parking-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .parking-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .parking-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        .parking-card .stat {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .parking-card .label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 停车场管理功能测试（基于2.8.3测试数据）</h1>
+        
+
+
+        <div class="test-section">
+            <h2>🔧 系统状态检查</h2>
+            <p>API地址：<span id="apiUrl">http://localhost:5263</span> <span id="apiStatus" class="status offline">离线</span></p>
+            <button onclick="checkApiStatus()">检查API状态</button>
+            <div id="statusResult" class="result info"></div>
+        </div>
+
+        <!-- 停车场信息查询测试 -->
+        <div class="test-section">
+            <h2>📊 停车场信息查询测试</h2>
+            
+            <div class="form-group">
+                <label>停车场ID:</label>
+                <select id="parkingLotId">
+                    <option value="1001">1001 (停车费5元)</option>
+                    <option value="1002">1002 (停车费6元)</option>
+                    <option value="1003">1003 (停车费4元)</option>
+                    <option value="9999">9999 (不存在)</option>
+                </select>
+            </div>
+            
+            <button onclick="getParkingLotInfo()">获取停车场信息</button>
+            <div id="parkingInfoResult" class="result info"></div>
+            
+           
+        </div>
+
+        <!-- 停车场信息管理测试 -->
+        <div class="test-section">
+            <h2>⚙️ 停车场信息管理测试</h2>
+            
+            <div class="form-group">
+                <label>停车场ID:</label>
+                <select id="manageParkingId">
+                    <option value="1001">1001 (停车费5元)</option>
+                    <option value="1002">1002 (停车费6元)</option>
+                    <option value="1003">1003 (停车费4元)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>停车费用:</label>
+                <input type="number" id="parkingFee" value="5" min="1" max="50" step="1">
+                <small>元/小时</small>
+            </div>
+            
+            <!-- 车位数修改功能已取消 -->
+            <!-- <div class="form-group">
+                <label>车位数量:</label>
+                <input type="number" id="parkingSpaceCount" value="80" min="1" max="200" step="1">
+                <small>个</small>
+            </div> -->
+            
+            <div class="form-group">
+                <label>停车场状态:</label>
+                <select id="parkingStatus">
+                    <option value="正常运营">正常运营</option>
+                    <option value="维护中">维护中</option>
+                    <option value="暂停服务">暂停服务</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>操作员账号:</label>
+                <select id="operatorAccount">
+                    <option value="admin_test">admin_test (管理员测试)</option>
+                    <option value="manager_test">manager_test (经理测试)</option>
+                    <option value="staff_test">staff_test (员工测试)</option>
+                    <option value="invalid_user">invalid_user (无效用户)</option>
+                </select>
+            </div>
+            
+            <button onclick="updateParkingLotInfo()">更新停车场信息</button>
+            <div id="updateResult" class="result info"></div>
+        </div>
+
+
+
+        <!-- 异常情况测试 -->
+        <div class="test-section">
+            <h2>🧪 异常情况测试</h2>
+            
+            <div style="margin: 15px 0; padding: 10px; background-color: #fff3cd; border-radius: 5px;">
+                <p><strong>测试说明：</strong>以下按钮用于测试各种异常情况和边界条件</p>
+            </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                <button onclick="testNonExistentParkingLot()">❓ 测试不存在的停车场</button>
+                <button onclick="testUnauthorizedAccess()">🔒 测试权限不足</button>
+                <button onclick="testInvalidParkingFee()">💰 测试无效停车费</button>
+                <button onclick="testEmptyOperatorAccount()">👤 测试空操作员账号</button>
+                <button onclick="testInvalidStatus()">🚫 测试无效状态</button>
+                <button onclick="testNegativeParkingFee()">➖ 测试负数停车费</button>
+            </div>
+            
+            <div id="exceptionTestResult" class="result info"></div>
+        </div>
+
+        <!-- 强制设置维护状态测试 -->
+        <div class="test-section">
+            <h2>🚧 强制设置维护状态测试</h2>
+            
+            <div style="margin: 15px 0; padding: 10px; background-color: #fff3cd; border-radius: 5px;">
+                <p><strong>⚠️ 警告：</strong>此功能会强制将停车场设置为维护状态，即使停车场内有车辆。请谨慎使用！</p>
+            </div>
+            
+            <div class="form-group">
+                <label>停车场ID:</label>
+                <select id="forceMaintenanceId">
+                    <option value="1001">1001 (停车费5元)</option>
+                    <option value="1002">1002 (停车费6元)</option>
+                    <option value="1003">1003 (停车费4元)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>操作员账号:</label>
+                <select id="forceMaintenanceOperator">
+                    <option value="admin_test">admin_test (管理员测试)</option>
+                    <option value="manager_test">manager_test (经理测试)</option>
+                    <option value="staff_test">staff_test (员工测试)</option>
+                    <option value="invalid_user">invalid_user (无效用户)</option>
+                </select>
+            </div>
+            
+            <button onclick="forceMaintenanceStatus()" class="warning">🚧 强制设置维护状态</button>
+            <div id="forceMaintenanceResult" class="result info"></div>
+        </div>
+
+        <!-- 批量操作测试 -->
+        <div class="test-section">
+            <h2>📦 批量操作测试</h2>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0;">
+                <button onclick="getAllParkingLots()">获取所有停车场信息</button>
+                <button onclick="batchUpdateParkingFees()">批量更新停车费</button>
+                <button onclick="resetAllParkingLots()">重置所有停车场状态</button>
+            </div>
+            
+            <div id="batchResult" class="result info"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5263/api';
+        
+        // 页面加载时自动检查API状态
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚗 停车场管理功能测试页面已加载');
+            console.log('📋 使用2.8.3测试数据：停车场ID 1001, 1002, 1003');
+            console.log('🔗 API地址：', API_BASE);
+            checkApiStatus();
+        });
+        
+        async function checkApiStatus() {
+            const statusElement = document.getElementById('apiStatus');
+            const resultElement = document.getElementById('statusResult');
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/Status`);
+                if (response.ok) {
+                    statusElement.textContent = '在线';
+                    statusElement.className = 'status online';
+                    resultElement.textContent = '✅ API连接成功！';
+                    resultElement.className = 'result success';
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusElement.textContent = '离线';
+                statusElement.className = 'status offline';
+                resultElement.textContent = `❌ API连接失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function getParkingLotInfo() {
+            const parkingLotId = document.getElementById('parkingLotId').value;
+            const resultElement = document.getElementById('parkingInfoResult');
+            const cardsElement = document.getElementById('parkingCards');
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/GetParkingLotInfo/${parkingLotId}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                    
+                   
+                } else {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+
+        
+        async function updateParkingLotInfo() {
+            const parkingId = document.getElementById('manageParkingId').value;
+            const parkingFee = document.getElementById('parkingFee').value;
+            // const parkingSpaceCount = document.getElementById('parkingSpaceCount').value; // 车位数修改功能已取消
+            const parkingStatus = document.getElementById('parkingStatus').value;
+            const operatorAccount = document.getElementById('operatorAccount').value;
+            const resultElement = document.getElementById('updateResult');
+            
+            const updateData = {
+                parkingFee: parseInt(parkingFee),
+                // parkingSpaceCount: parseInt(parkingSpaceCount), // 车位数修改功能已取消
+                status: parkingStatus,
+                operatorAccount: operatorAccount
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/UpdateParkingLotInfo/${parkingId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent = `请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+
+        
+        // ==================== 异常情况测试函数 ====================
+        
+        async function testNonExistentParkingLot() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试不存在的停车场...\n';
+            resultElement.className = 'result info';
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/GetParkingLotInfo/9999`);
+                const data = await response.json();
+                
+                if (!response.ok && data.error && data.error.includes('不存在')) {
+                    resultElement.textContent += '✅ 测试通过：正确识别了不存在的停车场\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该返回停车场不存在错误\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testUnauthorizedAccess() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试权限不足...\n';
+            resultElement.className = 'result info';
+            
+            const updateData = {
+                parkingFee: 10,
+                parkingSpaceCount: 80,
+                status: "正常运营",
+                operatorAccount: "invalid_user"
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/UpdateParkingLotInfo/1001`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok && data.error && data.error.includes('权限')) {
+                    resultElement.textContent += '✅ 测试通过：正确识别了权限不足\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该拒绝权限不足的操作\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testInvalidParkingFee() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试无效停车费...\n';
+            resultElement.className = 'result info';
+            
+            const updateData = {
+                parkingFee: 0, // 无效的停车费
+                operatorAccount: "admin_test"
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/UpdateParkingLotInfo/1001`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    resultElement.textContent += '✅ 测试通过：正确拒绝了无效停车费\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该拒绝无效停车费\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testEmptyOperatorAccount() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试空操作员账号...\n';
+            resultElement.className = 'result info';
+            
+            const updateData = {
+                parkingFee: 5,
+                operatorAccount: "" // 空操作员账号
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/UpdateParkingLotInfo/1001`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    resultElement.textContent += '✅ 测试通过：正确拒绝了空操作员账号\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该拒绝空操作员账号\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testInvalidStatus() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试无效状态...\n';
+            resultElement.className = 'result info';
+            
+            const statusData = {
+                parkingFee: 5,
+                parkingSpaceCount: 80,
+                status: "无效状态",
+                operatorAccount: "admin_test"
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/UpdateParkingLotInfo/1001`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(statusData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok && (data.error && data.error.includes('无效的状态值'))) {
+                    resultElement.textContent += '✅ 测试通过：正确拒绝了无效状态\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该拒绝无效状态\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        async function testNegativeParkingFee() {
+            const resultElement = document.getElementById('exceptionTestResult');
+            resultElement.textContent = '🧪 测试负数停车费...\n';
+            resultElement.className = 'result info';
+            
+            const updateData = {
+                parkingFee: -5, // 负数停车费
+                operatorAccount: "parking_admin"
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/UpdateParkingLotInfo/1001`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    resultElement.textContent += '✅ 测试通过：正确拒绝了负数停车费\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 测试失败：应该拒绝负数停车费\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        // ==================== 强制设置维护状态测试函数 ====================
+        
+        async function forceMaintenanceStatus() {
+            const areaId = document.getElementById('forceMaintenanceId').value;
+            const operatorAccount = document.getElementById('forceMaintenanceOperator').value;
+            const resultElement = document.getElementById('forceMaintenanceResult');
+            
+            resultElement.textContent = '🚧 正在强制设置维护状态...\n';
+            resultElement.className = 'result info';
+            
+            const forceMaintenanceData = {
+                areaId: parseInt(areaId),
+                status: "维护中",
+                operatorAccount: operatorAccount
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/Parking/ForceMaintenanceStatus`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(forceMaintenanceData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent += '✅ 强制设置维护状态成功！\n';
+                    resultElement.textContent += `停车场ID: ${areaId}\n`;
+                    resultElement.textContent += `新状态: 维护中\n`;
+                    resultElement.textContent += `操作员: ${operatorAccount}\n`;
+                    resultElement.textContent += `警告: ${data.warning || '无'}\n`;
+                    resultElement.textContent += '\n详细响应:\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result success';
+                } else {
+                    resultElement.textContent += '❌ 强制设置维护状态失败！\n';
+                    resultElement.textContent += `错误信息: ${data.error || '未知错误'}\n`;
+                    resultElement.textContent += '\n详细响应:\n' + JSON.stringify(data, null, 2);
+                    resultElement.className = 'result error';
+                }
+            } catch (error) {
+                resultElement.textContent += `❌ 请求失败: ${error.message}`;
+                resultElement.className = 'result error';
+            }
+        }
+        
+        // ==================== 批量操作测试函数 ====================
+        
+        async function getAllParkingLots() {
+            const resultElement = document.getElementById('batchResult');
+            resultElement.textContent = '📦 获取所有停车场信息...\n';
+            resultElement.className = 'result info';
+            
+            const parkingLots = [1001, 1002, 1003];
+            let allResults = [];
+            
+            for (const lotId of parkingLots) {
+                try {
+                    const response = await fetch(`${API_BASE}/Parking/GetParkingLotInfo/${lotId}`);
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        allResults.push({
+                            parkingLot: lotId,
+                            status: 'success',
+                            data: data
+                        });
+                    } else {
+                        allResults.push({
+                            parkingLot: lotId,
+                            status: 'error',
+                            error: data
+                        });
+                    }
+                } catch (error) {
+                    allResults.push({
+                        parkingLot: lotId,
+                        status: 'error',
+                        error: error.message
+                    });
+                }
+            }
+            
+            resultElement.textContent += '✅ 批量查询完成\n' + JSON.stringify(allResults, null, 2);
+            resultElement.className = 'result success';
+        }
+        
+        async function batchUpdateParkingFees() {
+            const resultElement = document.getElementById('batchResult');
+            resultElement.textContent = '📦 批量更新停车费...\n';
+            resultElement.className = 'result info';
+            
+            const updates = [
+                { areaId: 1001, parkingFee: 6 },
+                { areaId: 1002, parkingFee: 9 },
+                { areaId: 1003, parkingFee: 12 }
+            ];
+            
+            let results = [];
+            
+            for (const update of updates) {
+                try {
+                    const updateData = {
+                        ...update,
+                        parkingSpaceCount: 80, // 默认车位数
+                        status: "正常运营", // 默认状态
+                        operatorAccount: "admin_test"
+                    };
+                    
+                    const response = await fetch(`${API_BASE}/Parking/UpdateParkingLotInfo/${update.areaId}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(updateData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    results.push({
+                        areaId: update.areaId,
+                        newFee: update.parkingFee,
+                        success: response.ok,
+                        response: data
+                    });
+                } catch (error) {
+                    results.push({
+                        areaId: update.areaId,
+                        newFee: update.parkingFee,
+                        success: false,
+                        error: error.message
+                    });
+                }
+            }
+            
+            resultElement.textContent += '✅ 批量更新完成\n' + JSON.stringify(results, null, 2);
+            resultElement.className = 'result success';
+        }
+        
+        async function resetAllParkingLots() {
+            const resultElement = document.getElementById('batchResult');
+            resultElement.textContent = '📦 重置所有停车场状态...\n';
+            resultElement.className = 'result info';
+            
+            const resets = [
+                { areaId: 1001, status: "正常运营" },
+                { areaId: 1002, status: "正常运营" },
+                { areaId: 1003, status: "正常运营" }
+            ];
+            
+            let results = [];
+            
+            for (const reset of resets) {
+                try {
+                    const statusData = {
+                        parkingFee: 10,
+                        status: reset.status,
+                        operatorAccount: "admin_test"
+                    };
+                    
+                    const response = await fetch(`${API_BASE}/Parking/UpdateParkingLotInfo/${reset.areaId}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(statusData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    results.push({
+                        areaId: reset.areaId,
+                        success: response.ok,
+                        response: data
+                    });
+                } catch (error) {
+                    results.push({
+                        areaId: reset.areaId,
+                        success: false,
+                        error: error.message
+                    });
+                }
+            }
+            
+            resultElement.textContent += '✅ 批量重置完成\n' + JSON.stringify(results, null, 2);
+            resultElement.className = 'result success';
+        }
+    </script>
+</body>
+</html>
