@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace oracle_backend.Models
 {
+    [Table("TEMP_AUTHORITY")]
     [PrimaryKey(nameof(ACCOUNT), nameof(EVENT_ID))]
     public class TempAuthority
     {
