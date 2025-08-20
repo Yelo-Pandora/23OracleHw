@@ -39,12 +39,12 @@ namespace oracle_backend.Dbcontexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // 配置RetailArea和Area的外键关系
-            modelBuilder.Entity<RetailArea>()
-                .HasOne(r => r.AreaNavigation)
-                .WithMany()
-                .HasForeignKey(r => r.AREA_ID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //// 配置RetailArea和Area的外键关系
+            //modelBuilder.Entity<RetailArea>()
+            //    .HasOne(r => r.AreaNavigation)
+            //    .WithMany()
+            //    .HasForeignKey(r => r.AREA_ID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             // 配置RentStore的外键关系
             modelBuilder.Entity<RentStore>()

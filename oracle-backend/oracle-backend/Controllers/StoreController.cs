@@ -141,22 +141,26 @@ namespace oracle_backend.Controllers
                     return BadRequest(new { error = "该区域ID已存在，请重新设置" });
                 }
 
-                // 3. 创建基础区域记录
-                var area = new Area
-                {
-                    AREA_ID = dto.AreaId,
-                    ISEMPTY = 1, // 新建区域默认为空置状态
-                    AREA_SIZE = dto.AreaSize,
-                    CATEGORY = "RETAIL"
-                };
+                //// 3. 创建基础区域记录
+                //var area = new Area
+                //{
+                //    AREA_ID = dto.AreaId,
+                //    ISEMPTY = 1, // 新建区域默认为空置状态
+                //    AREA_SIZE = dto.AreaSize,
+                //    CATEGORY = "RETAIL"
+                //};
 
-                _storeContext.AREA.Add(area);
-                await _storeContext.SaveChangesAsync();
+                //_storeContext.AREA.Add(area);
+                //await _storeContext.SaveChangesAsync();
 
                 // 4. 创建零售区域记录
                 var retailArea = new RetailArea
                 {
                     AREA_ID = dto.AreaId,
+                    ISEMPTY = 1, // 新建区域默认为空置状态
+                    AREA_SIZE = dto.AreaSize,
+                    CATEGORY = "RETAIL",
+                    //AREA_ID = dto.AreaId,
                     RENT_STATUS = "空置", // 新建店面默认为空置状态
                     BASE_RENT = dto.BaseRent
                 };

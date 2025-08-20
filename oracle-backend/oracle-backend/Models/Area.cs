@@ -10,17 +10,13 @@ namespace oracle_backend.Models
     [Table("AREA")]
     public class Area
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         //区域ID
         public int AREA_ID { get; set; }
         //是否为空 (0-否，1-是)
         public int ISEMPTY { get; set; }
         //区域面积
         public int? AREA_SIZE { get; set; }
-        //区域类别（RETAIL, EVENT, PARKING, OTHER等）
-        [Column(TypeName = "VARCHAR2(50)")]
-        public string CATEGORY { get; set; }
-
         //区域类别（RETAIL, EVENT, PARKING, OTHER等）
         [Column(TypeName = "VARCHAR2(50)")]
         public string CATEGORY { get; set; }
