@@ -20,7 +20,7 @@ namespace oracle_backend.Models
         //奖金
         public double BONUS { get; set; }
         //罚金
-        public double FIRE {  get; set; }
+        public double FINE { get; set; }
 
         //外键约束，员工和每月工资总支出是多对多关系
         [ForeignKey("STAFF_ID")]

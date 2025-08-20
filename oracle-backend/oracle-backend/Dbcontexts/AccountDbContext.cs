@@ -88,7 +88,8 @@ namespace oracle_backend.Dbcontexts
             return await TEMP_AUTHORITY.Where(ta => ta.ACCOUNT == goal)
                 .ToListAsync();
         }
-
+        
+        
         //检查某个账号是否拥有足够的权限
         public async Task<bool> CheckAuthority(string goal, int auth)
         {
