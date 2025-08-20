@@ -176,6 +176,18 @@ namespace oracle_backend.Controllers
             return Ok(monthSalaryCost);
         }
 
+        // 查看所有temp authorities
+        [HttpGet("AllTempAuthorities")]
+        public async Task<IActionResult> GetAllTempAuthorities()
+        {
+            var tempAuthorities = await _accountContext.TEMP_AUTHORITY.ToListAsync();
+            if (tempAuthorities == null || tempAuthorities.Count == 0)
+            {
+                return NotFound("没有临时权限记录");
+            }
+            return Ok(tempAuthorities);
+        }
+
         // 2.6.1 添加新员工
         [HttpPost("add staff")]
         public async Task<IActionResult> AddStaff(
@@ -468,7 +480,7 @@ namespace oracle_backend.Controllers
             return Ok("临时权限修改成功");
         }
 
-        // 撤销权限
+        // 撤销临时权限
         [HttpDelete("revoke temporary authority")]
         public async Task<IActionResult> RevokeTemporaryAuthority(
             [FromQuery, Required] string operatorAccount,
