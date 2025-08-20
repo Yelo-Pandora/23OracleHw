@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using oracle_backend.Dbcontexts;
 using oracle_backend.Models;
+using oracle_backend.Services;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace oracle_backend.Controllers
     private readonly AccountDbContext _accountContext;
     private readonly ILogger<StaffController> _logger;
     private readonly ILogger<AccountController> _accountLogger;
+    private readonly SaleEventService _saleEventService;
 
         public StaffController(
             CollaborationDbContext collabContext,
@@ -417,10 +419,23 @@ namespace oracle_backend.Controllers
             // 临时权限不得大于操作者权限
             if (dto.tempAuthority < operatorAuthority) return BadRequest("临时权限不得大于操作者权限");
 
-            // 如果员工非临时权限大于等于该临时权限,则返回
-            if (account.AUTHORITY <= dto.tempAuthority) return BadRequest("员工权限大于等于该临时权限");
+            // 如果员工非临时权限大于等于该临时权限或操作者权限,则返回
+            if (account.AUTHORITY <= dto.tempAuthority || operatorAuthority <= dto.tempAuthority) return BadRequest("员工权限大于等于该临时权限");
 
-            // TODO:检查该活动是否存在, 若活动已结束，提示 “活动已结束”
+            // 检查该活动是否存在, 若活动已结束，提示 “活动已结束”
+            var saleEvent = await _saleEventService.GetSaleEventAsync(dto.eventId);
+            if (saleEvent == null) return NotFound("活动不存在");
+            if (saleEvent.EVENT_END < DateTime.Now) return BadRequest("活动已结束");
+
+            // 若已有该活动的权限
+            var existingTempAuthority = await _accountContext.TEMP_AUTHORITY
+                .FirstOrDefaultAsync(ta => ta.ACCOUNT == dto.account && ta.EVENT_ID == dto.eventId);
+            if (existingTempAuthority != null)
+            {
+                // 如果临时权限大于操作者权限,则返回
+                if (existingTempAuthority.TEMP_AUTHORITY < operatorAuthority) return BadRequest("操作对象临时权限更大,不可修改");
+                _accountContext.TEMP_AUTHORITY.Remove(existingTempAuthority);
+            }
 
             // 创建临时权限
             var tempAuthority = new TempAuthority
