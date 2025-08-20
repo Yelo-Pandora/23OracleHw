@@ -19,11 +19,6 @@ namespace oracle_backend.Dbcontexts
         // 用于检查依赖关系的实体
         public DbSet<VenueEventDetail> VenueEventDetails { get; set; }
 
-
-        // 用于检查依赖关系的实体
-        public DbSet<VenueEventDetail> VenueEventDetails { get; set; }
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<VenueEventDetail>()

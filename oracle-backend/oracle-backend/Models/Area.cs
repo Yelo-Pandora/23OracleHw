@@ -20,9 +20,5 @@ namespace oracle_backend.Models
         //区域类别（RETAIL, EVENT, PARKING, OTHER等）
         [Column(TypeName = "VARCHAR2(50)")]
         public string CATEGORY { get; set; }
-
-        //区域类别（RETAIL, EVENT, PARKING, OTHER等）
-        [Column(TypeName = "VARCHAR2(50)")]
-        public string CATEGORY { get; set; }
     }
 }
