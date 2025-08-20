@@ -61,7 +61,7 @@ namespace oracle_backend
             builder.Services.AddSwaggerGen();
 
             // 添加数据库上下文
-            builder.Services.AddDbContext<SaleEventDbContext>(options => options.UseOracle(builder.Configuration.GetConnectionString(connectionString)));
+            builder.Services.AddDbContext<SaleEventDbContext>(options => options.UseOracle(connectionString));
 
             // 注册服务
             builder.Services.AddScoped<SaleEventService>();
