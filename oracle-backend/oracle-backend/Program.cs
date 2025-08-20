@@ -27,8 +27,8 @@ namespace oracle_backend
                 options.UseOracle(connectionString);
             });
 
-            // 添加对 ComplexDbContext 的依赖注入
-            builder.Services.AddDbContext<ComplexDbContext>(options =>
+            // 添加对 EquipmentDbContext 的依赖注入
+            builder.Services.AddDbContext<EquipmentDbContext>(options =>
             {
                 options.UseOracle(connectionString);
             });
