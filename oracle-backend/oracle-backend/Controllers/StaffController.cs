@@ -66,15 +66,15 @@ namespace oracle_backend.Controllers
         {
             [Required(ErrorMessage = "账号是必填项")]
             [StringLength(50, ErrorMessage = "账号长度不能超过50个字符")]
-            public string Account { get; set; }
+            public string account { get; set; }
 
             [Required(ErrorMessage = "活动ID是必填项")]
             [Range(1, int.MaxValue, ErrorMessage = "活动ID必须大于0")]
-            public int EventId { get; set; }
+            public int eventId { get; set; }
 
             [Required(ErrorMessage = "临时权限级别是必填项")]
             [Range(1, 5, ErrorMessage = "临时权限级别必须在1到5之间")]
-            public int TempAuthority { get; set; }
+            public int tempAuthority { get; set; }
         }
 
         // 权限与临时权限检查
@@ -398,31 +398,39 @@ namespace oracle_backend.Controllers
             [FromQuery, Required] string operatorAccount,
             [FromBody, Required] TempAuthorityDto dto)
         {
-            // 权限检查
-            var permission = await CanModifyStaff(operatorAccount, dto.STAFF_APARTMENT);
-            if (permission != null) return permission;
 
-            // 临时权限不得大于操作者权限
-            if (dto.TempAuthority < permission.TempAuthority) return BadRequest("临时权限不得大于操作者权限");
-
-            // 根据dto获取account
-            var account = await _collabContext.FindAccountById(dto.ACCOUNT);
+            // 根据dto获取staff account
+            var account = await _accountContext.FindAccount(dto.account);
             if (account == null) return NotFound("账号不存在");
 
+            // 获取staff
+            var staff = await _collabContext.FindStaffByAccount(dto.account);
+            if (staff == null) return NotFound("员工不存在");
+
+            // 权限检查
+            var permission = await CanModifyStaff(operatorAccount, staff.STAFF_APARTMENT);
+            if (permission != null) return permission;
+
+            // 获取operator权限大小
+            var operatorAuthority = await GetCurrentAuthorityLevel(operatorAccount);
+
+            // 临时权限不得大于操作者权限
+            if (dto.tempAuthority < operatorAuthority) return BadRequest("临时权限不得大于操作者权限");
+
             // 如果员工非临时权限大于等于该临时权限,则返回
-            if (account.AUTHORITY <= dto.TempAuthority) return BadRequest("员工权限大于等于该临时权限");
+            if (account.AUTHORITY <= dto.tempAuthority) return BadRequest("员工权限大于等于该临时权限");
 
             // TODO:检查该活动是否存在, 若活动已结束，提示 “活动已结束”
 
             // 创建临时权限
             var tempAuthority = new TempAuthority
             {
-                ACCOUNT = dto.ACCOUNT,
-                EVENT_ID = dto.EVENT_ID,
-                TempAuthority = dto.TempAuthority,
+                ACCOUNT = dto.account,
+                EVENT_ID = dto.eventId,
+                TEMP_AUTHORITY = dto.tempAuthority,
             };
-            await _collabContext.TempAuthorities.AddAsync(tempAuthority);
-            await _collabContext.SaveChangesAsync();
+            await _accountContext.TEMP_AUTHORITY.AddAsync(tempAuthority);
+            await _accountContext.SaveChangesAsync();
 
             return Ok("临时权限修改成功");
         }
