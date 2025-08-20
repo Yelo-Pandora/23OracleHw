@@ -13,18 +13,20 @@ namespace oracle_backend.Controllers
     public class StaffController : ControllerBase
     {
     private readonly CollaborationDbContext _collabContext;
+    private readonly ComplexDbContext _eventContext;
     private readonly AccountDbContext _accountContext;
     private readonly ILogger<StaffController> _logger;
     private readonly ILogger<AccountController> _accountLogger;
-    private readonly SaleEventService _saleEventService;
 
         public StaffController(
             CollaborationDbContext collabContext,
+            ComplexDbContext eventContext,
             AccountDbContext accountContext,
             ILogger<StaffController> logger,
             ILogger<AccountController> accountLogger)
         {
             _collabContext = collabContext;
+            _eventContext = eventContext;
             _accountContext = accountContext;
             _logger = logger;
             _accountLogger = accountLogger;
@@ -165,6 +167,18 @@ namespace oracle_backend.Controllers
         {
             var monthSalaryCost = await _collabContext.MonthSalaryCosts.ToListAsync();
             return Ok(monthSalaryCost);
+        }
+
+        // 查看所有temp authorities
+        [HttpGet("AllTempAuthorities")]
+        public async Task<IActionResult> GetAllTempAuthorities()
+        {
+            var tempAuthorities = await _accountContext.TEMP_AUTHORITY.ToListAsync();
+            if (tempAuthorities == null || tempAuthorities.Count == 0)
+            {
+                return NotFound("没有临时权限记录");
+            }
+            return Ok(tempAuthorities);
         }
 
         // 2.6.1 添加新员工
@@ -425,10 +439,10 @@ namespace oracle_backend.Controllers
             // 如果员工非临时权限大于操作者权限,则返回
             if (account.AUTHORITY < operatorAuthority) return BadRequest("员工权限大于操作者权限");
 
-            // 检查该活动是否存在, 若活动已结束，提示 “活动已结束”
-            var saleEvent = await _saleEventService.GetSaleEventAsync(dto.eventId);
-            if (saleEvent == null) return NotFound("活动不存在");
-            if (saleEvent.EVENT_END < DateTime.Now) return BadRequest("活动已结束");
+            // 检查该活动(venue event)是否存在, 若活动已结束，提示 “活动已结束”
+            var eventEntity = await _eventContext.GetEventByIdAsync(dto.eventId);
+            if (eventEntity == null) return NotFound("活动不存在");
+            if (eventEntity.EVENT_END < DateTime.Now) return BadRequest("活动已结束");
 
             // 若已有该活动的权限
             var existingTempAuthority = await _accountContext.TEMP_AUTHORITY

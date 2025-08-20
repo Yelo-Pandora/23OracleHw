@@ -55,5 +55,11 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<Account>().HasKey(a => a.ACCOUNT);
             modelBuilder.Entity<TempAuthority>().HasKey(ta => new { ta.ACCOUNT, ta.EVENT_ID });
         }
+
+        // 根据ID获得Event
+        public async Task<Event?> GetEventByIdAsync(int eventId)
+        {
+            return await Events.FindAsync(eventId);
+        }
     }
 }
