@@ -10,7 +10,7 @@ namespace oracle_backend.Models
     [Table("AREA")]
     public class Area
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         //区域ID
         public int AREA_ID { get; set; }
         //是否为空 (0-否，1-是)
