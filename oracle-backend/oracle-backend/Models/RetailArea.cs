@@ -13,6 +13,6 @@ namespace oracle_backend.Models
         //出租状态
         public string RENT_STATUS { get; set; }
         //基础租金
-        public double BASE_RENT {  get; set; }
+        public double BASE_RENT { get; set; }
     }
 }

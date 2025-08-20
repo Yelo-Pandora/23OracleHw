@@ -101,5 +101,11 @@ namespace oracle_backend.Dbcontexts
             else if(auth == 4 && acc.AUTHORITY == 3) return false;
             return true;
         }
+
+        //根据账号返回商户账号信息（用于租金收取功能）
+        public async Task<StoreAccount?> GetStoreAccountByAccount(string account)
+        {
+            return await STORE_ACCOUNT.FirstOrDefaultAsync(sa => sa.ACCOUNT == account);
+        }
     }
 }

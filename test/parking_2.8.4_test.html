@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2.8.4 停车场内车辆状态查询 - 测试页面</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Microsoft YaHei', Arial, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      background: white; 
+      border-radius: 15px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .header { 
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white; 
+      padding: 30px; 
+      text-align: center; 
+    }
+    .header h1 { font-size: 28px; margin-bottom: 10px; }
+    .header p { font-size: 16px; opacity: 0.9; }
+    .content { padding: 30px; }
+    .card { 
+      background: #f8f9fa; 
+      border-radius: 10px; 
+      padding: 25px; 
+      margin-bottom: 25px; 
+      border-left: 4px solid #4CAF50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .card h3 { 
+      color: #333; 
+      margin-bottom: 20px; 
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card h3::before {
+      content: "🚗";
+      font-size: 24px;
+    }
+    .form-group { 
+      margin-bottom: 20px; 
+    }
+    .form-group label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: bold; 
+      color: #555;
+    }
+    .form-group input, .form-group select { 
+      width: 100%; 
+      padding: 12px; 
+      border: 2px solid #ddd; 
+      border-radius: 8px; 
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus { 
+      outline: none; 
+      border-color: #4CAF50; 
+    }
+    .btn { 
+      background: #4CAF50; 
+      color: white; 
+      border: none; 
+      padding: 12px 24px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-size: 16px;
+      transition: all 0.3s;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    .btn:hover { 
+      background: #45a049; 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+    .btn.secondary { 
+      background: #2196F3; 
+    }
+    .btn.secondary:hover { 
+      background: #1976D2; 
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    }
+    .btn.warning { 
+      background: #FF9800; 
+    }
+    .btn.warning:hover { 
+      background: #F57C00; 
+      box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+    }
+    .btn.danger { 
+      background: #f44336; 
+    }
+    .btn.danger:hover { 
+      background: #d32f2f; 
+      box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+    }
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .log { 
+      background: #1e1e1e; 
+      color: #00ff00; 
+      padding: 20px; 
+      border-radius: 8px; 
+      font-family: 'Consolas', monospace; 
+      font-size: 14px; 
+      max-height: 400px; 
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .badge { 
+      padding: 4px 12px; 
+      border-radius: 20px; 
+      font-size: 12px; 
+      font-weight: bold;
+    }
+    .badge.active { 
+      background: #4CAF50; 
+      color: white; 
+    }
+    .badge.info { 
+      background: #2196F3; 
+      color: white; 
+    }
+    .badge.warning { 
+      background: #FF9800; 
+      color: white; 
+    }
+    .badge.error { 
+      background: #f44336; 
+      color: white; 
+    }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 15px;
+    }
+    th, td { 
+      padding: 12px; 
+      text-align: left; 
+      border: 1px solid #ddd;
+    }
+    th { 
+      background: #f5f5f5; 
+      font-weight: bold;
+      color: #333;
+    }
+    tr:nth-child(even) { 
+      background: #f9f9f9; 
+    }
+    tr:hover { 
+      background: #e8f5e9; 
+    }
+    .search-result {
+      background: #e8f5e9;
+      border: 2px solid #4CAF50;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 15px;
+    }
+    .search-result h4 {
+      color: #2e7d32;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .info-item {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #4CAF50;
+    }
+    .info-item label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .info-item .value {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+    .no-result {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      color: #856404;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 15px;
+      text-align: center;
+    }
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid;
+    }
+    .alert.success {
+      background: #d4edda;
+      color: #155724;
+      border-color: #c3e6cb;
+    }
+    .alert.error {
+      background: #f8d7da;
+      color: #721c24;
+      border-color: #f5c6cb;
+    }
+    .alert.warning {
+      background: #fff3cd;
+      color: #856404;
+      border-color: #ffeaa7;
+    }
+    .alert.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border-color: #bee5eb;
+    }
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      border: 2px solid #e9ecef;
+    }
+    .stat-card.primary {
+      border-color: #4CAF50;
+      background: #e8f5e9;
+    }
+    .stat-card.info {
+      border-color: #2196F3;
+      background: #e3f2fd;
+    }
+    .stat-card.warning {
+      border-color: #FF9800;
+      background: #fff3e0;
+    }
+    .stat-number {
+      font-size: 2em;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    .stat-label {
+      font-size: 0.9em;
+      color: #666;
+    }
+    .auto-refresh {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .auto-refresh input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4CAF50;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .json-display {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 15px;
+      margin-top: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🚗 停车场内车辆状态查询</h1>
+    <p>2.8.4 功能测试 - 管理员选择停车场查看在停车辆 & 车牌号查询</p>
+  </div>
+
+  <div class="content">
+    <!-- 功能说明 -->
+    <div class="card" style="background: #e3f2fd; border-left-color: #2196f3;">
+      <h3 style="color: #1976d2;">🎯 功能2.8.4说明</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+        <div>
+          <strong>主要功能:</strong><br>
+          • 获取停车场列表 (GET /ParkingLots)<br>
+          • 查询在停车辆 (GET /CurrentVehicles)<br>
+          • 车牌号查询车辆状态 (GET /VehicleStatus/{licensePlate})<br>
+          • 支持按停车场筛选查询
+        </div>
+        <div>
+          <strong>权限要求:</strong><br>
+          • 匿名访问: 可查询<br>
+          • 员工权限: 可查询<br>
+          • 管理员权限: 可查询<br>
+          • 需要权限级别 ≤ 3
+        </div>
+      </div>
+    </div>
+
+    <!-- API连接测试 -->
+    <div class="card">
+      <h3>🔌 API连接测试</h3>
+      <div class="form-group">
+        <label>🌐 API服务地址</label>
+        <input id="apiBaseUrl" value="http://localhost:5263/api/Parking" placeholder="请输入API服务地址" />
+      </div>
+      <div class="form-group">
+        <label>👤 操作员账号</label>
+        <select id="operatorAccount">
+          <option value="">-- 请选择操作员账号 --</option>
+          <option value="admin_test">admin_test (管理员测试)</option>
+          <option value="manager_test">manager_test (经理测试)</option>
+          <option value="staff_test">staff_test (员工测试)</option>
+          <option value="invalid_user">invalid_user (无效用户)</option>
+        </select>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <button class="btn secondary" onclick="testApiConnection()">🔍 测试API连接</button>
+        <button class="btn" onclick="loadParkingLots()">🔄 刷新停车场列表</button>
+      </div>
+      <div id="apiTestResult"></div>
+    </div>
+
+    <!-- 统计面板 -->
+    <div class="card">
+      <h3>📊 统计信息</h3>
+      <div class="stats-panel" id="statsPanel">
+        <div class="stat-card primary">
+          <div class="stat-number" id="totalParkingLots">-</div>
+          <div class="stat-label">停车场总数</div>
+        </div>
+        <div class="stat-card info">
+          <div class="stat-number" id="totalVehicles">-</div>
+          <div class="stat-label">在停车辆总数</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-number" id="selectedAreaVehicles">-</div>
+          <div class="stat-label">选中区域车辆</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 停车场选择 -->
+    <div class="card">
+      <h3>🏢 停车场选择</h3>
+      <div class="form-group">
+        <label>选择停车场</label>
+        <select id="parkingLotSelect" onchange="onParkingLotChange()">
+          <option value="">请选择停车场...</option>
+        </select>
+      </div>
+      <div class="auto-refresh">
+        <input type="checkbox" id="autoRefresh" onchange="toggleAutoRefresh()">
+        <label for="autoRefresh">🔄 自动刷新 (10秒)</label>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <button class="btn" onclick="loadAllCurrentVehicles()">🚗 查看所有在停车辆</button>
+        <button class="btn secondary" onclick="refreshCurrentData()">🔄 刷新当前数据</button>
+        <button class="btn warning" onclick="clearLog()">🗑️ 清空日志</button>
+      </div>
+    </div>
+
+    <!-- 在停车辆列表 -->
+    <div class="card">
+      <h3>🚙 在停车辆信息</h3>
+      <div id="currentVehicles"></div>
+    </div>
+
+    <!-- 车牌号查询 -->
+    <div class="card">
+      <h3>🔍 车牌号查询</h3>
+      <div class="form-group">
+        <label>车牌号</label>
+        <input id="licensePlateQuery" placeholder="请输入车牌号，如：TEST001" maxlength="20" />
+      </div>
+      <div style="margin-bottom: 20px;">
+        <button class="btn" onclick="queryVehicleStatus()">🔍 查询车辆状态</button>
+        <button class="btn secondary" onclick="clearQuery()">🧹 清空查询</button>
+        <button class="btn warning" onclick="quickTest()">⚡ 快速测试</button>
+      </div>
+      <div id="vehicleStatusResult"></div>
+    </div>
+
+    <!-- 调试输出 -->
+    <div class="card">
+      <h3>📝 调试输出</h3>
+      <div id="log" class="log"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 全局变量
+let autoRefreshInterval = null;
+let currentVehiclesData = []; // 当前显示的车辆数据
+let allVehiclesData = []; // 所有停车场的车辆数据
+let parkingLotsData = [];
+
+// 工具函数
+function el(id) { return document.getElementById(id); }
+function api() { return el('apiBaseUrl').value.trim() || 'http://localhost:5263/api/Parking'; }
+function getOperatorAccount() { return el('operatorAccount').value; }
+
+function log(...args) { 
+  const timestamp = new Date().toLocaleTimeString();
+  el('log').textContent += `[${timestamp}] ${args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : a).join(' ')}\n`;
+  el('log').scrollTop = el('log').scrollHeight;
+}
+
+function clearLog() { el('log').textContent = ''; }
+
+function showAlert(message, type = 'info') {
+  const alertClass = type === 'error' ? 'alert error' : 
+                    type === 'success' ? 'alert success' : 
+                    type === 'warning' ? 'alert warning' : 'alert info';
+  
+  const alertDiv = document.createElement('div');
+  alertDiv.className = alertClass;
+  alertDiv.innerHTML = message;
+  
+  const container = el('apiTestResult');
+  container.innerHTML = '';
+  container.appendChild(alertDiv);
+  
+  // 3秒后自动隐藏
+  setTimeout(() => {
+    if (alertDiv.parentNode) {
+      alertDiv.parentNode.removeChild(alertDiv);
+    }
+  }, 3000);
+}
+
+function showLoading(containerId) {
+  document.getElementById(containerId).innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>正在加载数据...</p>
+    </div>
+  `;
+}
+
+// API连接测试
+async function testApiConnection() {
+  const testButton = event.target;
+  const originalText = testButton.textContent;
+  
+  testButton.textContent = '测试中...';
+  testButton.disabled = true;
+  
+  try {
+    const apiUrl = api();
+    const testUrl = `${apiUrl}/ParkingLots`;
+    
+    log('测试API连接:', testUrl);
+    
+    const response = await fetch(testUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (response.ok) {
+      showAlert('✅ API连接测试成功！停车场服务可用', 'success');
+      log('API连接测试成功，状态码:', response.status);
+    } else {
+      showAlert(`❌ API连接失败！状态码: ${response.status}`, 'error');
+      log('API连接失败，状态码:', response.status);
+    }
+  } catch (error) {
+    showAlert(`❌ API连接异常！${error.message}`, 'error');
+    log('API连接异常:', error);
+  } finally {
+    testButton.textContent = originalText;
+    testButton.disabled = false;
+  }
+}
+
+// 加载停车场列表
+async function loadParkingLots(){
+  showLoading('apiTestResult');
+  const url = api() + '/ParkingLots';
+  const operatorAccount = getOperatorAccount();
+  const fullUrl = operatorAccount ? `${url}?operatorAccount=${encodeURIComponent(operatorAccount)}` : url;
+  
+  try{
+    const resp = await fetch(fullUrl);
+    const data = await resp.json();
+    log('ParkingLots 请求', fullUrl);
+    log('ParkingLots 响应', resp.status, resp.statusText, data);
+    
+    if(resp.ok && data && data.Data){
+      parkingLotsData = data.Data;
+      populateParkingLotSelect(data.Data);
+      updateStats();
+      showAlert(`✅ 成功获取${data.Data.length}个停车场信息`, 'success');
+    } else {
+      showAlert(`❌ 获取停车场列表失败: ${data.error || '未知错误'}`, 'error');
+    }
+  }catch(e){ 
+    showAlert(`❌ 网络错误: ${e.message}`, 'error');
+    log('ParkingLots 异常', e.name, e.message); 
+  }
+}
+
+// 填充停车场下拉列表
+function populateParkingLotSelect(parkingLots){
+  const select = el('parkingLotSelect');
+  select.innerHTML = '<option value="">请选择停车场...</option>';
+  
+  parkingLots.forEach(lot => {
+    const option = document.createElement('option');
+    option.value = lot.AreaId;
+    option.textContent = `${lot.ParkingLotName} (${lot.ParkingFee}元/小时)`;
+    select.appendChild(option);
+  });
+}
+
+// 停车场选择变化事件
+function onParkingLotChange(){
+  const areaId = el('parkingLotSelect').value;
+  if(areaId){
+    loadCurrentVehiclesByParkingLot(areaId);
+  } else {
+    el('currentVehicles').innerHTML = '';
+    updateStats();
+  }
+}
+
+// 加载指定停车场的在停车辆
+async function loadCurrentVehiclesByParkingLot(areaId){
+  showLoading('currentVehicles');
+  const url = api() + '/CurrentVehicles';
+  const operatorAccount = getOperatorAccount();
+  const fullUrl = `${url}?areaId=${areaId}${operatorAccount ? '&operatorAccount=' + encodeURIComponent(operatorAccount) : ''}`;
+  
+  try{
+    const resp = await fetch(fullUrl);
+    const data = await resp.json();
+    log('CurrentVehicles 请求', fullUrl);
+    log('CurrentVehicles 响应', resp.status, resp.statusText, data);
+    
+    if(resp.ok && data){
+      currentVehiclesData = data.Data || [];
+      displayCurrentVehicles(data.Data || [], data.Message);
+      updateStats();
+    } else {
+      showAlert(`❌ 获取在停车辆失败: ${data.error || '未知错误'}`, 'error');
+    }
+  }catch(e){ 
+    showAlert(`❌ 网络错误: ${e.message}`, 'error');
+    log('CurrentVehicles 异常', e.name, e.message); 
+  }
+}
+
+// 加载所有在停车辆（用于显示）
+async function loadAllCurrentVehicles(){
+  showLoading('currentVehicles');
+  const url = api() + '/CurrentVehicles';
+  const operatorAccount = getOperatorAccount();
+  const fullUrl = operatorAccount ? `${url}?operatorAccount=${encodeURIComponent(operatorAccount)}` : url;
+  
+  try{
+    const resp = await fetch(fullUrl);
+    const data = await resp.json();
+    log('AllCurrentVehicles 请求', fullUrl);
+    log('AllCurrentVehicles 响应', resp.status, resp.statusText, data);
+    
+    if(resp.ok && data){
+      allVehiclesData = data.Data || [];
+      currentVehiclesData = data.Data || [];
+      displayCurrentVehicles(data.Data || [], data.Message);
+      // 清空停车场选择
+      el('parkingLotSelect').value = '';
+      updateStats();
+    } else {
+      showAlert(`❌ 获取所有在停车辆失败: ${data.error || '未知错误'}`, 'error');
+    }
+  }catch(e){ 
+    showAlert(`❌ 网络错误: ${e.message}`, 'error');
+    log('AllCurrentVehicles 异常', e.name, e.message); 
+  }
+}
+
+// 加载所有在停车辆（仅用于统计，不显示）
+async function loadAllVehiclesForStats(){
+  const url = api() + '/CurrentVehicles';
+  const operatorAccount = getOperatorAccount();
+  const fullUrl = operatorAccount ? `${url}?operatorAccount=${encodeURIComponent(operatorAccount)}` : url;
+  
+  try{
+    const resp = await fetch(fullUrl);
+    const data = await resp.json();
+    log('LoadAllVehiclesForStats 请求', fullUrl);
+    
+    if(resp.ok && data){
+      allVehiclesData = data.Data || [];
+      updateStats();
+      log('统计数据更新完成，总车辆数:', allVehiclesData.length);
+    }
+  }catch(e){ 
+    log('LoadAllVehiclesForStats 异常', e.name, e.message); 
+  }
+}
+
+// 显示在停车辆列表
+function displayCurrentVehicles(vehicles, message){
+  const container = el('currentVehicles');
+  
+  if(!vehicles || vehicles.length === 0){
+    container.innerHTML = `<div class="no-result">
+      <h4>📭 ${message || '当前停车场无在停车辆'}</h4>
+      <p>所有车位都是空闲状态</p>
+    </div>`;
+    return;
+  }
+  
+  let html = `<div style="margin-bottom: 15px;">
+    <span class="badge info">共 ${vehicles.length} 辆在停车辆</span>
+    <span class="badge active">最后更新: ${new Date().toLocaleString()}</span>
+  </div>`;
+  
+  html += '<table>';
+  html += '<tr><th>车牌号</th><th>车位ID</th><th>区域</th><th>停车场</th><th>入场时间</th><th>当前时长</th><th>状态</th></tr>';
+  
+  vehicles.forEach(vehicle => {
+    const parkStart = new Date(vehicle.ParkStart).toLocaleString('zh-CN');
+    const duration = formatDuration(vehicle.CurrentDuration);
+    
+    html += `<tr>
+      <td><strong>${vehicle.LicensePlateNumber}</strong></td>
+      <td>${vehicle.ParkingSpaceId}</td>
+      <td>${vehicle.AreaName}</td>
+      <td>${vehicle.ParkingLotName}</td>
+      <td>${parkStart}</td>
+      <td>${duration}</td>
+      <td><span class="badge active">${vehicle.Status}</span></td>
+    </tr>`;
+  });
+  
+  html += '</table>';
+  container.innerHTML = html;
+}
+
+// 查询车辆状态
+async function queryVehicleStatus(){
+  const licensePlate = el('licensePlateQuery').value.trim();
+  
+  if(!licensePlate){
+    showAlert('请输入车牌号', 'warning');
+    return;
+  }
+  
+  const url = api() + '/VehicleStatus/' + encodeURIComponent(licensePlate);
+  const operatorAccount = getOperatorAccount();
+  const fullUrl = operatorAccount ? `${url}?operatorAccount=${encodeURIComponent(operatorAccount)}` : url;
+  
+  try{
+    const resp = await fetch(fullUrl);
+    const data = await resp.json();
+    log('VehicleStatus 请求', fullUrl);
+    log('VehicleStatus 响应', resp.status, resp.statusText, data);
+    
+    if(resp.ok && data){
+      displayVehicleStatus(data.Data, data.Message, data.Success);
+    } else {
+      showAlert(`❌ 查询车辆状态失败: ${data.error || '未知错误'}`, 'error');
+    }
+  }catch(e){ 
+    showAlert(`❌ 网络错误: ${e.message}`, 'error');
+    log('VehicleStatus 异常', e.name, e.message); 
+  }
+}
+
+// 显示车辆状态查询结果
+function displayVehicleStatus(vehicle, message, success){
+  const container = el('vehicleStatusResult');
+  
+  if(!success || !vehicle){
+    container.innerHTML = `<div class="no-result">
+      <h4>❌ ${message || '未查询到该车牌号的在停记录'}</h4>
+      <p>请检查车牌号是否正确，或该车辆是否已离场</p>
+    </div>`;
+    return;
+  }
+  
+  const parkStart = new Date(vehicle.ParkStart).toLocaleString('zh-CN');
+  const duration = formatDuration(vehicle.CurrentDuration);
+  
+  container.innerHTML = `<div class="search-result">
+    <h4>✅ 查询成功 - ${vehicle.LicensePlateNumber}</h4>
+    <div class="info-grid">
+      <div class="info-item">
+        <label>车牌号</label>
+        <div class="value">${vehicle.LicensePlateNumber}</div>
+      </div>
+      <div class="info-item">
+        <label>车位ID</label>
+        <div class="value">${vehicle.ParkingSpaceId}</div>
+      </div>
+      <div class="info-item">
+        <label>停车场</label>
+        <div class="value">${vehicle.ParkingLotName}</div>
+      </div>
+      <div class="info-item">
+        <label>区域</label>
+        <div class="value">${vehicle.AreaName}</div>
+      </div>
+      <div class="info-item">
+        <label>入场时间</label>
+        <div class="value">${parkStart}</div>
+      </div>
+      <div class="info-item">
+        <label>当前时长</label>
+        <div class="value">${duration}</div>
+      </div>
+      <div class="info-item">
+        <label>车辆状态</label>
+        <div class="value"><span class="badge active">${vehicle.Status}</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// 清空查询
+function clearQuery(){
+  el('licensePlateQuery').value = '';
+  el('vehicleStatusResult').innerHTML = '';
+}
+
+// 刷新当前数据
+function refreshCurrentData() {
+  const areaId = el('parkingLotSelect').value;
+  if (areaId) {
+    loadCurrentVehiclesByParkingLot(areaId);
+  } else {
+    loadAllCurrentVehicles();
+  }
+  // 同时更新统计数据
+  loadAllVehiclesForStats();
+}
+
+// 切换自动刷新
+function toggleAutoRefresh() {
+  const checkbox = el('autoRefresh');
+  
+  if (checkbox.checked) {
+    autoRefreshInterval = setInterval(() => {
+      refreshCurrentData();
+    }, 10000);
+    showAlert('🔄 已开启自动刷新 (每10秒)', 'success');
+  } else {
+    if (autoRefreshInterval) {
+      clearInterval(autoRefreshInterval);
+      autoRefreshInterval = null;
+    }
+    showAlert('⏹️ 已关闭自动刷新', 'warning');
+  }
+}
+
+// 更新统计信息
+function updateStats() {
+  el('totalParkingLots').textContent = parkingLotsData.length;
+  el('totalVehicles').textContent = allVehiclesData.length;
+  
+  const selectedAreaId = el('parkingLotSelect').value;
+  if (selectedAreaId) {
+    const areaVehicles = currentVehiclesData.filter(v => v.AreaId == selectedAreaId);
+    el('selectedAreaVehicles').textContent = areaVehicles.length;
+  } else {
+    el('selectedAreaVehicles').textContent = '-';
+  }
+}
+
+// 格式化时长
+function formatDuration(duration){
+  if(!duration) return '0分钟';
+  
+  // 解析 C# TimeSpan 格式 (如: "1.02:30:45" 或 "02:30:45")
+  const match = duration.match(/(?:(\d+)\.)?(\d+):(\d+):(\d+)/);
+  if(match){
+    const days = parseInt(match[1] || '0');
+    const hours = parseInt(match[2]);
+    const minutes = parseInt(match[3]);
+    const seconds = parseInt(match[4]);
+    
+    let result = '';
+    if(days > 0) result += `${days}天`;
+    if(hours > 0) result += `${hours}小时`;
+    if(minutes > 0) result += `${minutes}分钟`;
+    if(result === '' && seconds > 0) result = `${seconds}秒`;
+    
+    return result || '刚入场';
+  }
+  
+  return duration;
+}
+
+// 快速测试按钮
+function quickTest(){
+  const testPlates = ['TEST001', 'TEST002', 'TEST003', 'STATUS001', 'STATUS002', 'STATUS003'];
+  const randomPlate = testPlates[Math.floor(Math.random() * testPlates.length)];
+  el('licensePlateQuery').value = randomPlate;
+  queryVehicleStatus();
+}
+
+// 页面加载时自动加载停车场列表
+window.onload = function(){
+  loadParkingLots();
+  // 延迟加载所有车辆数据，确保统计准确
+  setTimeout(() => {
+    loadAllVehiclesForStats();
+  }, 1000);
+  log('页面加载完成，开始测试 2.8.4 停车场内车辆状态查询功能');
+  log('功能：1) 选择停车场查看在停车辆 2) 车牌号查询');
+  log('测试车牌号：TEST001, TEST002, TEST003, STATUS001, STATUS002, STATUS003');
+};
+
+// 页面卸载时清理定时器
+window.onbeforeunload = function() {
+  if (autoRefreshInterval) {
+    clearInterval(autoRefreshInterval);
+  }
+};
+
+// 键盘事件：回车键查询
+el('licensePlateQuery').addEventListener('keypress', function(e){
+  if(e.key === 'Enter'){
+    queryVehicleStatus();
+  }
+});
+
+</script>
+</body>
+</html>

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace oracle_backend.Models
 {
+    [Table("VENUE_EVENT")]
     public class VenueEvent : Event
     {
         //活动参与人数

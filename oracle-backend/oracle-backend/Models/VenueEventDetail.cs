@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace oracle_backend.Models
 {
-    [PrimaryKey(nameof(EVENT_ID), nameof(AREA_ID),nameof(COLLABORATION_ID))]
+    [Table("VENUE_EVENT_DETAIL")]
+    [PrimaryKey(nameof(EVENT_ID), nameof(AREA_ID), nameof(COLLABORATION_ID))]
     public class VenueEventDetail
     {
         //活动ID
@@ -23,11 +24,11 @@ namespace oracle_backend.Models
         //场地租借状态
         public string STATUS { get; set; }
         //合作方投资资金
-        public double FUNDING {  get; set; }
+        public double FUNDING { get; set; }
 
         //外键约束，多对多对多关系
         [ForeignKey("EVENT_ID")]
-        public VenueEvent venueEventNavigation {  get; set; }
+        public VenueEvent venueEventNavigation { get; set; }
 
         [ForeignKey("AREA_ID")]
         public EventArea eventAreaNavigation { get; set; }
