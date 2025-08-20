@@ -46,7 +46,7 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<RentStore>().HasKey(rs => new { rs.STORE_ID, rs.AREA_ID });
             modelBuilder.Entity<VenueEventDetail>().HasKey(ved => new { ved.EVENT_ID, ved.AREA_ID, ved.COLLABORATION_ID });
             modelBuilder.Entity<ParkingSpaceDistribution>().HasKey(rs => new { rs.PARKING_SPACE_ID, rs.AREA_ID });
-            
+
             // 场地活动相关实体主键配置
             modelBuilder.Entity<Event>().HasKey(e => e.EVENT_ID);
             modelBuilder.Entity<VenueEvent>().HasBaseType<Event>().ToTable("VENUE_EVENT");
@@ -54,6 +54,12 @@ namespace oracle_backend.Dbcontexts
             modelBuilder.Entity<Staff>().HasKey(s => s.STAFF_ID);
             modelBuilder.Entity<Account>().HasKey(a => a.ACCOUNT);
             modelBuilder.Entity<TempAuthority>().HasKey(ta => new { ta.ACCOUNT, ta.EVENT_ID });
+        }
+
+        // 根据活动ID查找活动
+        public async Task<Event?> FindEventById(int eventId)
+        {
+            return await Events.FindAsync(eventId);
         }
     }
 }

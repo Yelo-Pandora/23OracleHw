@@ -4,6 +4,7 @@ using oracle_backend.Dbcontexts;
 using oracle_backend.Models;
 using oracle_backend.Services;
 using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace oracle_backend.Controllers
@@ -12,19 +13,22 @@ namespace oracle_backend.Controllers
     [ApiController]
     public class StaffController : ControllerBase
     {
-    private readonly CollaborationDbContext _collabContext;
-    private readonly AccountDbContext _accountContext;
-    private readonly ILogger<StaffController> _logger;
-    private readonly ILogger<AccountController> _accountLogger;
-    private readonly SaleEventService _saleEventService;
+        private readonly CollaborationDbContext _collabContext;
+        private readonly AccountDbContext _accountContext;
+        private readonly ComplexDbContext _eventContext;
+        private readonly ILogger<StaffController> _logger;
+        private readonly ILogger<AccountController> _accountLogger;
+        private readonly SaleEventService _saleEventService;
 
         public StaffController(
             CollaborationDbContext collabContext,
+            ComplexDbContext eventContext,
             AccountDbContext accountContext,
             ILogger<StaffController> logger,
             ILogger<AccountController> accountLogger)
         {
             _collabContext = collabContext;
+            _eventContext = eventContext;
             _accountContext = accountContext;
             _logger = logger;
             _accountLogger = accountLogger;
@@ -53,7 +57,8 @@ namespace oracle_backend.Controllers
             public double STAFF_SALARY { get; set; }
         }
 
-        public class SalaryDto{
+        public class SalaryDto
+        {
             [Range(0, 9999999999.99, ErrorMessage = "薪资必须大于等于0，且不能超过10位整数和2位小数")]
             public double BASE_SALARY { get; set; }
 
@@ -80,7 +85,8 @@ namespace oracle_backend.Controllers
         }
 
         // 权限与临时权限检查
-        private async Task<bool> CheckPermission(string operatorAccountId, int requiredAuthority){
+        private async Task<bool> CheckPermission(string operatorAccountId, int requiredAuthority)
+        {
             // 检查账号是否存在
             var account = await _accountContext.FindAccount(operatorAccountId);
             // 检查权限
@@ -121,13 +127,16 @@ namespace oracle_backend.Controllers
         }
 
         // 是否有权限修改员工信息
-        private async Task<ActionResult?> CanModifyStaff(string operatorAccount, string apartment){
+        private async Task<ActionResult?> CanModifyStaff(string operatorAccount, string apartment)
+        {
             var isAdmin = await CheckPermission(operatorAccount, 1);
             var isManager = await CheckPermission(operatorAccount, 2);
-            if(!isAdmin && !isManager) {
+            if (!isAdmin && !isManager)
+            {
                 return BadRequest("无权限");
             }
-            else if (isManager != null){
+            else if (!isAdmin && isManager)
+            {
                 // 查看manager的部门
                 Staff manager = await _collabContext.FindStaffByAccount(operatorAccount);
                 if (manager == null)
@@ -175,10 +184,12 @@ namespace oracle_backend.Controllers
         {
             // 权限检查
             var Permission = await CanModifyStaff(operatorAccount, dto.STAFF_APARTMENT);
-            if (Permission != null){
+            if (Permission != null)
+            {
                 return Permission;
             }
-            try {
+            try
+            {
                 // 自动生成员工ID
                 var maxStaffId = await _collabContext.Staffs.MaxAsync(s => (int?)s.STAFF_ID) ?? 0;
                 var newStaffId = maxStaffId + 1;
@@ -194,7 +205,8 @@ namespace oracle_backend.Controllers
 
                 // 生成员工新账号（账号为字符串，建议用员工ID或姓名+ID）
                 var accountStr = $"staff{newStaffId}";
-                var accountDto = new AccountController.AccountRegisterDto {
+                var accountDto = new AccountController.AccountRegisterDto
+                {
                     ACCOUNT = accountStr,
                     USERNAME = dto.STAFF_NAME,
                     PASSWORD = "DefaultPassword",
@@ -213,14 +225,15 @@ namespace oracle_backend.Controllers
                 await _collabContext.SaveChangesAsync();
 
                 // 建立员工与账号关联
-                var staffAccount = new StaffAccount {
+                var staffAccount = new StaffAccount
+                {
                     STAFF_ID = newStaffId,
                     ACCOUNT = accountStr
                 };
                 _accountContext.STAFF_ACCOUNT.Add(staffAccount);
                 await _accountContext.SaveChangesAsync();
                 _accountLogger.LogInformation($"员工与账号关联: ID={staff.STAFF_ID}, 账号={accountStr}");
-                
+
                 return Ok(new { message = "添加成功", id = staff.STAFF_ID, account = accountStr });
             }
             catch (Exception ex)
@@ -347,14 +360,15 @@ namespace oracle_backend.Controllers
             // 查询员工
             var staff = await _collabContext.FindStaffById(staffId);
             if (staff == null) return NotFound("员工不存在");
-            
+
             // 权限检查
             var permission = await CanModifyStaff(operatorAccount, staff.STAFF_APARTMENT);
             if (permission != null) return permission;
 
             // 查询SalarySlip
             var salarySlip = await _collabContext.GetSalarySlipByStaffId(staffId, monthTime);
-            if (salarySlip == null) {
+            if (salarySlip == null)
+            {
                 // 创建数据
                 salarySlip = new SalarySlip
                 {
@@ -367,7 +381,8 @@ namespace oracle_backend.Controllers
                 staff.STAFF_SALARY = dto.BASE_SALARY;
                 await _collabContext.SalarySlips.AddAsync(salarySlip);
             }
-            else{
+            else
+            {
                 // 更新员工工资信息
                 staff.STAFF_SALARY = dto.BASE_SALARY;
                 salarySlip.BONUS = dto.BONUS;
@@ -419,11 +434,14 @@ namespace oracle_backend.Controllers
             // 临时权限不得大于操作者权限
             if (dto.tempAuthority < operatorAuthority) return BadRequest("临时权限不得大于操作者权限");
 
-            // 如果员工非临时权限大于等于该临时权限或操作者权限,则返回
-            if (account.AUTHORITY <= dto.tempAuthority || operatorAuthority <= dto.tempAuthority) return BadRequest("员工权限大于等于该临时权限");
+            // 如果员工非临时权限大于等于该临时权限,则返回
+            if (account.AUTHORITY <= dto.tempAuthority) return BadRequest("员工权限已大于等于该临时权限");
+
+            // 如果员工权限大于操作者权限
+            if (account.AUTHORITY < operatorAuthority) return BadRequest("该员工权限大于操作者权限");
 
             // 检查该活动是否存在, 若活动已结束，提示 “活动已结束”
-            var saleEvent = await _saleEventService.GetSaleEventAsync(dto.eventId);
+            var saleEvent = await _eventContext.FindEventById(dto.eventId);
             if (saleEvent == null) return NotFound("活动不存在");
             if (saleEvent.EVENT_END < DateTime.Now) return BadRequest("活动已结束");
 
@@ -448,6 +466,37 @@ namespace oracle_backend.Controllers
             await _accountContext.SaveChangesAsync();
 
             return Ok("临时权限修改成功");
+        }
+
+        // 撤销权限
+        [HttpDelete("revoke temporary authority")]
+        public async Task<IActionResult> RevokeTemporaryAuthority(
+            [FromQuery, Required] string operatorAccount,
+            [FromQuery, Required] string staffAccount,
+            [FromQuery, Required] int eventId)
+        {
+            // 根据staffAccount获取staff
+            var staff = await _collabContext.FindStaffByAccount(staffAccount);
+            if (staff == null) return NotFound("员工不存在");
+
+            // 权限检查
+            var permission = await CanModifyStaff(operatorAccount, staff.STAFF_APARTMENT);
+            if (permission != null) return permission;
+
+            // 检查该活动是否存在, 若活动已结束，提示 “活动已结束”
+            var saleEvent = await _eventContext.FindEventById(eventId);
+            if (saleEvent == null) return NotFound("活动不存在");
+            if (saleEvent.EVENT_END < DateTime.Now) return BadRequest("活动已结束");
+
+            // 撤销临时权限
+            var tempAuthority = await _accountContext.TEMP_AUTHORITY
+                .FirstOrDefaultAsync(ta => ta.ACCOUNT == staffAccount && ta.EVENT_ID == eventId);
+            if (tempAuthority == null) return NotFound("临时权限不存在");
+
+            _accountContext.TEMP_AUTHORITY.Remove(tempAuthority);
+            await _accountContext.SaveChangesAsync();
+
+            return Ok("临时权限撤销成功");
         }
     }
 }
