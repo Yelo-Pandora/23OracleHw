@@ -419,8 +419,11 @@ namespace oracle_backend.Controllers
             // 临时权限不得大于操作者权限
             if (dto.tempAuthority < operatorAuthority) return BadRequest("临时权限不得大于操作者权限");
 
-            // 如果员工非临时权限大于等于该临时权限或操作者权限,则返回
-            if (account.AUTHORITY <= dto.tempAuthority || operatorAuthority <= dto.tempAuthority) return BadRequest("员工权限大于等于该临时权限");
+            // 如果员工非临时权限大于等于该临时权限,则返回
+            if (account.AUTHORITY <= dto.tempAuthority) return BadRequest("员工权限大于等于该临时权限");
+
+            // 如果员工非临时权限大于操作者权限,则返回
+            if (account.AUTHORITY < operatorAuthority) return BadRequest("员工权限大于操作者权限");
 
             // 检查该活动是否存在, 若活动已结束，提示 “活动已结束”
             var saleEvent = await _saleEventService.GetSaleEventAsync(dto.eventId);
