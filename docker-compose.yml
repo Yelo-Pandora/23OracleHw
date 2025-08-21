@@ -18,7 +18,7 @@ services:
       # 强制应用在容器内部监听 8080 端口
       - ASPNETCORE_URLS=http://+:8080
       # 数据库连接字符串，主机名'oracle-db'必须与下面的数据库服务名一致
-      - ConnectionStrings__DefaultConnection=Data Source=oracle-db-instance:1521/ORCLPDB1;User Id=ORACLEDBA;Password=23OracleServer;
+      - ConnectionStrings__OracleConnection=Data Source=oracle-db:1521/XEPDB1;User Id=ORACLEDBA;Password=23OracleServer;
     depends_on:
       # 确保在启动此服务前，数据库服务已准备就绪
       - oracle-db
