@@ -186,7 +186,7 @@ const routes = \[
 
 \#### 2. 状态管理 (Pinia)
 
-\*\*所有与用户登录状态（token, role, userInfo）相关的数据，请通过src/stores/user.js进行修改。\*\*
+\*\*所有与用户登录状态（token, role, userInfo）相关的数据，请通过src/stores/user.js进行修改。但获取可以直接用localStorage.getItem()\*\*
 
 \*\*如有需要额外的涉及用户登录状态的操作，请先告知全体\*\*
 
