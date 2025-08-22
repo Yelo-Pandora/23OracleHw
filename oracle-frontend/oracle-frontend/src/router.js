@@ -3,6 +3,8 @@ import { useUserStore } from './user/user'
 // 指定页面对应的vue应用实例，开发完成后自行解除注释
 import Login from './pages/login/LoginPage.vue'
 import Home from './pages/home/Home.vue'
+//测试用的EmployeeInfo页面
+import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
 // import Visualization from './pages/area_visualization/App.vue'
 // import Equipment from './pages/Equipment_management/App.vue'
 // import Employee from './pages/employee_management/App.vue'
@@ -24,24 +26,32 @@ const routes = [
   {
     path: '/',
     component: Home,
-    meta: { requiresAuth: true,title: '主页' },
+    meta: { requiresAuth: true, title: '主页', role_need: ['员工', '商户', '游客'] },
   },
-//   // 区域图形可视化页面
-//   { path: '/area_visualization', component: Visualization, meta: { requiresAuth: true } },
-//   // 活动管理页面
-//   { path: '/events_management', component: Events, meta: { requiresAuth: true } },
+  // 员工信息页面（测试）
+  {
+    path: '/employee_management',
+    component: EmployeeInfo,
+    meta: {
+      requiresAuth: true,
+      title: '员工信息', // 这个 title 会显示在页眉和菜单中
+      role_need: ['员工']  // 假设只有“员工”角色能看到
+    }
+  },
+//   // 活动管理/活动查询页面
+//   { path: '/events_management', component: Events, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   // 员工信息管理页面
-//   { path: '/employee_management', component: Employee, meta: { requiresAuth: true } },
+//   { path: '/employee_management', component: Employee, meta: { requiresAuth: true, role_need: ['员工'] } },
 //   // 合作方信息管理页面
-//   { path: '/collaboration_management', component: Collaboration, meta: { requiresAuth: true } },
-//   //商场/店铺管理页面
-//   { path: '/mall_management', component: Mall, meta: { requiresAuth: true } },
-//   //停车场管理页面
-//   { path: '/parking_management', component: Parking, meta: { requiresAuth: true } },
+//   { path: '/collaboration_management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工']} },
+//   //商场(店铺)管理/商场平面图查看页面
+//   { path: '/mall_management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
+//   //停车场管理/车位查询页面
+//   { path: '/parking_management', component: Parking, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   //设备管理页面
-//   { path: '/equipment_management', component: Equipment, meta: { requiresAuth: true } },
+//   { path: '/equipment_management', component: Equipment, meta: { requiresAuth: true, role_need: ['员工'] } },
 //   //现金流管理页面
-//   { path: '/cashflow_management', component: Cashflow, meta: { requiresAuth: true } },
+//   { path: '/cashflow_management', component: Cashflow, meta: { requiresAuth: true, role_need: ['员工'] } },
 ]
 
 const router = createRouter({

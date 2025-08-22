@@ -1,39 +1,34 @@
 <!-- src/components/DashboardLayout.vue -->
 <template>
   <div class="dashboard-layout">
-    <!-- 左侧导航栏 -->
     <aside class="sidebar">
-      <div class="sidebar-header">
-        通用后台管理系统
-      </div>
+      <div class="sidebar-header">商业综合体管理系统</div>
       <nav class="sidebar-nav">
         <ul>
-          <li class="active">
-            <a href="#">
-              <!-- SVG 图标会继承父元素的 color -->
-              <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M946.5 505L534.6 93.4a31.93 31.93 0 0 0-45.2 0L77.5 505c-12 12-18.8 28.3-18.8 45.3V884c0 35.3 28.7 64 64 64h204.3V691.2H499.1V948H703.4c35.3 0 64-28.7 64-64V550.3c0-17-6.8-33.3-18.9-45.3z"></path></svg>
-              <span>首页</span>
-            </a>
+          <!-- v-for遍历计算出来的路由对象 -->
+          <li v-for="route in visibleRoutes"
+              :key="route.path"
+              :class="{ active: $route.path === route.path }">
+            <!-- 'to'属性直接绑定到路由的path -->
+            <router-link :to="route.path">
+              <span>{{ route.meta.title }}</span>
+            </router-link>
           </li>
         </ul>
       </nav>
     </aside>
 
-    <!-- 右侧主区域 -->
     <div class="main-content">
-      <!-- 顶部页眉 -->
       <header class="header">
-        <div class="breadcrumb">
-          首页
-        </div>
+        <!-- 面包屑动态显示当前路由的标题 -->
+        <div class="breadcrumb">{{ $route.meta.title }}</div>
         <div class="user-profile">
           <div class="avatar"></div>
-          <span>Admin</span>
+          <span>{{ userStore.userInfo?.username || '用户' }}</span>
         </div>
       </header>
-
-      <!-- 页面内容插入位置 -->
       <main class="page-content">
+        <!-- 此处列表的显示会根据路由动态替换 -->
         <slot></slot>
       </main>
     </div>
@@ -41,6 +36,25 @@
 </template>
 
 <script setup>
+  // 通过useRouter()获取路由配置，并计算出visibleRoutes。
+  import { computed } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { useUserStore } from '@/user/user';
+
+  const router = useRouter();
+  const userStore = useUserStore();
+
+  const visibleRoutes = computed(() => {
+    const userRole = userStore.role;
+    if (!userRole) return [];
+
+    return router.options.routes.filter(route => {
+      if (!route.meta || !route.meta.title) return false;
+      if (route.path === '/login') return false; // 明确排除登录页
+      if (!route.meta.role_need || !route.meta.role_need.includes(userRole)) return false;
+      return true;
+    });
+  });
 </script>
 
 <style scoped>
@@ -63,7 +77,7 @@
     display: flex;
     height: 100vh;
   }
-  /* 整体 */
+
   body, html {
     margin: 0;
     padding: 0;
@@ -72,7 +86,6 @@
     background-color: var(--content-bg);
   }
 
-  /* 左侧导航栏 */
   .sidebar {
     width: 210px;
     background-color: var(--sidebar-bg);
@@ -99,38 +112,38 @@
     overflow-y: auto;
   }
 
-  .sidebar-nav ul {
-    list-style: none;
-    padding: 10px 0;
-    margin: 0;
-  }
+    .sidebar-nav ul {
+      list-style: none;
+      padding: 10px 0;
+      margin: 0;
+    }
 
-  .sidebar-nav li a {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    color: var(--sidebar-text);
-    text-decoration: none;
-    transition: background-color 0.2s, color 0.2s;
-    font-weight: 500;
-  }
+    .sidebar-nav li a {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      transition: background-color 0.2s, color 0.2s;
+      font-weight: 500;
+    }
 
-  .sidebar-nav li a .icon {
-    margin-right: 15px;
-    width: 20px;
-    height: 20px;
-    opacity: 0.8;
-  }
+      .sidebar-nav li a .icon {
+        margin-right: 15px;
+        width: 20px;
+        height: 20px;
+        opacity: 0.8;
+      }
 
-  .sidebar-nav li a:hover {
-    background-color: #f8f9fa;
-    color: var(--sidebar-active-text);
-  }
+      .sidebar-nav li a:hover {
+        background-color: #f8f9fa;
+        color: var(--sidebar-active-text);
+      }
 
-  .sidebar-nav li.active > a {
-    color: var(--sidebar-active-text);
-    background-color: #e6f7f4;
-  }
+    .sidebar-nav li.active > a {
+      color: var(--sidebar-active-text);
+      background-color: #e6f7f4;
+    }
 
   .nav-dropdown > a::after {
     content: '▼';
@@ -164,23 +177,23 @@
     flex-shrink: 0;
   }
 
-  .header .breadcrumb {
-    color: #f0f0f0;
-  }
+    .header .breadcrumb {
+      color: #f0f0f0;
+    }
 
-  .header .user-profile {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
+    .header .user-profile {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
 
-  .header .user-profile .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #ccc;
-    margin-right: 10px;
-  }
+      .header .user-profile .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #ccc;
+        margin-right: 10px;
+      }
 
 
   /* 页面内容区域 */

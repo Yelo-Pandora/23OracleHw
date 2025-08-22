@@ -4,7 +4,7 @@
     <!--
       这里的所有内容，都会被自动插入到 DashboardLayout 组件的 <slot> 位置。
     -->
-    <div class="home-dashboard">
+    <div class="home-content">
       <h1>欢迎, Admin!</h1>
       <p>这里是您的仪表盘主页。</p>
 
@@ -21,11 +21,13 @@
 <script setup>
   // 1. 导入布局组件
   import DashboardLayout from '@/components/BoardLayout.vue';
+  import { useUserStore } from '@/user/user';
+  const userStore = useUserStore();
 </script>
 
 <style scoped>
   /* 只属于首页的样式 */
-  .home-dashboard {
+  .home-content {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
