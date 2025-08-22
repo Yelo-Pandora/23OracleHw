@@ -38,6 +38,8 @@ const routes = [
       role_need: ['员工']  // 假设只有“员工”角色能看到
     }
   },
+//   //区域可视化页面
+//   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   // 活动管理/活动查询页面
 //   { path: '/events_management', component: Events, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   // 员工信息管理页面
