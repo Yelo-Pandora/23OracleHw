@@ -4,10 +4,10 @@ import { useUserStore } from './user/user'
 import Login from './pages/login/LoginPage.vue'
 import Home from './pages/home/Home.vue'
 //测试用的EmployeeInfo页面
-import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
+// import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
 // import Visualization from './pages/area_visualization/App.vue'
 // import Equipment from './pages/Equipment_management/App.vue'
-// import Employee from './pages/employee_management/App.vue'
+import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
 // import Events from './pages/events_management/App.vue'
 // import Mall from './pages/mall_management/App.vue'
 // import Cashflow from './pages/cashflow_management/App.vue'
@@ -29,21 +29,28 @@ const routes = [
     meta: { requiresAuth: true, title: '主页', role_need: ['员工', '商户', '游客'] },
   },
   // 员工信息页面（测试）
-  {
-    path: '/employee_management',
-    component: EmployeeInfo,
-    meta: {
-      requiresAuth: true,
-      title: '员工信息', // 这个 title 会显示在页眉和菜单中
-      role_need: ['员工']  // 假设只有“员工”角色能看到
-    }
-  },
+  // {
+  //   path: '/employee_management',
+  //   component: EmployeeInfo,
+  //   meta: {
+  //     requiresAuth: true,
+  //     title: '员工信息', // 这个 title 会显示在页眉和菜单中
+  //     role_need: ['员工']  // 假设只有“员工”角色能看到
+  //   }
+  // },
 //   //区域可视化页面
 //   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   // 活动管理/活动查询页面
 //   { path: '/events_management', component: Events, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-//   // 员工信息管理页面
-//   { path: '/employee_management', component: Employee, meta: { requiresAuth: true, role_need: ['员工'] } },
+  // 员工信息管理页面
+  { path: '/employee_management', 
+    component: EmployeeManagement, 
+    meta: { 
+      requiresAuth: true,
+      title: '员工信息管理',
+      role_need: ['员工'] 
+    }
+  },
 //   // 合作方信息管理页面
 //   { path: '/collaboration_management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工']} },
 //   //商场(店铺)管理/商场平面图查看页面
