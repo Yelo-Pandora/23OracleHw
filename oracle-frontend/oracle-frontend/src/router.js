@@ -43,7 +43,8 @@ const routes = [
 //   // 活动管理/活动查询页面
 //   { path: '/events_management', component: Events, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
   // 员工信息管理页面
-  { path: '/employee_management', 
+  { 
+    path: '/employee_management', 
     component: EmployeeManagement, 
     meta: { 
       requiresAuth: true,
