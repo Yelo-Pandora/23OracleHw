@@ -68,12 +68,16 @@ onMounted(async () => {
         console.error("Error fetching staff data:", error);
     }
 
-    const account = await axios.get('/api/Accounts/GetAccountByStaffId', {
-        params: {
-            staffId: 1
-        }
-    });
-    console.log(account.data)
+    try{
+        const account = await axios.get('/api/Accounts/GetAccById', {
+            params: {
+                staffId: 1
+            }
+        });
+        console.log(account.data);
+    } catch (error) {
+        console.log("Error fetching account data:", error);
+    }
 
     // 对于每个employee, GetAccountByStaffId
     // try {
