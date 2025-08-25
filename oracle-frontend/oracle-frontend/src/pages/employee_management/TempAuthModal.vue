@@ -6,7 +6,7 @@
       </div>
       <div class="temp-auth-header">
         <input class="temp-auth-search" v-model="localSearch" placeholder="搜索..." />
-        <button class="temp-auth-toggle-btn" @click="$emit('toggleShowAll')">
+        <button class="temp-auth-toggle-btn" :disabled="!canToggleShowAll" @click="$emit('toggleShowAll')">
           {{ showAll ? `只显示员工${currentEmployeeId}的权限` : '显示全部' }}
         </button>
       </div>
@@ -52,7 +52,11 @@ const props = defineProps({
   showAll: Boolean,
   currentEmployeeId: [String, Number],
   tempAuthList: Array,
-  search: String
+  search: String,
+  canToggleShowAll: {
+    type: Boolean,
+    default: true
+  }
 });
 const emit = defineEmits(['close', 'toggleShowAll', 'edit', 'update:search']);
 const localSearch = ref(props.search || '');
@@ -107,8 +111,15 @@ const filteredList = computed(() => {
   margin-left: 12px;
   cursor: pointer;
   transition: background 0.2s;
+  opacity: 1;
 }
-.temp-auth-toggle-btn:hover {
+.temp-auth-toggle-btn:disabled {
+  background: #e0e0e0;
+  color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.temp-auth-toggle-btn:not(:disabled):hover {
   background: #f7c676;
   color: #fff;
 }

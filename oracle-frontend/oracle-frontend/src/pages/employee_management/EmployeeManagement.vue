@@ -5,7 +5,7 @@
             <div class="hint">
                 你现在的身份是 <strong>{{ currentUserRole }}</strong>
             </div>
-            <div class="buttons">
+            <div class="buttons" v-if="userEmployee && Number(userEmployee.authority) <= 2">
                 <button class = "btn" @click="addEmployee">添加员工</button>
                 <button class = "btn" @click="editEmployee">编辑员工</button>
                 <button class = "btn" @click="deleteEmployee">删除员工</button>
@@ -47,9 +47,10 @@
             :currentEmployeeId="currentEmployeeId"
             :tempAuthList="tempAuthList"
             :search="tempAuthSearch"
+            :canToggleShowAll="userEmployee && Number(userEmployee.authority) <= 2"
             @close="showTempAuthWindow = false"
             @toggleShowAll="toggleShowAllTempAuth"
-            @edit="editTempAuth"
+            @edit="EditTempAuth"
             @update:search="val => tempAuthSearch = val"
         />
         <SalarySlipModal
@@ -76,6 +77,7 @@ const currentUserRole = userStore.role;
 
 const currentEmployeeId = ref(null);
 const employees = ref([]);
+const userEmployee = ref(null);
 
 const tempAuthList = ref([]);
 const tempAuthSearch = ref('');
@@ -85,7 +87,24 @@ const salarySlip = ref([]);
 const showSalarySlipWindow = ref(false);
 
 const sortedEmployees = computed(() => {
-    return employees.value.slice().sort((a, b) => {
+    // 权限过滤
+    if (!userEmployee.value || !userEmployee.value.authority) return [];
+    const auth = Number(userEmployee.value.authority);
+    let filtered = employees.value;
+    if (auth === 1) {
+        // 全部显示
+        console.log("全部显示");
+        filtered = employees.value;
+    } else if (auth === 2) {
+        // 只显示同部门
+        console.log("只显示同部门");
+        filtered = employees.value.filter(emp => emp.department === userEmployee.value.department);
+    } else if (auth > 2) {
+        // 只显示自己
+        console.log("只显示自己");
+        filtered = employees.value.filter(emp => emp.id === userEmployee.value.id);
+    }
+    return filtered.slice().sort((a, b) => {
         const idA = Number(a.id);
         const idB = Number(b.id);
         if (isNaN(idA) || isNaN(idB)) return String(a.id).localeCompare(String(b.id));
@@ -110,6 +129,10 @@ function DisplayTempAuthWindow(employeeId) {
 function DisplaySalaryWindow(employeeId) {
     currentEmployeeId.value = employeeId;
     showSalarySlipWindow.value = true;
+}
+
+function EditTempAuth(){
+
 }
 
 onMounted(async () => {
@@ -180,6 +203,9 @@ onMounted(async () => {
     catch (error) {
         console.error("Error fetching salary slip data:", error);
     }
+
+    // 设置当前登录员工信息（假设userStore.account为当前登录账号）
+    userEmployee.value = employees.value.find(emp => emp.account === userStore.userInfo.account) || null;
 })
 
 </script>
