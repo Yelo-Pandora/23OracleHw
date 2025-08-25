@@ -55,7 +55,7 @@
   import { ref, computed } from 'vue';
   import axios from 'axios';
   import { useRouter } from 'vue-router'
-  import { useUserStore } from '@/user/user'
+  import { useUserStore } from '@/stores/user'
 
   //响应式状态
   const role = ref('员工'); // '员工' 或 '商户' 或 '游客'
