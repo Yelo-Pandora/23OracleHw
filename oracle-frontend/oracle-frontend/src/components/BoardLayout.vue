@@ -25,6 +25,7 @@
         <div class="user-profile">
           <div class="avatar"></div>
           <span>{{ userStore.userInfo?.username || '用户' }}</span>
+          <button v-if="userStore.token" class="logout-btn" @click="logout">退出</button>
         </div>
       </header>
       <main class="page-content">
@@ -39,7 +40,7 @@
   // 通过useRouter()获取路由配置，并计算出visibleRoutes。
   import { computed } from 'vue';
   import { useRouter } from 'vue-router';
-  import { useUserStore } from '@/user/user';
+  import { useUserStore } from '@/stores/user';
 
   const router = useRouter();
   const userStore = useUserStore();
@@ -55,6 +56,11 @@
       return true;
     });
   });
+
+  function logout() {
+    userStore.logout()
+    router.push('/login')
+  }
 </script>
 
 <style scoped>
