@@ -5,9 +5,13 @@
       <p>请选择以下功能以继续：</p>
 
       <div class="navigation">
-        <router-link class="nav-item" to="/store-management/store-detail">
-          <h3>店铺详情</h3>
-          <p>查看和管理店铺的详细信息</p>
+        <router-link class="card" to="/store-management/store-detail">
+          <h3>我的店铺详情</h3>
+          <p>查看并管理您的店铺信息</p>
+        </router-link>
+        <router-link class="card" :to="{ name: 'MyRentBills' }">
+          <h3>我的租金账单</h3>
+          <p>查看并支付您的月度租金</p>
         </router-link>
       </div>
     </div>

@@ -74,6 +74,7 @@ const routes = [
       { path: 'store-status-approval', component: StoreStatusApproval, meta: { requiresAuth: true, title: '店面状态审批', role_need: ['员工'] } },
       { path: 'create-merchant', component: CreateMerchant, meta: { requiresAuth: true, title: '新增店面', role_need: ['员工'] } },
       { path: 'merchant-statistics-report', component: () => import('@/pages/mall_management/MerchantStatisticsReport.vue'), meta: { requiresAuth: true, title: '商户统计报表', role_need: ['员工'] } },
+      { path: 'rent-collection', name: 'RentCollection', component: () => import('@/pages/mall_management/RentCollection.vue'), meta: { requiresAuth: true, title: '租金管理', role_need: ['员工'] } },
       {
         path: 'store-status-request',
         component: StoreStatusRequest,
@@ -96,6 +97,12 @@ const routes = [
     path: '/store-management/store-detail',
     component: StoreDetail,
   meta: { requiresAuth: true, title: '店铺详情', role_need: ['商户', '员工'] },
+  },
+  {
+    path: '/store-management/my-rent-bills',
+    name: 'MyRentBills',
+    component: () => import('@/pages/store_management/MyRentBills.vue'),
+    meta: { requiresAuth: true, title: '我的租金', role_need: ['商户'] }
   },
 //   //区域可视化页面
 //   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },

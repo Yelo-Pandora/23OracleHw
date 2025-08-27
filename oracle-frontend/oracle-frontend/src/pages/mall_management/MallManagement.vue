@@ -25,6 +25,11 @@
           <p>在商场中添加新店面（员工）</p>
         </router-link>
 
+        <router-link v-if="role === '员工'" class="card" :to="{ name: 'RentCollection' }">
+          <h3>租金管理</h3>
+          <p>生成、查询并确认商户租金账单</p>
+        </router-link>
+
         <router-link v-if="role === '员工'" class="card" :to="'/mall-management/merchant-statistics-report'">
           <h3>商户统计报表</h3>
           <p>查看商户、区域和类型的统计信息</p>

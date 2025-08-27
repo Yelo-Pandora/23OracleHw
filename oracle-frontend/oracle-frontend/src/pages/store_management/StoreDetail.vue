@@ -245,62 +245,36 @@ const role = computed(() => userStore.role || '游客')
 
 async function loadForRole() {
   clearMessages()
-  // 商户：尝试获取其所属店铺（通过后端 GetMyRentBills 或 AccountContext）
+  const account = userStore.userInfo?.account || userStore.token || ''
+  if (!account) return
+
   try {
-    const account = userStore.userInfo?.account || userStore.token || ''
-    if (!account) return
-
     if (role.value === '商户') {
-      // try GetMyRentBills to obtain storeId
-      try {
-        const r = await axios.get('/api/Store/GetMyRentBills', { params: { merchantAccount: account } })
-        // backend may return { storeId, bills, ... } or { bills: [...] }
-        const storeIds = new Set()
-        if (r.data) {
-          if (r.data.storeId) storeIds.add(Number(r.data.storeId))
-          if (Array.isArray(r.data.bills)) {
-            r.data.bills.forEach(b => { if (b.storeId) storeIds.add(Number(b.storeId)) })
-          }
+      // For merchants, get their store info from their own API endpoint
+      const response = await axios.get('/api/Store/GetMyRentBills', { params: { merchantAccount: account } });
+      if (response.data && Array.isArray(response.data.bills) && response.data.bills.length > 0) {
+        const firstBill = response.data.bills[0];
+        stores.value = [{
+          STORE_ID: firstBill.StoreId,
+          STORE_NAME: firstBill.StoreName
+        }];
+        
+        // If we found the store, auto-select it and load its details
+        if (stores.value.length > 0) {
+          selectedStoreId.value = stores.value[0].STORE_ID;
+          await loadMerchantInfo();
         }
-        // if we have storeIds, fetch their details from AllStores to populate stores list
-        if (storeIds.size > 0) {
-          // load all stores and filter by these ids
-          const all = await axios.get('/api/Store/AllStores', { params: { operatorAccount: account } })
-          if (Array.isArray(all.data)) {
-            stores.value = all.data.filter(s => storeIds.has(Number(s.STORE_ID) || Number(s.storeId)))
-          }
-        }
-      } catch (e) {
-        // fallback: try to get store account mapping via Account endpoints (if available)
-        // Some backends provide GetStoreAccountByAccount; backend has endpoint GetStoreAccountByAccount inside AccountDbContext
-        try {
-          const r2 = await axios.get('/api/Store/GetMyRentBills', { params: { merchantAccount: account } })
-          if (r2.data && r2.data.storeId) {
-            stores.value = [{ STORE_ID: r2.data.storeId, STORE_NAME: r2.data.storeName || '' }]
-          }
-        } catch { /* swallow */ }
       }
-
-      // if we found storeId, load merchant info
-      if (stores.value.length === 1) {
-        selectedStoreId.value = Number(stores.value[0].STORE_ID || stores.value[0].storeId)
-        await loadMerchantInfo()
-      }
-    }
-
-    if (role.value === '员工') {
-      // 员工加载所有店铺以供选择
-      try {
-        const r = await axios.get('/api/Store/AllStores', { params: { operatorAccount: account } })
-        if (Array.isArray(r.data)) {
-          stores.value = r.data
-        }
-      } catch (e) {
-        // ignore - UI will allow manual id input
+    } else if (role.value === '员工') {
+      // For employees, load all stores for selection
+      const response = await axios.get('/api/Store/AllStores', { params: { operatorAccount: account } });
+      if (Array.isArray(response.data)) {
+        stores.value = response.data;
       }
     }
   } catch (e) {
-    // ignore role-load errors
+    error.value = '加载店铺列表失败，请稍后重试。';
+    console.error('Failed to load stores for role:', e);
   }
 }
 
