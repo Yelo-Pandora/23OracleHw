@@ -1,6 +1,7 @@
 <template>
-  <div class="store-detail">
-    <h2>商户信息管理</h2>
+  <DashboardLayout>
+    <div class="store-detail">
+      <h2>商户信息管理</h2>
 
     <div class="box">
       <template v-if="role === '商户' || role === '员工'">
@@ -46,8 +47,7 @@
       <label>联系方式</label>
       <input type="text" v-model="form.contactInfo" :disabled="!editable.nonCorePermissions.contactInfo" />
 
-      <label>店铺简介</label>
-      <textarea v-model="form.description" :disabled="!editable.nonCorePermissions.description" rows="4"></textarea>
+  <!-- 店铺简介已移除，后端不稳定导致无法保存 -->
 
       <label>租用起始时间</label>
       <input type="date" v-model="form.rentStart" :disabled="!editable.corePermissions.rentStart" />
@@ -80,7 +80,8 @@
       <p>租期: {{ merchant.rentStart ? merchant.rentStart.split('T')[0] : '-' }} ~ {{ merchant.rentEnd ? merchant.rentEnd.split('T')[0] : '-' }}</p>
       <p>权限: {{ editable.permissions.role }} (可修改核心: {{ editable.permissions.canModifyCore }})</p>
     </div>
-  </div>
+    </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
@@ -88,6 +89,7 @@ import { ref, reactive, computed } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
+import DashboardLayout from '@/components/BoardLayout.vue'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -97,7 +99,7 @@ const selectedStoreId = ref(null)
 const stores = ref([])
 const merchant = ref(null)
 const editable = reactive({
-  nonCorePermissions: { contactInfo: false, description: false },
+  nonCorePermissions: { contactInfo: false },
   corePermissions: { storeType: false, rentStart: false, rentEnd: false, storeStatus: false, storeName: false },
   permissions: { canModifyCore: false, canModifyNonCore: false, role: '未知' }
 })
@@ -113,7 +115,6 @@ const form = reactive({
   storeName: '',
   storeType: '',
   contactInfo: '',
-  description: '',
   rentStart: '',
   rentEnd: '',
   storeStatus: ''
@@ -148,7 +149,6 @@ async function loadMerchantInfo() {
     form.storeName = merchant.value.storeName || ''
     form.storeType = merchant.value.storeType || ''
     form.contactInfo = merchant.value.contactInfo || ''
-    form.description = merchant.value.description || ''
     form.rentStart = merchant.value.rentStart ? formatDateForInput(merchant.value.rentStart) : ''
     form.rentEnd = merchant.value.rentEnd ? formatDateForInput(merchant.value.rentEnd) : ''
     form.storeStatus = merchant.value.storeStatus || ''
@@ -162,8 +162,7 @@ async function loadMerchantInfo() {
     editable.permissions.role = data.permissions?.role || (userStore.role || '未知')
 
     // Set which specific fields are editable
-    editable.nonCorePermissions.contactInfo = (data.nonCoreFields || []).includes('contactInfo')
-    editable.nonCorePermissions.description = (data.nonCoreFields || []).includes('description')
+  editable.nonCorePermissions.contactInfo = (data.nonCoreFields || []).includes('contactInfo')
 
     const coreFields = data.coreFields || []
     editable.corePermissions.storeType = coreFields.includes('storeType')
@@ -218,7 +217,6 @@ async function submit() {
     const dto = {
       StoreId: Number(merchant.value.storeId),
       ContactInfo: editable.nonCorePermissions.contactInfo ? form.contactInfo : undefined,
-      Description: editable.nonCorePermissions.description ? form.description : undefined,
       StoreType: editable.corePermissions.storeType ? (form.storeType || undefined) : undefined,
       StoreName: editable.corePermissions.storeName ? (form.storeName || undefined) : undefined,
       StoreStatus: editable.corePermissions.storeStatus ? (form.storeStatus || undefined) : undefined,

@@ -46,13 +46,28 @@
   const userStore = useUserStore();
 
   const visibleRoutes = computed(() => {
-    const userRole = userStore.role;
-    if (!userRole) return [];
+    const rawUserRole = userStore.role || '游客'
+    // 与 router.beforeEach 中相同的 role 映射，保证中文/英文角色都能匹配
+    const roleMap = {
+      guest: '游客',
+      visitor: '游客',
+      merchant: '商户',
+      shop: '商户',
+      staff: '员工',
+      employee: '员工'
+    }
+    const normalized = roleMap[String(rawUserRole).toLowerCase()] || rawUserRole
+
+    const isAllowed = (roles, userR, normalizedR) => {
+      if (!Array.isArray(roles)) return false
+      return roles.includes(userR) || roles.includes(String(userR).toLowerCase()) || roles.includes(normalizedR)
+    }
 
     return router.options.routes.filter(route => {
       if (!route.meta || !route.meta.title) return false;
       if (route.path === '/login') return false; // 明确排除登录页
-      if (!route.meta.role_need || !route.meta.role_need.includes(userRole)) return false;
+      if (!route.meta.role_need) return false
+      if (!isAllowed(route.meta.role_need, rawUserRole, normalized)) return false
       return true;
     });
   });

@@ -1,49 +1,49 @@
 <template>
   <div class="store-status-request">
-    <h2>店面状态变更申请</h2>
-    <p>提交申请后，物业管理人员将在审批列表中处理。</p>
+      <h2>店面状态变更申请</h2>
+      <p>提交申请后，物业管理员人员将在审批列表中处理。</p>
 
-    <div class="box">
-      <label>选择店铺ID（填写或选择）</label>
-      <input type="number" v-model.number="storeId" min="1" />
-      <button @click="loadStoreStatus" :disabled="!storeId">查询当前状态</button>
-    </div>
-
-    <div v-if="storeInfo" class="box">
-      <p>店铺：{{ storeInfo.storeName }} （ID: {{ storeInfo.storeId }}）</p>
-      <p>当前状态：{{ storeInfo.currentStatus }}</p>
-      <p>可申请的变更类型：<span v-if="storeInfo.allowedChangeTypes.length === 0">无</span>
-        <span v-else>{{ storeInfo.allowedChangeTypes.join(', ') }}</span>
-      </p>
-    </div>
-
-    <form @submit.prevent="submitRequest" class="box">
-      <label>变更类型</label>
-      <select v-model="changeType" required>
-        <option value="" disabled>请选择</option>
-        <option v-for="t in allowedTypesForSelect" :key="t" :value="t">{{ t }}</option>
-      </select>
-
-      <label>目标状态</label>
-      <input type="text" v-model="targetStatus" placeholder="可选：若留空系统会推断" />
-
-      <label>申请原因</label>
-      <textarea v-model="reason" rows="4" required></textarea>
-
-      <div class="actions">
-        <button type="submit" :disabled="submitting || !canSubmit">提交申请</button>
+      <div class="box">
+        <label>选择店铺ID（填写或选择）</label>
+        <input type="number" v-model.number="storeId" min="1" />
+        <button @click="loadStoreStatus" :disabled="!storeId">查询当前状态</button>
       </div>
 
-      <div v-if="error" class="error">{{ error }}</div>
-      <div v-if="success" class="success">{{ success }}</div>
-    </form>
-  </div>
-</template>
+      <div v-if="storeInfo" class="box">
+        <p>店铺：{{ storeInfo.storeName }} （ID: {{ storeInfo.storeId }}）</p>
+        <p>当前状态：{{ storeInfo.currentStatus }}</p>
+        <p>可申请的变更类型：<span v-if="storeInfo.allowedChangeTypes.length === 0">无</span>
+          <span v-else>{{ storeInfo.allowedChangeTypes.join(', ') }}</span>
+        </p>
+      </div>
 
-<script setup>
-import { ref } from 'vue'
-import axios from 'axios'
-import { useUserStore } from '@/stores/user'
+      <form @submit.prevent="submitRequest" class="box">
+        <label>变更类型</label>
+        <select v-model="changeType" required>
+          <option value="" disabled>请选择</option>
+          <option v-for="t in allowedTypesForSelect" :key="t" :value="t">{{ t }}</option>
+        </select>
+
+        <label>目标状态</label>
+        <input type="text" v-model="targetStatus" placeholder="可选：若留空系统会推断" />
+
+        <label>申请原因</label>
+        <textarea v-model="reason" rows="4" required></textarea>
+
+        <div class="actions">
+          <button type="submit" :disabled="submitting || !canSubmit">提交申请</button>
+        </div>
+
+        <div v-if="error" class="error">{{ error }}</div>
+        <div v-if="success" class="success">{{ success }}</div>
+      </form>
+    </div>
+  </template>
+
+  <script setup>
+  import { ref, computed } from 'vue'
+  import axios from 'axios'
+  import { useUserStore } from '@/stores/user'
 
 const storeId = ref(null)
 const storeInfo = ref(null)

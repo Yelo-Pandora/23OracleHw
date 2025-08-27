@@ -53,7 +53,7 @@ const routes = [
     meta: { requiresAuth: true, title: '区域管理', role_need: ['员工', '商户', '游客'] },
     children: [
       { path: '', redirect: '/area/mall-management' },
-      { path: 'mall-management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户'] } },
+  { path: 'mall-management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户'], title: '商场管理' } },
       { path: 'parking-management', component: Parking, meta: { requiresAuth: true, role_need: ['员工'] } },
       { path: 'event-management', component: Events, meta: { requiresAuth: true, role_need: ['员工'] } },
       { path: 'collaboration-management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工'] } },
@@ -62,13 +62,13 @@ const routes = [
       { path: 'mall-map', component: MallMap, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
       { path: 'parking-query', component: ParkingQuery, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
       { path: 'event-query', component: EventQuery, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
-      { path: 'store-management', component: EventQuery, meta: { requiresAuth: true, role_need: ['商户'] } },
+  { path: 'store-management', component: StoreManagement, meta: { requiresAuth: true, role_need: ['商户', '员工'], title: '店铺管理' } },
     ]
   },
-  // 商场管理页面
+  // 商场管理页面（直接 /mall-management 重定向到 /area/mall-management）
   {
     path: '/mall-management',
-    component: Mall,
+    redirect: '/area/mall-management',
     meta: { requiresAuth: true, title: '商场管理', role_need: ['员工'] },
     children: [
       { path: 'store-status-approval', component: StoreStatusApproval, meta: { requiresAuth: true, title: '店面状态审批', role_need: ['员工'] } },
@@ -89,12 +89,12 @@ const routes = [
   {
     path: '/store-management',
     component: StoreManagement,
-    meta: { requiresAuth: true, title: '店铺管理', role_need: ['商户'] },
+  meta: { requiresAuth: true, title: '店铺管理', role_need: ['商户', '员工'] },
   },
   {
     path: '/store-management/store-detail',
     component: StoreDetail,
-    meta: { requiresAuth: true, title: '店铺详情', role_need: ['商户'] },
+  meta: { requiresAuth: true, title: '店铺详情', role_need: ['商户', '员工'] },
   },
 //   //区域可视化页面
 //   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },

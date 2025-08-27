@@ -1,19 +1,21 @@
 <template>
-  <div class="store-management">
-    <h2>店铺管理导航</h2>
-    <p>请选择以下功能以继续：</p>
+  <DashboardLayout>
+    <div class="store-management">
+      <h2>店铺管理导航</h2>
+      <p>请选择以下功能以继续：</p>
 
-    <div class="navigation">
-      <router-link class="nav-item" to="/store-management/store-detail">
-        <h3>店铺详情</h3>
-        <p>查看和管理店铺的详细信息</p>
-      </router-link>
+      <div class="navigation">
+        <router-link class="nav-item" to="/store-management/store-detail">
+          <h3>店铺详情</h3>
+          <p>查看和管理店铺的详细信息</p>
+        </router-link>
+      </div>
     </div>
-  </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
-// No additional logic needed for a simple navigation page
+import DashboardLayout from '@/components/BoardLayout.vue'
 </script>
 
 <style scoped>

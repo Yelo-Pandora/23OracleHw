@@ -1,5 +1,5 @@
 <template>
-  <div class="create-merchant">
+    <div class="create-merchant">
     <h2>新增店面</h2>
     <form @submit.prevent="submitForm">
       <div class="form-group">
@@ -23,12 +23,13 @@
     </form>
     <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
     <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-  </div>
+.    </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import DashboardLayout from '@/components/BoardLayout.vue'
 
 const storeName = ref('');
 const storeLocation = ref('');

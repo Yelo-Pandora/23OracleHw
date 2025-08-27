@@ -24,13 +24,13 @@
           <h3>新增店面</h3>
           <p>在商场中添加新店面（员工）</p>
         </router-link>
-      </div>
     </div>
 
     <!-- 移除原来的新增区域表单，MallManagement 仅作为导航/汇总页面 -->
     <section class="child-view">
       <router-view />
     </section>
+  </div>
   </div>
 </template>
 
