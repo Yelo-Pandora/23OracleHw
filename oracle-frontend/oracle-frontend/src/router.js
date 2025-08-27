@@ -12,11 +12,15 @@ import Events from './pages/event_management/EventManagement.vue'
 import Collaboration from './pages/collaboration_management/CollaborationManagement.vue'
 import Equipment from './pages/equipment_management/EquipmentManagement.vue'
 import Staff from './pages/staff_management/StaffManagement.vue'
-import Store from './pages/store_management/StoreManagement.vue'
-import MallMap from './pages/mall_map/MallMap.vue'
 import ParkingQuery from './pages/parking_query/ParkingQuery.vue'
 import EventQuery from './pages/event_query/EventQuery.vue'
 import AreaManagement from './pages/area_management/AreaManagement.vue'
+import StoreStatusRequest from '@/pages/mall_management/StoreStatusRequest.vue';
+import StoreStatusApproval from '@/pages/mall_management/StoreStatusApproval.vue';
+import CreateMerchant from '@/pages/mall_management/CreateMerchant.vue';
+import MallMap from '@/pages/mall_map/MallMap.vue';
+import StoreManagement from '@/pages/store_management/StoreManagement.vue';
+import StoreDetail from '@/pages/store_management/StoreDetail.vue';
 
 // 定义路由，开发完成后自行解除注释
 const routes = [
@@ -48,18 +52,49 @@ const routes = [
     component: AreaManagement,
     meta: { requiresAuth: true, title: '区域管理', role_need: ['员工', '商户', '游客'] },
     children: [
-      { path: '', redirect: 'mall-management' },
-      { path: 'mall-management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
+      { path: '', redirect: '/area/mall-management' },
+      { path: 'mall-management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户'] } },
       { path: 'parking-management', component: Parking, meta: { requiresAuth: true, role_need: ['员工'] } },
       { path: 'event-management', component: Events, meta: { requiresAuth: true, role_need: ['员工'] } },
       { path: 'collaboration-management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工'] } },
       { path: 'equipment-management', component: Equipment, meta: { requiresAuth: true, role_need: ['员工'] } },
       { path: 'staff-management', component: Staff, meta: { requiresAuth: true, role_need: ['员工'] } },
-      { path: 'store-management', component: Store, meta: { requiresAuth: true, role_need: ['商户'] } },
       { path: 'mall-map', component: MallMap, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
       { path: 'parking-query', component: ParkingQuery, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
       { path: 'event-query', component: EventQuery, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
+      { path: 'store-management', component: EventQuery, meta: { requiresAuth: true, role_need: ['商户'] } },
     ]
+  },
+  // 商场管理页面
+  {
+    path: '/mall-management',
+    component: Mall,
+    meta: { requiresAuth: true, title: '商场管理', role_need: ['员工'] },
+    children: [
+      { path: 'store-status-approval', component: StoreStatusApproval, meta: { requiresAuth: true, title: '店面状态审批', role_need: ['员工'] } },
+      { path: 'create-merchant', component: CreateMerchant, meta: { requiresAuth: true, title: '新增店面', role_need: ['员工'] } },
+      {
+        path: 'store-status-request',
+        component: StoreStatusRequest,
+        meta: { requiresAuth: true, title: '店面状态申请', role_need: ['商户'] },
+      },
+      {
+        path: 'store-management',
+        component: StoreManagement,
+        meta: { requiresAuth: true, title: '我的店铺', role_need: ['商户'] },
+      },
+    ]
+  },
+  // 店铺管理页面
+  {
+    path: '/store-management',
+    component: StoreManagement,
+    meta: { requiresAuth: true, title: '店铺管理', role_need: ['商户'] },
+  },
+  {
+    path: '/store-management/store-detail',
+    component: StoreDetail,
+    meta: { requiresAuth: true, title: '店铺详情', role_need: ['商户'] },
   },
 //   //区域可视化页面
 //   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
@@ -130,8 +165,9 @@ router.beforeEach((to, from, next) => {
         console.warn(`访问被拒绝: 角色 ${rawUserRole} 无权访问 ${to.path}`)
 
         // 找一个对当前用户可访问的回退路由，避免无限重定向
-        const fallback = router.getRoutes().find(r => r.meta && Array.isArray(r.meta.role_need) && (isAllowed(r.meta.role_need, rawUserRole) || isAllowed(r.meta.role_need, normalized)))
-        const fallbackPath = fallback ? (fallback.path || '/') : '/login'
+        // 优先选择已注册的绝对路径作为回退，避免 next('mall-management') 导致无匹配
+        const fallback = router.getRoutes().find(r => r.meta && Array.isArray(r.meta.role_need) && (isAllowed(r.meta.role_need, rawUserRole) || isAllowed(r.meta.role_need, normalized)) && r.path && r.path.startsWith('/'))
+        let fallbackPath = fallback ? (fallback.path || '/') : '/login'
 
         if (fallbackPath && fallbackPath !== to.path) {
           next(fallbackPath)

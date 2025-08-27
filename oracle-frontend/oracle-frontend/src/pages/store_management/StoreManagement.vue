@@ -1,13 +1,57 @@
 <template>
-  <div class="placeholder-page">
-    <h2>店铺管理（占位）</h2>
-    <p>此页面为店铺管理占位页；商户账号应只允许查看/管理自己店铺（权限检查需后端/组件实现）。</p>
+  <div class="store-management">
+    <h2>店铺管理导航</h2>
+    <p>请选择以下功能以继续：</p>
+
+    <div class="navigation">
+      <router-link class="nav-item" to="/store-management/store-detail">
+        <h3>店铺详情</h3>
+        <p>查看和管理店铺的详细信息</p>
+      </router-link>
+    </div>
   </div>
 </template>
 
 <script setup>
+// No additional logic needed for a simple navigation page
 </script>
 
 <style scoped>
-.placeholder-page { padding: 16px; }
+.store-management {
+  padding: 16px;
+}
+
+.navigation {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nav-item {
+  display: block;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.nav-item h3 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+}
+
+.nav-item p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.nav-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
 </style>

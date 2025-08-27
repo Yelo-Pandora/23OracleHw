@@ -1,0 +1,1460 @@
+
+Session已变更。
+
+PL/SQL 过程已成功完成。
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+1行已删除。
+
+
+7 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+25 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+25 行已删除。
+
+
+0 行已删除。
+
+
+19 行已删除。
+
+
+29 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+29 行已删除。
+
+
+0 行已删除。
+
+PL/SQL 过程已成功完成。
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+在行: 109 上开始执行命令时出错 -
+INSERT INTO STAFF (STAFF_ID, STAFF_NAME, STAFF_SEX, STAFF_APARTMENT, STAFF_POSITION, STAFF_SALARY)
+VALUES (1001, '张三', '男', '客服部', '客服', 6000)
+错误位于命令行: 109 列: 70
+错误报告 -
+SQL 错误: ORA-00904: "STAFF_POSITION": 标识符无效
+
+https://docs.oracle.com/error-help/db/ora-00904/00904. 00000 -  "%s: invalid identifier"
+*Cause:    The identifier or column name entered was invalid.
+*Action:   Ensure the following
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00904/
+
+1行已插入。
+
+
+1行已插入。
+
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+在行: 228 上开始执行命令时出错 -
+INSERT INTO STORE (STORE_ID, STORE_NAME, STORE_STATUS, STORE_TYPE, TENANT_NAME, CONTACT_INFO, RENT_START, RENT_END) 
+VALUES (2001, '时尚精品服装', '正常营业', '个人', '李时尚', '13800001001', DATE '2023-01-01', DATE '2025-12-31')
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 231 上开始执行命令时出错 -
+INSERT INTO STORE (STORE_ID, STORE_NAME, STORE_STATUS, STORE_TYPE, TENANT_NAME, CONTACT_INFO, RENT_START, RENT_END) 
+VALUES (2002, '运动世界旗舰店', '正常营业', '企业连锁', '王运动', '13800001002', DATE '2023-03-01', DATE '2026-02-28')
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 234 上开始执行命令时出错 -
+INSERT INTO STORE (STORE_ID, STORE_NAME, STORE_STATUS, STORE_TYPE, TENANT_NAME, CONTACT_INFO, RENT_START, RENT_END) 
+VALUES (2003, '温馨家居生活馆', '正常营业', '个人', '张家居', '13800001003', DATE '2023-06-01', DATE '2026-05-31')
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+在行: 333 上开始执行命令时出错 -
+INSERT INTO ACCOUNT (ACCOUNT, PASSWORD, IDENTITY, USERNAME, AUTHORITY) 
+VALUES ('bookstore5005', 'pass123', '商户', '书店管理员', 4)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 336 上开始执行命令时出错 -
+INSERT INTO ACCOUNT (ACCOUNT, PASSWORD, IDENTITY, USERNAME, AUTHORITY) 
+VALUES ('uniqlo5006', 'pass123', '商户', '优衣库管理员', 4)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 339 上开始执行命令时出错 -
+INSERT INTO ACCOUNT (ACCOUNT, PASSWORD, IDENTITY, USERNAME, AUTHORITY) 
+VALUES ('restaurant5007', 'pass123', '商户', '小餐厅管理员', 4)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 342 上开始执行命令时出错 -
+INSERT INTO ACCOUNT (ACCOUNT, PASSWORD, IDENTITY, USERNAME, AUTHORITY) 
+VALUES ('seven5008', 'pass123', '商户', '便利店管理员', 4)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+1行已插入。
+
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+在行: 365 上开始执行命令时出错 -
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('fashion_merchant', 2001)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 366 上开始执行命令时出错 -
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('sports_merchant', 2002)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 367 上开始执行命令时出错 -
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('jewelry_merchant', 2004)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+1行已插入。
+
+
+1行已插入。
+
+
+在行: 372 上开始执行命令时出错 -
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('bookstore5005', 5005)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 373 上开始执行命令时出错 -
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('uniqlo5006', 5006)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 374 上开始执行命令时出错 -
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('restaurant5007', 5007)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 375 上开始执行命令时出错 -
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('seven5008', 5008)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 378 上开始执行命令时出错 -
+INSERT INTO STORE_ACCOUNT (ACCOUNT, STORE_ID) VALUES ('shop_2001', 2001)
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_ACCOUNT_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+提交完成。
+
+在行: 387 上开始执行命令时出错 -
+INSERT INTO RENT_STORE (STORE_ID, AREA_ID) VALUES (1, 1)
+错误报告 -
+ORA-02291: 违反完整约束条件 (ORACLEDBA.RENT_STORE_FK2) - 未找到父项关键字
+
+https://docs.oracle.com/error-help/db/ora-02291/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-02291/
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+提交完成。
+
+24 行已更新。
+
+
+24 行已更新。
+
+提交完成。
+'====================================================================================='
+'                           测试数据导入完成验证'
+'====================================================================================='
+'1. 账号统计：'
+
+账号类型                         数量
+-------------------- ----------
+员工                          5
+商户                         15
+游客                          1
+管理员                        1
+财务管理员                     1
+
+'2. 店铺统计：'
+
+      总店铺数       正常营业        歇业中        维修中       暂停营业        翻新中
+---------- ---------- ---------- ---------- ---------- ----------
+        25         21          1          1          1          1
+
+'3. 区域统计：'
+
+      总区域数       空置区域      已租用区域     入住率(%)
+---------- ---------- ---------- ----------
+        29          5         24      82.76
+
+'4. 租金统计：'
+
+    已租用区域数       平均租金      总租金收入       最高租金       最低租金
+---------- ---------- ---------- ---------- ----------
+        24      14875     357000      25000       6000
+
+'5. 租用关系统计：'
+
+    租用关系总数
+----------
+        25
+
+'6. 账号关联统计：'
+
+有店铺关联的商户账号数  有账号关联的店铺数
+----------- ----------
+         15         14
+
+'====================================================================================='
+'                              测试账号信息'
+'====================================================================================='
+'管理员账号：'
+'- admin/admin123 (权限1) - 系统管理员'
+'- admin_test/admin123 (权限1) - 测试管理员'
+'- finance_admin/finance123 (权限1) - 财务部主管'
+'- finance_manager/Finance123 (权限2) - 财务经理'
+'- statistics_viewer/Stats123 (权限3) - 统计查看员'
+'- rent_admin/RentAdmin123 (权限1) - 租金管理员'
+''
+'普通用户账号：'
+'- guest/guest123 (权限5) - 普通用户'
+''
+'商户账号示例：'
+'- fashion_merchant/Fashion123 (权限4) - 服装店商户'
+'- sports_merchant/Sports123 (权限4) - 运动店商户'
+'- jewelry_merchant/Jewelry123 (权限4) - 珠宝店商户'
+'- cafe5003/pass123 (权限4) - 咖啡厅管理员'
+'- starbucks5004/pass123 (权限4) - 星巴克管理员'
+''
+'员工账号：'
+'- staff_zhang/password123 (权限1) - 张三（员工）'
+''
+'====================================================================================='
+'                             功能测试覆盖'
+'====================================================================================='
+'✓ 新增店面功能测试 - 区域1001-1003'
+'✓ 商户信息管理功能测试 - 基础店铺和账号'
+'✓ 店面状态管理功能测试 - 店铺3001-3003'
+'✓ 商户信息统计报表功能测试 - 店铺5003-5008'
+'✓ 商户租金统计报表功能测试 - 店铺2001-2010'
+'✓ 商户租金收取功能测试 - 店铺6001-6005'
+'✓ 权限管理测试 - 不同权限等级账号'
+'✓ 数据完整性测试 - 外键约束和数据一致性'
+''
+'====================================================================================='
+'             🎉 所有测试数据导入完成！现在可以运行所有测试功能 🎉'
+'====================================================================================='
+提交完成。
+
+Session已变更。
+
+
+Session已变更。
+
+PL/SQL 过程已成功完成。
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+4 行已删除。
+
+
+15 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+25 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+25 行已删除。
+
+
+0 行已删除。
+
+
+23 行已删除。
+
+
+29 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+0 行已删除。
+
+
+29 行已删除。
+
+
+0 行已删除。
+
+PL/SQL 过程已成功完成。
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+在行: 102 上开始执行命令时出错 -
+INSERT INTO STAFF (STAFF_ID, STAFF_NAME, STAFF_SEX, STAFF_APARTMENT, STAFF_POSITION, STAFF_SALARY)
+VALUES (1001, '张三', '男', '客服部', '客服', 6000)
+错误位于命令行: 102 列: 70
+错误报告 -
+SQL 错误: ORA-00904: "STAFF_POSITION": 标识符无效
+
+https://docs.oracle.com/error-help/db/ora-00904/00904. 00000 -  "%s: invalid identifier"
+*Cause:    The identifier or column name entered was invalid.
+*Action:   Ensure the following
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00904/
+
+1行已插入。
+
+
+在行: 108 上开始执行命令时出错 -
+INSERT INTO STAFF_ACCOUNT (ACCOUNT, STAFF_ID) VALUES ('staff_zhang', 1001)
+错误报告 -
+ORA-02291: 违反完整约束条件 (ORACLEDBA.STAFF_ACCOUNT_FK2) - 未找到父项关键字
+
+https://docs.oracle.com/error-help/db/ora-02291/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-02291/
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+在行: 221 上开始执行命令时出错 -
+INSERT INTO STORE (STORE_ID, STORE_NAME, STORE_STATUS, STORE_TYPE, TENANT_NAME, CONTACT_INFO, RENT_START, RENT_END) 
+VALUES (2001, '时尚精品服装', '正常营业', '个人', '李时尚', '13800001001', DATE '2023-01-01', DATE '2025-12-31')
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 224 上开始执行命令时出错 -
+INSERT INTO STORE (STORE_ID, STORE_NAME, STORE_STATUS, STORE_TYPE, TENANT_NAME, CONTACT_INFO, RENT_START, RENT_END) 
+VALUES (2002, '运动世界旗舰店', '正常营业', '企业连锁', '王运动', '13800001002', DATE '2023-03-01', DATE '2026-02-28')
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+在行: 227 上开始执行命令时出错 -
+INSERT INTO STORE (STORE_ID, STORE_NAME, STORE_STATUS, STORE_TYPE, TENANT_NAME, CONTACT_INFO, RENT_START, RENT_END) 
+VALUES (2003, '温馨家居生活馆', '正常营业', '个人', '张家居', '13800001003', DATE '2023-06-01', DATE '2026-05-31')
+错误报告 -
+ORA-00001: 违反唯一约束条件 (ORACLEDBA.STORE_PK)
+
+https://docs.oracle.com/error-help/db/ora-00001/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-00001/
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+提交完成。
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+提交完成。
+
+在行: 380 上开始执行命令时出错 -
+INSERT INTO RENT_STORE (STORE_ID, AREA_ID) VALUES (1, 1)
+错误报告 -
+ORA-02291: 违反完整约束条件 (ORACLEDBA.RENT_STORE_FK2) - 未找到父项关键字
+
+https://docs.oracle.com/error-help/db/ora-02291/
+
+More Details :
+https://docs.oracle.com/error-help/db/ora-02291/
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+
+1行已插入。
+
+提交完成。
+
+24 行已更新。
+
+
+24 行已更新。
+
+提交完成。
+'====================================================================================='
+'                           测试数据导入完成验证'
+'====================================================================================='
+'1. 账号统计：'
+
+账号类型                         数量
+-------------------- ----------
+员工                          5
+商户                         15
+游客                          1
+管理员                        1
+财务管理员                     1
+
+'2. 店铺统计：'
+
+      总店铺数       正常营业        歇业中        维修中       暂停营业        翻新中
+---------- ---------- ---------- ---------- ---------- ----------
+        25         21          1          1          1          1
+
+'3. 区域统计：'
+
+      总区域数       空置区域      已租用区域     入住率(%)
+---------- ---------- ---------- ----------
+        29          5         24      82.76
+
+'4. 租金统计：'
+
+    已租用区域数       平均租金      总租金收入       最高租金       最低租金
+---------- ---------- ---------- ---------- ----------
+        24      14875     357000      25000       6000
+
+'5. 租用关系统计：'
+
+    租用关系总数
+----------
+        25
+
+'6. 账号关联统计：'
+
+有店铺关联的商户账号数  有账号关联的店铺数
+----------- ----------
+         15         14
+
+'====================================================================================='
+'                              测试账号信息'
+'====================================================================================='
+'管理员账号：'
+'- admin/admin123 (权限1) - 系统管理员'
+'- admin_test/admin123 (权限1) - 测试管理员'
+'- finance_admin/finance123 (权限1) - 财务部主管'
+'- finance_manager/Finance123 (权限2) - 财务经理'
+'- statistics_viewer/Stats123 (权限3) - 统计查看员'
+'- rent_admin/RentAdmin123 (权限1) - 租金管理员'
+''
+'普通用户账号：'
+'- guest/guest123 (权限5) - 普通用户'
+''
+'商户账号示例：'
+'- fashion_merchant/Fashion123 (权限4) - 服装店商户'
+'- sports_merchant/Sports123 (权限4) - 运动店商户'
+'- jewelry_merchant/Jewelry123 (权限4) - 珠宝店商户'
+'- cafe5003/pass123 (权限4) - 咖啡厅管理员'
+'- starbucks5004/pass123 (权限4) - 星巴克管理员'
+''
+'员工账号：'
+'- staff_zhang/password123 (权限1) - 张三（员工）'
+''
+'====================================================================================='
+'                             功能测试覆盖'
+'====================================================================================='
+'✓ 新增店面功能测试 - 区域1001-1003'
+'✓ 商户信息管理功能测试 - 基础店铺和账号'
+'✓ 店面状态管理功能测试 - 店铺3001-3003'
+'✓ 商户信息统计报表功能测试 - 店铺5003-5008'
+'✓ 商户租金统计报表功能测试 - 店铺2001-2010'
+'✓ 商户租金收取功能测试 - 店铺6001-6005'
+'✓ 权限管理测试 - 不同权限等级账号'
+'✓ 数据完整性测试 - 外键约束和数据一致性'
+''
+'====================================================================================='
+'             🎉 所有测试数据导入完成！现在可以运行所有测试功能 🎉'
+'====================================================================================='
+提交完成。
