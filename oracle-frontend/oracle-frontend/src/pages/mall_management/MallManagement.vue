@@ -24,6 +24,11 @@
           <h3>新增店面</h3>
           <p>在商场中添加新店面（员工）</p>
         </router-link>
+
+        <router-link v-if="role === '员工'" class="card" :to="'/mall-management/merchant-statistics-report'">
+          <h3>商户统计报表</h3>
+          <p>查看商户、区域和类型的统计信息</p>
+        </router-link>
     </div>
 
     <!-- 移除原来的新增区域表单，MallManagement 仅作为导航/汇总页面 -->

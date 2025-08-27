@@ -73,6 +73,7 @@ const routes = [
     children: [
       { path: 'store-status-approval', component: StoreStatusApproval, meta: { requiresAuth: true, title: '店面状态审批', role_need: ['员工'] } },
       { path: 'create-merchant', component: CreateMerchant, meta: { requiresAuth: true, title: '新增店面', role_need: ['员工'] } },
+      { path: 'merchant-statistics-report', component: () => import('@/pages/mall_management/MerchantStatisticsReport.vue'), meta: { requiresAuth: true, title: '商户统计报表', role_need: ['员工'] } },
       {
         path: 'store-status-request',
         component: StoreStatusRequest,
