@@ -10,8 +10,13 @@
           <p>查看并管理您的店铺信息</p>
         </router-link>
         <router-link class="card" :to="{ name: 'MyRentBills' }">
-          <h3>我的租金账单</h3>
-          <p>查看并支付您的月度租金</p>
+          <h3>我的租金</h3>
+          <p>查看并处理您的租金账单</p>
+        </router-link>
+
+        <router-link class="card" :to="{ name: 'MyRentStatisticsReport' }">
+          <h3>我的租金统计</h3>
+          <p>查看您的租金统计信息</p>
         </router-link>
       </div>
     </div>

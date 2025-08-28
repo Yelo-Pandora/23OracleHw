@@ -34,6 +34,11 @@
           <h3>商户统计报表</h3>
           <p>查看商户、区域和类型的统计信息</p>
         </router-link>
+
+        <router-link v-if="role === '员工'" class="card" :to="{ name: 'MerchantRentStatisticsReport' }">
+          <h3>商户租金统计报表</h3>
+          <p>分析商户租金收缴情况、欠款明细及历史趋势</p>
+        </router-link>
     </div>
 
     <!-- 移除原来的新增区域表单，MallManagement 仅作为导航/汇总页面 -->

@@ -21,6 +21,8 @@ import CreateMerchant from '@/pages/mall_management/CreateMerchant.vue';
 import MallMap from '@/pages/mall_map/MallMap.vue';
 import StoreManagement from '@/pages/store_management/StoreManagement.vue';
 import StoreDetail from '@/pages/store_management/StoreDetail.vue';
+import MerchantRentStatisticsReport from '@/pages/mall_management/MerchantRentStatisticsReport.vue';
+import MyRentStatisticsReport from '@/pages/store_management/MyRentStatisticsReport.vue';
 
 // 定义路由，开发完成后自行解除注释
 const routes = [
@@ -103,6 +105,18 @@ const routes = [
     name: 'MyRentBills',
     component: () => import('@/pages/store_management/MyRentBills.vue'),
     meta: { requiresAuth: true, title: '我的租金', role_need: ['商户'] }
+  },
+  {
+    path: '/mall-management/merchant-rent-statistics-report',
+    name: 'MerchantRentStatisticsReport',
+    component: MerchantRentStatisticsReport,
+    meta: { requiresAuth: true, title: '商户租金统计报表', role_need: ['员工'] }
+  },
+  {
+    path: '/store-management/my-rent-statistics-report',
+    name: 'MyRentStatisticsReport',
+    component: MyRentStatisticsReport,
+    meta: { requiresAuth: true, title: '我的租金统计', role_need: ['商户'] }
   },
 //   //区域可视化页面
 //   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
