@@ -21,14 +21,35 @@
         <button @click="fetchRentStatisticsReport" :disabled="loading">
           {{ loading ? '正在生成...' : '生成统计报表' }}
         </button>
+        <button @click="exportReportToPDF" :disabled="!reportData" class="export-btn">
+          导出PDF
+        </button>
       </div>
 
       <div v-if="loading" class="loading-indicator card">正在加载报表数据...</div>
       <div v-if="error" class="error-message card">{{ error }}</div>
 
       <!-- 报表结果展示 -->
-      <div v-if="reportData" class="report-container card">
+      <div v-if="reportData" id="reportToExport" class="report-container card">
         <h3 class="report-main-title">{{ reportData.title }}</h3>
+
+        <!-- 数据可视化 -->
+        <div class="visualization-section" v-if="selectedDimension === 'all' && reportData.operationalMetrics">
+          <div class="chart-controls">
+            <h4 class="report-title">数据可视化</h4>
+            <select v-model="selectedChartType" @change="renderCharts">
+              <option value="pie">租金状态分布 (饼图)</option>
+              <option value="bar">收缴情况对比 (柱状图)</option>
+              <option value="line">收缴趋势 (折线图)</option>
+              <option value="radar">财务指标雷达图</option>
+              <option value="polarArea">运营指标概览 (极坐标图)</option>
+              <option value="scatter">租金与逾期关系 (散点图)</option>
+            </select>
+          </div>
+          <div class="chart-container">
+            <canvas id="rentChart"></canvas>
+          </div>
+        </div>
 
         <!-- 综合分析 (all) -->
         <div v-if="selectedDimension === 'all' && reportData.executiveSummary">
@@ -103,10 +124,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
 import DashboardLayout from '@/components/BoardLayout.vue';
+import { Chart, registerables } from 'chart.js';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+Chart.register(...registerables);
 
 const userStore = useUserStore();
 const API_BASE_URL = '/api/Store';
@@ -116,6 +142,104 @@ const selectedDimension = ref('all');
 const loading = ref(false);
 const error = ref(null);
 const reportData = ref(null);
+let rentChart = null;
+const selectedChartType = ref('pie');
+
+const renderCharts = () => {
+  if (rentChart) {
+    rentChart.destroy();
+  }
+  if (selectedDimension.value !== 'all' || !reportData.value) return;
+
+  const ctx = document.getElementById('rentChart').getContext('2d');
+  const financial = reportData.value.financialSummary;
+  const operational = reportData.value.operationalMetrics;
+
+  let chartConfig;
+  switch (selectedChartType.value) {
+    case 'pie':
+      chartConfig = {
+        type: 'pie',
+        data: {
+          labels: ['已缴账单', '逾期账单', '待缴账单'],
+          datasets: [{ data: [operational.paidBills, operational.overdueBills, operational.pendingBills], backgroundColor: ['#4CAF50', '#F44336', '#FFC107'] }]
+        },
+        options: { plugins: { title: { display: true, text: '租金账单状态分布' } } }
+      };
+      break;
+    case 'bar':
+      chartConfig = {
+        type: 'bar',
+        data: {
+          labels: ['应收', '已收', '待收'],
+          datasets: [{ label: '金额', data: [financial.totalAmount, financial.collectedAmount, financial.outstandingAmount], backgroundColor: ['#2196F3', '#4CAF50', '#F44336'] }]
+        },
+        options: { plugins: { title: { display: true, text: '收缴情况对比' } } }
+      };
+      break;
+    case 'line':
+       chartConfig = {
+        type: 'line',
+        data: {
+          labels: ['总账单', '已缴账单', '逾期账单', '待缴账单'],
+          datasets: [{ label: '数量', data: [operational.totalBills, operational.paidBills, operational.overdueBills, operational.pendingBills], fill: false, borderColor: '#FF5722' }]
+        },
+        options: { plugins: { title: { display: true, text: '收缴趋势' } } }
+      };
+      break;
+    case 'radar':
+      chartConfig = {
+        type: 'radar',
+        data: {
+          labels: ['总收入', '收缴率(%)', '风险等级(%)', '按时缴纳率(%)'],
+          datasets: [{ label: '综合指标', data: [financial.totalAmount / 1000, financial.collectionRate, (operational.overdueBills / operational.totalBills) * 100, operational.onTimePaymentRate], backgroundColor: 'rgba(156, 39, 176, 0.2)', borderColor: '#9C27B0' }]
+        },
+        options: { plugins: { title: { display: true, text: '财务指标雷达图' } } }
+      };
+      break;
+    case 'polarArea':
+      chartConfig = {
+        type: 'polarArea',
+        data: {
+          labels: ['总账单', '已缴账单', '逾期账单'],
+          datasets: [{ data: [operational.totalBills, operational.paidBills, operational.overdueBills], backgroundColor: ['#00BCD4', '#8BC34A', '#E91E63'] }]
+        },
+        options: { plugins: { title: { display: true, text: '运营指标概览' } } }
+      };
+      break;
+    case 'scatter':
+      chartConfig = {
+        type: 'scatter',
+        data: {
+          datasets: [{ label: '租金与逾期关系', data: [{ x: financial.avgRentPerStore, y: operational.overdueBills }], backgroundColor: '#607D8B' }]
+        },
+        options: { plugins: { title: { display: true, text: '租金与逾期关系' } }, scales: { x: { title: { display: true, text: '平均租金' } }, y: { title: { display: true, text: '逾期账单数' } } } }
+      };
+      break;
+  }
+  
+  if (chartConfig) {
+    rentChart = new Chart(ctx, chartConfig);
+  }
+};
+
+const exportReportToPDF = async () => {
+  const reportElement = document.getElementById('reportToExport');
+  if (!reportElement) return;
+
+  const canvas = await html2canvas(reportElement, {
+    scale: 2, 
+    useCORS: true,
+  });
+
+  const imgData = canvas.toDataURL('image/png');
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  
+  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  pdf.save(`商户租金统计报表-${reportPeriod.value}.pdf`);
+};
 
 const fetchRentStatisticsReport = async () => {
   if (!userStore.userInfo || !userStore.userInfo.account) {
@@ -140,6 +264,8 @@ const fetchRentStatisticsReport = async () => {
     const response = await axios.get(`${API_BASE_URL}/RentStatisticsReport`, { params });
     if (response.data && response.data.report) {
       reportData.value = response.data.report;
+      await nextTick();
+      renderCharts();
     } else {
       throw new Error("返回的报表数据格式不正确或为空");
     }
@@ -289,5 +415,34 @@ button:disabled {
 }
 .report-table th {
     background-color: #f7f7f7;
+}
+.export-btn {
+  background-color: #27ae60;
+  margin-left: auto;
+}
+.export-btn:hover {
+  background-color: #229954;
+}
+.export-btn:disabled {
+  background-color: #a3e9a4;
+  cursor: not-allowed;
+}
+.visualization-section {
+  margin-bottom: 24px;
+}
+.chart-container {
+  position: relative;
+  height: 400px;
+  width: 100%;
+  margin-top: 16px;
+}
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.chart-controls select {
+  width: 250px;
 }
 </style>
