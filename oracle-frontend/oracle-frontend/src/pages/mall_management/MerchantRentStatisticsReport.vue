@@ -7,8 +7,12 @@
       <!-- 控制区域 -->
       <div class="controls-container card">
         <div class="form-group">
-          <label for="period-input">统计时间 (YYYYMM):</label>
-          <input type="text" id="period-input" v-model="reportPeriod" placeholder="例如: 202412" />
+          <label for="start-period-input">开始时间:</label>
+          <input type="month" id="start-period-input" v-model="startPeriod" />
+        </div>
+        <div class="form-group">
+          <label for="end-period-input">结束时间:</label>
+          <input type="month" id="end-period-input" v-model="endPeriod" />
         </div>
         <div class="form-group">
           <label for="dimension-select">统计维度:</label>
@@ -21,9 +25,19 @@
         <button @click="fetchRentStatisticsReport" :disabled="loading">
           {{ loading ? '正在生成...' : '生成统计报表' }}
         </button>
+        <button @click="showLogs = !showLogs" class="log-toggle-btn">
+          {{ showLogs ? '隐藏调试日志' : '显示调试日志' }}
+        </button>
         <button @click="exportReportToPDF" :disabled="!reportData" class="export-btn">
           导出PDF
         </button>
+      </div>
+
+      <div v-if="showLogs" class="debug-log card">
+        <h4 class="report-title">调试日志</h4>
+        <div class="log-list">
+          <div v-for="(l, i) in logs" :key="i" class="log-line">{{ l }}</div>
+        </div>
       </div>
 
       <div v-if="loading" class="loading-indicator card">正在加载报表数据...</div>
@@ -124,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, computed } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
 import DashboardLayout from '@/components/BoardLayout.vue';
@@ -137,11 +151,27 @@ Chart.register(...registerables);
 const userStore = useUserStore();
 const API_BASE_URL = '/api/Store';
 
-const reportPeriod = ref('202412');
+const startPeriod = ref('2024-01');
+const endPeriod = ref('2024-12');
 const selectedDimension = ref('all');
 const loading = ref(false);
 const error = ref(null);
 const reportData = ref(null);
+const logs = ref([]);
+const showLogs = ref(false);
+const pushLog = (level, ...args) => {
+  try {
+    const text = args.map(a => {
+      try { return typeof a === 'string' ? a : JSON.stringify(a); } catch (e) { return String(a); }
+    }).join(' ');
+    const prefix = `[${new Date().toLocaleTimeString()}] ${level.toUpperCase()}:`;
+    logs.value.unshift(prefix + ' ' + text);
+    // keep logs length reasonable
+    if (logs.value.length > 200) logs.value.pop();
+  } catch (e) {
+    // ignore logging errors
+  }
+};
 let rentChart = null;
 const selectedChartType = ref('pie');
 
@@ -238,16 +268,28 @@ const exportReportToPDF = async () => {
   const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
   
   pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-  pdf.save(`商户租金统计报表-${reportPeriod.value}.pdf`);
+  pdf.save(`商户租金统计报表-${startPeriod.value}.pdf`);
 };
 
 const fetchRentStatisticsReport = async () => {
+  logs.value = [];
+  const startVal = startPeriod.value;
+  const endVal = endPeriod.value;
+
+  pushLog('info', `生成报表: 维度=${selectedDimension.value}, 开始=${startVal}, 结束=${endVal}`);
   if (!userStore.userInfo || !userStore.userInfo.account) {
     error.value = '无法获取用户信息，请重新登录。';
     return;
   }
-  if (!reportPeriod.value || reportPeriod.value.length !== 6) {
-    error.value = '时间段格式错误，应为YYYYMM格式。';
+
+  const parsedStart = new Date(startVal + '-01');
+  const parsedEnd = new Date(endVal + '-01');
+  if (isNaN(parsedStart.getTime()) || isNaN(parsedEnd.getTime())) {
+    error.value = '无效的日期格式。';
+    return;
+  }
+  if (parsedStart > parsedEnd) {
+    error.value = '开始时间不能晚于结束时间。';
     return;
   }
 
@@ -256,21 +298,99 @@ const fetchRentStatisticsReport = async () => {
   reportData.value = null;
 
   try {
-    const params = {
-      period: reportPeriod.value,
-      dimension: selectedDimension.value,
-      operatorAccount: userStore.userInfo.account,
-    };
-    const response = await axios.get(`${API_BASE_URL}/RentStatisticsReport`, { params });
-    if (response.data && response.data.report) {
-      reportData.value = response.data.report;
-      await nextTick();
-      renderCharts();
-    } else {
-      throw new Error("返回的报表数据格式不正确或为空");
+    const operatorAccount = userStore.userInfo.account;
+    const startPeriodFormatted = startVal.replace('-', '');
+    const endPeriodFormatted = endVal.replace('-', '');
+
+    if (selectedDimension.value === 'all') {
+      // For 'all', fetch trend, basic stats, and combine them
+      const trendPromise = axios.get(`${API_BASE_URL}/RentTrendAnalysis`, {
+        params: { startPeriod: startPeriodFormatted, endPeriod: endPeriodFormatted, operatorAccount }
+      });
+      const basicStatsPromise = axios.get(`${API_BASE_URL}/BasicStatistics`);
+      
+      const [trendResp, basicStatsResp] = await Promise.all([trendPromise, basicStatsPromise]);
+
+      pushLog('debug', `[RentReport] raw trendData: ${JSON.stringify(trendResp.data)}`);
+      pushLog('debug', `[RentReport] raw basicStats: ${JSON.stringify(basicStatsResp.data)}`);
+
+      const trendArr = Array.isArray(trendResp.data.trendData) ? trendResp.data.trendData : [];
+      const totalStores = basicStatsResp.data.totalStores || 0;
+      const totalRevenue = trendArr.reduce((sum, item) => sum + (item.CollectedAmount || 0), 0);
+      const totalBills = trendArr.reduce((sum, item) => sum + (item.TotalBills || 0), 0);
+      const paidBills = trendArr.reduce((sum, item) => sum + (item.PaidBills || 0), 0);
+      const overdueBills = trendArr.reduce((sum, item) => sum + (item.OverdueBills || 0), 0);
+      const collectionRate = totalBills > 0 ? ((paidBills / totalBills) * 100).toFixed(2) : "0.00";
+      
+      reportData.value = {
+        title: `${startVal} - ${endVal} 商户租金综合统计报表`,
+        executiveSummary: {
+          totalStores: totalStores,
+          totalRevenue: totalRevenue,
+          collectionRate: collectionRate,
+          riskLevel: totalBills > 0 ? `${Math.round((overdueBills / totalBills) * 100)}%` : '0%'
+        },
+        financialSummary: {
+          totalAmount: trendArr.reduce((sum, item) => sum + (item.TotalAmount || 0), 0),
+          collectedAmount: totalRevenue,
+          outstandingAmount: trendArr.reduce((sum, item) => sum + (item.TotalAmount || 0), 0) - totalRevenue,
+          collectionRate: collectionRate,
+          avgRentPerStore: totalStores > 0 ? Number((totalRevenue / totalStores).toFixed(2)) : 0
+        },
+        operationalMetrics: {
+          totalBills: totalBills,
+          paidBills: paidBills,
+          overdueBills: overdueBills,
+          pendingBills: totalBills - paidBills - overdueBills,
+          onTimePaymentRate: collectionRate
+        },
+        timeAnalysis: { trend: trendArr },
+        recommendations: trendResp.data.recommendations || []
+      };
+
+    } else if (selectedDimension.value === 'time') {
+      // For 'time', fetch only trend data
+      const resp = await axios.get(`${API_BASE_URL}/RentTrendAnalysis`, {
+        params: { startPeriod: startPeriodFormatted, endPeriod: endPeriodFormatted, operatorAccount }
+      });
+      pushLog('debug', `[RentReport] raw trendData: ${JSON.stringify(resp.data)}`);
+      const trendArr = Array.isArray(resp.data.trendData) ? resp.data.trendData : [];
+      const totalBills = trendArr.reduce((sum, item) => sum + (item.TotalBills || 0), 0);
+      const paidBills = trendArr.reduce((sum, item) => sum + (item.PaidBills || 0), 0);
+      const collectionRate = totalBills > 0 ? ((paidBills / totalBills) * 100).toFixed(2) : "0.00";
+
+      reportData.value = {
+        summary: {
+          totalBills: totalBills,
+          paidBills: paidBills,
+          overdueBills: trendArr.reduce((sum, item) => sum + (item.OverdueBills || 0), 0),
+          collectionRate: collectionRate
+        },
+        insights: [resp.data.message || ''],
+        trend: trendArr,
+      };
+
+    } else if (selectedDimension.value === 'area') {
+      // For 'area', call the specific report endpoint
+      const resp = await axios.get(`${API_BASE_URL}/RentStatisticsReport`, {
+        params: { startPeriod: startPeriodFormatted, endPeriod: endPeriodFormatted, dimension: 'area', operatorAccount }
+      });
+      pushLog('debug', `[RentReport] raw areaData: ${JSON.stringify(resp.data)}`);
+      if (resp.data && resp.data.report) {
+        reportData.value = resp.data.report;
+      } else {
+        throw new Error('区域报表数据格式不正确');
+      }
     }
+
+    await nextTick();
+    if (selectedDimension.value === 'all') {
+      renderCharts();
+    }
+
   } catch (err) {
     console.error('Failed to fetch rent statistics report:', err);
+    pushLog('error', 'Failed to fetch rent statistics report:', err && err.message ? err.message : String(err));
     if (err.response) {
       error.value = `报表生成失败: ${err.response.data.error || err.response.statusText}`;
     } else if (err.request) {

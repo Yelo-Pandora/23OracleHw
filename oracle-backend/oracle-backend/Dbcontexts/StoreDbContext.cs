@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using oracle_backend.Models;
 
 namespace oracle_backend.Dbcontexts
@@ -505,29 +506,31 @@ namespace oracle_backend.Dbcontexts
         /// </summary>
         public async Task<RentCollectionStatistics> GetRentCollectionStatistics(string period)
         {
-            // 获取所有正常营业的店铺
-            var totalStores = await STORE.CountAsync(s => s.STORE_STATUS == "正常营业");
-            var totalRent = await (from store in STORE
-                                 join rentStore in RENT_STORE on store.STORE_ID equals rentStore.STORE_ID
-                                 join retailArea in RETAIL_AREA on rentStore.AREA_ID equals retailArea.AREA_ID
-                                 where store.STORE_STATUS == "正常营业"
-                                 select retailArea.BASE_RENT).SumAsync();
+            // 基于账单明细按期计算统计数据（不再使用全量模拟值）
+            var request = new RentBillQueryRequest
+            {
+                BillPeriod = period
+            };
 
-            // 模拟统计数据
-            var paidBills = (int)(totalStores * 0.7); // 假设70%已缴纳
-            var overdueBills = (int)(totalStores * 0.2); // 假设20%逾期
-            var paidAmount = (decimal)totalRent * 0.7m; // 对应已缴纳的金额
-            var collectionRate = totalStores > 0 ? Math.Round((double)paidBills / totalStores * 100, 2) : 0;
+            var bills = await GetRentBillsDetails(request);
+
+            var totalBills = bills.Count;
+            var paidBills = bills.Count(b => b.BillStatus == "已缴纳");
+            var overdueBills = bills.Count(b => b.BillStatus == "逾期" || b.BillStatus == "预警");
+            var totalAmount = bills.Sum(b => b.TotalAmount);
+            var paidAmount = bills.Where(b => b.BillStatus == "已缴纳").Sum(b => b.TotalAmount);
+            var overdueAmount = bills.Where(b => b.BillStatus == "逾期" || b.BillStatus == "预警").Sum(b => b.TotalAmount);
+            var collectionRate = totalBills > 0 ? Math.Round((double)paidBills / totalBills * 100, 2) : 0;
 
             return new RentCollectionStatistics
             {
                 Period = period,
-                TotalBills = totalStores,
+                TotalBills = totalBills,
                 PaidBills = paidBills,
                 OverdueBills = overdueBills,
-                TotalAmount = (decimal)totalRent,
+                TotalAmount = totalAmount,
                 PaidAmount = paidAmount,
-                OverdueAmount = (decimal)totalRent - paidAmount,
+                OverdueAmount = overdueAmount,
                 CollectionRate = collectionRate
             };
         }
