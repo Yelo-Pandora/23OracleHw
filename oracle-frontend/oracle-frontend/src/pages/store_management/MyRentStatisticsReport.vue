@@ -1,40 +1,40 @@
 <template>
   <DashboardLayout>
-    <div class="my-rent-report">
-      <h2>我的租金统计</h2>
-      <p class="subtitle">查看您所有商铺的租金账单和统计信息。</p>
+    <div class="page-container">
+      <div class="page-header">
+        <h1>我的租金统计</h1>
+        <p>查看您所有商铺的租金账单和统计信息。</p>
+      </div>
 
-      <div v-if="loading" class="loading-indicator card">正在加载您的租金数据...</div>
-      <div v-if="error" class="error-message card">{{ error }}</div>
+      <div v-if="loading" class="status-card">正在加载您的租金数据...</div>
+      <div v-if="error" class="status-card error">{{ error }}</div>
 
-      <div v-if="rentData" class="report-container">
+      <div v-if="rentData" class="report-content">
         <!-- 租金概览 -->
-        <div class="stats-overview-container">
-          <div class="stats-grid">
-            <div class="stats-card card-primary">
-              <h3>{{ rentData.totalBills }}</h3>
-              <small>账单总数</small>
-            </div>
-            <div class="stats-card card-success">
-              <h3>¥{{ totalPaid.toLocaleString() }}</h3>
-              <small>已付总额</small>
-            </div>
-            <div class="stats-card card-danger">
-              <h3>{{ overdueBills }}</h3>
-              <small>逾期账单</small>
-            </div>
-            <div class="stats-card card-warning">
-              <h3>¥{{ totalDue.toLocaleString() }}</h3>
-              <small>待付总额</small>
-            </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <h3>{{ rentData.totalBills }}</h3>
+            <p>账单总数</p>
+          </div>
+          <div class="stat-item">
+            <h3>¥{{ totalPaid.toLocaleString() }}</h3>
+            <p>已付总额</p>
+          </div>
+          <div class="stat-item">
+            <h3>{{ overdueBills }}</h3>
+            <p>逾期账单</p>
+          </div>
+          <div class="stat-item">
+            <h3>¥{{ totalDue.toLocaleString() }}</h3>
+            <p>待付总额</p>
           </div>
         </div>
 
         <!-- 账单明细 -->
-        <div class="rent-details card">
-          <h4 class="report-title">租金账单明细</h4>
+        <div class="content-card">
+          <h4>租金账单明细</h4>
           <div class="table-container">
-            <table class="report-table">
+            <table class="bill-table">
               <thead>
                 <tr>
                   <th>账单周期</th>
@@ -51,7 +51,7 @@
                   <td>{{ bill.storeName }}</td>
                   <td>¥{{ bill.totalAmount.toLocaleString() }}</td>
                   <td>
-                    <span :class="['status-badge', getStatusClass(bill.billStatus)]">
+                    <span class="status-tag" :class="getStatusClass(bill.billStatus)">
                       {{ bill.billStatus }}
                     </span>
                   </td>
@@ -148,96 +148,102 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.my-rent-report {
-  padding: 16px;
+:root {
+  --primary-color: #1abc9c;
+  --success-color: #2ecc71;
+  --warning-color: #f39c12;
+  --danger-color: #e74c3c;
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius: 12px;
+}
+
+.page-container {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
-.card {
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 24px;
-}
-h2 {
-  font-size: 22px;
-  color: #333;
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 600;
   margin-bottom: 4px;
 }
-.subtitle {
-  color: #666;
+
+.page-header p {
   font-size: 14px;
-  margin: 0 0 16px 0;
+  color: #7f8c8d;
 }
-.loading-indicator, .error-message {
+
+.status-card {
   text-align: center;
-  padding: 20px;
+  padding: 40px 20px;
   font-size: 16px;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
-.error-message {
-  color: #c00;
+.status-card.error {
+  color: var(--danger-color);
   background-color: #fbeae5;
-  border: 1px solid #c00;
 }
-.stats-overview-container {
-  margin-bottom: 24px;
+
+.report-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
+
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
 }
-.stats-card {
-  text-align: center;
+
+.stat-item {
+  background: var(--card-bg);
   padding: 20px;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
+  border-radius: var(--border-radius);
+  text-align: center;
+  box-shadow: var(--card-shadow);
 }
-.stats-card h3 {
-  margin: 0;
-  font-size: 24px;
+.stat-item h3 { margin: 0 0 8px 0; font-size: 28px; font-weight: 600; color: var(--primary-color); }
+.stat-item p { margin: 0; color: #7f8c8d; }
+
+.content-card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 24px;
 }
-.stats-card small {
-  font-size: 12px;
-  opacity: 0.9;
-}
-.card-primary { background: linear-gradient(135deg, #3498db, #2980b9); }
-.card-success { background: linear-gradient(135deg, #27ae60, #229954); }
-.card-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-.card-warning { background: linear-gradient(135deg, #f39c12, #e67e22); }
-.report-title {
-  color: #333;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-.table-container {
-  overflow-x: auto;
-}
-.report-table {
+.content-card h4 { font-size: 18px; margin-bottom: 16px; }
+
+.table-container { overflow-x: auto; }
+.bill-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 14px;
 }
-.report-table th, .report-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
+.bill-table th, .bill-table td {
+  border-bottom: 1px solid #eee;
+  padding: 16px;
   text-align: left;
+  vertical-align: middle;
 }
-.report-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
+.bill-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #555;
 }
-.status-badge {
-  padding: 3px 8px;
+
+.status-tag {
+  padding: 4px 10px;
   border-radius: 12px;
+  font-weight: 500;
   font-size: 12px;
-  font-weight: bold;
   color: white;
 }
-.status-paid { background-color: #27ae60; }
-.status-pending { background-color: #f39c12; }
-.status-overdue { background-color: #e74c3c; }
+.status-paid { background-color: var(--success-color); }
+.status-pending { background-color: var(--warning-color); }
+.status-overdue { background-color: var(--danger-color); }
 </style>

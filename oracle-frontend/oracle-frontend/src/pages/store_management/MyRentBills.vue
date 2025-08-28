@@ -1,15 +1,16 @@
 <template>
   <DashboardLayout>
-    <div class="my-rent-bills-page">
-      <h2>我的租金账单</h2>
-      <p class="subtitle">查看并支付您的月度租金账单。</p>
+    <div class="page-container">
+      <div class="page-header">
+        <h1>我的租金账单</h1>
+        <p>查看并支付您的月度租金账单。</p>
+      </div>
 
-      <div class="list-container card">
-        <h3>账单列表</h3>
-        <div v-if="loading" class="loading-indicator">正在加载账单...</div>
-        <div v-if="error" class="error-message">{{ error }}</div>
-        <div v-if="!loading && bills.length === 0" class="info-message">您当前没有租金账单。</div>
-        
+      <div class="content-card">
+        <div v-if="loading" class="status-card">正在加载账单...</div>
+        <div v-if="error" class="status-card error">{{ error }}</div>
+        <div v-if="!loading && bills.length === 0" class="status-card">您当前没有租金账单。</div>
+
         <div v-if="bills.length > 0" class="table-container">
           <table class="bill-table">
             <thead>
@@ -28,12 +29,12 @@
                 <td>{{ bill.StoreName }}</td>
                 <td>¥{{ bill.TotalAmount.toFixed(2) }}</td>
                 <td>{{ new Date(bill.DueDate).toLocaleDateString() }}</td>
-                <td><span :class="`status-${bill.BillStatus}`">{{ bill.BillStatus }}</span></td>
+                <td><span class="status-tag" :class="`status-${bill.BillStatus}`">{{ bill.BillStatus }}</span></td>
                 <td>
-                  <button 
-                    v-if="bill.BillStatus === '待缴纳' || bill.BillStatus === '逾期'" 
-                    @click="payBill(bill)" 
-                    class="pay-btn"
+                  <button
+                    v-if="bill.BillStatus === '待缴纳' || bill.BillStatus === '逾期'"
+                    @click="payBill(bill)"
+                    class="btn-success"
                     :disabled="bill.payLoading">
                     {{ bill.payLoading ? '支付中...' : '立即支付' }}
                   </button>
@@ -114,50 +115,56 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.my-rent-bills-page {
-  padding: 16px;
+:root {
+  --primary-color: #1abc9c;
+  --success-color: #2ecc71;
+  --warning-color: #f39c12;
+  --danger-color: #e74c3c;
+  --info-color: #3498db;
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius: 12px;
 }
 
-.card {
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 24px;
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-h2 {
-  font-size: 22px;
-  color: #333;
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 600;
   margin-bottom: 4px;
 }
 
-.subtitle {
-  color: #666;
+.page-header p {
   font-size: 14px;
-  margin-bottom: 24px;
+  color: #7f8c8d;
 }
 
-.list-container h3 {
-  font-size: 18px;
-  margin-top: 0;
-  margin-bottom: 16px;
+.content-card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 24px;
 }
 
-.loading-indicator, .info-message, .error-message {
+.status-card {
   text-align: center;
-  padding: 20px;
+  padding: 40px 20px;
   font-size: 16px;
   color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
-
-.error-message {
-  color: #c00;
+.status-card.error {
+  color: var(--danger-color);
   background-color: #fbeae5;
-  border-radius: 4px;
 }
 
 .table-container {
-    overflow-x: auto;
+  overflow-x: auto;
 }
 
 .bill-table {
@@ -168,8 +175,9 @@ h2 {
 
 .bill-table th, .bill-table td {
   border-bottom: 1px solid #eee;
-  padding: 12px 16px;
+  padding: 16px;
   text-align: left;
+  vertical-align: middle;
 }
 
 .bill-table th {
@@ -178,28 +186,34 @@ h2 {
   color: #555;
 }
 
-.pay-btn {
-  background-color: #27ae60;
-  color: white;
+.btn-success {
   padding: 8px 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
+  font-weight: 500;
+  background-color: #2ecc71;
+  color: white;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.btn-success:hover:not(:disabled) { 
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
+.btn-success:disabled { 
+  background-color: #a3e9a4; 
+  cursor: not-allowed; 
 }
 
-.pay-btn:hover {
-  background-color: #219a52;
+.status-tag {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 12px;
+  color: white;
 }
-
-.pay-btn:disabled {
-  background-color: #a3d9b8;
-  cursor: not-allowed;
-}
-
-.status-待缴纳 { color: #e67e22; font-weight: bold; }
-.status-已缴纳 { color: #27ae60; font-weight: bold; }
-.status-已确认 { color: #2980b9; font-weight: bold; }
-.status-逾期 { color: #c0392b; font-weight: bold; }
+.status-待缴纳 { background-color: var(--warning-color); }
+.status-已缴纳 { background-color: var(--success-color); }
+.status-已确认 { background-color: var(--info-color); }
+.status-逾期 { background-color: var(--danger-color); }
 </style>

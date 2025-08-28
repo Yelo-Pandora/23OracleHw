@@ -1,70 +1,60 @@
 <template>
   <DashboardLayout>
-    <div class="store-status-request">
-      <h2>店面状态变更申请</h2>
-      <p>提交店铺状态变更申请（如退租、维修、暂停营业等）</p>
-
-      <div class="form-section">
-        <div class="form-group">
-          <label>选择店面：</label>
-          <select v-model="form.storeId" @change="onStoreChange">
-            <option value="">请选择店面</option>
-            <option v-for="store in stores" :key="store.STORE_ID" :value="store.STORE_ID">
-              {{ store.STORE_ID }} - {{ store.STORE_NAME }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>变更类型：</label>
-          <select v-model="form.changeType" @change="updateTargetStatus">
-            <option value="">请选择变更类型</option>
-            <option v-for="type in allowedTypes" :key="type" :value="type">
-              {{ getChangeTypeLabel(type) }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>目标状态：</label>
-          <input type="text" v-model="form.targetStatus" readonly placeholder="根据变更类型自动确定" />
-        </div>
-
-        <div class="form-group">
-          <label>申请原因：</label>
-          <textarea v-model="form.reason" placeholder="请详细说明状态变更的原因..." rows="4"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>申请人账号：</label>
-          <input type="text" v-model="form.applicantAccount" :placeholder="accountPlaceholder" />
-        </div>
-
-        <div class="form-actions">
-          <button class="btn-primary" @click="submitRequest" :disabled="submitting">
-            {{ submitting ? '提交中...' : '提交申请' }}
-          </button>
-          <button class="btn-secondary" @click="refreshStoreStatus" :disabled="!form.storeId">
-            查询当前状态
-          </button>
-          <button class="btn-secondary" @click="resetForm">
-            重置表单
-          </button>
-        </div>
+    <div class="page-container">
+      <div class="page-header">
+        <h1>店面状态变更申请</h1>
+        <p>提交店铺状态变更申请（如退租、维修、暂停营业等）。</p>
       </div>
 
-      <div v-if="message" :class="['message', messageType]">
-        {{ message }}
-      </div>
+      <div class="content-grid">
+        <div class="form-card">
+          <div class="form-group">
+            <label>选择店面</label>
+            <select v-model="form.storeId" @change="onStoreChange">
+              <option value="">请选择店面</option>
+              <option v-for="store in stores" :key="store.STORE_ID" :value="store.STORE_ID">
+                {{ store.STORE_ID }} - {{ store.STORE_NAME }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>变更类型</label>
+            <select v-model="form.changeType" @change="updateTargetStatus">
+              <option value="">请选择变更类型</option>
+              <option v-for="type in allowedTypes" :key="type" :value="type">{{ getChangeTypeLabel(type) }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>目标状态</label>
+            <input type="text" v-model="form.targetStatus" readonly placeholder="根据变更类型自动确定" />
+          </div>
+          <div class="form-group">
+            <label>申请原因</label>
+            <textarea v-model="form.reason" placeholder="请详细说明状态变更的原因..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>申请人账号</label>
+            <input type="text" v-model="form.applicantAccount" :placeholder="accountPlaceholder" />
+          </div>
+          <div class="actions">
+            <button class="btn-primary" @click="submitRequest" :disabled="submitting">{{ submitting ? '提交中...' : '提交申请' }}</button>
+            <button class="btn-secondary" @click="refreshStoreStatus" :disabled="!form.storeId">查询状态</button>
+            <button class="btn-secondary" @click="resetForm">重置</button>
+          </div>
+        </div>
 
-      <div v-if="storeStatus" class="status-info">
-        <h3>当前店面状态信息</h3>
-        <div class="status-details">
-          <p><strong>店铺名称：</strong>{{ storeStatus.storeName }}</p>
-          <p><strong>当前状态：</strong>{{ storeStatus.currentStatus }}</p>
-          <p><strong>租户名称：</strong>{{ storeStatus.tenantName }}</p>
-          <p><strong>是否有租用记录：</strong>{{ storeStatus.hasRentRecord ? '是' : '否' }}</p>
-          <p><strong>可申请变更：</strong>{{ storeStatus.canApplyStatusChange ? '是' : '否' }}</p>
+        <div class="info-sidebar">
+          <div v-if="storeStatus" class="info-card">
+            <h4>当前店面状态</h4>
+            <p><strong>店铺名称：</strong>{{ storeStatus.storeName }}</p>
+            <p><strong>当前状态：</strong>{{ storeStatus.currentStatus }}</p>
+            <p><strong>租户名称：</strong>{{ storeStatus.tenantName }}</p>
+            <p><strong>有租用记录：</strong>{{ storeStatus.hasRentRecord ? '是' : '否' }}</p>
+            <p><strong>可申请变更：</strong>{{ storeStatus.canApplyStatusChange ? '是' : '否' }}</p>
+          </div>
+          <div v-if="message" :class="['form-message', messageType]">
+            {{ message }}
+          </div>
         </div>
       </div>
     </div>
@@ -336,149 +326,102 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.store-status-request {
-  max-width: 800px;
-  margin: 0 auto;
+:root {
+  --primary-color: #1abc9c;
+  --secondary-color: #7f8c8d;
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius: 12px;
+  --input-border-color: #dee2e6;
 }
 
-.form-section {
-  background: white;
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+.page-header p { font-size: 14px; color: var(--secondary-color); }
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.form-card, .info-card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
   padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+}
+
+.info-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .form-group {
-  margin-bottom: 20px;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
 }
-
-.form-group label {
-  width: 120px;
-  font-weight: 600;
-  color: #333;
-  margin-top: 8px;
-  flex-shrink: 0;
-}
-
-.form-group select,
-.form-group input,
-.form-group textarea {
-  flex: 1;
+.form-group label { font-weight: 500; font-size: 14px; }
+.form-group input, .form-group select, .form-group textarea {
   padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: border-color 0.2s;
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
 }
+.form-group textarea { min-height: 100px; }
 
-.form-group select:focus,
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #1abc9c;
-  box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.2);
-}
-
-.form-actions {
-  margin-top: 30px;
+.actions {
   display: flex;
   gap: 12px;
-  justify-content: flex-start;
+  margin-top: 24px;
 }
-
-.btn-primary {
-  background-color: #1abc9c;
-  color: white;
+.btn-primary, .btn-secondary {
+  padding: 10px 20px;
   border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: background-color 0.2s;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #16a085;
-}
-
-.btn-primary:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background-color: #95a5a6;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: background-color 0.2s;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background-color: #7f8c8d;
-}
-
-.btn-secondary:disabled {
-  background-color: #ecf0f1;
-  color: #7f8c8d;
-  cursor: not-allowed;
-}
-
-.message {
-  margin-top: 20px;
-  padding: 16px;
-  border-radius: 4px;
-  font-size: 14px;
-  white-space: pre-line;
-}
-
-.message.info {
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  color: #155724;
-}
-
-.message.success {
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  color: #155724;
-}
-
-.message.error {
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  color: #721c24;
-}
-
-.status-info {
-  background: white;
-  padding: 24px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.btn-primary { background-color: var(--primary-color); color: white; }
+.btn-primary:hover:not(:disabled) { 
+  background-color: #16a085;
+  transform: translateY(-2px);
+}
+.btn-primary:disabled { 
+  background-color: #a3e9a4; 
+  cursor: not-allowed; 
+}
+.btn-secondary { background-color: #ecf0f1; color: #34495e; }
+.btn-secondary:hover:not(:disabled) { 
+  background-color: #bdc3c7;
+  transform: translateY(-2px);
 }
 
-.status-info h3 {
-  margin-top: 0;
-  color: #333;
-  border-bottom: 2px solid #1abc9c;
-  padding-bottom: 8px;
-}
+.info-card h4 { font-size: 18px; margin-bottom: 16px; }
+.info-card p { margin: 0 0 12px 0; }
+.info-card p strong { color: #333; }
 
-.status-details p {
-  margin: 8px 0;
-  color: #555;
+.form-message {
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
 }
+.form-message.success { color: #27ae60; background-color: #e8f8f5; }
+.form-message.error { color: #e74c3c; background-color: #fbeae5; }
+.form-message.info { color: #3498db; background-color: #eaf4fb; }
 
-.status-details strong {
-  color: #333;
+@media (max-width: 992px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

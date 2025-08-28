@@ -1,12 +1,14 @@
 <template>
   <DashboardLayout>
-    <div class="store-status-approval">
-      <h2>店面状态审批管理</h2>
-      <p>审批商户提交的店面状态变更申请</p>
+    <div class="page-container">
+      <div class="page-header">
+        <h1>店面状态审批管理</h1>
+        <p>审批商户提交的店面状态变更申请。</p>
+      </div>
 
-      <div class="approval-controls">
-        <div class="control-group">
-          <label>选择店面（可选）：</label>
+      <div class="controls-card">
+        <div class="form-group">
+          <label>选择店面</label>
           <select v-model="filters.storeId">
             <option value="">全部店面</option>
             <option v-for="store in stores" :key="store.STORE_ID" :value="store.STORE_ID">
@@ -14,9 +16,8 @@
             </option>
           </select>
         </div>
-
-        <div class="control-group">
-          <label>申请状态：</label>
+        <div class="form-group">
+          <label>申请状态</label>
           <select v-model="filters.status">
             <option value="Pending">待审批</option>
             <option value="Approved">已通过</option>
@@ -24,82 +25,62 @@
             <option value="">全部状态</option>
           </select>
         </div>
-
-        <div class="control-actions">
-          <button class="btn-primary" @click="fetchApplications" :disabled="loading">
-            {{ loading ? '加载中...' : '刷新申请列表' }}
-          </button>
-        </div>
+        <button class="btn-primary" @click="fetchApplications" :disabled="loading">
+          {{ loading ? '加载中...' : '刷新列表' }}
+        </button>
       </div>
 
-      <div v-if="applications.length === 0" class="empty-state">
-        <p>暂无申请记录</p>
-      </div>
-
-      <div v-else class="applications-list">
+      <div v-if="loading" class="status-card">正在加载申请列表...</div>
+      <div v-if="!loading && applications.length === 0" class="status-card">暂无申请记录</div>
+      
+      <div v-if="applications.length > 0" class="applications-list">
         <div v-for="app in applications" :key="app.applicationNo" class="application-item">
           <div class="application-header">
-            <div class="application-meta">
-              <h3>申请编号：{{ app.applicationNo }}</h3>
-              <div class="meta-details">
-                <span class="store-info">店铺：{{ app.storeId }} - {{ app.storeName || '未知店铺' }}</span>
-                <span class="change-type">变更类型：{{ getChangeTypeLabel(app.changeType) }}</span>
-                <span class="applicant">申请人：{{ app.applicant }}</span>
-                <span class="created-time">申请时间：{{ formatDate(app.createdAt) }}</span>
-                <span :class="['status-badge', getStatusClass(app.status)]">{{ getStatusLabel(app.status) }}</span>
-              </div>
-            </div>
+            <h3>申请编号：{{ app.applicationNo }}</h3>
+            <span class="status-tag" :class="getStatusClass(app.status)">{{ getStatusLabel(app.status) }}</span>
           </div>
-
+          <div class="application-meta">
+            <span><strong>店铺：</strong>{{ app.storeId }} - {{ app.storeName || '未知店铺' }}</span>
+            <span><strong>变更类型：</strong>{{ getChangeTypeLabel(app.changeType) }}</span>
+            <span><strong>申请人：</strong>{{ app.applicant }}</span>
+            <span><strong>申请时间：</strong>{{ formatDate(app.createdAt) }}</span>
+          </div>
           <div class="application-content">
             <div class="reason-section">
-              <h4>申请原因：</h4>
+              <h4>申请原因</h4>
               <p>{{ app.reason }}</p>
             </div>
-
-            <div v-if="app.status === 'Pending'" class="approval-section">
-              <h4>审批操作：</h4>
-              <div class="approval-form">
-                <div class="form-row">
-                  <label>审批结果：</label>
+            <div v-if="app.status === 'Pending'" class="approval-form">
+              <h4>审批操作</h4>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>审批结果</label>
                   <select v-model="approvalData[app.applicationNo].action" @change="onApprovalActionChange(app.applicationNo)">
                     <option value="通过">通过</option>
                     <option value="驳回">驳回</option>
                   </select>
                 </div>
-
-                <div v-if="approvalData[app.applicationNo].action === '通过'" class="form-row">
-                  <label>目标状态：</label>
+                <div class="form-group" v-if="approvalData[app.applicationNo].action === '通过'">
+                  <label>目标状态</label>
                   <select v-model="approvalData[app.applicationNo].targetStatus">
-                    <option v-for="status in availableTargetStatuses" :key="status" :value="status">
-                      {{ status }}
-                    </option>
+                    <option v-for="status in availableTargetStatuses" :key="status" :value="status">{{ status }}</option>
                   </select>
                 </div>
-
-                <div class="form-row">
-                  <label>审批意见：</label>
-                  <textarea v-model="approvalData[app.applicationNo].comment"
-                           :placeholder="approvalData[app.applicationNo].action === '驳回' ? '请输入驳回原因...' : '请输入审批意见...'"
-                           rows="3"></textarea>
+                <div class="form-group full-width">
+                  <label>审批意见</label>
+                  <textarea v-model="approvalData[app.applicationNo].comment" :placeholder="approvalData[app.applicationNo].action === '驳回' ? '请输入驳回原因...' : '请输入审批意见...'"></textarea>
                 </div>
-
-                <div class="form-row">
-                  <label>审批人账号：</label>
-                  <input type="text" v-model="approvalData[app.applicationNo].approverAccount"
-                        :placeholder="approverPlaceholder" />
-                </div>
-
-                <div class="form-actions">
-                  <button class="btn-success" @click="submitApproval(app)" :disabled="submitting[app.applicationNo]">
-                    {{ submitting[app.applicationNo] ? '提交中...' : '提交审批' }}
-                  </button>
+                <div class="form-group">
+                  <label>审批人账号</label>
+                  <input type="text" v-model="approvalData[app.applicationNo].approverAccount" :placeholder="approverPlaceholder" />
                 </div>
               </div>
+              <button class="btn-success" @click="submitApproval(app)" :disabled="submitting[app.applicationNo]">
+                {{ submitting[app.applicationNo] ? '提交中...' : '提交审批' }}
+              </button>
             </div>
-
             <div v-else class="approval-result">
-              <h4>审批结果：</h4>
+              <h4>审批结果</h4>
               <p><strong>审批结果：</strong>{{ app.status === 'Approved' ? '通过' : '驳回' }}</p>
               <p><strong>审批人：</strong>{{ app.approver || '系统' }}</p>
               <p><strong>审批时间：</strong>{{ app.approvalTime ? formatDate(app.approvalTime) : '未知' }}</p>
@@ -109,7 +90,7 @@
         </div>
       </div>
 
-      <div v-if="message" :class="['message', messageType]">
+      <div v-if="message" :class="['form-message', messageType]">
         {{ message }}
       </div>
     </div>
@@ -354,251 +335,155 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.store-status-approval {
-  max-width: 1200px;
-  margin: 0 auto;
+:root {
+  --primary-color: #1abc9c;
+  --success-color: #2ecc71;
+  --warning-color: #f39c12;
+  --danger-color: #e74c3c;
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius: 12px;
+  --input-border-color: #dee2e6;
 }
 
-.approval-controls {
-  background: white;
-  padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+.page-container {
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+.page-header p { font-size: 14px; color: #7f8c8d; }
+
+.controls-card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 24px;
+  display: flex;
   align-items: flex-end;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
-.control-group {
+.form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
-.control-group label {
-  font-weight: 600;
-  color: #333;
-}
-
-.control-group select {
+.form-group label { font-weight: 500; font-size: 14px; }
+.form-group input, .form-group select, .form-group textarea {
   padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  min-width: 200px;
-}
-
-.control-actions {
-  display: flex;
-  align-items: flex-end;
-}
-
-.btn-primary {
-  background-color: #1abc9c;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: background-color 0.2s;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #16a085;
-}
-
-.btn-primary:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: #666;
-  background: white;
+  border: 1px solid var(--input-border-color);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  min-width: 220px;
+}
+
+.btn-primary, .btn-success {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.btn-primary { background-color: var(--primary-color); color: white; }
+.btn-primary:hover:not(:disabled) { 
+  background-color: #16a085;
+  transform: translateY(-2px);
+}
+.btn-primary:disabled { 
+  background-color: #a3e9a4; 
+  cursor: not-allowed; 
+}
+.btn-success { background-color: var(--success-color); color: white; }
+.btn-success:hover:not(:disabled) { 
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
+.btn-success:disabled { 
+  background-color: #a3e9a4; 
+  cursor: not-allowed; 
+}
+
+.status-card {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 16px;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
 
 .applications-list {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .application-item {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
 }
 
 .application-header {
-  background: #f8f9fa;
-  padding: 16px 24px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.application-meta h3 {
-  margin: 0 0 12px 0;
-  color: #333;
-  font-size: 18px;
-}
-
-.meta-details {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #eee;
+}
+.application-header h3 { font-size: 18px; margin: 0; }
+
+.application-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+  padding: 16px 24px;
   font-size: 14px;
-  color: #666;
-}
-
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status-badge.pending {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.status-badge.approved {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.status-badge.rejected {
-  background-color: #f8d7da;
-  color: #721c24;
 }
 
 .application-content {
   padding: 24px;
+  border-top: 1px solid #eee;
 }
-
-.reason-section h4,
-.approval-section h4,
-.approval-result h4 {
-  margin: 0 0 12px 0;
-  color: #333;
-  font-size: 16px;
-}
-
-.reason-section p {
-  margin: 0;
-  color: #555;
-  line-height: 1.6;
-}
+.application-content h4 { font-size: 16px; margin-bottom: 12px; }
 
 .approval-form {
-  background: #f8f9fa;
+  background-color: #f9f9f9;
   padding: 20px;
-  border-radius: 6px;
+  border-radius: 8px;
+  margin-top: 16px;
 }
-
-.form-row {
-  margin-bottom: 16px;
-  display: flex;
-  align-items: flex-start;
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
 }
+.form-group.full-width { grid-column: 1 / -1; }
 
-.form-row label {
-  width: 100px;
-  font-weight: 600;
-  color: #333;
-  margin-top: 8px;
-  flex-shrink: 0;
-}
+.approval-result p { margin: 8px 0; }
 
-.form-row select,
-.form-row input,
-.form-row textarea {
-  flex: 1;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-
-.form-row select:focus,
-.form-row input:focus,
-.form-row textarea:focus {
-  outline: none;
-  border-color: #1abc9c;
-  box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.2);
-}
-
-.form-actions {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.btn-success {
-  background-color: #28a745;
+.status-tag {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 12px;
   color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: background-color 0.2s;
 }
+.pending { background-color: var(--warning-color); }
+.approved { background-color: var(--success-color); }
+.rejected { background-color: var(--danger-color); }
 
-.btn-success:hover:not(:disabled) {
-  background-color: #218838;
-}
-
-.btn-success:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-.approval-result p {
-  margin: 8px 0;
-  color: #555;
-}
-
-.approval-result strong {
-  color: #333;
-}
-
-.message {
+.form-message {
   margin-top: 20px;
   padding: 16px;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 14px;
-  white-space: pre-line;
 }
-
-.message.info {
-  background-color: #d1ecf1;
-  border: 1px solid #bee5eb;
-  color: #0c5460;
-}
-
-.message.success {
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  color: #155724;
-}
-
-.message.error {
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  color: #721c24;
-}
+.form-message.success { color: #27ae60; background-color: #e8f8f5; }
+.form-message.error { color: #e74c3c; background-color: #fbeae5; }
+.form-message.info { color: #3498db; background-color: #eaf4fb; }
 </style>

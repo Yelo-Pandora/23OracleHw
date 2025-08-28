@@ -1,56 +1,62 @@
 <template>
   <DashboardLayout>
-    <div class="rent-statistics-report">
-      <h2>商户租金统计报表</h2>
-      <p class="subtitle">分析商户租金收缴情况、欠款明细及历史趋势。</p>
-
-      <!-- 控制区域 -->
-      <div class="controls-container card">
-        <div class="form-group">
-          <label for="start-period-input">开始时间:</label>
-          <input type="month" id="start-period-input" v-model="startPeriod" />
-        </div>
-        <div class="form-group">
-          <label for="end-period-input">结束时间:</label>
-          <input type="month" id="end-period-input" v-model="endPeriod" />
-        </div>
-        <div class="form-group">
-          <label for="dimension-select">统计维度:</label>
-          <select id="dimension-select" v-model="selectedDimension">
-            <option value="all">综合分析</option>
-            <option value="time">时间维度</option>
-            <option value="area">区域维度</option>
-          </select>
-        </div>
-        <button @click="fetchRentStatisticsReport" :disabled="loading">
-          {{ loading ? '正在生成...' : '生成统计报表' }}
-        </button>
-        <button @click="showLogs = !showLogs" class="log-toggle-btn">
-          {{ showLogs ? '隐藏调试日志' : '显示调试日志' }}
-        </button>
-        <button @click="exportReportToPDF" :disabled="!reportData" class="export-btn">
-          导出PDF
-        </button>
+    <div class="report-container">
+      <div class="page-header">
+        <h1>商户租金统计报表</h1>
+        <p>分析商户租金收缴情况、欠款明细及历史趋势。</p>
       </div>
 
-      <div v-if="showLogs" class="debug-log card">
-        <h4 class="report-title">调试日志</h4>
+      <!-- 控制区域 -->
+      <div class="controls-card">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="start-period-input">开始时间</label>
+            <input type="month" id="start-period-input" v-model="startPeriod" />
+          </div>
+          <div class="form-group">
+            <label for="end-period-input">结束时间</label>
+            <input type="month" id="end-period-input" v-model="endPeriod" />
+          </div>
+          <div class="form-group">
+            <label for="dimension-select">统计维度</label>
+            <select id="dimension-select" v-model="selectedDimension">
+              <option value="all">综合分析</option>
+              <option value="time">时间维度</option>
+              <option value="area">区域维度</option>
+            </select>
+          </div>
+        </div>
+        <div class="button-group">
+          <button class="btn-primary" @click="fetchRentStatisticsReport" :disabled="loading">
+            {{ loading ? '生成中...' : '生成报表' }}
+          </button>
+          <button class="btn-secondary" @click="showLogs = !showLogs">
+            {{ showLogs ? '隐藏日志' : '显示日志' }}
+          </button>
+          <button class="btn-success" @click="exportReportToPDF" :disabled="!reportData">
+            导出PDF
+          </button>
+        </div>
+      </div>
+
+      <div v-if="showLogs" class="logs-card">
+        <h4>调试日志</h4>
         <div class="log-list">
           <div v-for="(l, i) in logs" :key="i" class="log-line">{{ l }}</div>
         </div>
       </div>
 
-      <div v-if="loading" class="loading-indicator card">正在加载报表数据...</div>
-      <div v-if="error" class="error-message card">{{ error }}</div>
+      <div v-if="loading" class="status-card">正在加载报表数据...</div>
+      <div v-if="error" class="status-card error">{{ error }}</div>
 
       <!-- 报表结果展示 -->
-      <div v-if="reportData" id="reportToExport" class="report-container card">
+      <div v-if="reportData" id="reportToExport" class="report-content-card">
         <h3 class="report-main-title">{{ reportData.title }}</h3>
 
         <!-- 数据可视化 -->
         <div class="visualization-section" v-if="selectedDimension === 'all' && reportData.operationalMetrics">
           <div class="chart-controls">
-            <h4 class="report-title">数据可视化</h4>
+            <h4>数据可视化</h4>
             <select v-model="selectedChartType" @change="renderCharts">
               <option value="pie">租金状态分布 (饼图)</option>
               <option value="bar">收缴情况对比 (柱状图)</option>
@@ -65,57 +71,55 @@
           </div>
         </div>
 
-        <!-- 综合分析 (all) -->
+        <!-- 综合分析 -->
         <div v-if="selectedDimension === 'all' && reportData.executiveSummary">
-          <div class="stats-overview-container">
-            <div class="stats-grid">
-              <div class="stats-card card-primary"><h3>{{ reportData.executiveSummary.totalStores }}</h3><small>商铺总数</small></div>
-              <div class="stats-card card-success"><h3>¥{{ reportData.executiveSummary.totalRevenue.toLocaleString() }}</h3><small>租金总收入</small></div>
-              <div class="stats-card card-warning"><h3>{{ reportData.executiveSummary.collectionRate }}%</h3><small>收缴率</small></div>
-              <div class="stats-card card-danger"><h3>{{ reportData.executiveSummary.riskLevel }}</h3><small>风险等级</small></div>
-            </div>
+          <div class="stats-grid">
+            <div class="stat-item"><h3>{{ reportData.executiveSummary.totalStores }}</h3><p>商铺总数</p></div>
+            <div class="stat-item"><h3>¥{{ reportData.executiveSummary.totalRevenue.toLocaleString() }}</h3><p>租金总收入</p></div>
+            <div class="stat-item"><h3>{{ reportData.executiveSummary.collectionRate }}%</h3><p>收缴率</p></div>
+            <div class="stat-item"><h3>{{ reportData.executiveSummary.riskLevel }}</h3><p>风险等级</p></div>
           </div>
           <div class="report-section">
-            <h4 class="report-title">财务汇总</h4>
+            <h4>财务汇总</h4>
             <p><strong>应收租金:</strong> ¥{{ reportData.financialSummary.totalAmount.toLocaleString() }}</p>
             <p><strong>已收金额:</strong> ¥{{ reportData.financialSummary.collectedAmount.toLocaleString() }}</p>
           </div>
           <div class="report-section">
-            <h4 class="report-title">运营指标</h4>
+            <h4>运营指标</h4>
             <p><strong>总账单数:</strong> {{ reportData.operationalMetrics.totalBills }}</p>
             <p><strong>逾期账单:</strong> {{ reportData.operationalMetrics.overdueBills }}</p>
           </div>
           <div class="report-section" v-if="reportData.recommendations">
-            <h4 class="report-title">洞察建议</h4>
+            <h4>洞察建议</h4>
             <ul><li v-for="(rec, index) in reportData.recommendations" :key="index">{{ rec }}</li></ul>
           </div>
         </div>
 
-        <!-- 时间维度 (time) -->
+        <!-- 时间维度 -->
         <div v-if="selectedDimension === 'time' && reportData.summary">
           <div class="report-section">
-            <h4 class="report-title">收缴总览</h4>
+            <h4>收缴总览</h4>
             <p><strong>总账单:</strong> {{ reportData.summary.totalBills }}</p>
             <p><strong>已缴账单:</strong> {{ reportData.summary.paidBills }}</p>
             <p><strong>逾期账单:</strong> {{ reportData.summary.overdueBills }}</p>
             <p><strong>收缴率:</strong> {{ reportData.summary.collectionRate }}%</p>
           </div>
           <div class="report-section" v-if="reportData.insights">
-            <h4 class="report-title">数据洞察</h4>
+            <h4>数据洞察</h4>
             <ul><li v-for="(insight, index) in reportData.insights" :key="index">{{ insight }}</li></ul>
           </div>
         </div>
 
-        <!-- 区域维度 (area) -->
+        <!-- 区域维度 -->
         <div v-if="selectedDimension === 'area' && reportData.areaDetails">
           <div class="report-section">
-            <h4 class="report-title">区域总览</h4>
+            <h4>区域总览</h4>
             <p><strong>总区域数:</strong> {{ reportData.summary.totalAreas }}</p>
             <p><strong>已租用区域:</strong> {{ reportData.summary.occupiedAreas }}</p>
             <p><strong>平均租金:</strong> ¥{{ reportData.summary.avgRentPerArea.toLocaleString() }}</p>
           </div>
           <div class="report-section table-container">
-            <h4 class="report-title">各区域详情</h4>
+            <h4>各区域详情</h4>
             <table class="report-table">
               <thead>
                 <tr><th>区域ID</th><th>店铺名称</th><th>基础租金</th><th>收缴状态</th><th>平米租金</th></tr>
@@ -138,13 +142,13 @@
 </template>
 
 <script setup>
-import { ref, nextTick, computed } from 'vue';
+import { ref, nextTick } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
-import DashboardLayout from '@/components/BoardLayout.vue';
 import { Chart, registerables } from 'chart.js';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import DashboardLayout from '@/components/BoardLayout.vue';
 
 Chart.register(...registerables);
 
@@ -405,164 +409,128 @@ const fetchRentStatisticsReport = async () => {
 </script>
 
 <style scoped>
-.rent-statistics-report {
-  padding: 16px;
+:root {
+  --primary-color: #1abc9c;
+  --secondary-color: #7f8c8d;
+  --success-color: #2ecc71;
+  --danger-color: #e74c3c;
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius: 12px;
+  --input-border-color: #dee2e6;
+}
+
+.report-container {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
-.card {
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 24px;
-}
-h2 {
-  font-size: 22px;
-  color: #333;
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 600;
   margin-bottom: 4px;
 }
-.subtitle {
-  color: #666;
+
+.page-header p {
   font-size: 14px;
-  margin: 0 0 16px 0;
+  color: var(--secondary-color);
 }
-.controls-container {
+
+.controls-card, .logs-card, .status-card, .report-content-card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 24px;
+}
+
+.form-row {
   display: flex;
-  align-items: center;
-  gap: 16px;
   flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
 }
+
 .form-group {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
 }
-label {
-  font-weight: bold;
-  color: #555;
-}
-input, select {
-  width: 200px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+
+.form-group label {
+  font-weight: 500;
   font-size: 14px;
 }
-button {
-  background-color: #e74c3c;
-  color: white;
+
+.form-group input, .form-group select {
+  padding: 10px 12px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  min-width: 220px;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary, .btn-secondary, .btn-success {
   padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
-button:hover {
-  background-color: #c0392b;
-}
-button:disabled {
-  background-color: #f5b7b1;
-  cursor: not-allowed;
-}
-.loading-indicator, .error-message {
-  text-align: center;
-  padding: 20px;
-  font-size: 16px;
-}
-.error-message {
-  color: #c00;
-  background-color: #fbeae5;
-  border: 1px solid #c00;
-}
-.stats-overview-container {
-  margin-bottom: 24px;
-}
+
+.btn-primary { background-color: #1abc9c; color: white; }
+.btn-primary:hover:not(:disabled) { background-color: #16a085; transform: translateY(-2px); }
+.btn-primary:disabled { background-color: #a3e9a4; cursor: not-allowed; }
+
+.btn-secondary { background-color: #ecf0f1; color: #34495e; }
+.btn-secondary:hover:not(:disabled) { background-color: #bdc3c7; transform: translateY(-2px); }
+
+.btn-success { background-color: #2ecc71; color: white; }
+.btn-success:hover:not(:disabled) { background-color: #27ae60; transform: translateY(-2px); }
+.btn-success:disabled { background-color: #a3e9a4; cursor: not-allowed; }
+
+.status-card { text-align: center; font-size: 16px; }
+.status-card.error { color: var(--danger-color); background-color: #fbeae5; }
+
+.logs-card h4 { margin-top: 0; }
+.log-list { max-height: 200px; overflow-y: auto; background: #f9f9f9; padding: 10px; border-radius: 8px; }
+
+.report-main-title { font-size: 20px; margin-bottom: 16px; }
+
+.visualization-section { margin-bottom: 24px; }
+.chart-controls { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.chart-container { position: relative; height: 400px; width: 100%; margin-top: 16px; }
+
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-}
-.stats-card {
-  text-align: center;
-  padding: 20px;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
-}
-.stats-card h3 {
-  margin: 0;
-  font-size: 24px;
-}
-.stats-card small {
-  font-size: 12px;
-  opacity: 0.9;
-}
-.card-primary { background: linear-gradient(135deg, #3498db, #2980b9); }
-.card-success { background: linear-gradient(135deg, #27ae60, #229954); }
-.card-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-.card-warning { background: linear-gradient(135deg, #f39c12, #e67e22); }
-.report-main-title {
-    font-size: 20px;
-    color: #333;
-    margin-bottom: 16px;
-}
-.report-section {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-  margin-bottom: 15px;
-}
-.report-section:last-child {
-  border-bottom: none;
-}
-.report-title {
-  color: #e74c3c;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-.table-container {
-    overflow-x: auto;
-}
-.report-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.report-table th, .report-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-.report-table th {
-    background-color: #f7f7f7;
-}
-.export-btn {
-  background-color: #27ae60;
-  margin-left: auto;
-}
-.export-btn:hover {
-  background-color: #229954;
-}
-.export-btn:disabled {
-  background-color: #a3e9a4;
-  cursor: not-allowed;
-}
-.visualization-section {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
   margin-bottom: 24px;
 }
-.chart-container {
-  position: relative;
-  height: 400px;
-  width: 100%;
-  margin-top: 16px;
+
+.stat-item {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
 }
-.chart-controls {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
+.stat-item h3 { margin: 0 0 8px 0; font-size: 22px; color: var(--primary-color); }
+.stat-item p { margin: 0; color: var(--secondary-color); }
+
+.report-section {
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  margin-top: 20px;
 }
-.chart-controls select {
-  width: 250px;
-}
+.report-section h4 { font-size: 18px; margin-bottom: 12px; }
+
+.table-container { overflow-x: auto; }
+.report-table { width: 100%; border-collapse: collapse; }
+.report-table th, .report-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+.report-table th { background-color: #f7f7f7; font-weight: 600; }
 </style>

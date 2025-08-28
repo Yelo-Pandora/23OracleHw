@@ -1,91 +1,107 @@
 <template>
   <DashboardLayout>
-    <div class="store-detail">
-      <h2>商户信息管理</h2>
-
-    <div class="box">
-      <template v-if="role === '商户' || role === '员工'">
-        <label>选择店铺</label>
-        <select v-model.number="selectedStoreId">
-          <option value="">--请选择店铺--</option>
-          <option v-for="s in stores" :key="s.STORE_ID" :value="s.STORE_ID">{{ s.STORE_ID }} - {{ s.STORE_NAME || s.storeName || s.STORE_NAME }}</option>
-        </select>
-        <div style="margin-top:8px; display:flex; gap:8px;">
-          <button @click="onSelectStore" :disabled="!selectedStoreId">加载选中店铺</button>
-          <button @click="refreshStores">刷新列表</button>
-        </div>
-        <p v-if="role === '商户' && stores.length === 0" style="margin-top:8px;color:#666">未找到归属店铺；若您确实有店铺，请联系管理员或使用下方手动ID查询。</p>
-      </template>
-
-      <template v-else>
-        <label>店铺ID（输入后点击查询）</label>
-        <input type="number" v-model.number="storeId" min="1" />
-        <button @click="loadMerchantInfo" :disabled="!storeId">查询商户信息</button>
-      </template>
-    </div>
-
-    <div v-if="loading" class="box">加载中...</div>
-
-    <div v-if="error" class="box error">{{ error }}</div>
-
-    <form v-if="merchant && !loading" @submit.prevent="submit" class="box">
-      <label>店铺名称</label>
-      <input type="text" v-model="form.storeName" :disabled="!editable.corePermissions.storeName" />
-
-      <label>租户名称</label>
-      <input type="text" v-model="merchant.tenantName" disabled />
-
-      <label>租户类型</label>
-      <select v-model="form.storeType" :disabled="!editable.corePermissions.storeType">
-        <option value="">-- 请选择 --</option>
-        <option>餐饮</option>
-        <option>零售</option>
-        <option>服务</option>
-        <option>企业连锁</option>
-      </select>
-
-      <label>联系方式</label>
-      <input type="text" v-model="form.contactInfo" :disabled="!editable.nonCorePermissions.contactInfo" />
-
-  <!-- 店铺简介已移除，后端不稳定导致无法保存 -->
-
-      <label>租用起始时间</label>
-      <input type="date" v-model="form.rentStart" :disabled="!editable.corePermissions.rentStart" />
-
-      <label>租用结束时间</label>
-      <input type="date" v-model="form.rentEnd" :disabled="!editable.corePermissions.rentEnd" />
-
-      <label>店铺状态</label>
-      <select v-model="form.storeStatus" :disabled="!editable.corePermissions.storeStatus">
-        <option value="">-- 请选择 --</option>
-        <option>正常营业</option>
-        <option>歇业中</option>
-        <option>翻新中</option>
-        <option>维修中</option>
-        <option>暂停营业</option>
-      </select>
-
-      <div class="actions">
-        <button type="submit" :disabled="submitting">保存修改</button>
+    <div class="page-container">
+      <div class="page-header">
+        <h1>商户信息管理</h1>
+        <p>查看并管理您的商户详细信息。</p>
       </div>
 
-      <div v-if="submitError" class="error">{{ submitError }}</div>
-      <div v-if="submitSuccess" class="success">{{ submitSuccess }}</div>
-    </form>
+      <div class="controls-card">
+        <template v-if="role === '商户' || role === '员工'">
+          <div class="form-group">
+            <label>选择店铺</label>
+            <select v-model.number="selectedStoreId">
+              <option value="">--请选择店铺--</option>
+              <option v-for="s in stores" :key="s.STORE_ID" :value="s.STORE_ID">{{ s.STORE_ID }} - {{ s.STORE_NAME || s.storeName }}</option>
+            </select>
+          </div>
+          <div class="button-group">
+            <button class="btn-primary" @click="onSelectStore" :disabled="!selectedStoreId">加载店铺</button>
+            <button class="btn-secondary" @click="refreshStores">刷新列表</button>
+          </div>
+          <p v-if="role === '商户' && stores.length === 0" class="info-text">未找到归属店铺；若您确实有店铺，请联系管理员或使用下方手动ID查询。</p>
+        </template>
 
-    <div v-if="merchant && !loading" class="box small">
-      <p><strong>只读信息</strong></p>
-      <p>店铺ID: {{ merchant.storeId }}</p>
-      <p>当前状态: {{ merchant.storeStatus }}</p>
-      <p>租期: {{ merchant.rentStart ? merchant.rentStart.split('T')[0] : '-' }} ~ {{ merchant.rentEnd ? merchant.rentEnd.split('T')[0] : '-' }}</p>
-      <p>权限: {{ editable.permissions.role }} (可修改核心: {{ editable.permissions.canModifyCore }})</p>
-    </div>
+        <template v-else>
+          <div class="form-group">
+            <label>店铺ID</label>
+            <input type="number" v-model.number="storeId" min="1" placeholder="输入店铺ID" />
+          </div>
+          <button class="btn-primary" @click="loadMerchantInfo" :disabled="!storeId">查询商户信息</button>
+        </template>
+      </div>
+
+      <div v-if="loading" class="status-card">加载中...</div>
+      <div v-if="error" class="status-card error">{{ error }}</div>
+
+      <div v-if="merchant && !loading" class="details-grid">
+        <form @submit.prevent="submit" class="form-card">
+          <h4>编辑信息</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>店铺名称</label>
+              <input type="text" v-model="form.storeName" :disabled="!editable.corePermissions.storeName" />
+            </div>
+            <div class="form-group">
+              <label>租户名称</label>
+              <input type="text" v-model="merchant.tenantName" disabled />
+            </div>
+            <div class="form-group">
+              <label>租户类型</label>
+              <select v-model="form.storeType" :disabled="!editable.corePermissions.storeType">
+                <option value="">-- 请选择 --</option>
+                <option>餐饮</option>
+                <option>零售</option>
+                <option>服务</option>
+                <option>企业连锁</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>联系方式</label>
+              <input type="text" v-model="form.contactInfo" :disabled="!editable.nonCorePermissions.contactInfo" />
+            </div>
+            <div class="form-group">
+              <label>租用起始时间</label>
+              <input type="date" v-model="form.rentStart" :disabled="!editable.corePermissions.rentStart" />
+            </div>
+            <div class="form-group">
+              <label>租用结束时间</label>
+              <input type="date" v-model="form.rentEnd" :disabled="!editable.corePermissions.rentEnd" />
+            </div>
+            <div class="form-group">
+              <label>店铺状态</label>
+              <select v-model="form.storeStatus" :disabled="!editable.corePermissions.storeStatus">
+                <option value="">-- 请选择 --</option>
+                <option>正常营业</option>
+                <option>歇业中</option>
+                <option>翻新中</option>
+                <option>维修中</option>
+                <option>暂停营业</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="submit" class="btn-primary" :disabled="submitting">{{ submitting ? '保存中...' : '保存修改' }}</button>
+          </div>
+          <div v-if="submitError" class="form-message error">{{ submitError }}</div>
+          <div v-if="submitSuccess" class="form-message success">{{ submitSuccess }}</div>
+        </form>
+
+        <div class="info-card">
+          <h4>只读信息</h4>
+          <p><strong>店铺ID:</strong> {{ merchant.storeId }}</p>
+          <p><strong>当前状态:</strong> {{ merchant.storeStatus }}</p>
+          <p><strong>租期:</strong> {{ merchant.rentStart ? merchant.rentStart.split('T')[0] : '-' }} ~ {{ merchant.rentEnd ? merchant.rentEnd.split('T')[0] : '-' }}</p>
+          <p><strong>权限角色:</strong> {{ editable.permissions.role }}</p>
+          <p><strong>可修改核心信息:</strong> {{ editable.permissions.canModifyCore ? '是' : '否' }}</p>
+        </div>
+      </div>
     </div>
   </DashboardLayout>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
@@ -278,8 +294,9 @@ async function loadForRole() {
   }
 }
 
-// initial load
-loadForRole()
+onMounted(() => {
+  loadForRole();
+});
 
 // user actions
 async function refreshStores() {
@@ -308,12 +325,103 @@ async function onSelectStore() {
 </script>
 
 <style scoped>
-.store-detail { padding: 16px }
-.box { background:#fff; padding:12px; margin-bottom:12px; border-radius:6px }
-label { display:block; font-weight:600; margin-bottom:6px }
-input, select, textarea { width:100%; padding:8px; box-sizing:border-box; margin-bottom:8px }
-.actions { margin-top:12px }
-.error { color:#c00 }
-.success { color:#080 }
-.small p { margin:4px 0 }
+:root {
+  --primary-color: #1abc9c;
+  --secondary-color: #7f8c8d;
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius: 12px;
+  --input-border-color: #dee2e6;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+.page-header p { font-size: 14px; color: var(--secondary-color); }
+
+.controls-card, .status-card, .form-card, .info-card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 24px;
+}
+
+.controls-card {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-group label { font-weight: 500; font-size: 14px; }
+.form-group input, .form-group select {
+  padding: 10px 12px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 8px;
+  min-width: 220px;
+}
+
+.button-group { display: flex; gap: 12px; }
+.btn-primary, .btn-secondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.btn-primary { background-color: #1abc9c; color: white; }
+.btn-primary:hover:not(:disabled) { 
+  background-color: #16a085;
+  transform: translateY(-2px);
+}
+.btn-primary:disabled { 
+  background-color: #a3e9a4; 
+  cursor: not-allowed; 
+}
+.btn-secondary { background-color: #ecf0f1; color: #34495e; }
+.btn-secondary:hover:not(:disabled) { 
+  background-color: #bdc3c7;
+  transform: translateY(-2px);
+}
+
+.status-card { text-align: center; font-size: 16px; }
+.status-card.error { color: #e74c3c; background-color: #fbeae5; }
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.form-card h4, .info-card h4 { font-size: 18px; margin-bottom: 16px; }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.actions { margin-top: 24px; }
+.form-message { margin-top: 16px; padding: 10px; border-radius: 8px; }
+.form-message.error { color: #e74c3c; background-color: #fbeae5; }
+.form-message.success { color: #27ae60; background-color: #e8f8f5; }
+
+.info-card p { margin: 0 0 12px 0; }
+.info-card p strong { color: #333; }
+
+@media (max-width: 992px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
