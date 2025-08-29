@@ -1,4 +1,3 @@
-<!-- src/pages/login/LoginBox.vue -->
 <template>
   <div class="login-container">
     <div class="role-switcher">
@@ -39,23 +38,25 @@
     </form>
 
     <div class="links-container">
-      <a href="#register">注册账号</a>
-      <a href="#forgot">忘记密码?</a>
+      <a href="#" @click.prevent="$emit('switchToRegister')">注册账号</a> <!-- 修改这里 -->
+      <a href="#" @click.prevent="$emit('switchToForgotPassword')">忘记密码?</a>
     </div>
 
-    <hr class="divider">
+    <!--<hr class="divider">-->
 
-    <div class="guest-login">
+    <!--<div class="guest-login">
       <a href="#" @click.prevent="handleGuestLogin">>>> 游客登录</a>
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, defineEmits } from 'vue'; // 添加 defineEmits
   import axios from 'axios';
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/user/user'
+
+  const emit = defineEmits(['switchToRegister', 'switchToForgotPassword']); // 定义 emit 事件
 
   //响应式状态
   const role = ref('员工'); // '员工' 或 '商户' 或 '游客'
@@ -110,13 +111,14 @@
     }
   }
 
-  function handleGuestLogin() {
-    userStore.login('guest-token', 'guest', { name: '游客' });
-    router.push('/');
-  }
+  //function handleGuestLogin() {
+  //  userStore.login('guest-token', 'guest', { name: '游客' });
+  //  router.push('/');
+  //}
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .login-container {
   width: 400px;
   padding: 40px;
