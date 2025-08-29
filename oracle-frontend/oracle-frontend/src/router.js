@@ -44,8 +44,15 @@ const routes = [
 //   { path: '/events_management', component: Events, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   // 员工信息管理页面
 //   { path: '/employee_management', component: Employee, meta: { requiresAuth: true, role_need: ['员工'] } },
-//   // 合作方信息管理页面
-//   { path: '/collaboration_management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工']} },
+{
+  path: '/collaboration_management',
+  component: () => import('@/pages/collaboration_management/App.vue'),
+  meta: {
+    requiresAuth: true,
+    title: '合作方管理',
+    role_need: ['员工']  // 只有员工角色可以访问
+  }
+}
 //   //商场(店铺)管理/商场平面图查看页面
 //   { path: '/mall_management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   //停车场管理/车位查询页面
@@ -67,7 +74,7 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = !!userStore.token // 通过 token 判断用户是否登录
   if (to.meta.requiresAuth && !isLoggedIn) {
     // a. 如果页面需要登录，但用户未登录，则强制跳转到登录页
-    next('/login') 
+    next('/login')
   }
   else if (to.name === 'login' && isLoggedIn) {
     // b. 如果用户已登录，但又尝试访问登录页，则直接跳转到首页
@@ -75,7 +82,7 @@ router.beforeEach((to, from, next) => {
   }
   else {
     // c. 其他所有情况（无需登录的页面，或需要登录且已登录的页面），直接放行
-    next() 
+    next()
   }
   if (to.meta.title) {
     document.title = to.meta.title;
