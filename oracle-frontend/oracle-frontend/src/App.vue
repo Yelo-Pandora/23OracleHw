@@ -9,6 +9,23 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  // 2. 鼠标点击波纹效果
+  document.addEventListener('click', function (e) {
+    let ripple = document.createElement('div');
+    ripple.className = 'ripple';
+    document.body.appendChild(ripple);
+
+    ripple.style.left = `${e.clientX}px`;
+    ripple.style.top = `${e.clientY}px`;
+
+    ripple.addEventListener('animationend', () => {
+      document.body.removeChild(ripple);
+    });
+  });
+});
 </script>
 
 <style>
@@ -36,6 +53,155 @@
       font-family: 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
       overflow: hidden;
       background-color: #f4f4f4; /* 背景加载前的底色 */
+    }
+
+    /* 1. 动态渐变背景 */
+    body {
+        background: linear-gradient(45deg, #f5f7fa, #c3cfe2, #f5f7fa, #c3cfe2);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* 2. 鼠标点击波纹 */
+    .ripple {
+        position: fixed;
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        animation: ripple-animation 0.7s linear;
+        border: 2px solid var(--primary-color);
+    }
+
+    @keyframes ripple-animation {
+        0% {
+            width: 0;
+            height: 0;
+            opacity: 0.5;
+        }
+        100% {
+            width: 100px;
+            height: 100px;
+            opacity: 0;
+        }
+    }
+
+    /* 3. 按钮悬停放大 & 4. 按钮点击效果 */
+    button, .el-button {
+        transition: all 0.2s ease-in-out;
+    }
+
+    button:hover, .el-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    button:active, .el-button:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 5. 输入框聚焦边框 & 6. 输入框聚焦阴影 */
+    input[type="text"], input[type="password"], input[type="email"], textarea, .el-input__inner {
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, textarea:focus, .el-input__inner:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 8px rgba(26, 188, 156, 0.3) !important;
+    }
+
+    /* 7. 链接悬停下划线 */
+    a {
+        position: relative;
+        text-decoration: none;
+        color: inherit;
+        transition: color 0.2s;
+    }
+
+    a:hover {
+        color: var(--primary-color);
+    }
+
+    a::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background-color: var(--primary-color);
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.3s ease-out;
+    }
+
+    a:hover::after {
+        transform: scaleX(1);
+    }
+
+    /* 8. 卡片悬停浮动 */
+    .el-card, .board-layout { /* 假设 .el-card 和 .board-layout 是卡片类 */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .el-card:hover, .board-layout:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--card-shadow), 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 9. 图片悬停灰度 */
+    img {
+        transition: filter 0.3s ease;
+    }
+
+    img:hover {
+        filter: grayscale(80%);
+    }
+
+    /* 10. 通知图标脉冲 */
+    .notification-icon {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(26, 188, 156, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(26, 188, 156, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(26, 188, 156, 0); }
+    }
+
+    /* 11. 元素淡入效果 */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    /* 12. 自定义滚动条 */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #aaa;
     }
 
     #app {

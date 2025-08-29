@@ -18,9 +18,9 @@
       </nav>
     </aside>
 
-    <div class="main-content">
-      <header class="header">
-        <!-- 面包屑动态显示当前路由的标题 -->
+  <div class="main-content fade-in">
+    <header class="header">
+      <!-- 面包屑动态显示当前路由的标题 -->
         <div class="breadcrumb">{{ $route.meta.title }}</div>
         <div class="user-profile">
           <div class="avatar"></div>
