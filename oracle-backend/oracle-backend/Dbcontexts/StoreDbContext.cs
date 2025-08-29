@@ -333,7 +333,7 @@ namespace oracle_backend.Dbcontexts
                            store.STORE_ID,
                            store.STORE_NAME,
                            store.TENANT_NAME,
-                           retailArea.BASE_RENT
+                           BASE_RENT = (double?)retailArea.BASE_RENT ?? 0.0
                        };
 
             // 根据查询条件筛选

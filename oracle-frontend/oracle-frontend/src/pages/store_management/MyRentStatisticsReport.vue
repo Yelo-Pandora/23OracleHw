@@ -49,7 +49,7 @@
                 <tr v-for="bill in rentData.bills" :key="bill.billId">
                   <td>{{ bill.billPeriod }}</td>
                   <td>{{ bill.storeName }}</td>
-                  <td>¥{{ bill.totalAmount.toLocaleString() }}</td>
+                  <td>¥{{ bill.TotalAmount.toLocaleString() }}</td>
                   <td>
                     <span class="status-tag" :class="getStatusClass(bill.billStatus)">
                       {{ bill.billStatus }}
@@ -118,14 +118,14 @@ const totalPaid = computed(() => {
   if (!rentData.value) return 0;
   return rentData.value.bills
     .filter(b => b.billStatus === '已缴纳')
-    .reduce((sum, b) => sum + b.totalAmount, 0);
+    .reduce((sum, b) => sum + b.TotalAmount, 0);
 });
 
 const totalDue = computed(() => {
   if (!rentData.value) return 0;
   return rentData.value.bills
     .filter(b => b.billStatus !== '已缴纳')
-    .reduce((sum, b) => sum + b.totalAmount, 0);
+    .reduce((sum, b) => sum + b.TotalAmount, 0);
 });
 
 const overdueBills = computed(() => {
