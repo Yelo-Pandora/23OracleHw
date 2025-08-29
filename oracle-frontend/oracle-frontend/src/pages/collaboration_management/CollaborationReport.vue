@@ -4,6 +4,18 @@
 
     <div class="report-filters">
       <div class="filter-group">
+        <label>快捷选择:</label>
+        <select v-model="quickKey" @change="onQuickChange" class="quick-select">
+          <option value="">- 选择快捷范围 -</option>
+          <option value="all">有史以来</option>
+          <option value="year">近一年</option>
+          <option value="half">近半年</option>
+          <option value="thisQuarter">本季度</option>
+          <option value="lastQuarter">上季度</option>
+          <option value="thisMonth">本月</option>
+        </select>
+      </div>
+      <div class="filter-group">
         <label>开始日期:</label>
         <input type="date" v-model="filters.startDate" :max="filters.endDate || maxDate">
       </div>
@@ -103,6 +115,8 @@ const filters = reactive({
 
 const reportData = ref([]);
 const loading = ref(false);
+// 快捷选择的 key
+const quickKey = ref('');
 
 // 检查登录状态
 const checkAuth = () => {
@@ -356,6 +370,77 @@ const exportPDF = async () => {
   }
 };
 
+// Helper: format Date -> YYYY-MM-DD (local)
+const pad = (n) => n.toString().padStart(2, '0');
+const formatLocal = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+// 设置快捷范围
+const setQuickRange = (key) => {
+  const today = new Date();
+  let start, end = new Date();
+
+  switch (key) {
+    case 'all':
+      filters.startDate = EARLIEST_DATE;
+      filters.endDate = maxDate;
+      return;
+
+    case 'year':
+      start = new Date(today);
+      start.setFullYear(start.getFullYear() - 1);
+      break;
+
+    case 'half':
+      start = new Date(today);
+      start.setMonth(start.getMonth() - 6);
+      break;
+
+    case 'thisQuarter': {
+      const month = today.getMonth();
+      const qStartMonth = Math.floor(month / 3) * 3;
+      start = new Date(today.getFullYear(), qStartMonth, 1);
+      end = new Date(today.getFullYear(), qStartMonth + 3, 0);
+      break;
+    }
+
+    case 'lastQuarter': {
+      const month = today.getMonth();
+      let qStartMonth = Math.floor(month / 3) * 3 - 3;
+      let year = today.getFullYear();
+      if (qStartMonth < 0) {
+        qStartMonth += 12;
+        year -= 1;
+      }
+      start = new Date(year, qStartMonth, 1);
+      end = new Date(year, qStartMonth + 3, 0);
+      break;
+    }
+
+    case 'thisMonth':
+      start = new Date(today.getFullYear(), today.getMonth(), 1);
+      end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      break;
+
+    default:
+      return;
+  }
+
+  // 如果没有在 switch 中设置 end，使用今天
+  if (!end) end = today;
+
+  // 保证 end 不超过当前日期
+  const todayStr = formatLocal(new Date());
+  const endStr = formatLocal(end) > todayStr ? todayStr : formatLocal(end);
+
+  filters.startDate = start ? formatLocal(start) : EARLIEST_DATE;
+  filters.endDate = endStr;
+};
+
+const onQuickChange = () => {
+  if (!quickKey.value) return;
+  setQuickRange(quickKey.value);
+};
+
 // 组件挂载时检查登录状态
 onMounted(() => {
   checkAuth();
@@ -393,6 +478,10 @@ onMounted(() => {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+
+.quick-select {
+  min-width: 180px;
 }
 
 .btn-generate, .btn-export, .btn-export-pdf {
