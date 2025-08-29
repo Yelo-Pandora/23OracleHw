@@ -46,17 +46,17 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="bill in rentData.bills" :key="bill.billId">
-                  <td>{{ bill.billPeriod }}</td>
-                  <td>{{ bill.storeName }}</td>
+                <tr v-for="bill in rentData.bills" :key="bill.BillId">
+                  <td>{{ bill.BillPeriod }}</td>
+                  <td>{{ bill.StoreName }}</td>
                   <td>¥{{ bill.TotalAmount.toLocaleString() }}</td>
                   <td>
-                    <span class="status-tag" :class="getStatusClass(bill.billStatus)">
-                      {{ bill.billStatus }}
+                    <span class="status-tag" :class="getStatusClass(bill.BillStatus)">
+                      {{ bill.BillStatus }}
                     </span>
                   </td>
-                  <td>{{ new Date(bill.dueDate).toLocaleDateString() }}</td>
-                  <td>{{ bill.paymentDate ? new Date(bill.paymentDate).toLocaleDateString() : '-' }}</td>
+                  <td>{{ new Date(bill.DueDate).toLocaleDateString() }}</td>
+                  <td>{{ bill.PaymentDate ? new Date(bill.PaymentDate).toLocaleDateString() : '-' }}</td>
                 </tr>
               </tbody>
             </table>
@@ -117,20 +117,20 @@ const fetchMyRentBills = async () => {
 const totalPaid = computed(() => {
   if (!rentData.value) return 0;
   return rentData.value.bills
-    .filter(b => b.billStatus === '已缴纳')
+    .filter(b => b.BillStatus === '已缴纳')
     .reduce((sum, b) => sum + b.TotalAmount, 0);
 });
 
 const totalDue = computed(() => {
   if (!rentData.value) return 0;
   return rentData.value.bills
-    .filter(b => b.billStatus !== '已缴纳')
+    .filter(b => b.BillStatus !== '已缴纳')
     .reduce((sum, b) => sum + b.TotalAmount, 0);
 });
 
 const overdueBills = computed(() => {
   if (!rentData.value) return 0;
-  return rentData.value.bills.filter(b => b.billStatus === '逾期').length;
+  return rentData.value.bills.filter(b => b.BillStatus === '逾期' || b.BillStatus === '预警').length;
 });
 
 const getStatusClass = (status) => {
@@ -138,6 +138,7 @@ const getStatusClass = (status) => {
     case '已缴纳': return 'status-paid';
     case '待缴纳': return 'status-pending';
     case '逾期': return 'status-overdue';
+    case '预警': return 'status-overdue'; // 预警也用逾期样式
     default: return '';
   }
 };
