@@ -22,8 +22,9 @@
         />
       </div>
 
-      <button @click="generateReport" class="btn-generate">生成报表</button>
-      <button @click="exportReport" class="btn-export" :disabled="!reportData.length">导出报表</button>
+  <button @click="generateReport" class="btn-generate">生成报表</button>
+  <button @click="exportReport" class="btn-export" :disabled="!reportData.length">导出报表</button>
+  <button @click="exportPDF" class="btn-export-pdf" :disabled="!reportData.length">导出为 PDF</button>
     </div>
 
     <div v-if="loading" class="loading">生成报表中...</div>
@@ -88,15 +89,20 @@ import axios from 'axios';
 const userStore = useUserStore();
 const router = useRouter();
 
+// 当前日期（用于限制选择范围）
+const maxDate = new Date().toISOString().split('T')[0]; // 当前日期
+// 极早的默认开始日期
+const EARLIEST_DATE = '1900-01-01';
+
 const filters = reactive({
-  startDate: '',
-  endDate: '',
+  // 默认从极早值到当前日期
+  startDate: EARLIEST_DATE,
+  endDate: maxDate,
   industry: ''
 });
 
 const reportData = ref([]);
 const loading = ref(false);
-const maxDate = new Date().toISOString().split('T')[0]; // 当前日期
 
 // 检查登录状态
 const checkAuth = () => {
@@ -199,6 +205,157 @@ const exportReport = () => {
   document.body.removeChild(link);
 };
 
+const exportPDF = async () => {
+  if (!reportData.value.length) return;
+  const el = document.querySelector('.report-results');
+  if (!el) {
+    alert('没有可导出的内容');
+    return;
+  }
+  loading.value = true;
+
+  // 辅助函数：创建一个隐藏容器并附加清理后的克隆元素
+  const createCleanClone = (sourceEl) => {
+    const clone = sourceEl.cloneNode(true);
+
+    // 移除克隆元素中的所有iframe以避免跨域/克隆问题
+    const iframes = clone.querySelectorAll('iframe');
+    iframes.forEach(f => f.remove());
+
+    // 可选：移除脚本
+    clone.querySelectorAll('script').forEach(s => s.remove());
+
+    // 内联最小计算样式以确保布局稳定性
+    const copyStyles = (src, dst) => {
+      try {
+        const cs = window.getComputedStyle(src);
+        if (cs) {
+          for (let i = 0; i < cs.length; i++) {
+            const prop = cs[i];
+            dst.style.setProperty(prop, cs.getPropertyValue(prop), cs.getPropertyPriority(prop));
+          }
+        }
+      } catch (e) {
+        // 忽略计算样式错误
+      }
+    };
+
+    const walk = (sNode, dNode) => {
+      copyStyles(sNode, dNode);
+      const sChildren = Array.from(sNode.children || []);
+      const dChildren = Array.from(dNode.children || []);
+      for (let i = 0; i < sChildren.length; i++) {
+        walk(sChildren[i], dChildren[i]);
+      }
+    };
+
+    try {
+      walk(sourceEl, clone);
+    } catch (e) {
+      // 后备方案：如果内联失败，继续使用克隆元素
+    }
+
+    // 修复内联SVG：序列化并替换<svg>元素以保留视觉效果
+    const svgs = clone.querySelectorAll('svg');
+    svgs.forEach(svg => {
+      try {
+        const serializer = new XMLSerializer();
+        const svgStr = serializer.serializeToString(svg);
+        const encoded = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
+        const img = document.createElement('img');
+        img.src = encoded;
+        img.style.width = svg.getAttribute('width') || getComputedStyle(svg).width;
+        img.style.height = svg.getAttribute('height') || getComputedStyle(svg).height;
+        svg.parentNode.replaceChild(img, svg);
+      } catch (e) {
+        // 忽略SVG序列化错误
+      }
+    });
+
+    return clone;
+  };
+
+  // 创建隐藏容器
+  const container = document.createElement('div');
+  container.style.position = 'absolute';
+  container.style.left = '-9999px';
+  container.style.top = '0';
+  container.style.width = `${el.offsetWidth}px`;
+  container.style.background = '#ffffff';
+  container.id = 'tmp-export-container';
+  document.body.appendChild(container);
+
+  try {
+    const clone = createCleanClone(el);
+    container.appendChild(clone);
+
+    const html2canvas = (await import('html2canvas')).default;
+    const { jsPDF } = await import('jspdf');
+
+    // 渲染克隆元素
+    const canvas = await html2canvas(clone, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      logging: false,
+      imageTimeout: 20000,
+      scrollX: 0,
+      scrollY: -window.scrollY
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // 将画布尺寸（px）转换为毫米用于PDF放置
+    const pxPerMm = canvas.width / ((pageWidth) * (document.documentElement.clientWidth / document.documentElement.clientWidth || 1));
+
+    // 计算图像渲染尺寸，保持宽高比
+    const imgProps = { width: canvas.width, height: canvas.height };
+    let renderWidth = pageWidth - 20; // 毫米
+    // 高度（毫米）= imgProps.height / (canvas.width / renderWidth_mm)
+    const renderHeight = (imgProps.height * renderWidth) / imgProps.width;
+
+    // 如果内容高度超过一页，进行分割
+    if (renderHeight <= pageHeight - 20) {
+      pdf.addImage(imgData, 'PNG', 10, 10, renderWidth, renderHeight);
+    } else {
+      // 将画布垂直分割成多页
+      const canvasPageHeight = Math.floor((imgProps.width * (pageHeight - 20)) / renderWidth);
+      let remainingHeight = imgProps.height;
+      let page = 0;
+      const tmpCanvas = document.createElement('canvas');
+      const tmpCtx = tmpCanvas.getContext('2d');
+
+      while (remainingHeight > 0) {
+        const sy = page * canvasPageHeight;
+        const sh = Math.min(canvasPageHeight, imgProps.height - sy);
+        tmpCanvas.width = imgProps.width;
+        tmpCanvas.height = sh;
+        tmpCtx.clearRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+        tmpCtx.drawImage(canvas, 0, sy, imgProps.width, sh, 0, 0, imgProps.width, sh);
+        const pageData = tmpCanvas.toDataURL('image/png');
+        const pageRenderHeight = (sh * renderWidth) / imgProps.width;
+        if (page > 0) pdf.addPage();
+        pdf.addImage(pageData, 'PNG', 10, 10, renderWidth, pageRenderHeight);
+        remainingHeight -= sh;
+        page += 1;
+      }
+    }
+
+    pdf.save(`合作方统计报表_${filters.startDate}_至_${filters.endDate}.pdf`);
+  } catch (err) {
+    console.error('导出PDF失败', err);
+    alert('导出PDF失败，请稍后重试');
+  } finally {
+    // 清理工作
+    const tmp = document.getElementById('tmp-export-container');
+    if (tmp) document.body.removeChild(tmp);
+    loading.value = false;
+  }
+};
+
 // 组件挂载时检查登录状态
 onMounted(() => {
   checkAuth();
@@ -238,7 +395,7 @@ onMounted(() => {
   border-radius: 4px;
 }
 
-.btn-generate, .btn-export {
+.btn-generate, .btn-export, .btn-export-pdf {
   padding: 8px 15px;
   border: none;
   border-radius: 4px;
@@ -257,6 +414,17 @@ onMounted(() => {
 }
 
 .btn-export:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.btn-export-pdf {
+  background-color: #17a2b8;
+  color: white;
+  margin-left: 10px;
+}
+
+.btn-export-pdf:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
 }
