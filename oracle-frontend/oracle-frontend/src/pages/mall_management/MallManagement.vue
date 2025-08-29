@@ -67,6 +67,17 @@
         </div>
       </router-link>
 
+      <!-- 为员工提供快速访问店铺详情的入口（将店铺详情导航移到商场管理页） -->
+      <router-link v-if="role === '员工'" class="action-card" to="/store-management/store-detail">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+        </div>
+        <div class="card-content">
+          <h3>店铺详情</h3>
+          <p>查看任意店铺的详细信息</p>
+        </div>
+      </router-link>
+
       <router-link v-if="role === '员工'" class="action-card" :to="{ name: 'MerchantRentStatisticsReport' }">
         <div class="card-icon">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
@@ -107,7 +118,8 @@ const role = computed(() => userStore.role || '游客')
 }
 
 .mall-management-container {
-  /* 移除内边距，让 BoardLayout 控制 */
+  /* 保持默认间距，避免空的 CSS 规则导致 lint 错误 */
+  padding: 0 0 0 0;
 }
 
 .page-header {

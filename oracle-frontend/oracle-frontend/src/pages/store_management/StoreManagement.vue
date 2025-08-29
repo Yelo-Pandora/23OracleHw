@@ -7,12 +7,12 @@
       </div>
 
       <div class="action-grid">
-        <router-link class="action-card" to="/store-management/store-detail">
+  <router-link v-if="role === '商户'" class="action-card" to="/store-management/store-detail">
           <div class="card-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
           </div>
           <div class="card-content">
-            <h3>我的店铺详情</h3>
+            <h3>店铺详情</h3>
             <p>查看并管理您的店铺信息</p>
           </div>
         </router-link>
@@ -41,6 +41,11 @@
 
 <script setup>
 import DashboardLayout from '@/components/BoardLayout.vue'
+import { computed } from 'vue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+const role = computed(() => userStore.role || '游客')
 </script>
 
 <style scoped>

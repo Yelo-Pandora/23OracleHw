@@ -63,9 +63,15 @@
       return roles.includes(userR) || roles.includes(String(userR).toLowerCase()) || roles.includes(normalizedR)
     }
 
+  // 不在侧边栏显示的菜单标题列表（仅影响侧边栏显示，不删除路由）
+  const excludedTitles = ['店铺详情', '商户租金统计报表']
+
     return router.options.routes.filter(route => {
-      if (!route.meta || !route.meta.title) return false;
+  if (!route.meta || !route.meta.title) return false;
       if (route.path === '/login') return false; // 明确排除登录页
+      if (excludedTitles.includes(route.meta.title)) return false; // 排除特定标题
+  // 额外规则：当当前用户是“员工”时，不在侧边栏显示“店铺管理”这一项（store-management）
+  if (normalized === '员工' && route.meta.title === '店铺管理') return false;
       if (!route.meta.role_need) return false
       if (!isAllowed(route.meta.role_need, rawUserRole, normalized)) return false
       return true;
