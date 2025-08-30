@@ -14,6 +14,12 @@
         @click="switchTab('venue')">
         场地活动管理
       </button>
+      <button 
+        class="type-btn" 
+        :class="{ active: activeTab === 'collaboration' }"
+        @click="switchTab('collaboration')">
+        合作方管理
+      </button>
     </div>
 
     <!-- 促销活动管理 -->
@@ -25,6 +31,11 @@
     <div v-if="activeTab === 'venue'" class="tab-content">
       <VenueEventManagement />
     </div>
+
+    <!-- 合作方管理 -->
+    <div v-if="activeTab === 'collaboration'" class="tab-content">
+      <CollaborationManagement />
+    </div>
   </div>
 </template>
 
@@ -32,6 +43,7 @@
 import { ref } from 'vue'
 import SaleEventManagement from './components/SaleEventManagement.vue'
 import VenueEventManagement from './components/VenueEventManagement.vue'
+import CollaborationManagement from './components/CollaborationManagement.vue'
 
 // 当前激活的标签页
 const activeTab = ref('sale')
