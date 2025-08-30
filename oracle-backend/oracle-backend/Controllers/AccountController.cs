@@ -294,5 +294,25 @@ namespace oracle_backend.Controllers
             }
             return Ok(account);
         }
+
+        //查询指定账号的临时权限情况
+        [HttpGet("tempauth/{accountId}")]
+        public async Task<IActionResult> GetTempAuthorities(string accountId)
+        {
+            var account = await _context.FindAccount(accountId);
+            if (account == null)
+            {
+                _logger.LogWarning("指定的账号不存在");
+                return NotFound("账号不存在");
+            }
+            var tempAuths = await _context.FindTempAuthorities(accountId);
+            if (tempAuths == null)
+            {
+                _logger.LogInformation("该账号没有任何临时权限");
+                return Ok(new List<TempAuthority>());
+            }
+            return Ok(tempAuths);
+        }
+
     }
 }
