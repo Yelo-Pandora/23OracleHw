@@ -498,6 +498,7 @@ namespace oracle_backend.Controllers
                         STAFF_ID = bindDto.ID
                     };
                     _context.STAFF_ACCOUNT.Add(staffAccount);
+                    await _context.SaveChangesAsync();
                     return Ok("绑定成功");
                 }
                 else if (bindDto.TYPE == "商户")
@@ -527,6 +528,7 @@ namespace oracle_backend.Controllers
                             STORE_ID = bindDto.ID
                         };
                         _context.STORE_ACCOUNT.Add(storeAccount);
+                        await _context.SaveChangesAsync();
                         return Ok("绑定成功");
                     }
                     else
@@ -550,5 +552,66 @@ namespace oracle_backend.Controllers
         }
 
 
+        // 解绑账号和员工/商户
+        [HttpDelete("unbind")]
+        public async Task<IActionResult> UnbindAccount([FromQuery] string account, [FromQuery] int ID, [FromQuery] string type)
+        {
+            _logger.LogInformation("正在尝试为账号 {AccountName} 与 {Type} ID {Id} 解绑...", account, type, ID);
+
+            // 1. 输入验证
+            if (string.IsNullOrWhiteSpace(account) || ID <= 0 || string.IsNullOrWhiteSpace(type))
+            {
+                return BadRequest("必须提供有效的账号、ID 和类型。");
+            }
+
+            try
+            {
+                if (type == "员工")
+                {
+                    // 2. 查找并删除员工绑定关系
+                    var staffAccountLink = await _context.STAFF_ACCOUNT
+                        .FirstOrDefaultAsync(sa => sa.ACCOUNT == account && sa.STAFF_ID == ID);
+
+                    if (staffAccountLink == null)
+                    {
+                        _logger.LogWarning("未找到账号 {AccountName} 与员工 ID {StaffId} 的绑定关系。", account, ID);
+                        return NotFound("未找到指定的员工绑定关系。");
+                    }
+
+                    _context.STAFF_ACCOUNT.Remove(staffAccountLink);
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("账号 {AccountName} 与员工 ID {StaffId} 解绑成功。", account, ID);
+                    return Ok("员工解绑成功");
+                }
+                else if (type == "商户")
+                {
+                    // 3. 查找并删除商户绑定关系
+                    var storeAccountLink = await _context.STORE_ACCOUNT
+                        .FirstOrDefaultAsync(sa => sa.ACCOUNT == account && sa.STORE_ID == ID);
+
+                    if (storeAccountLink == null)
+                    {
+                        _logger.LogWarning("未找到账号 {AccountName} 与商铺 ID {StoreId} 的绑定关系。", account, ID);
+                        return NotFound("未找到指定的商户绑定关系。");
+                    }
+
+                    _context.STORE_ACCOUNT.Remove(storeAccountLink);
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("账号 {AccountName} 与商铺 ID {StoreId} 解绑成功。", account, ID);
+                    return Ok("商户解绑成功");
+                }
+                else
+                {
+                    // 4. 处理无效的类型参数
+                    _logger.LogWarning("无效的解绑类型 '{Type}'。", type);
+                    return BadRequest($"无效的解绑类型：'{type}'。有效值为：员工, 商户。");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "为账号 {AccountName} 进行解绑时发生内部错误。", account);
+                return StatusCode(500, "服务器内部错误，解绑失败。");
+            }
+        }
     }
 }
