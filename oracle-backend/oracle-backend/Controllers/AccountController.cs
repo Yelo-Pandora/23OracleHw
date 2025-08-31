@@ -149,15 +149,15 @@ namespace oracle_backend.Controllers
             var target = await _context.FindAccount(goal.acc);
             if (target == null)
             {
-                _logger.LogWarning("不存在该账号：{acc}",goal.acc);
+                _logger.LogWarning("不存在该账号：{acc}", goal.acc);
                 return BadRequest("用户不存在");
             }
-            else if(target.PASSWORD != goal.pass)
+            else if (target.PASSWORD != goal.pass)
             {
                 _logger.LogWarning("密码不正确：{pass}", goal.pass);
                 return BadRequest("密码不正确");
             }
-            else if(target.AUTHORITY == 5)
+            else if (target.AUTHORITY == 5)
             {
                 _logger.LogWarning("账号已被封禁，禁止登录：{acc}", goal.acc);
                 return BadRequest("账号封禁中");
@@ -198,8 +198,8 @@ namespace oracle_backend.Controllers
             // 判断账号名是否被修改，且新账号名是否已存在
             if (updatedAccount.ACCOUNT != currAccount)
             {
-                    _logger.LogWarning("不允许直接修改账号");
-                    return BadRequest("不允许直接修改账号");
+                _logger.LogWarning("不允许直接修改账号");
+                return BadRequest("不允许直接修改账号");
             }
             // 修改成了无效身份
             if (updatedAccount.IDENTITY != "员工" && updatedAccount.IDENTITY != "商户")
@@ -218,7 +218,7 @@ namespace oracle_backend.Controllers
             {
                 cur.AUTHORITY = updatedAccount.AUTHORITY < oper.AUTHORITY ? oper.AUTHORITY : updatedAccount.AUTHORITY;
             }
-            
+
             //提交更改
             await _context.SaveChangesAsync();
             return Ok("更新成功");
@@ -242,11 +242,54 @@ namespace oracle_backend.Controllers
                 return NotFound("账号不存在");
             }
 
-            _context.ACCOUNT.Remove(account);
-            await _context.SaveChangesAsync();
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // 删除关联的员工账号 (StaffAccount)
+                    var staffLink = await _context.STAFF_ACCOUNT.FirstOrDefaultAsync(sa => sa.ACCOUNT == accountId);
+                    if (staffLink != null)
+                    {
+                        _context.STAFF_ACCOUNT.Remove(staffLink);
+                    }
 
-            _logger.LogInformation($"账号 {accountId} 删除成功");
-            return Ok("账号删除成功");
+                    // 删除关联的商家账号 (StoreAccount)
+                    var storeLink = await _context.STORE_ACCOUNT.FirstOrDefaultAsync(sa => sa.ACCOUNT == accountId);
+                    if (storeLink != null)
+                    {
+                        _context.STORE_ACCOUNT.Remove(storeLink);
+                    }
+
+                    // 删除所有关联的临时权限 (TempAuthority)
+                    var tempAuthorities = await _context.TEMP_AUTHORITY
+                                                        .Where(ta => ta.ACCOUNT == accountId)
+                                                        .ToListAsync();
+                    if (tempAuthorities.Any())
+                    {
+                        _context.TEMP_AUTHORITY.RemoveRange(tempAuthorities);
+                    }
+
+                    // 删除主账号
+                    _context.ACCOUNT.Remove(account);
+
+                    // 操作提交到数据库
+                    await _context.SaveChangesAsync();
+
+                    // 提交事务
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation($"账号 {accountId} 及其所有关联信息已由管理员 {operatorAccountId} 成功删除。");
+                    return Ok($"账号 '{accountId}' 已被成功删除。");
+                }
+                catch (DbUpdateException ex) // 捕获数据库更新异常
+                {
+                    // 如果在SaveChangesAsync过程中发生错误，则回滚事务
+                    await transaction.RollbackAsync();
+
+                    _logger.LogError(ex, $"删除账号 {accountId} 时发生数据库更新错误。");
+                    return StatusCode(500, "删除账号时发生数据库错误，操作已回滚。");
+                }
+            }
         }
 
         //查询指定账号的权限
@@ -313,6 +356,199 @@ namespace oracle_backend.Controllers
             }
             return Ok(tempAuths);
         }
+
+        // 员工信息的 DTO
+        public class StaffInfoDto
+        {
+            public int StaffId { get; set; }
+            public string StaffName { get; set; }
+            public string Department { get; set; }
+        }
+        // 商家信息的 DTO
+        public class StoreInfoDto
+        {
+            public int StoreId { get; set; }
+            public string StoreName { get; set; }
+            public string TenantName { get; set; }
+        }
+        //用来返回详细信息的DTO
+        public class AccountDetailDto
+        {
+            // 从 Account 表获取的信息
+            public string Account { get; set; }
+            public string Username { get; set; }
+            public string Identity { get; set; }
+            public int Authority { get; set; }
+
+            // 关联的员工信息 (如果存在)
+            public StaffInfoDto? StaffInfo { get; set; }
+
+            // 关联的商家信息 (如果存在)
+            public StoreInfoDto? StoreInfo { get; set; }
+        }
+        //查询所有账号信息，附带关联的员工或商铺信息
+        [HttpGet("AllAccount/detailed")]
+        public async Task<IActionResult> GetAccountDetails(string account)
+        {
+            // 查找基本的账号信息
+            var accountEntity = await _context.FindAccount(account);
+
+            if (accountEntity == null)
+            {
+                return NotFound("未找到指定的账号。");
+            }
+
+            // 创建DTO并填充基本信息
+            var responseDto = new AccountDetailDto
+            {
+                Account = accountEntity.ACCOUNT,
+                Username = accountEntity.USERNAME,
+                Identity = accountEntity.IDENTITY,
+                Authority = accountEntity.AUTHORITY
+            };
+
+            // 检查并获取关联的员工信息
+            var staffLink = await _context.STAFF_ACCOUNT
+                                          .Include(sa => sa.staffNavigation) // 关键：预加载员工实体
+                                          .FirstOrDefaultAsync(sa => sa.ACCOUNT == account);
+
+            if (staffLink != null && staffLink.staffNavigation != null)
+            {
+                responseDto.StaffInfo = new StaffInfoDto
+                {
+                    StaffId = staffLink.STAFF_ID,
+                    StaffName = staffLink.staffNavigation.STAFF_NAME,
+                    Department = staffLink.staffNavigation.STAFF_APARTMENT
+                };
+            }
+
+            // 4. 检查并获取关联的商家信息
+            // 使用 Include() 来同时加载 StoreAccount 及其导航属性 Store 的数据
+            var storeLink = await _context.STORE_ACCOUNT
+                                          .Include(sa => sa.storeNavigation) // 关键：预加载店铺实体
+                                          .FirstOrDefaultAsync(sa => sa.ACCOUNT == account);
+
+            if (storeLink != null && storeLink.storeNavigation != null)
+            {
+                responseDto.StoreInfo = new StoreInfoDto
+                {
+                    StoreId = storeLink.STORE_ID,
+                    // 以下属性需要您根据实际的 Store Model 修改
+                    StoreName = storeLink.storeNavigation.STORE_NAME, // 假设 Store 类有 Name 属性
+                    TenantName = storeLink.storeNavigation.TENANT_NAME
+                };
+            }
+
+            // 5. 返回整合后的 DTO
+            return Ok(responseDto);
+        }
+
+        //绑定账号和员工/商铺
+        public class BindAccountDto
+        {
+            [Required(ErrorMessage = "账号为必填项")]
+            [StringLength(50, MinimumLength = 3, ErrorMessage = "账号长度必须在3到50个字符之间")]
+            public string ACCOUNT { get; set; }
+            [Required(ErrorMessage = "ID为必填项")]
+            public int ID { get; set; }
+            [Required(ErrorMessage = "类型为必填项")]
+            [StringLength(10)]
+            public string TYPE { get; set; }
+        }
+        [HttpPost("bind")]
+        public async Task<IActionResult> BindAccount([FromBody] BindAccountDto bindDto)
+        {
+            _logger.LogInformation("正在尝试绑定账号 {AccountName} 到 {Type} ID {Id}...", bindDto.ACCOUNT, bindDto.TYPE, bindDto.ID);
+            try
+            {
+                //检查账号是否存在
+                var account = await _context.FindAccount(bindDto.ACCOUNT);
+                if (account == null)
+                {
+                    _logger.LogWarning("账号 {AccountName} 不存在，绑定失败。", bindDto.ACCOUNT);
+                    return NotFound("该账号不存在。");
+                }
+                else if (bindDto.TYPE == "员工")
+                {
+                    //检查员工ID是否存在
+                    var staff = await _context.STAFF.FirstOrDefaultAsync(s => s.STAFF_ID == bindDto.ID);
+                    if (staff == null)
+                    {
+                        _logger.LogWarning("员工 ID {StaffId} 不存在，绑定失败。", bindDto.ID);
+                        return NotFound("该员工 ID 不存在。");
+                    }
+                    //检查该账号是否已经绑定了员工
+                    var existingStaffLink = await _context.STAFF_ACCOUNT.FirstOrDefaultAsync(sa => sa.ACCOUNT == bindDto.ACCOUNT);
+                    if (existingStaffLink != null)
+                    {
+                        _logger.LogWarning("账号 {AccountName} 已经绑定了员工 ID {StaffId}，绑定失败。", bindDto.ACCOUNT, existingStaffLink.STAFF_ID);
+                        return Conflict("该账号已经绑定了一个员工。");
+                    }
+                    //检查该员工是否已经绑定了账号
+                    var existingStaffIdLink = await _context.STAFF_ACCOUNT.FirstOrDefaultAsync(sa => sa.STAFF_ID == bindDto.ID);
+                    if (existingStaffIdLink != null)
+                    {
+                        _logger.LogWarning("员工 ID {StaffId} 已经绑定了账号 {AccountName}，绑定失败。", bindDto.ID, existingStaffIdLink.ACCOUNT);
+                        return Conflict("该员工已经绑定了一个账号。");
+                    }
+                    //创建新的 StaffAccount 关联
+                    var staffAccount = new StaffAccount
+                    {
+                        ACCOUNT = bindDto.ACCOUNT,
+                        STAFF_ID = bindDto.ID
+                    };
+                    _context.STAFF_ACCOUNT.Add(staffAccount);
+                    return Ok("绑定成功");
+                }
+                else if (bindDto.TYPE == "商户")
+                {
+                    //检查商铺ID是否存在
+                    var store = await _context.STORE.FirstOrDefaultAsync(s => s.STORE_ID == bindDto.ID);
+                    if (store != null)
+                    {
+                        //检查该账号是否已经绑定了商铺
+                        var existingStoreLink = await _context.STORE_ACCOUNT.FirstOrDefaultAsync(sa => sa.ACCOUNT == bindDto.ACCOUNT);
+                        if (existingStoreLink != null)
+                        {
+                            _logger.LogWarning("账号 {AccountName} 已经绑定了商铺 ID {StoreId}，绑定失败。", bindDto.ACCOUNT, existingStoreLink.STORE_ID);
+                            return Conflict("该账号已经绑定了一个商铺。");
+                        }
+                        //检查该商铺是否已经绑定了账号
+                        var existingStoreIdLink = await _context.STORE_ACCOUNT.FirstOrDefaultAsync(sa => sa.STORE_ID == bindDto.ID);
+                        if (existingStoreIdLink != null)
+                        {
+                            _logger.LogWarning("商铺 ID {StoreId} 已经绑定了账号 {AccountName}，绑定失败。", bindDto.ID, existingStoreIdLink.ACCOUNT);
+                            return Conflict("该商铺已经绑定了一个账号。");
+                        }
+                        //创建新的 StoreAccount 关联
+                        var storeAccount = new StoreAccount
+                        {
+                            ACCOUNT = bindDto.ACCOUNT,
+                            STORE_ID = bindDto.ID
+                        };
+                        _context.STORE_ACCOUNT.Add(storeAccount);
+                        return Ok("绑定成功");
+                    }
+                    else
+                    {
+                        _logger.LogWarning("商铺 ID {StoreId} 不存在，绑定失败。", bindDto.ID);
+                        return NotFound("该商铺 ID 不存在。");
+                    }
+
+                }
+                else
+                {
+                    _logger.LogWarning("无效的绑定类型 '{Type}'，绑定失败。", bindDto.TYPE);
+                    return BadRequest($"无效的绑定类型：'{bindDto.TYPE}'。有效值为：员工, 商户。");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "为账号 {AccountName} 进行绑定时发生内部错误。", bindDto.ACCOUNT);
+                return StatusCode(500, "服务器内部错误，绑定失败。");
+            }
+        }
+
 
     }
 }

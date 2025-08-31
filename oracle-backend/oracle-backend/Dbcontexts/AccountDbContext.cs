@@ -19,6 +19,9 @@ namespace oracle_backend.Dbcontexts
         public DbSet<StaffAccount> STAFF_ACCOUNT { get; set; }
         public DbSet<StoreAccount> STORE_ACCOUNT { get; set; }
         public DbSet<TempAuthority> TEMP_AUTHORITY { get; set; }
+        public DbSet<Store> STORE { get; set; }
+        public DbSet<Staff> STAFF { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //规定账号对员工账号的级联删除规则，账号删除时，对应员工账号一并删除
