@@ -23,7 +23,7 @@
         <!-- 面包屑动态显示当前路由的标题 -->
         <div class="breadcrumb">{{ $route.meta.title }}</div>
         <div class="user-profile">
-          <div class="avatar"></div>
+          <img class="avatar" src="@/assets/Vue.svg"></img>
           <span>{{ userStore.userInfo?.username || '用户' }}</span>
         </div>
       </header>
@@ -190,9 +190,8 @@
       .header .user-profile .avatar {
         width: 36px;
         height: 36px;
-        border-radius: 50%;
-        background-color: #ccc;
         margin-right: 10px;
+        border-radius: 50%;
       }
 
 

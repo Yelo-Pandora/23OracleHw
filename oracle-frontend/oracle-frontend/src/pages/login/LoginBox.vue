@@ -42,11 +42,11 @@
       <a href="#" @click.prevent="$emit('switchToForgotPassword')">忘记密码?</a>
     </div>
 
-    <!--<hr class="divider">-->
+    <hr class="divider">
 
-    <!--<div class="guest-login">
+    <div class="guest-login">
       <a href="#" @click.prevent="handleGuestLogin">>>> 游客登录</a>
-    </div>-->
+    </div>
   </div>
 </template>
 
@@ -111,10 +111,10 @@
     }
   }
 
-  //function handleGuestLogin() {
-  //  userStore.login('guest-token', 'guest', { name: '游客' });
-  //  router.push('/');
-  //}
+  function handleGuestLogin() {
+    userStore.login('guest-token', '游客', { account: 'Guest', username: 'Guest', authority: 5 });
+    router.push('/');
+  }
 </script>
 
 <style scoped>
