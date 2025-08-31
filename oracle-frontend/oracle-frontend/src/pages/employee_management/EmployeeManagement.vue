@@ -13,32 +13,37 @@
         </div>
         <div class="content">
             <table>
-                <th class = "table_header">员工账号</th>
-                <th class = "table_header">员工昵称</th>
-                <th class = "table_header">员工ID</th>
-                <th class = "table_header">姓名</th>
-                <th class = "table_header">性别</th>
-                <th class = "table_header">所属部门</th>
-                <th class = "table_header">职位</th>
-                <th class = "table_header">员工权限</th>
-                <th class = "table_header">底薪</th>
-                <th class = "table_header">操作</th>
-
-                <tr class="table_row" v-for="employee in sortedEmployees" :key="employee.id">
-                    <td class = "table_cell c1">{{ employee.account }}</td>
-                    <td class = "table_cell c2">{{ employee.username }}</td>
-                    <td class = "table_cell c1">{{ employee.id }}</td>
-                    <td class = "table_cell c2">{{ employee.name }}</td>
-                    <td class = "table_cell c1">{{ employee.sex }}</td>
-                    <td class = "table_cell c2">{{ employee.department }}</td>
-                    <td class = "table_cell c1">{{ employee.position }}</td>
-                    <td class = "table_cell c2">{{ employee.authority }}</td>
-                    <td class = "table_cell c1">{{ employee.salary }}</td>
-                    <td class = "table_cell c2">
-                        <button class="action-btn salary-btn" @click="DisplaySalaryWindow(employee.id)">工资条目</button>
-                        <button class="action-btn tempauth-btn" @click="DisplayTempAuthWindow(employee.id)">临时权限</button>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th class = "table_header">员工账号</th>
+                        <th class = "table_header">员工昵称</th>
+                        <th class = "table_header">员工ID</th>
+                        <th class = "table_header">姓名</th>
+                        <th class = "table_header">性别</th>
+                        <th class = "table_header">所属部门</th>
+                        <th class = "table_header">职位</th>
+                        <th class = "table_header">员工权限</th>
+                        <th class = "table_header">底薪</th>
+                        <th class = "table_header">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table_row" v-for="employee in sortedEmployees" :key="employee.id">
+                        <td class = "table_cell c1">{{ employee.account }}</td>
+                        <td class = "table_cell c2">{{ employee.username }}</td>
+                        <td class = "table_cell c1">{{ employee.id }}</td>
+                        <td class = "table_cell c2">{{ employee.name }}</td>
+                        <td class = "table_cell c1">{{ employee.sex }}</td>
+                        <td class = "table_cell c2">{{ employee.department }}</td>
+                        <td class = "table_cell c1">{{ employee.position }}</td>
+                        <td class = "table_cell c2">{{ employee.authority }}</td>
+                        <td class = "table_cell c1">{{ employee.salary }}</td>
+                        <td class = "table_cell c2">
+                            <button class="action-btn salary-btn" @click="DisplaySalaryWindow(employee.id)">工资条目</button>
+                            <button class="action-btn tempauth-btn" @click="DisplayTempAuthWindow(employee.id)">临时权限</button>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         <TempAuthModal
