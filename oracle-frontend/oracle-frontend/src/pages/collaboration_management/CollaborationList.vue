@@ -101,7 +101,7 @@ const searchCollaborations = async () => {
       userStore.logout();
       router.push('/login');
     } else {
-      await alert('查询失败，请稍后重试');
+      await alert('查询失败，' + (error || '，请稍后重试'));
     }
   } finally {
     loading.value = false;

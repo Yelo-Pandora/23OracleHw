@@ -184,7 +184,7 @@ const submitForm = async () => {
     } else if (error.response && error.response.status === 400) {
       await alert(error.response.data || '添加失败，请检查输入数据');
     } else {
-      await alert('添加失败，请稍后重试');
+      await alert('添加失败，' + (error || '，请稍后重试'));
       console.error('添加合作方错误:', error);
     }
   } finally {

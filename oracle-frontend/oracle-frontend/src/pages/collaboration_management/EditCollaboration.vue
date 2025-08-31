@@ -206,7 +206,7 @@ const submitForm = async () => {
       } else if (error.response.status === 404) {
         await alert('合作方不存在');
       } else {
-        await alert('更新失败，请稍后重试');
+        await alert('更新失败，' + (error || '，请稍后重试'));
       }
     } else {
       await alert('更新失败，请检查网络连接');

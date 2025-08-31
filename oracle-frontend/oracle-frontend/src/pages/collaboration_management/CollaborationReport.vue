@@ -187,7 +187,7 @@ const generateReport = async () => {
       userStore.logout();
       router.push('/login');
     } else {
-      await alert('生成报表失败，请稍后重试');
+      await alert('生成报表失败，' + (error || '，请稍后重试'));
     }
   } finally {
     loading.value = false;
