@@ -58,6 +58,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useUserStore } from '@/user/user';
 import axios from 'axios';
+import alert from '@/utils/alert';
 import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
@@ -96,11 +97,11 @@ const searchCollaborations = async () => {
   } catch (error) {
     console.error('查询合作方失败:', error);
     if (error.response && error.response.status === 401) {
-      alert('登录已过期，请重新登录');
+      await alert('登录已过期，请重新登录');
       userStore.logout();
       router.push('/login');
     } else {
-      alert('查询失败，请稍后重试');
+      await alert('查询失败，请稍后重试');
     }
   } finally {
     loading.value = false;

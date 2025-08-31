@@ -79,6 +79,7 @@ import { reactive, ref } from 'vue';
 import { useUserStore } from '@/user/user';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import alert from '@/utils/alert';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -171,19 +172,19 @@ const submitForm = async () => {
     const operator = encodeURIComponent(userStore.token);
     const url = `/api/Collaboration?operatorAccountId=${operator}`;
 
-    const response = await axios.post(url, body);
+    await axios.post(url, body);
 
-    alert('添加成功！');
+    await alert('添加成功！');
     emit('saved');
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      alert('登录已过期，请重新登录');
+      await alert('登录已过期，请重新登录');
       userStore.logout();
       router.push('/login');
     } else if (error.response && error.response.status === 400) {
-      alert(error.response.data || '添加失败，请检查输入数据');
+      await alert(error.response.data || '添加失败，请检查输入数据');
     } else {
-      alert('添加失败，请稍后重试');
+      await alert('添加失败，请稍后重试');
       console.error('添加合作方错误:', error);
     }
   } finally {

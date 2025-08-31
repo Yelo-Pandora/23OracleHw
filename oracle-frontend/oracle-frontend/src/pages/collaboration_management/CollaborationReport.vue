@@ -97,6 +97,7 @@ import { reactive, ref, computed, onMounted } from 'vue';
 import { useUserStore } from '@/user/user';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import alert from '@/utils/alert';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -150,17 +151,17 @@ const generateReport = async () => {
 
   // 验证日期
   if (!filters.startDate || !filters.endDate) {
-    alert('请选择开始日期和结束日期');
+    await alert('请选择开始日期和结束日期');
     return;
   }
 
   if (filters.startDate > filters.endDate) {
-    alert('开始日期不能晚于结束日期');
+    await alert('开始日期不能晚于结束日期');
     return;
   }
 
   if (filters.endDate > maxDate) {
-    alert('结束日期不能晚于当前日期');
+    await alert('结束日期不能晚于当前日期');
     return;
   }
 
@@ -182,18 +183,18 @@ const generateReport = async () => {
   } catch (error) {
     console.error('生成报表失败:', error);
     if (error.response && error.response.status === 401) {
-      alert('登录已过期，请重新登录');
+      await alert('登录已过期，请重新登录');
       userStore.logout();
       router.push('/login');
     } else {
-      alert('生成报表失败，请稍后重试');
+      await alert('生成报表失败，请稍后重试');
     }
   } finally {
     loading.value = false;
   }
 };
 
-const exportReport = () => {
+  const exportReport = async () => {
   // 这里实现导出功能，可以导出为Excel或PDF
   // 简单实现：导出为CSV
   const csvContent = [
@@ -223,7 +224,7 @@ const exportPDF = async () => {
   if (!reportData.value.length) return;
   const el = document.querySelector('.report-results');
   if (!el) {
-    alert('没有可导出的内容');
+    await alert('没有可导出的内容');
     return;
   }
   loading.value = true;
@@ -357,8 +358,8 @@ const exportPDF = async () => {
 
     pdf.save(`合作方统计报表_${filters.startDate}_至_${filters.endDate}.pdf`);
   } catch (err) {
-    console.error('导出PDF失败', err);
-    alert('导出PDF失败，请稍后重试');
+  console.error('导出PDF失败', err);
+  await alert('导出PDF失败，请稍后重试');
   } finally {
     // 清理工作
     const tmp = document.getElementById('tmp-export-container');

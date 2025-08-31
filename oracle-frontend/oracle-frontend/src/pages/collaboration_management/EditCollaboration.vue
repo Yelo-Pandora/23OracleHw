@@ -82,6 +82,7 @@ import { useUserStore } from '@/user/user';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import confirm from '@/utils/confirm';
+import alert from '@/utils/alert';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -192,23 +193,23 @@ const submitForm = async () => {
 
   await axios.put(url, body);
 
-  alert('更新成功！');
+  await alert('更新成功！');
     emit('saved');
   } catch (error) {
     if (error.response) {
       if (error.response.status === 401) {
-        alert('登录已过期，请重新登录');
+        await alert('登录已过期，请重新登录');
         userStore.logout();
         router.push('/login');
       } else if (error.response.status === 400) {
-        alert(error.response.data || '更新失败，请检查输入数据');
+        await alert(error.response.data || '更新失败，请检查输入数据');
       } else if (error.response.status === 404) {
-        alert('合作方不存在');
+        await alert('合作方不存在');
       } else {
-        alert('更新失败，请稍后重试');
+        await alert('更新失败，请稍后重试');
       }
     } else {
-      alert('更新失败，请检查网络连接');
+      await alert('更新失败，请检查网络连接');
     }
     console.error('更新合作方错误:', error);
   } finally {
@@ -224,8 +225,8 @@ const deleting = ref(false);
 
 const deleteCollaboration = async () => {
   if (!checkAuth()) return;
-  if (!formData.collaborationId) {
-    alert('无效的合作方ID');
+    if (!formData.collaborationId) {
+    await alert('无效的合作方ID');
     return;
   }
 
@@ -237,25 +238,25 @@ const deleteCollaboration = async () => {
     const operator = encodeURIComponent(userStore.token);
     const url = `/api/Collaboration/${formData.collaborationId}?operatorAccountId=${operator}`;
 
-    await axios.delete(url);
+  await axios.delete(url);
 
-    alert('删除成功！');
-    emit('deleted');
+  await alert('删除成功！');
+  emit('deleted');
   } catch (error) {
     if (error.response) {
       if (error.response.status === 401) {
-        alert('登录已过期，请重新登录');
+        await alert('登录已过期，请重新登录');
         userStore.logout();
         router.push('/login');
       } else if (error.response.status === 400) {
-        alert(error.response.data || '删除失败，请检查请求');
+        await alert(error.response.data || '删除失败，请检查请求');
       } else if (error.response.status === 404) {
-        alert('合作方不存在');
+        await alert('合作方不存在');
       } else {
-        alert('删除失败，请稍后重试');
+        await alert('删除失败，请稍后重试');
       }
     } else {
-      alert('删除失败，请检查网络连接');
+      await alert('删除失败，请检查网络连接');
     }
     console.error('删除合作方错误:', error);
   } finally {
