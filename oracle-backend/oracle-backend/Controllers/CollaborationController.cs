@@ -251,6 +251,37 @@ namespace oracle_backend.Controllers
             return Ok(report);
         }
 
+        // 2.4.5 合作方数据删除
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCollaboration(
+            int id,
+            [FromQuery, Required] string operatorAccountId)
+        {
+            // 验证权限 - 需要数据库管理员权限(1)
+            var permissionCheck = await CheckPermission(operatorAccountId, 1);
+            if (permissionCheck != null) return permissionCheck;
+            try
+            {
+                var collaboration = await _context.Collaborations
+                    .FirstOrDefaultAsync(c => c.COLLABORATION_ID == id);
+                if (collaboration == null)
+                    return NotFound("合作方不存在");
+                // 检查活动状态冲突(需要表VenueEventDetails)
+                if (await HasActiveEvents(id))
+                    return BadRequest("存在进行中的合作活动，无法删除");
+                // 删除合作方
+                _context.Collaborations.Remove(collaboration);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"操作员 {operatorAccountId} 删除了合作方: ID={id}");
+                return Ok(new { message = "删除成功", id = id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"操作员 {operatorAccountId} 删除合作方时出错");
+                return StatusCode(500, "内部服务器错误");
+            }
+        }
+
         // DTO类
         public class CollaborationDto
         {

@@ -322,9 +322,6 @@ const exportPDF = async () => {
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
-    // 将画布尺寸（px）转换为毫米用于PDF放置
-    const pxPerMm = canvas.width / ((pageWidth) * (document.documentElement.clientWidth / document.documentElement.clientWidth || 1));
-
     // 计算图像渲染尺寸，保持宽高比
     const imgProps = { width: canvas.width, height: canvas.height };
     let renderWidth = pageWidth - 20; // 毫米

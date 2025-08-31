@@ -63,16 +63,25 @@
           {{ submitting ? '提交中...' : '提交' }}
         </button>
         <button type="button" @click="cancel" class="btn-cancel">取消</button>
+        <button
+          type="button"
+          class="btn-delete"
+          @click="deleteCollaboration"
+          :disabled="deleting"
+        >
+          {{ deleting ? '删除中...' : '删除' }}
+        </button>
       </div>
     </form>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue';
+import { reactive, ref } from 'vue';
 import { useUserStore } from '@/user/user';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import confirm from '@/utils/confirm';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -181,9 +190,9 @@ const submitForm = async () => {
     const operator = encodeURIComponent(userStore.token);
     const url = `/api/Collaboration/${formData.collaborationId}?operatorAccountId=${operator}`;
 
-    const response = await axios.put(url, body);
+  await axios.put(url, body);
 
-    alert('更新成功！');
+  alert('更新成功！');
     emit('saved');
   } catch (error) {
     if (error.response) {
@@ -211,7 +220,50 @@ const cancel = () => {
   emit('cancel');
 };
 
-const emit = defineEmits(['saved', 'cancel']);
+const deleting = ref(false);
+
+const deleteCollaboration = async () => {
+  if (!checkAuth()) return;
+  if (!formData.collaborationId) {
+    alert('无效的合作方ID');
+    return;
+  }
+
+  const ok = await confirm('确定要删除该合作方吗？此操作不可恢复。');
+  if (!ok) return;
+
+  deleting.value = true;
+  try {
+    const operator = encodeURIComponent(userStore.token);
+    const url = `/api/Collaboration/${formData.collaborationId}?operatorAccountId=${operator}`;
+
+    await axios.delete(url);
+
+    alert('删除成功！');
+    emit('deleted');
+  } catch (error) {
+    if (error.response) {
+      if (error.response.status === 401) {
+        alert('登录已过期，请重新登录');
+        userStore.logout();
+        router.push('/login');
+      } else if (error.response.status === 400) {
+        alert(error.response.data || '删除失败，请检查请求');
+      } else if (error.response.status === 404) {
+        alert('合作方不存在');
+      } else {
+        alert('删除失败，请稍后重试');
+      }
+    } else {
+      alert('删除失败，请检查网络连接');
+    }
+    console.error('删除合作方错误:', error);
+  } finally {
+    deleting.value = false;
+  }
+};
+
+const emit = defineEmits(['saved', 'cancel', 'deleted']);
 </script>
 
 <style scoped>
@@ -269,7 +321,7 @@ const emit = defineEmits(['saved', 'cancel']);
   margin-top: 30px;
 }
 
-.btn-submit, .btn-cancel {
+.btn-submit, .btn-cancel , .btn-delete {
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -288,6 +340,11 @@ const emit = defineEmits(['saved', 'cancel']);
 
 .btn-cancel {
   background-color: #6c757d;
+  color: white;
+}
+
+.btn-delete {
+  background-color: #dc3545;
   color: white;
 }
 

@@ -83,9 +83,9 @@ import axios from 'axios';
 const userStore = useUserStore();
 const router = useRouter();
 
-// 使用当前时间戳（毫秒）自动生成默认的合作方 ID
+// 使用当前时间戳（秒）自动生成默认的合作方 ID
 const formData = reactive({
-  collaborationId: Date.now(),
+  collaborationId: Math.floor(Date.now()/1000), // 秒级时间戳
   collaborationName: '',
   contactor: '',
   phoneNumber: '',
