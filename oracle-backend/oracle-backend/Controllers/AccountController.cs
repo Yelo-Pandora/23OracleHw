@@ -363,6 +363,8 @@ namespace oracle_backend.Controllers
             public int StaffId { get; set; }
             public string StaffName { get; set; }
             public string Department { get; set; }
+            public string Position { get; set; }
+            public string StaffSex { get; set; }
         }
         // 商家信息的 DTO
         public class StoreInfoDto
@@ -374,7 +376,6 @@ namespace oracle_backend.Controllers
         //用来返回详细信息的DTO
         public class AccountDetailDto
         {
-            // 从 Account 表获取的信息
             public string Account { get; set; }
             public string Username { get; set; }
             public string Identity { get; set; }
@@ -386,61 +387,70 @@ namespace oracle_backend.Controllers
             // 关联的商家信息 (如果存在)
             public StoreInfoDto? StoreInfo { get; set; }
         }
-        //查询所有账号信息，附带关联的员工或商铺信息
+        // 查询所有账号信息，附带关联的员工或商铺信息
         [HttpGet("AllAccount/detailed")]
-        public async Task<IActionResult> GetAccountDetails(string account)
+        public async Task<IActionResult> GetAllAccountDetails()
         {
-            // 查找基本的账号信息
-            var accountEntity = await _context.FindAccount(account);
+            // 获取所有账号基本信息
+            var allAccounts = await _context.ACCOUNT.ToListAsync();
 
-            if (accountEntity == null)
+            if (allAccounts == null || !allAccounts.Any())
             {
-                return NotFound("未找到指定的账号。");
+                return Ok(new List<AccountDetailDto>()); // 如果没有账号，返回空列表
             }
 
-            // 创建DTO并填充基本信息
-            var responseDto = new AccountDetailDto
-            {
-                Account = accountEntity.ACCOUNT,
-                Username = accountEntity.USERNAME,
-                Identity = accountEntity.IDENTITY,
-                Authority = accountEntity.AUTHORITY
-            };
+            // 一次性获取所有相关的员工链接信息，并转换为字典以便快速查找
+            var staffLinks = await _context.STAFF_ACCOUNT
+                                           .Include(sa => sa.staffNavigation)
+                                           .ToDictionaryAsync(sa => sa.ACCOUNT, sa => sa);
 
-            // 检查并获取关联的员工信息
-            var staffLink = await _context.STAFF_ACCOUNT
-                                          .Include(sa => sa.staffNavigation) // 关键：预加载员工实体
-                                          .FirstOrDefaultAsync(sa => sa.ACCOUNT == account);
+            // 一次性获取所有相关的商家链接信息，并转换为字典以便快速查找
+            var storeLinks = await _context.STORE_ACCOUNT
+                                           .Include(sa => sa.storeNavigation)
+                                           .ToDictionaryAsync(sa => sa.ACCOUNT, sa => sa);
 
-            if (staffLink != null && staffLink.staffNavigation != null)
+            // 遍历所有账号，并组装返回的 DTO 列表
+            var responseDtos = new List<AccountDetailDto>();
+
+            foreach (var accountEntity in allAccounts)
             {
-                responseDto.StaffInfo = new StaffInfoDto
+                var detailDto = new AccountDetailDto
                 {
-                    StaffId = staffLink.STAFF_ID,
-                    StaffName = staffLink.staffNavigation.STAFF_NAME,
-                    Department = staffLink.staffNavigation.STAFF_APARTMENT
+                    Account = accountEntity.ACCOUNT,
+                    Username = accountEntity.USERNAME,
+                    Identity = accountEntity.IDENTITY,
+                    Authority = accountEntity.AUTHORITY
                 };
-            }
 
-            // 4. 检查并获取关联的商家信息
-            // 使用 Include() 来同时加载 StoreAccount 及其导航属性 Store 的数据
-            var storeLink = await _context.STORE_ACCOUNT
-                                          .Include(sa => sa.storeNavigation) // 关键：预加载店铺实体
-                                          .FirstOrDefaultAsync(sa => sa.ACCOUNT == account);
-
-            if (storeLink != null && storeLink.storeNavigation != null)
-            {
-                responseDto.StoreInfo = new StoreInfoDto
+                // 尝试从字典中查找关联的员工信息
+                if (staffLinks.TryGetValue(accountEntity.ACCOUNT, out var staffLink) && staffLink.staffNavigation != null)
                 {
-                    StoreId = storeLink.STORE_ID,
-                    // 以下属性需要您根据实际的 Store Model 修改
-                    StoreName = storeLink.storeNavigation.STORE_NAME, // 假设 Store 类有 Name 属性
-                    TenantName = storeLink.storeNavigation.TENANT_NAME
-                };
+                    detailDto.StaffInfo = new StaffInfoDto
+                    {
+                        StaffId = staffLink.STAFF_ID,
+                        StaffName = staffLink.staffNavigation.STAFF_NAME,
+                        StaffSex = staffLink.staffNavigation.STAFF_SEX,
+                        Department = staffLink.staffNavigation.STAFF_APARTMENT,
+                        Position = staffLink.staffNavigation.STAFF_POSITION
+                    };
+                }
+
+                // 尝试从字典中查找关联的商家信息
+                if (storeLinks.TryGetValue(accountEntity.ACCOUNT, out var storeLink) && storeLink.storeNavigation != null)
+                {
+                    detailDto.StoreInfo = new StoreInfoDto
+                    {
+                        StoreId = storeLink.STORE_ID,
+                        StoreName = storeLink.storeNavigation.STORE_NAME,
+                        TenantName = storeLink.storeNavigation.TENANT_NAME
+                    };
+                }
+
+                responseDtos.Add(detailDto);
             }
 
-            // 5. 返回整合后的 DTO
-            return Ok(responseDto);
+            // 5. 返回整合后的 DTO 列表
+            return Ok(responseDtos);
         }
 
         //绑定账号和员工/商铺

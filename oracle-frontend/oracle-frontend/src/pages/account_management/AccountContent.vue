@@ -1,19 +1,38 @@
 <template>
   <DashboardLayout>
     <div class="account-content-container">
-      <!-- 区域1: 所有员工可见 (修改个人信息) -->
+      <!-- 区域1: 所有员工/商户可见，管理自身账户 -->
       <div class="common-section">
         <h2 class="section-title">个人信息管理</h2>
         <div class="info-card">
-          <p>这里是用于修改您自己账户信息的功能区。</p>
-          <p><strong>当前用户:</strong> {{ userStore.userInfo?.Username || 'N/A' }}</p>
-          <p><strong>您的角色:</strong> {{ userStore.role || 'N/A' }}</p>
-          <!-- 在这里可以放置修改密码、联系方式等的表单 -->
+          <p><strong>账号:</strong> {{ userStore.userInfo?.account || 'N/A' }}</p>
+          <p><strong>用户名:</strong> {{ userStore.userInfo?.username || 'N/A' }}</p>
+          <p><strong>身份:</strong> {{ userStore.role || 'N/A' }}</p>
+
+          <!-- 分割线，让界面更清晰 -->
+          <hr v-if="userStore.userInfo?.StaffInfo || userStore.userInfo?.StoreInfo" class="info-divider">
+
+          <!-- 关联的员工信息 (仅当登录者是员工时显示) -->
+          <div v-if="userStore.userInfo?.StaffInfo" class="role-details">
+            <h4>员工档案</h4>
+            <p><strong>员工姓名:</strong> {{ userStore.userInfo.StaffInfo.StaffName }}</p>
+            <p><strong>所属部门:</strong> {{ userStore.userInfo.StaffInfo.Department }}</p>
+            <p><strong>职位:</strong> {{ userStore.userInfo.StaffInfo.Position }}</p>
+          </div>
+
+          <!-- 关联的商户信息 (仅当登录者是商户时显示) -->
+          <div v-if="userStore.userInfo?.StoreInfo" class="role-details">
+            <h4>商户档案</h4>
+            <p><strong>商户名称:</strong> {{ userStore.userInfo.StoreInfo.StoreName }}</p>
+            <p><strong>租户姓名:</strong> {{ userStore.userInfo.StoreInfo.TenantName }}</p>
+          </div>
+
+          <!-- 修改按钮 -->
           <button class="action-button">修改密码</button>
         </div>
       </div>
 
-      <!-- 区域2: 仅管理员可见 (管理所有账户) -->
+      <!-- 区域2: 仅管理员可见，管理所有账户 -->
       <div v-if="isAdmin" class="admin-section">
         <hr class="section-divider">
         <h2 class="section-title">系统账户列表</h2>
@@ -30,7 +49,6 @@
                 <th>性别</th>
                 <th>所属部门</th>
                 <th>职位</th>
-                <th>底薪</th>
               </tr>
             </thead>
             <tbody>
@@ -41,10 +59,9 @@
                 <td>{{ account.StaffInfo.StaffId }}</td>
                 <td>{{ account.Account }}</td>
                 <td>{{ account.StaffInfo.StaffName }}</td>
-                <td>{{ account.StaffInfo.Gender }}</td>
+                <td>{{ account.StaffInfo.StaffSex || '未知' }}</td>
                 <td>{{ account.StaffInfo.Department }}</td>
                 <td>{{ account.StaffInfo.Position }}</td>
-                <td>{{ account.StaffInfo.BaseSalary }}</td>
               </tr>
             </tbody>
           </table>
@@ -88,6 +105,7 @@
   import DashboardLayout from '@/components/BoardLayout.vue';
   // 1. 导入用户状态仓库
   import { useUserStore } from '@/user/user';
+import axios from 'axios';
 
   // 2. 获取 userStore 实例
   const userStore = useUserStore();
@@ -100,19 +118,20 @@
   const staffAccounts = ref([]);
   const tenantAccounts = ref([]);
 
-  // 模拟的API数据...
-  const mockApiData = [
-    { "Account": "admin", "Username": "admin", "Identity": "员工", "Authority": 1, "StaffInfo": { "StaffId": 1, "StaffName": "admin", "Department": "财务部", "Gender": "男", "Position": "经理", "BaseSalary": 90000 }, "StoreInfo": null },
-    { "Account": "staff002", "Username": "张三", "Identity": "员工", "Authority": 0, "StaffInfo": { "StaffId": 2, "StaffName": "张三", "Department": "市场部", "Gender": "男", "Position": "职员", "BaseSalary": 12000 }, "StoreInfo": null },
-    { "Account": "stringss", "Username": "stringss", "Identity": "商户", "Authority": 1, "StaffInfo": null, "StoreInfo": { "StoreId": 1, "StoreName": "品牌A", "TenantName": "tx" } },
-    { "Account": "tenant002", "Username": "李四", "Identity": "商户", "Authority": 0, "StaffInfo": null, "StoreInfo": { "StoreId": 2, "StoreName": "品牌B", "TenantName": "李四" } },
-    { "Account": "guest", "Username": "guest", "Identity": "Guest", "Authority": 0, "StaffInfo": null, "StoreInfo": null }
-  ];
+  //// 模拟的API数据...
+  //const mockApiData = [
+  //  { "Account": "admin", "Username": "admin", "Identity": "员工", "Authority": 1, "StaffInfo": { "StaffId": 1, "StaffName": "admin", "Department": "财务部", "Gender": "男", "Position": "经理", "BaseSalary": 90000 }, "StoreInfo": null },
+  //  { "Account": "staff002", "Username": "张三", "Identity": "员工", "Authority": 0, "StaffInfo": { "StaffId": 2, "StaffName": "张三", "Department": "市场部", "Gender": "男", "Position": "职员", "BaseSalary": 12000 }, "StoreInfo": null },
+  //  { "Account": "stringss", "Username": "stringss", "Identity": "商户", "Authority": 1, "StaffInfo": null, "StoreInfo": { "StoreId": 1, "StoreName": "品牌A", "TenantName": "tx" } },
+  //  { "Account": "tenant002", "Username": "李四", "Identity": "商户", "Authority": 0, "StaffInfo": null, "StoreInfo": { "StoreId": 2, "StoreName": "品牌B", "TenantName": "李四" } },
+  //  { "Account": "guest", "Username": "guest", "Identity": "Guest", "Authority": 0, "StaffInfo": null, "StoreInfo": null }
+  //];
 
-  const fetchAndProcessAccounts = () => {
-    const allAccounts = mockApiData;
-    staffAccounts.value = allAccounts.filter(acc => acc.Identity === '员工' && acc.StaffInfo);
-    tenantAccounts.value = allAccounts.filter(acc => acc.Identity === '商户' && acc.StoreInfo);
+  const fetchAndProcessAccounts = async () => {
+    const response = await axios.get('/api/Accounts/AllAccount/detailed');
+    const allAccount = response.data;
+    staffAccounts.value = allAccount.filter(acc => acc.Identity === '员工' && acc.StaffInfo);
+    tenantAccounts.value = allAccount.filter(acc => acc.Identity === '商户' && acc.StoreInfo);
   };
 
   // 4. 在组件挂载时，检查用户权限
@@ -124,6 +143,11 @@
     } else {
       console.log("当前用户是普通员工，不加载账户列表。");
     }
+    console.log("当前 User Store 的状态:", userStore);
+  });
+  onMounted(() => {
+    // 在这里打印 store 的快照
+    console.log("当前 User Store 的状态:", userStore);
   });
 </script>
 
