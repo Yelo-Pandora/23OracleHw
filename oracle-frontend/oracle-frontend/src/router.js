@@ -8,6 +8,8 @@ import Home from './pages/home/Home.vue'
 // import Visualization from './pages/area_visualization/App.vue'
 // import Equipment from './pages/Equipment_management/App.vue'
 import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
+import TotalSalary from './pages/employee_management/TotalSalary.vue'
+
 // import Events from './pages/events_management/App.vue'
 // import Mall from './pages/mall_management/App.vue'
 // import Cashflow from './pages/cashflow_management/App.vue'
@@ -50,6 +52,15 @@ const routes = [
       requiresAuth: true,
       title: '员工信息管理',
       role_need: ['员工'] 
+    }
+  },
+  {
+    path: '/cashflow_management/total_salary',
+    component: TotalSalary,
+    meta: {
+      requiresAuth: true,
+      title: '工资总支出',
+      role_need: ['员工']
     }
   },
 //   // 合作方信息管理页面
