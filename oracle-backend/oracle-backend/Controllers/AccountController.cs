@@ -171,9 +171,22 @@ namespace oracle_backend.Controllers
                 return Ok(target);
         }
 
+        public class AccountUpdateDto
+        {
+            public string? USERNAME { get; set; }
+
+            // 密码是可选的，所以设为可空字符串
+            public string? PASSWORD { get; set; }
+
+            public string? IDENTITY { get; set; }
+
+            public int? AUTHORITY { get; set; }
+
+            public string ACCOUNT { get; set; }
+        }
         //修改指定账号信息
         [HttpPatch("alter/{currAccount}")]
-        public async Task<IActionResult> UpdateAccount(string currAccount, [FromQuery] string operatorAccountId, [FromBody] Account updatedAccount)
+        public async Task<IActionResult> UpdateAccount(string currAccount, [FromQuery] string operatorAccountId, [FromBody] AccountUpdateDto updatedAccountDto)
         {
             var cur = await _context.FindAccount(currAccount);
             var oper = await _context.FindAccount(operatorAccountId);
@@ -190,33 +203,55 @@ namespace oracle_backend.Controllers
                 return BadRequest("请重试");
             }
             //只有数据库管理员能管理其它的的账号
-            if (oper.AUTHORITY != 1 && currAccount.ToLower() != updatedAccount.ACCOUNT)
+            if (oper.AUTHORITY != 1 && updatedAccountDto.ACCOUNT != null && currAccount.ToLower() != updatedAccountDto.ACCOUNT)
             {
                 _logger.LogWarning("操作者权限不足");
                 return BadRequest("权限不足");
             }
             // 判断账号名是否被修改，且新账号名是否已存在
-            if (updatedAccount.ACCOUNT != currAccount)
+            if (updatedAccountDto.ACCOUNT != null && updatedAccountDto.ACCOUNT != currAccount)
             {
                 _logger.LogWarning("不允许直接修改账号");
                 return BadRequest("不允许直接修改账号");
             }
             // 修改成了无效身份
-            if (updatedAccount.IDENTITY != "员工" && updatedAccount.IDENTITY != "商户")
+            if (updatedAccountDto.IDENTITY != null && updatedAccountDto.IDENTITY != "员工" && updatedAccountDto.IDENTITY != "商户")
             {
                 _logger.LogWarning("无效的身份");
                 return BadRequest("无效的身份");
             }
 
             //执行更新
-            cur.ACCOUNT = updatedAccount.ACCOUNT;
-            cur.PASSWORD = updatedAccount.PASSWORD;
-            cur.USERNAME = updatedAccount.USERNAME;
-            cur.IDENTITY = updatedAccount.IDENTITY;
-            //不允许修改自己的权限，且修改的权限不能超过操作员权限
-            if (oper.AUTHORITY == 1 && currAccount.ToLower() != operatorAccountId.ToLower())
+            // 如果 DTO 中提供了 USERNAME，就更新实体
+            if (updatedAccountDto.USERNAME != null)
             {
-                cur.AUTHORITY = updatedAccount.AUTHORITY < oper.AUTHORITY ? oper.AUTHORITY : updatedAccount.AUTHORITY;
+                cur.USERNAME = updatedAccountDto.USERNAME;
+            }
+
+            // 如果 DTO 中提供了 IDENTITY，就更新实体
+            if (updatedAccountDto.IDENTITY != null)
+            {
+                // 你可以保留这里的验证逻辑
+                if (updatedAccountDto.IDENTITY != "员工" && updatedAccountDto.IDENTITY != "商户")
+                {
+                    return BadRequest("无效的身份");
+                }
+                cur.IDENTITY = updatedAccountDto.IDENTITY;
+            }
+
+            // 只有当 DTO 中提供了非空的 PASSWORD 字符串时，才进行更新。
+            if (!string.IsNullOrEmpty(updatedAccountDto.PASSWORD))
+            {
+                // accountEntity.PASSWORD = HashPassword(updatedAccountDto.PASSWORD);
+                cur.PASSWORD = updatedAccountDto.PASSWORD;
+
+                _logger.LogInformation($"账号 {currAccount} 的密码已被更新。");
+            }
+
+            // 权限更新逻辑
+            if (updatedAccountDto.AUTHORITY.HasValue && oper.AUTHORITY == 1 && currAccount != operatorAccountId)
+            {
+                cur.AUTHORITY = Math.Max(updatedAccountDto.AUTHORITY.Value, oper.AUTHORITY);
             }
 
             //提交更改
@@ -292,7 +327,7 @@ namespace oracle_backend.Controllers
             }
         }
 
-        //查询指定账号的权限
+        //检查指定账号的权限是否符合条件
         [HttpPost("chkauth")]
         public async Task<IActionResult> ChkAuthority(string account, int goalAuth)
         {
@@ -308,6 +343,7 @@ namespace oracle_backend.Controllers
             }
         }
 
+        //查询指定账号的权限
         [HttpPost("getauth")]
         public async Task<IActionResult> GetAuthority(string account)
         {
@@ -453,7 +489,55 @@ namespace oracle_backend.Controllers
             return Ok(responseDtos);
         }
 
-        //绑定账号和员工/商铺
+        //只返回单个账号的详细信息
+        [HttpGet("info/detailed/{accountId}")]
+        public async Task<IActionResult> GetAccountDetail(string accountId)
+        {
+            var accountEntity = await _context.FindAccount(accountId);
+            if (accountEntity == null)
+            {
+                _logger.LogWarning("指定的账号不存在");
+                return NotFound("账号不存在");
+            }
+            var detailDto = new AccountDetailDto
+            {
+                Account = accountEntity.ACCOUNT,
+                Username = accountEntity.USERNAME,
+                Identity = accountEntity.IDENTITY,
+                Authority = accountEntity.AUTHORITY
+            };
+            // 查找关联的员工信息
+            var staffLink = await _context.STAFF_ACCOUNT
+                                          .Include(sa => sa.staffNavigation)
+                                          .FirstOrDefaultAsync(sa => sa.ACCOUNT == accountId);
+            if (staffLink != null && staffLink.staffNavigation != null)
+            {
+                detailDto.StaffInfo = new StaffInfoDto
+                {
+                    StaffId = staffLink.STAFF_ID,
+                    StaffName = staffLink.staffNavigation.STAFF_NAME,
+                    StaffSex = staffLink.staffNavigation.STAFF_SEX,
+                    Department = staffLink.staffNavigation.STAFF_APARTMENT,
+                    Position = staffLink.staffNavigation.STAFF_POSITION
+                };
+            }
+            // 查找关联的商家信息
+            var storeLink = await _context.STORE_ACCOUNT
+                                          .Include(sa => sa.storeNavigation)
+                                          .FirstOrDefaultAsync(sa => sa.ACCOUNT == accountId);
+            if (storeLink != null && storeLink.storeNavigation != null)
+            {
+                detailDto.StoreInfo = new StoreInfoDto
+                {
+                    StoreId = storeLink.STORE_ID,
+                    StoreName = storeLink.storeNavigation.STORE_NAME,
+                    TenantName = storeLink.storeNavigation.TENANT_NAME
+                };
+            }
+            return Ok(detailDto);
+        }
+
+            //绑定账号和员工/商铺
         public class BindAccountDto
         {
             [Required(ErrorMessage = "账号为必填项")]
