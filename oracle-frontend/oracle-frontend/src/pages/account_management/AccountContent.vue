@@ -50,10 +50,6 @@
 
             <!-- 3. 使用 <template> 和 v-if 来包裹所有仅管理员可见的按钮 -->
             <template v-if="isAdmin">
-              <button class="action-button" @click="addAccount">添加账号</button>
-              <button class="action-button" @click="alterAccount">编辑账号</button>
-              <button class="action-button" @click="linkAccount">关联账号</button>
-              <button class="action-button" @click="grantTempPermission">临时权限</button>
               <button class="action-button action-button--danger" @click="deleteAccount">删除账号</button>
             </template>
           </div>
@@ -92,32 +88,57 @@
                          :checked="isAllStaffSelected"
                          @change="toggleAllStaffSelection" />
                 </th>
-                <th>员工ID</th>
                 <th>账户</th>
                 <th>用户名</th>
+                <th>权限</th>
+                <th>员工ID</th>
                 <th>姓名</th>
                 <th>性别</th>
                 <th>所属部门</th>
                 <th>职位</th>
+                <th class="actions-col">操作</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="filteredStaffAccounts.length === 0">
-                <td colspan="7">暂无员工数据</td>
+                <td colspan="9">暂无员工数据</td>
               </tr>
-              <tr v-for="account in filteredStaffAccounts" :key="account.StaffInfo.StaffId">
+              <tr v-for="account in filteredStaffAccounts" :key="account.Account">
                 <td>
                   <input type="checkbox"
-                         :value="account.StaffInfo.StaffId"
-                         v-model="selectedStaffIds" />
+                         :value="account.Account"
+                         v-model="selectedStaffAccounts" />
                 </td>
-                <td>{{ account.StaffInfo.StaffId }}</td>
                 <td>{{ account.Account }}</td>
                 <td>{{ account.Username }}</td>
-                <td>{{ account.StaffInfo.StaffName }}</td>
-                <td>{{ account.StaffInfo.StaffSex || '未知' }}</td>
-                <td>{{ account.StaffInfo.Department }}</td>
-                <td>{{ account.StaffInfo.Position }}</td>
+                <td>{{ account.Authority }}</td>
+                <td>{{ account.StaffInfo?.StaffId || 'N/A' }}</td>
+                <td>{{ account.StaffInfo?.StaffName || '(未关联)' }}</td>
+                <td>{{ account.StaffInfo?.StaffSex || 'N/A' }}</td>
+                <td>{{ account.StaffInfo?.Department || '(未关联)' }}</td>
+                <td>{{ account.StaffInfo?.Position || '(未关联)' }}</td>
+                <td class="actions-cell">
+                  <button class="row-action-button" @click="grantTempPermission(account)">
+                    临时权限
+                  </button>
+
+                  <!-- 关联账号按钮 (仅当 StaffInfo 不存在时显示) -->
+                  <button v-if="!account.StaffInfo"
+                          class="row-action-button"
+                          @click="linkAccount(account)">
+                    关联账号
+                  </button>
+
+                  <!-- 取消关联按钮 (仅当 StaffInfo 存在时显示) -->
+                  <button v-if="account.StaffInfo"
+                          class="row-action-button row-action-button--danger"
+                          @click="unlinkAccount(account)">
+                    取消关联
+                  </button>
+                  <button class="row-action-button" @click="editAccount(account)">
+                    编辑账号
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -134,28 +155,54 @@
                          :checked="isAllTenantSelected"
                          @change="toggleAllTenantSelection" />
                 </th>
-                <th>商户ID</th>
                 <th>账户</th>
                 <th>用户名</th>
+                <th>权限</th>
+                <th>商户ID</th>
                 <th>商户名称</th>
                 <th>租户姓名</th>
+                <th class="actions-col">操作</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="filteredTenantAccounts.length === 0">
-                <td colspan="5">暂无商户数据</td>
+                <td colspan="8">暂无商户数据</td>
               </tr>
-              <tr v-for="account in filteredTenantAccounts" :key="account.StoreInfo.StoreId">
+              <tr v-for="account in filteredTenantAccounts" :key="account.Account">
                 <td>
                   <input type="checkbox"
-                         :value="account.StoreInfo.StoreId"
-                         v-model="selectedTenantIds" />
+                         :value="account.Account"
+                         v-model="selectedTenantAccounts" />
                 </td>
-                <td>{{ account.StoreInfo.StoreId }}</td>
                 <td>{{ account.Account }}</td>
                 <td>{{ account.Username }}</td>
-                <td>{{ account.StoreInfo.StoreName }}</td>
-                <td>{{ account.StoreInfo.TenantName }}</td>
+                <td>{{ account.Authority }}</td>
+                <td>{{ account.StoreInfo?.StoreId || 'N/A' }}</td>
+                <td>{{ account.StoreInfo?.StoreName || '(未关联)' }}</td>
+                <td>{{ account.StoreInfo?.TenantName || '(未关联)' }}</td>
+                <td class="actions-cell">
+                  <!-- 临时权限按钮 (所有行都有) -->
+                  <button class="row-action-button" @click="grantTempPermission(account)">
+                    临时权限
+                  </button>
+
+                  <!-- 关联账号按钮 (仅当 StaffInfo 不存在时显示) -->
+                  <button v-if="!account.StaffInfo"
+                          class="row-action-button"
+                          @click="linkAccount(account)">
+                    关联账号
+                  </button>
+
+                  <!-- 取消关联按钮 (仅当 StaffInfo 存在时显示) -->
+                  <button v-if="account.StaffInfo"
+                          class="row-action-button row-action-button--danger"
+                          @click="unlinkAccount(account)">
+                    取消关联
+                  </button>
+                  <button class="row-action-button" @click="editAccount(account)">
+                    编辑账号
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -185,7 +232,7 @@
 
   // --- 模块化调用 ---
 
-  // 模块 A: 获取个人信息
+  // 模块A:获取个人信息
   const {
     currentUserStaffInfo,
     currentUserStoreInfo,
@@ -193,7 +240,7 @@
     fetchCurrentUserDetails
   } = useCurrentUserProfile(userStore);
 
-  // 模块 B: 获取、筛选和搜索账户列表
+  // 模块B:获取、筛选和搜索账户列表
   const {
     searchFilter,
     searchQuery,
@@ -202,27 +249,28 @@
     filteredTenantAccounts
   } = useAccountList();
 
-  // 模块 C: 处理列表勾选 (它依赖于模块B的结果)
+  // 模块C:处理列表勾选(依赖于模块B的结果)
   const {
-    selectedStaffIds,
-    selectedTenantIds,
+    selectedStaffAccounts,
+    selectedTenantAccounts,
     isAllStaffSelected,
     toggleAllStaffSelection,
     isAllTenantSelected,
     toggleAllTenantSelection
   } = useAccountSelection(filteredStaffAccounts, filteredTenantAccounts);
 
-  // 模块 D: 处理按钮操作 (它依赖于模块C的结果)
+  // 模块D:处理按钮操作(依赖于模块C的结果)
   const {
     modifyInfo,
-    addAccount,
     deleteAccount,
     linkAccount,
-    grantTempPermission
-  } = useAccountActions(userStore, selectedStaffIds, selectedTenantIds);
+    unlinkAccount,
+    grantTempPermission,
+    editAccount
+  } = useAccountActions(userStore, fetchAndProcessAccounts, selectedStaffAccounts, selectedTenantAccounts);
 
 
-  // --- 生命周期钩子 ---
+  // 生命周期钩子函数
   onMounted(() => {
     // 调用模块A的函数
     fetchCurrentUserDetails();
@@ -401,4 +449,48 @@
     width: 40px; /* 给复选框列一个固定的窄宽度 */
     text-align: center;
   }
+
+  /* 操作列表头样式 */
+  .actions-col {
+    width: 240px; /* 根据按钮数量和文字长度给一个合适的宽度 */
+    text-align: center;
+  }
+
+  /* 操作列单元格样式 */
+  .actions-cell {
+    text-align: center;
+    /* 使用 Flexbox 让按钮排列更灵活 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* 按钮之间的间距 */
+  }
+
+  /* 行内操作按钮的通用样式 */
+  .row-action-button {
+    padding: 4px 8px; /* 比全局按钮更小，更紧凑 */
+    font-size: 0.8rem;
+    border: 1px solid #4A90E2;
+    background-color: #fff;
+    color: #4A90E2;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+    .row-action-button:hover {
+      background-color: #4A90E2;
+      color: #fff;
+    }
+
+  /* 行内危险操作按钮的样式 */
+  .row-action-button--danger {
+    border-color: #e74c3c;
+    color: #e74c3c;
+  }
+
+    .row-action-button--danger:hover {
+      background-color: #e74c3c;
+      color: #fff;
+    }
 </style>
