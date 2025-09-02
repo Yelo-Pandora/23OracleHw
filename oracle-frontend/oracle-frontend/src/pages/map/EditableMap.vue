@@ -21,21 +21,47 @@
         <span>{{ currentZoom.toFixed(1) }}x</span>
       </div>
       <div class="right">
-        <button :disabled="!canEdit" @click="onAddArea">新增区域</button>
-        <button :disabled="!selectedId || !canEdit" @click="onDuplicate">复制</button>
-        <button :disabled="!selectedId || !canEdit" @click="onDelete">删除</button>
-        <button :disabled="!canEdit" @click="saveToLocal">保存</button>
-        <button :disabled="!canEdit" @click="resetToDefault">重置示例</button>
+        <label>模式：</label>
+        <button :class="{active: editMode}" @click="editMode=true">编辑</button>
+        <button :class="{active: !editMode}" @click="editMode=false">展示</button>
+        <label style="margin-left:12px;">边框：</label>
+        <select v-model.number="borderMargin">
+          <option :value="8">小</option>
+          <option :value="20">中</option>
+          <option :value="36">大</option>
+        </select>
+        <button :disabled="!canEdit || !editMode" @click="onAddArea">新增区域</button>
+        <button :disabled="!selectedId || !canEdit || !editMode" @click="onDuplicate">复制</button>
+        <button :disabled="!selectedId || !canEdit || !editMode" @click="onDelete">删除</button>
+        <button :disabled="!canEdit || !editMode" @click="saveToLocal">保存</button>
+        <button :disabled="!canEdit || !editMode" @click="resetToDefault">重置示例</button>
         <button @click="exportJSON">导出JSON</button>
         <label class="import-btn">
           导入JSON
           <input type="file" accept="application/json" @change="importJSON">
         </label>
+        <label style="margin-left:12px;">线条：</label>
+        <button :disabled="!editMode" @click="startAddLine">添加线条</button>
+        <button :disabled="!editMode || !selectedLineId" @click="deleteLine">删除线条</button>
+        <template v-if="selectedLine">
+          <label style="margin-left:8px;">颜色</label>
+          <input type="color" v-model="selectedLine.color" style="width:36px;height:28px; padding:0; border:none;" />
+          <label>粗细</label>
+          <input type="number" min="1" max="8" step="1" v-model.number="selectedLine.width" style="width:64px;" />
+        </template>
+        <label style="margin-left:12px;">吸附</label>
+        <input type="checkbox" v-model="snapEnabled" />
+        <select v-model.number="snapSize">
+          <option :value="8">8px</option>
+          <option :value="12">12px</option>
+          <option :value="16">16px</option>
+          <option :value="20">20px</option>
+        </select>
       </div>
     </div>
 
     <div class="canvas-wrap" @mousemove="onMouseMove" @mouseleave="hovered = null">
-      <svg :viewBox="`0 0 ${canvasSize.w} ${canvasSize.h}`" preserveAspectRatio="xMidYMid meet">
+      <svg :viewBox="`0 0 ${canvasSize.w} ${canvasSize.h}`" preserveAspectRatio="xMidYMid meet" @click="onSvgClick">
         <defs>
           <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto-start-reverse">
             <path d="M0,0 L0,6 L9,3 z" fill="#666" />
@@ -48,6 +74,17 @@
           <rect :x="walk.inner.x" :y="walk.inner.y" :width="walk.inner.w" :height="walk.inner.h" fill="none" stroke="#bbb" stroke-width="1.5" stroke-dasharray="6 6" />
           <line v-for="(x,i) in walk.vertical" :key="'wv-'+i" :x1="x" :y1="walk.inner.y" :x2="x" :y2="walk.inner.y + walk.inner.h" stroke="#bbb" stroke-dasharray="8 8" />
           <line v-for="(y,i) in walk.horizontal" :key="'wh-'+i" :x1="walk.inner.x" :y1="y" :x2="walk.inner.x + walk.inner.w" :y2="y" stroke="#bbb" stroke-dasharray="8 8" />
+        </g>
+
+        <!-- 用户自定义线条（可编辑、可选中、可拖动） -->
+        <g class="user-lines">
+          <line v-for="ln in currentLines" :key="ln.id"
+                :x1="ln.x1" :y1="ln.y1" :x2="ln.x2" :y2="ln.y2"
+                :stroke="selectedLineId===ln.id ? (ln.color||'#409eff') : (ln.color||'#888')"
+                :stroke-width="selectedLineId===ln.id ? (ln.width||2)+1 : (ln.width||2)"
+                stroke-dasharray="6 6"
+                @click.stop="selectLine(ln.id)"
+                @mousedown.stop.prevent="editMode && beginDragLine(ln, $event)" />
         </g>
 
         <!-- 内容整体自适应居中（仅平移） -->
@@ -237,6 +274,8 @@ import BoardLayout from '@/components/BoardLayout.vue'
 import { MapApi } from '@/services/mapApi'
 
 const canvasSize = reactive({ w: 1200, h: 700 })
+const editMode = ref(true)
+const borderMargin = ref(20)
 // 每层缩放：默认倍率（B1=1.0，1F=0.8，2/3F=1.2），可在滑块上调整并记忆
 const layerZoom = reactive({ [-1]: 1.0, [1]: 0.8, [2]: 1.2, [3]: 1.2 })
 const currentZoom = computed(() => layerZoom[currentFloor.value])
@@ -452,6 +491,8 @@ onMounted(() => {
   let p = localStorage.getItem('mall.editable.parking')
   areas.value = a ? JSON.parse(a) : defaultAreas
   parkingSlots.value = p ? JSON.parse(p) : defaultParking
+  const l = localStorage.getItem('mall.editable.lines')
+  if (l) { try { const obj = JSON.parse(l); Object.assign(lines, obj) } catch {} }
   // 一次性左对齐归一化，避免出现初始大空白
   normalizeLeftEdge(-1)
   normalizeLeftEdge(1)
@@ -476,7 +517,7 @@ const transformFit = computed(() => `translate(0, 0) scale(${currentZoom.value})
 
 // 走道/过道线：每层一套参数，含外围虚线框与网格线
 const walk = computed(() => {
-  const m = 20
+  const m = borderMargin.value
   const inner = { x: m, y: m, w: canvasSize.w - 2*m, h: canvasSize.h - 2*m }
   if (currentFloor.value === -1) {
     const p = layoutParams[-1]
@@ -494,6 +535,71 @@ const walk = computed(() => {
   const vertical = [inner.x + inner.w*0.25, inner.x + inner.w*0.5, inner.x + inner.w*0.75]
   return { inner, vertical, horizontal }
 })
+
+// 线条编辑：按楼层存储
+const lines = reactive({ [-1]: [], [1]: [], [2]: [], [3]: [] })
+const currentLines = computed(() => lines[currentFloor.value] || [])
+const selectedLineId = ref(null)
+const selectedLine = computed(() => (currentLines.value||[]).find(l => l.id===selectedLineId.value) || null)
+let draggingLine = null
+let dragOffset = null
+const snapEnabled = ref(true)
+const snapSize = ref(12)
+
+function startAddLine(){
+  addingLine.value = true
+}
+const addingLine = ref(false)
+function onSvgClick(e){
+  if (!editMode.value) return
+  if (!addingLine.value) return
+  const pt = svgPoint(e)
+  const id = `L${Date.now().toString().slice(-6)}`
+  const ln = { id, x1: pt.x-40, y1: pt.y, x2: pt.x+40, y2: pt.y }
+  (lines[currentFloor.value] ||= []).push(ln)
+  selectedLineId.value = id
+  addingLine.value = false
+  saveToLocal()
+}
+function selectLine(id){ selectedLineId.value = id }
+function beginDragLine(ln, ev){
+  if (!editMode.value) return
+  draggingLine = ln
+  const p = svgPoint(ev)
+  dragOffset = { dx1: p.x - ln.x1, dy1: p.y - ln.y1, dx2: p.x - ln.x2, dy2: p.y - ln.y2 }
+  window.addEventListener('mousemove', onLineMove)
+  window.addEventListener('mouseup', endLineMove)
+}
+function onLineMove(ev){
+  if (!draggingLine) return
+  const p = svgPoint(ev)
+  let x1 = p.x - dragOffset.dx1
+  let y1 = p.y - dragOffset.dy1
+  let x2 = p.x - dragOffset.dx2
+  let y2 = p.y - dragOffset.dy2
+  if (snapEnabled.value){
+    const s = snapSize.value
+    const snap = (v) => Math.round(v / s) * s
+    x1 = snap(x1); y1 = snap(y1); x2 = snap(x2); y2 = snap(y2)
+  }
+  draggingLine.x1 = x1; draggingLine.y1 = y1; draggingLine.x2 = x2; draggingLine.y2 = y2
+}
+function endLineMove(){ draggingLine=null; dragOffset=null; window.removeEventListener('mousemove', onLineMove); window.removeEventListener('mouseup', endLineMove); saveToLocal() }
+function deleteLine(){
+  if (!selectedLineId.value) return
+  const arr = lines[currentFloor.value] || []
+  const idx = arr.findIndex(l => l.id === selectedLineId.value)
+  if (idx>=0) arr.splice(idx,1)
+  selectedLineId.value = null
+  saveToLocal()
+}
+function svgPoint(ev){
+  const svg = ev.currentTarget?.ownerSVGElement || ev.target?.ownerSVGElement || ev.currentTarget || document.querySelector('svg')
+  const rect = svg.getBoundingClientRect()
+  const x = (ev.clientX - rect.left) / currentZoom.value
+  const y = (ev.clientY - rect.top) / currentZoom.value
+  return { x, y }
+}
 
 const visibleAreas = computed(() => {
   const f = layerFilter[currentFloor.value]
@@ -743,6 +849,7 @@ function persistEdit() { saveToLocal() }
 function saveToLocal() {
   localStorage.setItem('mall.editable.areas', JSON.stringify(areas.value))
   localStorage.setItem('mall.editable.parking', JSON.stringify(parkingSlots.value))
+  try { localStorage.setItem('mall.editable.lines', JSON.stringify(lines)) } catch {}
   // 静默自动保存，不提示
 }
 function resetToDefault() {
