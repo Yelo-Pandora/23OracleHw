@@ -21,6 +21,7 @@ namespace oracle_backend.Dbcontexts
         public DbSet<TempAuthority> TEMP_AUTHORITY { get; set; }
         public DbSet<Store> STORE { get; set; }
         public DbSet<Staff> STAFF { get; set; }
+        public DbSet<Event> EVENT { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

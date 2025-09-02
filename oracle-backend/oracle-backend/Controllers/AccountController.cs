@@ -707,5 +707,28 @@ namespace oracle_backend.Controllers
                 return StatusCode(500, "服务器内部错误，解绑失败。");
             }
         }
+
+        //获取活动列表
+        [HttpGet("events")]
+        public async Task<IActionResult> GetAllEvents()
+        {
+            try
+            {
+                // 1. 异步查询数据库中的 Events DbSet，并转换为列表
+                var events = await _context.EVENT.ToListAsync();
+
+                // 2. 将查询到的列表作为结果返回，状态码为 200 OK
+                //    如果没有任何活动，这里会返回一个空的数组 []
+                return Ok(events);
+            }
+            catch (Exception ex)
+            {
+                // 3. 如果在查询数据库时发生任何异常，记录错误日志
+                _logger.LogError(ex, "获取所有活动列表时发生错误。");
+
+                // 4. 向客户端返回一个 500 内部服务器错误
+                return StatusCode(500, "服务器内部错误，无法获取活动列表。");
+            }
+        }
     }
 }

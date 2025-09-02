@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="account-content-container">
+    <div v-if="!isChildRouteActive" class="account-content-container">
       <!-- 区域1: 所有员工/商户可见，管理自身账户 -->
       <div class="common-section">
         <h2 class="section-title">个人信息管理</h2>
@@ -216,14 +216,24 @@
                         @close="closeLinkModal"
                         @confirm="handleLinkConfirm" />
     </div>
+    <router-view />
   </DashboardLayout>
 </template>
 
 <script setup>
   import { computed, onMounted } from 'vue';
+  import { useRoute } from 'vue-router';
   import DashboardLayout from '@/components/BoardLayout.vue';
   import { useUserStore } from '@/user/user';
-  import AccountLinkModal from '@/pages/account_management/AccountLinkModel.vue'; 
+  import AccountLinkModal from '@/pages/account_management/AccountLinkModel.vue';
+
+  const route = useRoute();
+
+  // 3. 创建一个计算属性来判断当前路由是否是子路由
+  const isChildRouteActive = computed(() => {
+    // 如果当前路由的 name 是 'TempAuthEditor'，则认为是子路由
+    return route.name === 'TempAuthEditor';
+  });
 
   // 按需导入需要的函数
   import {

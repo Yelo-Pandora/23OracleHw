@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 // 该函数模块负责获取当前登录用户的个人信息
 export function useCurrentUserProfile(userStore) {
@@ -130,6 +131,9 @@ export function useAccountSelection(filteredStaff, filteredTenants) {
 
 // 该函数模块负责所有按钮的操作
 export function useAccountActions(userStore, fetchAndProcessAccounts, selectedStaffIds, selectedTenantIds) {
+    const router = useRouter();
+    // 【添加日志】打印出路由器的所有已知路由
+    console.log('Available routes:', router.getRoutes());
     // 【修改】实现 modifyInfo 的完整逻辑
     const modifyInfo = async () => {
       const currentUser = userStore.userInfo;
@@ -308,7 +312,12 @@ export function useAccountActions(userStore, fetchAndProcessAccounts, selectedSt
         alert(`取消关联失败: ${error.response?.data?.message || error.message}`);
       }
     };
-    const grantTempPermission = (account) => alert('功能: 打开临时权限授予面板');
+    const grantTempPermission = (account) => {
+      // 3. 执行导航
+      router.push({
+        path: `/account_management/temp-auth/${account.Account}`
+      });
+    };
     const editAccount = async (accountToEdit) => {
       if (!accountToEdit) return;
 
