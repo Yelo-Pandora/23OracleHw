@@ -46,18 +46,6 @@
                 </tbody>
             </table>
         </div>
-        <TempAuthModal
-            :show="showTempAuthWindow"
-            :showAll="showAllTempAuth"
-            :currentEmployeeId="currentEmployeeId"
-            :tempAuthList="tempAuthList"
-            :search="tempAuthSearch"
-            :canToggleShowAll="userEmployee && Number(userEmployee.authority) <= 2"
-            @close="showTempAuthWindow = false"
-            @toggleShowAll="toggleShowAllTempAuth"
-            @edit="EditTempAuth"
-            @update:search="val => tempAuthSearch = val"
-        />
         <SalarySlipModal
             :show="showSalarySlipWindow"
             :employeeInfo="employees.find(emp => emp.id === currentEmployeeId)"
@@ -70,7 +58,6 @@
 
 <script setup>
 import DashboardLayout from '@/components/BoardLayout.vue';
-import TempAuthModal from './TempAuthModal.vue';
 import SalarySlipModal from './SalarySlipModal.vue';
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
@@ -85,7 +72,6 @@ const employees = ref([]);
 const userEmployee = ref(null);
 
 const tempAuthList = ref([]);
-const tempAuthSearch = ref('');
 const showTempAuthWindow = ref(false);
 
 const salarySlip = ref([]);
@@ -117,13 +103,6 @@ const sortedEmployees = computed(() => {
     });
 });
 
-const showAllTempAuth = ref(false);
-
-
-function toggleShowAllTempAuth() {
-    showAllTempAuth.value = !showAllTempAuth.value;
-}
-
 // temp auth
 function DisplayTempAuthWindow(employeeId) {
     showTempAuthWindow.value = true;
@@ -136,9 +115,6 @@ function DisplaySalaryWindow(employeeId) {
     showSalarySlipWindow.value = true;
 }
 
-function EditTempAuth(){
-
-}
 
 onMounted(async () => {
     // 获取所有员工
