@@ -4,119 +4,206 @@
       <h2>活动查询</h2>
     </div>
 
-    <div class="filter-container">
-      <el-form :model="filterForm" class="filter-form">
-        <el-row :gutter="20">
-          <el-col :span="8">
-            <el-form-item label="活动状态">
-              <el-select v-model="filterForm.status" placeholder="请选择活动状态" clearable style="width: 100%;">
-                <el-option label="未开始" value="upcoming"></el-option>
-                <el-option label="进行中" value="ongoing"></el-option>
-                <el-option label="已结束" value="completed"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="活动日期">
-              <el-date-picker
-                v-model="filterForm.dateRange"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="yyyy-MM-dd"
-                clearable
-                style="width: 100%;"
-              >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6" class="button-col">
-            <el-form-item>
-              <!-- 查询按钮 -->
-              <button
-                type="button"
-                @click="handleQueryClick"
-                :disabled="queryLoading"
-                class="custom-button custom-button--primary"
-                :class="{ 'is-loading': queryLoading, 'is-clicked': isQueryClicked }"
-              >
-                <span v-if="!queryLoading">查询</span>
-                <span v-else>查询中...</span>
-              </button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+    <!-- 筛选区域 -->
+    <div class="filter-section">
+      <div class="filter-container">
+        <el-form :model="filterForm" class="filter-form">
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-form-item label="活动状态">
+                <el-select v-model="filterForm.status" placeholder="请选择活动状态" clearable style="width: 100%;">
+                  <el-option label="未开始" value="upcoming"></el-option>
+                  <el-option label="进行中" value="ongoing"></el-option>
+                  <el-option label="已结束" value="completed"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10">
+              <el-form-item label="活动日期">
+                <el-date-picker
+                  v-model="filterForm.dateRange"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  clearable
+                  style="width: 100%;"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" class="button-col">
+              <el-form-item>
+                <div class="buttons-container">
+                  <!-- 查询按钮 -->
+                  <button
+                    type="button"
+                    @click="handleQueryClick"
+                    :disabled="queryLoading"
+                    class="custom-button custom-button--primary"
+                    :class="{ 'is-loading': queryLoading, 'is-clicked': isQueryClicked }"
+                  >
+                    <span v-if="!queryLoading">查询</span>
+                    <span v-else>查询中...</span>
+                  </button>
+                  <!-- 清除筛选按钮 -->
+                  <button
+                    type="button"
+                    @click="handleClearFilters"
+                    class="custom-button custom-button--secondary"
+                  >
+                    清除筛选
+                  </button>
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
+
+      <!-- 筛选按钮区域 -->
+      <div class="filter-buttons-section">
+        <div class="filter-buttons">
+          <button
+            type="button"
+            @click="applyFilter('type', 'venue')"
+            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.type === 'venue' }]"
+          >
+            场地活动
+          </button>
+          <button
+            type="button"
+            @click="applyFilter('type', 'promotion')"
+            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.type === 'promotion' }]"
+          >
+            促销活动
+          </button>
+          
+          <button
+            type="button"
+            @click="applyFilter('status', 'upcoming')"
+            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.status === 'upcoming' }]"
+          >
+            未开始
+          </button>
+          <button
+            type="button"
+            @click="applyFilter('status', 'ongoing')"
+            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.status === 'ongoing' }]"
+          >
+            进行中
+          </button>
+          <button
+            type="button"
+            @click="applyFilter('status', 'completed')"
+            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.status === 'completed' }]"
+          >
+            已结束
+          </button>
+
+        </div>
+      </div>
     </div>
 
-    <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-      <el-tab-pane label="全部活动" name="all"></el-tab-pane>
-      <el-tab-pane label="场地活动" name="venue"></el-tab-pane>
-      <el-tab-pane label="促销活动" name="promotion"></el-tab-pane>
-    </el-tabs>
+    <!-- 内容区域 -->
+    <div class="content-section">
+      <div v-if="loading" class="empty-state">
+        <i class="el-icon-loading"></i>
+        <p>加载中...</p>
+      </div>
 
-    <div v-if="loading" class="empty-state">
-      <i class="el-icon-loading"></i>
-      <p>加载中...</p>
-    </div>
+      <div v-else-if="activities.length === 0" class="empty-state">
+        <i class="el-icon-date"></i>
+        <p>暂无活动数据</p>
+      </div>
 
-    <div v-else-if="activities.length === 0" class="empty-state">
-      <i class="el-icon-date"></i>
-      <p>暂无活动数据</p>
-    </div>
+      <div v-else>
+        <div class="card-container">
+          <el-row :gutter="20">
+            <el-col v-for="activity in activities" :key="activity.EVENT_ID" :span="8" style="margin-bottom: 20px;">
+              <div class="activity-card">
+                <div class="card-header">
+                  <div class="card-title">{{ activity.EVENT_NAME }}</div>
+                </div>
+                <div class="card-content">
+                  <!-- 时间 -->
+                  <div class="card-detail">
+                    <i class="el-icon-time detail-icon"></i>
+                    <span class="detail-text">时间: {{ formatDate(activity.EVENT_START) }} 至 {{ formatDate(activity.EVENT_END) }}</span>
+                  </div>
 
-    <div v-else class="card-container">
-      <el-row :gutter="20">
-        <el-col v-for="activity in activities" :key="activity.EVENT_ID" :span="8" style="margin-bottom: 20px;">
-          <div class="activity-card">
-            <div class="card-header">
-              <div class="card-title">{{ activity.EVENT_NAME }}</div>
-            </div>
-            <div class="card-content">
-              <div class="card-detail">
-                <i class="el-icon-time detail-icon"></i>
-                <span class="detail-text">时间: {{ activity.EVENT_START }} 至 {{ activity.EVENT_END }}</span>
+                  <!-- 根据活动类型显示不同字段 -->
+                  <!-- 场地活动特有字段 -->
+                  <template v-if="activeFilters.type === 'venue'">
+                    <div class="card-detail">
+                      <i class="el-icon-user detail-icon"></i>
+                      <span class="detail-text">容量: {{ activity.Capacity }}</span>
+                    </div>
+                    <div class="card-detail">
+                      <i class="el-icon-money detail-icon"></i>
+                      <span class="detail-text">花费: {{ activity.Cost }}</span>
+                    </div>
+                    <div class="card-detail">
+                      <i class="el-icon-price-tag detail-icon"></i>
+                      <span class="detail-text">收费: {{ activity.Fee }}</span>
+                    </div>
+                    <div class="card-detail">
+                      <i class="el-icon-user-solid detail-icon"></i>
+                      <span class="detail-text">参与人数: {{ activity.Participants }}</span>
+                    </div>
+                  </template>
+
+                  <!-- 促销活动特有字段 -->
+                  <template v-else-if="activeFilters.type === 'promotion'">
+                    <div class="card-detail">
+                      <i class="el-icon-document detail-icon"></i>
+                      <span class="detail-text">描述: {{ activity.Description }}</span>
+                    </div>
+                  </template>
+
+                </div>
+                <div class="card-footer">
+                  <span :class="getStatusClass(activity.status)">
+                    {{ getStatusText(activity.status) }}
+                  </span>
+                </div>
               </div>
-              <div class="card-detail">
-                <i class="el-icon-document detail-icon"></i>
-                <span class="detail-text">描述: {{ activity.Description }}</span>
-              </div>
-              <div class="card-detail" v-if="activity.Cost !== undefined">
-                <i class="el-icon-money detail-icon"></i>
-                <span class="detail-text">费用: {{ activity.Cost }}</span>
-              </div>
-            </div>
-            <div class="card-footer">
-              <span :class="getStatusClass(activity.status)">
-                {{ getStatusText(activity.status) }}
-              </span>
-            </div>
-          </div>
-        </el-col>
-      </el-row>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
     </div>
 
-    <div class="pagination-wrapper">
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[6, 12, 24]"
-        :small="true"
-        :background="true"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        class="custom-pagination"
-      />
+    <!-- 分页控件 -->
+    <div v-if="total > pageSize" class="pagination-container">
+      <div class="pagination-info">
+        共 {{ total }} 条，第 {{ currentPage }} / {{ totalPages }} 页
+      </div>
+      <div class="pagination-controls">
+        <button
+          class="custom-button custom-button--secondary"
+          :disabled="currentPage <= 1"
+          @click="handlePrevPage"
+        >
+          上一页
+        </button>
+        <button
+          class="custom-button custom-button--secondary"
+          :disabled="currentPage >= totalPages"
+          @click="handleNextPage"
+          style="margin-left: 10px;"
+        >
+          下一页
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 
 const filterForm = ref({
@@ -124,21 +211,49 @@ const filterForm = ref({
   dateRange: []
 });
 
-const activeTab = ref('all');
+// 使用 activeFilters 来管理当前筛选状态
+const activeFilters = reactive({
+  type: 'promotion', // 默认选中促销活动
+  status: '' // 'upcoming', 'ongoing', 'completed'
+});
+
 const activities = ref([]);
-const loading = ref(false); // 整体加载状态
-const queryLoading = ref(false); // 查询按钮加载状态
+const loading = ref(false);
+const queryLoading = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(6);
 const total = ref(0);
 
-// 按钮点击效果状态
 const isQueryClicked = ref(false);
 
+// 计算总页数
+const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
+
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    const parts = dateString.split('T')[0];
+    if (parts && parts.match(/^\d{4}-\d{2}-\d{2}$/)) {
+       return parts; 
+    }
+    return dateString;
+  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+// 计算活动状态
 function calcStatus(activity) {
   const now = new Date();
   const start = new Date(activity.EVENT_START);
   const end = new Date(activity.EVENT_END);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      console.warn('Invalid date for activity:', activity.EVENT_NAME);
+      return 'completed';
+  }
   if (now < start) return 'upcoming';
   if (now >= start && now <= end) return 'ongoing';
   return 'completed';
@@ -148,55 +263,91 @@ const getStatusClass = (status) => {
   return `status-${status}`;
 };
 
-// 查询按钮点击处理函数
+// 应用筛选条件
+const applyFilter = (filterType, value) => {
+  // 如果点击的是已经激活的类型筛选按钮，则清除该筛选
+  if (filterType === 'type' && activeFilters[filterType] === value) {
+    activeFilters[filterType] = '';
+  } else {
+    activeFilters[filterType] = value;
+  }
+  // 应用筛选时重置到第一页
+  currentPage.value = 1;
+  handleQueryClick();
+};
+
+// 清除所有筛选条件
+const handleClearFilters = () => {
+  // 重置表单筛选
+  filterForm.value.status = '';
+  filterForm.value.dateRange = [];
+  
+  // 重置快速筛选按钮状态
+  activeFilters.type = 'promotion'; // 重置为默认类型
+  activeFilters.status = '';
+  
+  // 重置分页
+  currentPage.value = 1;
+  
+  // 重新加载数据
+  handleQueryClick();
+};
+
 const handleQueryClick = async () => {
-  if (queryLoading.value) return; // 防止重复点击
+  if (queryLoading.value) return;
 
-  isQueryClicked.value = true; // 触发点击效果
-  queryLoading.value = true;   // 触发加载状态
-  loading.value = true;        // 触发整体加载状态
+  isQueryClicked.value = true;
+  queryLoading.value = true;
+  loading.value = true;
 
-  // 点击效果持续时间
   setTimeout(() => {
     isQueryClicked.value = false;
   }, 150);
+  
   try {
-    // 使用模拟数据展示效果，正式使用删除，使用下方api调用
-    // const response = await axios.get('/api/SaleEvent');
-    // let list = response.data.map(a => ({
-    //   ...a,
-    //   status: calcStatus(a)
-    // }));
-    
-    // 模拟 API 调用延迟
-    await new Promise(resolve => setTimeout(resolve, 800));
-    const mockData = [
-      { EVENT_ID: 1, EVENT_NAME: '春季大促', EVENT_START: '2023-03-01', EVENT_END: '2023-03-15', Description: '全场商品8折起', Cost: 0 },
-      { EVENT_ID: 2, EVENT_NAME: '新品发布会', EVENT_START: '2023-05-20', EVENT_END: '2023-05-21', Description: '邀请您参加我们的新品发布会', Cost: 0 },
-      { EVENT_ID: 3, EVENT_NAME: '周年庆典', EVENT_START: '2022-12-01', EVENT_END: '2022-12-31', Description: '公司成立十周年，感恩回馈', Cost: 0 },
-      { EVENT_ID: 4, EVENT_NAME: '夏日清凉节', EVENT_START: '2023-07-01', EVENT_END: '2023-07-15', Description: '夏季专属折扣', Cost: 0 },
-      { EVENT_ID: 5, EVENT_NAME: '中秋赏月会', EVENT_START: '2023-09-29', EVENT_END: '2023-10-01', Description: '中秋佳节，共赏明月', Cost: 0 },
-      { EVENT_ID: 6, EVENT_NAME: '年终清仓', EVENT_START: '2023-12-20', EVENT_END: '2023-12-31', Description: '年终大促，清仓甩卖', Cost: 0 },
-      { EVENT_ID: 7, EVENT_NAME: '会员日特惠', EVENT_START: '2023-06-18', EVENT_END: '2023-06-18', Description: '会员尊享额外9折', Cost: 0 },
-      { EVENT_ID: 8, EVENT_NAME: '开学季大促', EVENT_START: '2023-08-15', EVENT_END: '2023-09-10', Description: '学生专享，学习用品特价', Cost: 0 },
-    ];
-    const response = { data: mockData };
+    let list = []; // 用于存储最终处理后的活动列表
+    if (activeFilters.type === 'venue') {
+      
+      const response = await axios.get('/api/VenueEvent/events');
+      list = response.data.map(a => ({
+        ...a,
+        status: calcStatus(a)
+      }));
 
-    let list = response.data.map(a => ({
-      ...a,
-      status: calcStatus(a)
-    }));
+    } else if (activeFilters.type === 'promotion') {
 
-    if (filterForm.value.status) {
-      list = list.filter(a => a.status === filterForm.value.status);
+      const response = await axios.get('/api/SaleEvent');
+      list = response.data.map(a => ({
+        ...a,
+        status: calcStatus(a)
+      }));
+
     }
-    if (filterForm.value.dateRange.length === 2) {
+
+    const statusFilter = filterForm.value.status || activeFilters.status;
+    if (statusFilter) {
+      list = list.filter(a => a.status === statusFilter);
+    }
+
+    if (filterForm.value.dateRange && filterForm.value.dateRange.length === 2) {
       const [start, end] = filterForm.value.dateRange;
-      list = list.filter(a => a.EVENT_START >= start && a.EVENT_END <= end);
+      list = list.filter(a => {
+         const activityStartDate = formatDate(a.EVENT_START);
+         const activityEndDate = formatDate(a.EVENT_END);
+
+         const filterStart = new Date(start);
+         const filterEnd = new Date(end);
+         const eventStart = new Date(activityStartDate);
+         const eventEnd = new Date(activityEndDate);
+
+         return eventStart <= filterEnd && eventEnd >= filterStart;
+      });
     }
 
-    // 模拟分页逻辑
+    // --- 分页处理 ---
     total.value = list.length;
+    
+    // 根据当前页和每页大小计算显示的数据
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
     activities.value = list.slice(start, end);
@@ -204,28 +355,28 @@ const handleQueryClick = async () => {
   } catch (err) {
     ElMessage.error('获取活动数据失败，请稍后重试');
     console.error(err);
+    activities.value = []; // 出错时清空列表
+    total.value = 0;
   } finally {
     queryLoading.value = false;
     loading.value = false;
   }
 };
 
-// 注意：resetFilter 函数已移除，因为没有了重置按钮
-
-const handleTabChange = () => {
-  currentPage.value = 1;
-  handleQueryClick(); // 切换Tab时也触发查询
+// 处理上一页点击
+const handlePrevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+    handleQueryClick(); // 重新加载当前页数据
+  }
 };
 
-const handleSizeChange = (newSize) => {
-  pageSize.value = newSize;
-  currentPage.value = 1;
-  handleQueryClick(); // 更改页面大小时触发查询
-};
-
-const handleCurrentChange = (newPage) => {
-  currentPage.value = newPage;
-  handleQueryClick(); // 更改页码时触发查询
+// 处理下一页点击
+const handleNextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+    handleQueryClick(); // 重新加载当前页数据
+  }
 };
 
 const getStatusText = (status) => {
@@ -237,8 +388,9 @@ const getStatusText = (status) => {
   return statusMap[status] || '未知状态';
 };
 
+// 页面加载时，默认加载促销活动
 onMounted(() => {
-  handleQueryClick(); // 页面加载时自动查询
+  handleQueryClick(); 
 });
 </script>
 
@@ -248,6 +400,8 @@ onMounted(() => {
   background-color: #f5f7fa;
   min-height: 100vh;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -260,21 +414,37 @@ onMounted(() => {
   margin: 0;
 }
 
+.filter-section {
+  margin-bottom: 20px;
+}
+
 .filter-container {
   background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
-/* 按钮列和按钮样式 */
+.filter-buttons-section {
+  background-color: #ffffff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
 .button-col {
   display: flex;
   align-items: flex-end;
 }
 
-/* 自定义按钮基础样式 */
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
 .custom-button {
   display: inline-flex;
   justify-content: center;
@@ -290,19 +460,29 @@ onMounted(() => {
   cursor: pointer;
   transition: all 0.2s ease;
   outline: none;
-  /* margin-right: 10px; 移除了按钮之间的右边距 */
-  position: relative; /* 为伪元素定位做准备 */
-  overflow: hidden; /* 防止波纹溢出 */
+  position: relative;
+  overflow: hidden;
 }
 
-/* 主要按钮样式 */
 .custom-button--primary {
   background-color: #409eff;
   border-color: #409eff;
   color: #ffffff;
 }
 
-/* 按钮悬停效果 */
+.custom-button--secondary {
+  background-color: #f0f2f5;
+  border-color: #dcdfe6;
+  color: #606266;
+  margin-right: 8px;
+}
+
+.custom-button--warning {
+  background-color: #fdf6ec;
+  border-color: #f5dab3;
+  color: #e6a23c;
+}
+
 .custom-button:hover {
   background-color: #f5f7fa;
   border-color: #c0c4cc;
@@ -313,8 +493,15 @@ onMounted(() => {
   border-color: #66b1ff;
   color: #ffffff;
 }
+.custom-button--secondary:hover {
+  background-color: #e1e5ea;
+  border-color: #c0c4cc;
+}
+.custom-button--warning:hover {
+  background-color: #faecd8;
+  border-color: #f5dab3;
+}
 
-/* 按钮按下/聚焦效果 */
 .custom-button:active,
 .custom-button:focus {
   border-color: #409eff;
@@ -327,7 +514,6 @@ onMounted(() => {
   box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
 }
 
-/* 按钮禁用状态 */
 .custom-button:disabled {
   cursor: not-allowed;
   opacity: 0.7;
@@ -341,7 +527,12 @@ onMounted(() => {
   color: #ffffff;
 }
 
-/* 自定义点击效果类 - 波纹动画 */
+.custom-button.is-active {
+  background-color: #409eff;
+  border-color: #409eff;
+  color: #ffffff;
+}
+
 .custom-button.is-clicked::after {
   content: "";
   position: absolute;
@@ -350,12 +541,11 @@ onMounted(() => {
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5); /* 白色半透明波纹 */
+  background: rgba(255, 255, 255, 0.5);
   transform: translate(-50%, -50%);
   animation: ripple 0.4s linear;
 }
 
-/* 波纹动画关键帧 */
 @keyframes ripple {
   to {
     width: 200%;
@@ -364,14 +554,26 @@ onMounted(() => {
   }
 }
 
-/* 查询按钮加载状态 */
 .custom-button.is-loading {
   pointer-events: none;
   opacity: 0.8;
 }
 
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.content-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
 .card-container {
+  flex: 1;
   margin-bottom: 20px;
 }
 
@@ -464,68 +666,37 @@ onMounted(() => {
   font-size: 12px;
 }
 
-.pagination-wrapper {
+.pagination-container {
+  background-color: #ffffff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   display: flex;
+  justify-content: space-between; /* 左右分布 */
+  align-items: center;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #606266;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  align-items: center;
+  color: #909399;
+  font-size: 16px;
 }
-
-.custom-pagination {
-  padding: 12px 16px;
-  background-color: #ffffff;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.custom-pagination :deep(.el-pagination__sizes .el-input .el-input__inner) {
-  height: 28px;
-  line-height: 28px;
-  font-size: 12px;
-}
-.custom-pagination :deep(.el-pagination__total) {
-  font-size: 12px;
-  color: #606266;
-}
-.custom-pagination :deep(.btn-prev),
-.custom-pagination :deep(.btn-next),
-.custom-pagination :deep(.el-pager li) {
-  min-width: 28px;
-  height: 28px;
-  line-height: 28px;
-  font-size: 12px;
-  border-radius: 4px;
-  margin: 0 2px;
-}
-.custom-pagination :deep(.el-pagination__jump) {
-  font-size: 12px;
-  color: #606266;
-  margin-left: 12px;
-}
-.custom-pagination :deep(.el-pagination__editor.el-input .el-input__inner) {
-  height: 28px;
-  line-height: 28px;
-  font-size: 12px;
-  width: 40px;
-  border-radius: 4px;
-  margin: 0 4px;
-}
-
-.el-tabs {
-  margin-bottom: 20px;
-}
-.el-tabs :deep(.el-tabs__header) {
-  background-color: #ffffff;
-  padding: 0 20px;
-  border-radius: 8px 8px 0 0;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  margin: 0;
-}
-.el-tabs :deep(.el-tabs__content) {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  min-height: 400px;
+.empty-state i {
+  font-size: 48px;
+  margin-bottom: 16px;
 }
 </style>
