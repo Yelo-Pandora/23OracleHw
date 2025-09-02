@@ -83,7 +83,7 @@ export function useAccountList() {
 }
 
 
-// 该函数负责列表的勾选交互逻辑，依赖于过滤后的数据
+// 该函数模块负责列表的勾选交互逻辑，依赖于过滤后的数据
 export function useAccountSelection(filteredStaff, filteredTenants) {
   const selectedStaffAccounts = ref(new Set());
   const selectedTenantAccounts = ref(new Set());
@@ -259,8 +259,55 @@ export function useAccountActions(userStore, fetchAndProcessAccounts, selectedSt
         selectedTenantIds.value.clear();
       };
     }
-    const linkAccount = (account) => alert('功能: 打开账号关联界面');
-    const unlinkAccount = (account) => alert('功能: 打开取消关联界面');
+    const linkAccount = async (account, linkData) => {
+      const requestBody = {
+        ACCOUNT: account.Account,
+        ID: linkData.id,
+        TYPE: linkData.type
+      };
+
+      try {
+        await axios.post('/api/Accounts/bind', requestBody);
+        alert(`账号 ${requestBody.ACCOUNT} 关联成功！`);
+        await fetchAndProcessAccounts(); // 刷新主列表
+        return true; // 返回 true 表示成功
+      } catch (error) {
+        console.error("关联账号失败:", error);
+        alert(`关联失败: ${error.response?.data?.message || error.message}`);
+        return false; // 返回 false 表示失败
+      }
+    };
+    const unlinkAccount = async (account) => {
+      // --- 步骤 1: 直接提取信息 (基于模板 v-if 的信任) ---
+      const isStaffLink = !!account.StaffInfo;
+      const linkedEntity = isStaffLink ? account.StaffInfo : account.StoreInfo;
+      const linkedEntityName = isStaffLink ? linkedEntity.StaffName : linkedEntity.StoreName;
+
+      // --- 步骤 2: 用户确认 ---
+      if (!confirm(`您确定要取消账号【${account.Account}】与 ${isStaffLink ? '员工' : '商户'}【${linkedEntityName}】的关联吗？`)) {
+        return;
+      }
+
+      // --- 步骤 3: 构造并发送 API 请求 ---
+      try {
+        const params = {
+          account: account.Account,
+          ID: isStaffLink ? linkedEntity.StaffId : linkedEntity.StoreId,
+          type: isStaffLink ? '员工' : '商户'
+        };
+
+        await axios.delete('/api/Accounts/unbind', { params });
+
+        // --- 步骤 4: 成功处理 ---
+        alert(`账号 ${params.account} 已成功取消关联！`);
+        await fetchAndProcessAccounts();
+
+      } catch (error) {
+        // --- 步骤 5: 失败处理 ---
+        console.error("取消关联失败:", error);
+        alert(`取消关联失败: ${error.response?.data?.message || error.message}`);
+      }
+    };
     const grantTempPermission = (account) => alert('功能: 打开临时权限授予面板');
     const editAccount = async (accountToEdit) => {
       if (!accountToEdit) return;
@@ -318,4 +365,42 @@ export function useAccountActions(userStore, fetchAndProcessAccounts, selectedSt
     };
 
     return { modifyInfo, deleteAccount, linkAccount,unlinkAccount, grantTempPermission, editAccount };
+}
+
+//该函数模块负责账号关联的逻辑
+export function useAccountLinkage() {
+  const isLinkModalVisible = ref(false);
+  const linkingAccount = ref(null);
+  const allStaffs = ref([]);
+  const allStores = ref([]);
+
+  const openLinkModal = async (account) => {
+    linkingAccount.value = account;
+    isLinkModalVisible.value = true;
+    try {
+      const [staffsResponse, storesResponse] = await Promise.all([
+        axios.get('/api/Staff/AllStaffs'),
+        axios.get('/api/Store/AllStores')
+      ]);
+      allStaffs.value = staffsResponse.data;
+      allStores.value = storesResponse.data;
+    } catch (error) {
+      console.error("获取员工或商户列表失败:", error);
+      alert("无法加载可关联的列表，请重试。");
+      isLinkModalVisible.value = false;
+    }
+  };
+
+  const closeLinkModal = () => {
+    isLinkModalVisible.value = false;
+  };
+
+  return {
+    isLinkModalVisible,
+    linkingAccount,
+    allStaffs,
+    allStores,
+    openLinkModal,
+    closeLinkModal,
+  };
 }

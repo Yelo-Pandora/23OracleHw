@@ -125,7 +125,7 @@
                   <!-- 关联账号按钮 (仅当 StaffInfo 不存在时显示) -->
                   <button v-if="!account.StaffInfo"
                           class="row-action-button"
-                          @click="linkAccount(account)">
+                          @click="openLinkModal(account)">
                     关联账号
                   </button>
 
@@ -189,7 +189,7 @@
                   <!-- 关联账号按钮 (仅当 StaffInfo 不存在时显示) -->
                   <button v-if="!account.StaffInfo"
                           class="row-action-button"
-                          @click="linkAccount(account)">
+                          @click="openLinkModal(account)">
                     关联账号
                   </button>
 
@@ -208,7 +208,13 @@
           </table>
         </div>
       </div>
-
+      <!-- 2. 使用新组件，并通过 props 和 events 进行通信 -->
+      <AccountLinkModal :visible="isLinkModalVisible"
+                        :account-to-link="linkingAccount"
+                        :staffs="allStaffs"
+                        :stores="allStores"
+                        @close="closeLinkModal"
+                        @confirm="handleLinkConfirm" />
     </div>
   </DashboardLayout>
 </template>
@@ -217,13 +223,15 @@
   import { computed, onMounted } from 'vue';
   import DashboardLayout from '@/components/BoardLayout.vue';
   import { useUserStore } from '@/user/user';
+  import AccountLinkModal from '@/pages/account_management/AccountLinkModel.vue'; 
 
   // 按需导入需要的函数
   import {
     useCurrentUserProfile,
     useAccountList,
     useAccountSelection,
-    useAccountActions
+    useAccountActions,
+    useAccountLinkage,
   } from './AccountInteract.js';
 
   // --- 基础设置 ---
@@ -269,6 +277,24 @@
     editAccount
   } = useAccountActions(userStore, fetchAndProcessAccounts, selectedStaffAccounts, selectedTenantAccounts);
 
+  // 模块E:关联状态管理
+  const {
+    isLinkModalVisible,
+    linkingAccount,
+    allStaffs,
+    allStores,
+    openLinkModal,
+    closeLinkModal,
+  } = useAccountLinkage();
+
+  // 处理模态框confirm事件的函数
+  const handleLinkConfirm = async (linkData) => {
+    const success = await linkAccount(linkingAccount.value, linkData);
+    // 如果关联成功，则关闭模态框
+    if (success) {
+      closeLinkModal();
+    }
+  };
 
   // 生命周期钩子函数
   onMounted(() => {
