@@ -422,12 +422,11 @@ namespace oracle_backend.Controllers
         }
 
         // 2.6.7 临时权限管理功能
-        [HttpPost("temporary authority")]
+        [HttpPost("temporary_authority")]
         public async Task<IActionResult> ManageTemporaryAuthority(
             [FromQuery, Required] string operatorAccount,
             [FromBody, Required] TempAuthorityDto dto)
         {
-
             // 根据dto获取staff account
             var account = await _accountContext.FindAccount(dto.account);
             if (account == null) return NotFound("账号不存在");
@@ -455,7 +454,7 @@ namespace oracle_backend.Controllers
             // 检查该活动是否存在, 若活动已结束，提示 “活动已结束”
             var saleEvent = await _eventContext.FindEventById(dto.eventId);
             if (saleEvent == null) return NotFound("活动不存在");
-            if (saleEvent.EVENT_END < DateTime.Now) return BadRequest("活动已结束");
+            //if (saleEvent.EVENT_END < DateTime.Now) return BadRequest("活动已结束");
 
             // 若已有该活动的权限
             var existingTempAuthority = await _accountContext.TEMP_AUTHORITY
@@ -463,7 +462,7 @@ namespace oracle_backend.Controllers
             if (existingTempAuthority != null)
             {
                 // 如果临时权限大于操作者权限,则返回
-                if (existingTempAuthority.TEMP_AUTHORITY < operatorAuthority) return BadRequest("操作对象临时权限更大,不可修改");
+                //if (existingTempAuthority.TEMP_AUTHORITY < operatorAuthority) return BadRequest("操作对象临时权限更大,不可修改");
                 _accountContext.TEMP_AUTHORITY.Remove(existingTempAuthority);
             }
 
@@ -481,7 +480,7 @@ namespace oracle_backend.Controllers
         }
 
         // 撤销临时权限
-        [HttpDelete("revoke temporary authority")]
+        [HttpDelete("revoke_temporary_authority")]
         public async Task<IActionResult> RevokeTemporaryAuthority(
             [FromQuery, Required] string operatorAccount,
             [FromQuery, Required] string staffAccount,
@@ -498,7 +497,7 @@ namespace oracle_backend.Controllers
             // 检查该活动是否存在, 若活动已结束，提示 “活动已结束”
             var saleEvent = await _eventContext.FindEventById(eventId);
             if (saleEvent == null) return NotFound("活动不存在");
-            if (saleEvent.EVENT_END < DateTime.Now) return BadRequest("活动已结束");
+            //if (saleEvent.EVENT_END < DateTime.Now) return BadRequest("活动已结束");
 
             // 撤销临时权限
             var tempAuthority = await _accountContext.TEMP_AUTHORITY

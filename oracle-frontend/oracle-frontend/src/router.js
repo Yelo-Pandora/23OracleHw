@@ -5,6 +5,8 @@ import Login from './pages/login/LoginPage.vue'
 import Home from './pages/home/Home.vue'
 //测试用的EmployeeInfo页面
 import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
+import AccountContent from '@/pages/account_management/AccountContent.vue'
+import TempAuthEditor from '@/pages/account_management/TempAuthEditor.vue'
 // import Visualization from './pages/area_visualization/App.vue'
 // import Equipment from './pages/Equipment_management/App.vue'
 // import Employee from './pages/employee_management/App.vue'
@@ -38,6 +40,26 @@ const routes = [
       role_need: ['员工']  // 假设只有“员工”角色能看到
     }
   },
+  // 账号信息管理页面
+  {
+    path: '/account_management',
+    component: AccountContent,
+    meta: {
+      requiresAuth: true,
+      title: '账号信息',
+      role_need: ['员工', '商户'],
+    },
+    children: [
+      {
+        // 定义子路由
+        // :accountId 是一个动态参数，我们将用它来传递被操作的账号
+        path: 'temp-auth/:accountId',
+        name: 'TempAuthEditor',
+        component: TempAuthEditor,
+        props: true // 3. 将路由参数 (:accountId) 作为 props 传递给组件
+      }
+    ]
+  }
 //   //区域可视化页面
 //   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   // 活动管理/活动查询页面
