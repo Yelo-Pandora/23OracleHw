@@ -87,7 +87,7 @@
     }
 
     try {
-      const response = await axios.post('/api/Accounts/login', {
+      const response = await axios.post('http://localhost:5263/api/Accounts/login', {
         acc: username.value,
         pass: password.value,
         identity: role.value,
