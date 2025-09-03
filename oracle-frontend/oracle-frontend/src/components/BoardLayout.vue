@@ -18,9 +18,9 @@
       </nav>
     </aside>
 
-    <div class="main-content">
-      <header class="header">
-        <!-- 面包屑动态显示当前路由的标题 -->
+  <div class="main-content fade-in">
+    <header class="header">
+      <!-- 面包屑动态显示当前路由的标题 -->
         <div class="breadcrumb">{{ $route.meta.title }}</div>
         <div class="user-profile">
           <div class="avatar"></div>
@@ -46,13 +46,34 @@
   const userStore = useUserStore();
 
   const visibleRoutes = computed(() => {
-    const userRole = userStore.role;
-    if (!userRole) return [];
+    const rawUserRole = userStore.role || '游客'
+    // 与 router.beforeEach 中相同的 role 映射，保证中文/英文角色都能匹配
+    const roleMap = {
+      guest: '游客',
+      visitor: '游客',
+      merchant: '商户',
+      shop: '商户',
+      staff: '员工',
+      employee: '员工'
+    }
+    const normalized = roleMap[String(rawUserRole).toLowerCase()] || rawUserRole
+
+    const isAllowed = (roles, userR, normalizedR) => {
+      if (!Array.isArray(roles)) return false
+      return roles.includes(userR) || roles.includes(String(userR).toLowerCase()) || roles.includes(normalizedR)
+    }
+
+  // 不在侧边栏显示的菜单标题列表（仅影响侧边栏显示，不删除路由）
+  const excludedTitles = ['店铺详情', '商户租金统计报表']
 
     return router.options.routes.filter(route => {
-      if (!route.meta || !route.meta.title) return false;
+  if (!route.meta || !route.meta.title) return false;
       if (route.path === '/login') return false; // 明确排除登录页
-      if (!route.meta.role_need || !route.meta.role_need.includes(userRole)) return false;
+      if (excludedTitles.includes(route.meta.title)) return false; // 排除特定标题
+  // 额外规则：当当前用户是“员工”时，不在侧边栏显示“店铺管理”这一项（store-management）
+  if (normalized === '员工' && route.meta.title === '店铺管理') return false;
+      if (!route.meta.role_need) return false
+      if (!isAllowed(route.meta.role_need, rawUserRole, normalized)) return false
       return true;
     });
   });
