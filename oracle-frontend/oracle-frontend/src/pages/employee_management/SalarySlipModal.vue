@@ -225,8 +225,15 @@ function calcTotalSalary(base, bonus, fine) {
     cursor: pointer;
     font-weight: bold;
     align-self: center;
+    transition: background 0.18s, transform 0.18s;
 }
-.temp-salary-close:hover { background: #357ae8; }
+.temp-salary-close:hover {
+    background: #357ae8;
+    transform: scale(1.08);
+}
+.temp-salary-close:active {
+    transform: scale(0.96);
+}
 
 /* 年份和月份选择美化 */
 .salary-year-input {
@@ -273,9 +280,13 @@ function calcTotalSalary(base, bonus, fine) {
     font-size: 14px;
     cursor: pointer;
     font-weight: 500;
-    transition: background 0.2s;
+    transition: background 0.18s, transform 0.18s;
 }
 .salary-edit-btn:hover {
     background: #ff9800;
+    transform: scale(1.08);
+}
+.salary-edit-btn:active {
+    transform: scale(0.96);
 }
 </style>
