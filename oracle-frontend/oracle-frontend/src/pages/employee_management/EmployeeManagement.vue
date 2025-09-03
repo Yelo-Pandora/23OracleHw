@@ -40,7 +40,6 @@
                         <td class = "table_cell c1">{{ employee.salary }}</td>
                         <td class = "table_cell c2">
                             <button class="action-btn salary-btn" @click="DisplaySalaryWindow(employee.id)">工资条目</button>
-                            <button class="action-btn tempauth-btn" @click="DisplayTempAuthWindow(employee.id)">临时权限</button>
                         </td>
                     </tr>
                 </tbody>
@@ -72,7 +71,6 @@ const employees = ref([]);
 const userEmployee = ref(null);
 
 const tempAuthList = ref([]);
-const showTempAuthWindow = ref(false);
 
 const salarySlip = ref([]);
 const showSalarySlipWindow = ref(false);
@@ -102,12 +100,6 @@ const sortedEmployees = computed(() => {
         return idA - idB;
     });
 });
-
-// temp auth
-function DisplayTempAuthWindow(employeeId) {
-    showTempAuthWindow.value = true;
-    currentEmployeeId.value = employeeId;
-}
 
 // salary
 function DisplaySalaryWindow(employeeId) {
