@@ -20,14 +20,13 @@
 
         <!-- 商户专属快捷入口 -->
         <template v-else-if="isMerchant">
-          <router-link class="card" to="/area/store-management">我的店铺</router-link>
+          <router-link class="card" to="/store-management">我的店铺</router-link>
           <router-link class="card" to="/area/parking-query">车位查询</router-link>
           <router-link class="card" to="/area/event-query">活动查询</router-link>
         </template>
 
         <!-- 游客视图 -->
         <template v-else>
-          <router-link class="card" to="/area/mall-map">商场平面图</router-link>
           <router-link class="card" to="/area/parking-query">车位查询</router-link>
           <router-link class="card" to="/area/event-query">活动查询</router-link>
         </template>

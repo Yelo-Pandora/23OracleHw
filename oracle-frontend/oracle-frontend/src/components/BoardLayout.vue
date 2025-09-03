@@ -70,8 +70,14 @@
   if (!route.meta || !route.meta.title) return false;
       if (route.path === '/login') return false; // 明确排除登录页
       if (excludedTitles.includes(route.meta.title)) return false; // 排除特定标题
+  if (normalized === '游客' && route.meta.title === '区域管理') return false;
+  if (normalized === '商户' && route.meta.title === '我的租金') return false;
+  if (normalized === '商户' && route.meta.title === '我的租金统计') return false;
+  if (normalized === '商户' && route.meta.title === '区域管理') return false;
   // 额外规则：当当前用户是“员工”时，不在侧边栏显示“店铺管理”这一项（store-management）
   if (normalized === '员工' && route.meta.title === '店铺管理') return false;
+  if (normalized === '员工' && route.meta.title === '区域管理') return false;
+  if (normalized === '员工' && route.meta.title === '商场管理') return false;
       if (!route.meta.role_need) return false
       if (!isAllowed(route.meta.role_need, rawUserRole, normalized)) return false
       return true;

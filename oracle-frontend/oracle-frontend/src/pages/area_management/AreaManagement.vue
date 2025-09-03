@@ -49,14 +49,12 @@ const navItems = computed(() => {
     if (role.value === '商户') {
         return [
             { label: '首页', path: '/' },
-            { label: '店铺管理（仅限己方）', path: '/area/store-management' },
             { label: '车位查询', path: '/area/parking-query' },
             { label: '活动查询', path: '/area/event-query' },
         ];
     }
     return [
         { label: '首页', path: '/' },
-        { label: '商场平面图查看', path: '/area/mall-map' },
         { label: '车位查询', path: '/area/parking-query' },
         { label: '活动查询', path: '/area/event-query' },
     ];
