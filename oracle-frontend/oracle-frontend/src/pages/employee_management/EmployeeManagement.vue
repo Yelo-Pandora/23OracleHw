@@ -6,9 +6,7 @@
                 你现在的身份是 <strong>{{ currentUserRole }}</strong>
             </div>
             <div class="buttons" v-if="userEmployee && Number(userEmployee.authority) <= 2">
-                <button class = "btn" @click="addEmployee">添加员工</button>
-                <button class = "btn" @click="editEmployee">编辑员工</button>
-                <button class = "btn" @click="deleteEmployee">删除员工</button>
+                <button class = "btn" @click="AddStaff">添加员工</button>
             </div>
         </div>
         <div class="content">
@@ -39,7 +37,10 @@
                         <td class = "table_cell c2">{{ employee.authority }}</td>
                         <td class = "table_cell c1">{{ employee.salary }}</td>
                         <td class = "table_cell c2">
-                            <button class="action-btn salary-btn" @click="DisplaySalaryWindow(employee.id)">工资条目</button>
+                            <button class="action-btn salary-btn" 
+                            @click="DisplaySalaryWindow(employee.id)">工资条目</button>
+                            <button class="action-btn edit-btn" 
+                            @click="EditStaff(employee.id)">编辑员工信息</button>
                         </td>
                     </tr>
                 </tbody>
@@ -51,6 +52,18 @@
             :salarySlip="salarySlip.filter(slip => slip.staffId === currentEmployeeId)"
             @close="showSalarySlipWindow = false"
         />
+        <AddStaffModal
+            :show="showAddStaffModal"
+            :operatorAccount="userStore.userInfo.account"
+            @close="showAddStaffModal = false"
+        />
+        <EmployeeInfoEditModal
+            :show="showEditEmployeeModal"
+            :employeeInfo="employees.find(emp => emp.id === currentEmployeeId)"
+            :operatorAccount="userStore.userInfo.account"
+            :operatorAuthority="userEmployee?.authority"
+            @close="showEditEmployeeModal = false"
+        />
     </div>
     </DashboardLayout>
 </template>
@@ -58,6 +71,8 @@
 <script setup>
 import DashboardLayout from '@/components/BoardLayout.vue';
 import SalarySlipModal from './SalarySlipModal.vue';
+import AddStaffModal from './AddStaffModal.vue';
+import EmployeeInfoEditModal from './EmployeeInfoEditModal.vue';
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { useUserStore } from '@/user/user';
@@ -70,10 +85,10 @@ const currentEmployeeId = ref(null);
 const employees = ref([]);
 const userEmployee = ref(null);
 
-const tempAuthList = ref([]);
-
 const salarySlip = ref([]);
 const showSalarySlipWindow = ref(false);
+const showAddStaffModal = ref(false);
+const showEditEmployeeModal = ref(false);
 
 const sortedEmployees = computed(() => {
     // 权限过滤
@@ -107,6 +122,17 @@ function DisplaySalaryWindow(employeeId) {
     showSalarySlipWindow.value = true;
 }
 
+
+// add staff
+function AddStaff() {
+    showAddStaffModal.value = true;
+}
+
+// edit staff
+function EditStaff(employeeId) {
+    currentEmployeeId.value = employeeId;
+    showEditEmployeeModal.value = true;
+}
 
 onMounted(async () => {
     // 获取所有员工
@@ -142,25 +168,6 @@ onMounted(async () => {
         console.error("Error fetching account data:", error);
     }
 
-    // 临时权限
-    try {
-        const tempAuths = await axios.get('/api/Staff/AllTempAuthorities');
-        tempAuthList.value = tempAuths.data.map(item => ({
-            account: item.ACCOUNT,
-            event_id: item.EVENT_ID,
-            temp_auth: item.TEMP_AUTHORITY
-        }));
-        // staff id和 username
-        tempAuthList.value.forEach(item => {
-            const emp = employees.value.find(emp => emp.account === item.account);
-            if (emp) {
-                item.staffId = emp.id;
-                item.username = emp.username;
-            }
-        });
-    } catch (error) {
-        console.error("Error fetching temporary authorization data:", error);
-    }
     // SalarySlip
     try {
         const salarySlips = await axios.get('/api/Staff/AllsalarySlip');

@@ -42,16 +42,11 @@
     border-top: 1px solid #eee;
 }
 
-
 .content {
     padding: 16px;
 }
 .content table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 1;
-    border-radius: 16px;
-    overflow: hidden;
 }
 .content th,
 .content td {
@@ -64,6 +59,36 @@
 }
 .content th:first-child { border-top-left-radius: 16px; }
 .content th:last-child { border-top-right-radius: 16px; }
+
+.action-btn {
+    margin: 0 4px;
+    padding: 6px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, transform 0.18s, box-shadow 0.18s;
+    box-shadow: 0 2px 8px #499ffb22;
+}
+
+.action-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 18px #499ffb33;
+}
+
+.action-btn:active {
+    transform: scale(0.96);
+    box-shadow: 0 1px 4px #499ffb22;
+}
+
+.edit-btn {
+    background: #4caf50;
+    color: #fff;
+}
+.edit-btn:hover {
+    background: #81c784;
+}
 .content tr:last-child td:first-child { border-bottom-left-radius: 16px; }
 .content tr:last-child td:last-child { border-bottom-right-radius: 16px; }
 .content tr:hover { background: #cafefc; }
