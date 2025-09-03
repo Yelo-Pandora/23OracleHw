@@ -14,8 +14,10 @@
           <router-link class="card" to="/area/mall-management">商场管理</router-link>
           <router-link class="card" to="/area/parking-management">停车场管理</router-link>
           <router-link class="card" to="/area/event-management">活动管理</router-link>
-          <router-link class="card" to="/area/staff-management">员工管理</router-link>
           <router-link class="card" to="/area/equipment-management">设备管理</router-link>
+          <router-link class="card" to="/employee_management">员工信息管理</router-link>
+          <router-link class="card" to="/cashflow_management/total_salary">员工工资支出</router-link>
+          
         </template>
 
         <!-- 商户专属快捷入口 -->

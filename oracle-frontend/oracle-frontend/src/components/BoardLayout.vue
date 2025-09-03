@@ -78,6 +78,8 @@
   if (normalized === '员工' && route.meta.title === '店铺管理') return false;
   if (normalized === '员工' && route.meta.title === '区域管理') return false;
   if (normalized === '员工' && route.meta.title === '商场管理') return false;
+  if (normalized === '员工' && route.meta.title === '员工信息管理') return false;
+  if (normalized === '员工' && route.meta.title === '工资总支出') return false;
       if (!route.meta.role_need) return false
       if (!isAllowed(route.meta.role_need, rawUserRole, normalized)) return false
       return true;

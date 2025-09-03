@@ -42,7 +42,6 @@ const navItems = computed(() => {
             { label: '商场管理', path: '/area/mall-management' },
             { label: '停车场管理', path: '/area/parking-management' },
             { label: '活动管理（含合作方）', path: '/area/event-management' },
-            { label: '员工管理', path: '/area/staff-management' },
             { label: '设备管理', path: '/area/equipment-management' },
         ];
     }
