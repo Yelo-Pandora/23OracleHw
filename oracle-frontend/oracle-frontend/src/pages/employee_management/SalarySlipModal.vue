@@ -34,22 +34,48 @@
                     <tbody>
 
                         <tr v-for="item in filteredSalarySlip" :key="item.date">
-                            <td>{{ employeeInfo?.account }}</td>
-                            <td>{{ employeeInfo?.username }}</td>
-                            <td>{{ getYear(item.date) }}</td>
-                            <td>{{ getMonth(item.date) }}</td>
-                            <td>{{ employeeInfo?.salary }}</td>
-                            <td>{{ item.bonus }}</td>
-                            <td>{{ item.fine }}</td>
-                            <td>{{ item.attendence }}</td>
-                            <td>{{ calcTotalSalary(employeeInfo?.salary, item.bonus, item.fine) }}</td>
-                            <td><button class="salary-edit-btn">编辑</button></td>
+                                <td>{{ employeeInfo?.account }}</td>
+                                <td>{{ employeeInfo?.username }}</td>
+                                <td>{{ getYear(item.date) }}</td>
+                                <td>{{ getMonth(item.date) }}</td>
+                                <td>
+                                    <template v-if="editRow === item.date">
+                                        <input v-model.number="editForm.salary" type="number" min="0" class="salary-edit-input" />
+                                    </template>
+                                    <template v-else>{{ employeeInfo?.salary }}</template>
+                                </td>
+                                <td>
+                                    <template v-if="editRow === item.date">
+                                        <input v-model.number="editForm.bonus" type="number" min="0" class="salary-edit-input" />
+                                    </template>
+                                    <template v-else>{{ item.bonus }}</template>
+                                </td>
+                                <td>
+                                    <template v-if="editRow === item.date">
+                                        <input v-model.number="editForm.fine" type="number" min="0" class="salary-edit-input" />
+                                    </template>
+                                    <template v-else>{{ item.fine }}</template>
+                                </td>
+                                <td>
+                                    {{ item.attendence }}
+                                </td>
+                                <td>{{ calcTotalSalary(editRow === item.date ? editForm.salary : employeeInfo?.salary, editRow === item.date ? editForm.bonus : item.bonus, editRow === item.date ? editForm.fine : item.fine) }}</td>
+                                <td>
+                                    <button
+                                        class="salary-edit-btn"
+                                        :disabled="!canEditRow()"
+                                        :style="!canEditRow() ? 'background:#ccc;cursor:not-allowed;' : ''"
+                                        @click="onEdit(item)"
+                                    >
+                                        {{ editRow === item.date ? '保存' : '编辑' }}
+                                    </button>
+                                </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div>
-                <button class="temp-salary-close" @click="$emit('close')">关闭</button>
+                <button class="temp-salary-close" @click="handleClose">关闭</button>
             </div>
         </div>
     </div>
@@ -57,11 +83,14 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+import axios from 'axios';
 
 const props = defineProps({
     show: Boolean,
     employeeInfo: Object, // {id, account, username, salary}
-    salarySlip: Array // 该员工所有工资条
+    salarySlip: Array, // 该员工所有工资条
+    operatorAccount: String,
+    operatorAuthority: [String, Number],
 });
 
 const now = new Date();
@@ -100,6 +129,70 @@ const filteredSalarySlip = computed(() => {
     });
 });
 
+const editRow = ref(null);
+const editForm = ref({ salary: 0, bonus: 0, fine: 0, attendence: 0 });
+const emit = defineEmits(['close']);
+function handleClose() {
+    // 关闭弹窗时取消编辑模式并撤销未保存的更改
+    editRow.value = null;
+    editForm.value = { salary: 0, bonus: 0, fine: 0, attendence: 0 };
+    emit('close');
+}
+
+function canEditRow() {
+    // 只有操作者权限高于被操作者且不是本人才能编辑
+    const myAuth = Number(props.operatorAuthority);
+    const targetAuth = Number(props.employeeInfo?.authority);
+    if (!props.operatorAccount || !props.employeeInfo) return false;
+    if (props.operatorAccount === props.employeeInfo.account) return false;
+    if (myAuth >= targetAuth) return false;
+    return true;
+}
+
+async function onEdit(item) {
+    if (editRow.value === item.date) {
+        try {
+            const staffId = props.employeeInfo.id;
+            const operatorAccount = props.operatorAccount;
+            // monthTime格式修正：yyyy-MM-01
+            let monthTime = item.date;
+            if (/^\d{4}-\d{2}$/.test(monthTime)) {
+                monthTime = monthTime + '-01';
+            }
+            await axios.post('/api/Staff/StaffSalaryManagement', {
+                BASE_SALARY: editForm.value.salary,
+                BONUS: editForm.value.bonus,
+                FINE: editForm.value.fine
+            }, {
+                params: {
+                    operatorAccount,
+                    staffId,
+                    monthTime
+                }
+            });
+            // 更新本地数据
+            props.employeeInfo.salary = editForm.value.salary;
+            // 找到对应工资条并更新
+            const slip = props.salarySlip.find(s => s.date === item.date);
+            if (slip) {
+                slip.bonus = editForm.value.bonus;
+                slip.fine = editForm.value.fine;
+            }
+        } catch (e) {
+            alert('保存失败：' + (e?.response?.data || e.message));
+        }
+        editRow.value = null;
+    } else {
+        // 进入编辑
+        editRow.value = item.date;
+        editForm.value = {
+            salary: props.employeeInfo.salary,
+            bonus: item.bonus,
+            fine: item.fine,
+            attendence: item.attendence
+        };
+    }
+}
 
 function calcTotalSalary(base, bonus, fine) {
     const b = Number(base)||0, bo=Number(bonus)||0, f=Number(fine)||0;
@@ -288,5 +381,22 @@ function calcTotalSalary(base, bonus, fine) {
 }
 .salary-edit-btn:active {
     transform: scale(0.96);
+}
+
+.salary-edit-input {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1.5px solid #ffb74d;
+    border-radius: 7px;
+    font-size: 15px;
+    background: #fffbe6;
+    color: #333;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(255,183,77,0.08);
+    transition: border 0.2s, box-shadow 0.2s;
+}
+.salary-edit-input:focus {
+    border: 2px solid #ff9800;
+    box-shadow: 0 2px 12px rgba(255,152,0,0.18);
 }
 </style>

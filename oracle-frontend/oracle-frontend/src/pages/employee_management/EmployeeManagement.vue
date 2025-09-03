@@ -50,6 +50,8 @@
             :show="showSalarySlipWindow"
             :employeeInfo="employees.find(emp => emp.id === currentEmployeeId)"
             :salarySlip="salarySlip.filter(slip => slip.staffId === currentEmployeeId)"
+            :operatorAccount="userStore.userInfo.account"
+            :operatorAuthority="userEmployee?.authority"
             @close="showSalarySlipWindow = false"
         />
         <AddStaffModal
