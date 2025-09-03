@@ -149,15 +149,15 @@ namespace oracle_backend.Controllers
             var target = await _context.FindAccount(goal.acc);
             if (target == null)
             {
-                _logger.LogWarning("不存在该账号：{acc}",goal.acc);
+                _logger.LogWarning("不存在该账号：{acc}", goal.acc);
                 return BadRequest("用户不存在");
             }
-            else if(target.PASSWORD != goal.pass)
+            else if (target.PASSWORD != goal.pass)
             {
                 _logger.LogWarning("密码不正确：{pass}", goal.pass);
                 return BadRequest("密码不正确");
             }
-            else if(target.AUTHORITY == 5)
+            else if (target.AUTHORITY == 5)
             {
                 _logger.LogWarning("账号已被封禁，禁止登录：{acc}", goal.acc);
                 return BadRequest("账号封禁中");
@@ -198,8 +198,8 @@ namespace oracle_backend.Controllers
             // 判断账号名是否被修改，且新账号名是否已存在
             if (updatedAccount.ACCOUNT != currAccount)
             {
-                    _logger.LogWarning("不允许直接修改账号");
-                    return BadRequest("不允许直接修改账号");
+                _logger.LogWarning("不允许直接修改账号");
+                return BadRequest("不允许直接修改账号");
             }
             // 修改成了无效身份
             if (updatedAccount.IDENTITY != "员工" && updatedAccount.IDENTITY != "商户")
@@ -218,7 +218,7 @@ namespace oracle_backend.Controllers
             {
                 cur.AUTHORITY = updatedAccount.AUTHORITY < oper.AUTHORITY ? oper.AUTHORITY : updatedAccount.AUTHORITY;
             }
-            
+
             //提交更改
             await _context.SaveChangesAsync();
             return Ok("更新成功");
@@ -278,6 +278,18 @@ namespace oracle_backend.Controllers
             {
                 return Ok(goalaccount.AUTHORITY);
             }
+        }
+        // 根据员工ID获取Account
+        [HttpGet("GetAccById")]
+        public async Task<IActionResult> GetAccountByStaffId(int staffId)
+        {
+            var account = await _context.AccountFromStaffID(staffId);
+            if (account == null)
+            {
+                _logger.LogWarning("指定的员工ID不存在");
+                return BadRequest("员工ID不存在，请重新指定");
+            }
+            return Ok(account);
         }
     }
 }

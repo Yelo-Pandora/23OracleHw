@@ -4,8 +4,12 @@ import { useUserStore } from './user/user'
 import Login from './pages/login/LoginPage.vue'
 import Home from './pages/home/Home.vue'
 //测试用的EmployeeInfo页面
-import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
-// 占位页面（后续替换为真实实现）
+// import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
+// import Visualization from './pages/area_visualization/App.vue'
+// import Equipment from './pages/Equipment_management/App.vue'
+import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
+import TotalSalary from './pages/employee_management/TotalSalary.vue'
+
 import Mall from './pages/mall_management/MallManagement.vue'
 import Parking from './pages/parking_management/ParkingManagement.vue'
 import Events from './pages/event_management/EventManagement.vue'
@@ -39,16 +43,16 @@ const routes = [
     meta: { requiresAuth: true, title: '主页', role_need: ['员工', '商户', '游客'] },
   },
   // 员工信息页面（测试）
-  {
-    path: '/employee_management',
-    component: EmployeeInfo,
-    meta: {
-      requiresAuth: true,
-      title: '员工信息', // 这个 title 会显示在页眉和菜单中
-      role_need: ['员工']  // 假设只有“员工”角色能看到
-    }
-  },
-  // 区域管理主页面（左侧跳转，右侧内容）
+  // {
+  //   path: '/employee_management',
+  //   component: EmployeeInfo,
+  //   meta: {
+  //     requiresAuth: true,
+  //     title: '员工信息', // 这个 title 会显示在页眉和菜单中
+  //     role_need: ['员工']  // 假设只有“员工”角色能看到
+  //   }
+  // },
+// 区域管理主页面（左侧跳转，右侧内容）
   {
     path: '/area',
     component: AreaManagement,
@@ -122,8 +126,25 @@ const routes = [
 //   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   // 活动管理/活动查询页面
 //   { path: '/events_management', component: Events, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-//   // 员工信息管理页面
-//   { path: '/employee_management', component: Employee, meta: { requiresAuth: true, role_need: ['员工'] } },
+  // 员工信息管理页面
+  { 
+    path: '/employee_management', 
+    component: EmployeeManagement, 
+    meta: { 
+      requiresAuth: true,
+      title: '员工信息管理',
+      role_need: ['员工'] 
+    }
+  },
+  {
+    path: '/cashflow_management/total_salary',
+    component: TotalSalary,
+    meta: {
+      requiresAuth: true,
+      title: '工资总支出',
+      role_need: ['员工']
+    }
+  },
 //   // 合作方信息管理页面
 //   { path: '/collaboration_management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工']} },
 //   //商场(店铺)管理/商场平面图查看页面
