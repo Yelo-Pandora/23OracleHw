@@ -77,9 +77,9 @@
   // 额外规则：当当前用户是“员工”时，不在侧边栏显示“店铺管理”这一项（store-management）
   if (normalized === '员工' && route.meta.title === '店铺管理') return false;
   if (normalized === '员工' && route.meta.title === '区域管理') return false;
-  if (normalized === '员工' && route.meta.title === '商场管理') return false;
-  if (normalized === '员工' && route.meta.title === '员工信息管理') return false;
   if (normalized === '员工' && route.meta.title === '工资总支出') return false;
+    if (normalized === '员工' && route.meta.title === '活动查询') return false;
+  if (normalized === '员工' && route.meta.title === '车位查询') return false;
       if (!route.meta.role_need) return false
       if (!isAllowed(route.meta.role_need, rawUserRole, normalized)) return false
       return true;

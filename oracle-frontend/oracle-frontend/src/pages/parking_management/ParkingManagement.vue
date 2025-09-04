@@ -1,4 +1,5 @@
 <template>
+  <DashboardLayout>
   <div class="parking-management">
     <h2>停车场管理</h2>
     
@@ -123,9 +124,11 @@
       </div>
     </div>
   </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
+import DashboardLayout from '@/components/BoardLayout.vue';
 import { ref, onMounted } from 'vue'
 
 // 响应式数据

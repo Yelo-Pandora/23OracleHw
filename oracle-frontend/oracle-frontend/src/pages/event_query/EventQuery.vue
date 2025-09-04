@@ -1,4 +1,5 @@
 <template>
+  <DashboardLayout>
   <div class="placeholder-page">
     <div class="header">
       <h2>活动查询</h2>
@@ -199,13 +200,14 @@
       </div>
     </div>
   </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
+import DashboardLayout from '@/components/BoardLayout.vue';
 import axios from 'axios';
 import { ref, onMounted, reactive, computed } from 'vue';
 import { ElMessage } from 'element-plus';
-
 const filterForm = ref({
   status: '',
   dateRange: []

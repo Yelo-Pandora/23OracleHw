@@ -27,6 +27,9 @@ import StoreManagement from '@/pages/store_management/StoreManagement.vue';
 import StoreDetail from '@/pages/store_management/StoreDetail.vue';
 import MerchantRentStatisticsReport from '@/pages/mall_management/MerchantRentStatisticsReport.vue';
 import MyRentStatisticsReport from '@/pages/store_management/MyRentStatisticsReport.vue';
+import ParkingManagement from './pages/parking_management/ParkingManagement.vue'
+import EventManagement from './pages/event_management/EventManagement.vue'
+import EquipmentManagement from './pages/equipment_management/EquipmentManagement.vue'
 
 // 定义路由，开发完成后自行解除注释
 const routes = [
@@ -122,20 +125,41 @@ const routes = [
     component: MyRentStatisticsReport,
     meta: { requiresAuth: true, title: '我的租金统计', role_need: ['商户'] }
   },
-//   //区域可视化页面
-//   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-//   // 活动管理/活动查询页面
-//   { path: '/events_management', component: Events, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-  // 员工信息管理页面
-  { 
-    path: '/employee_management', 
-    component: EmployeeManagement, 
+   // 车位查询
+  { path: '/area/parking-query', 
+    component: ParkingQuery, 
     meta: { 
-      requiresAuth: true,
-      title: '员工信息管理',
+      requiresAuth: true, 
+      title: '车位查询',
+      role_need: ['员工', '商户', '游客'] 
+    }
+   },
+      // 车位管理
+  { path: '/area/parking_management', 
+    component: ParkingManagement, 
+    meta: { 
+      requiresAuth: true, 
+      title: '停车场管理',
       role_need: ['员工'] 
     }
-  },
+   },
+  // 活动管理/活动查询页面
+  { path: '/area/events_query', 
+    component: EventQuery, 
+    meta: { 
+      requiresAuth: true, 
+      title: '活动查询',
+      role_need: ['员工', '商户', '游客'] 
+    }
+   },
+     { path: '/area/events_management', 
+    component: EventManagement, 
+    meta: { 
+      requiresAuth: true, 
+      title: '活动管理',
+      role_need: ['员工'] 
+    }
+   },
   {
     path: '/cashflow_management/total_salary',
     component: TotalSalary,
@@ -145,16 +169,36 @@ const routes = [
       role_need: ['员工']
     }
   },
-//   // 合作方信息管理页面
-//   { path: '/collaboration_management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工']} },
-//   //商场(店铺)管理/商场平面图查看页面
-//   { path: '/mall_management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-//   //停车场管理/车位查询页面
-//   { path: '/parking_management', component: Parking, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-//   //设备管理页面
-//   { path: '/equipment_management', component: Equipment, meta: { requiresAuth: true, role_need: ['员工'] } },
-//   //现金流管理页面
-//   { path: '/cashflow_management', component: Cashflow, meta: { requiresAuth: true, role_need: ['员工'] } },
+  
+  // 设备管理页面
+  {
+    path: '/area/equipment-management', 
+    component: EquipmentManagement, 
+    meta: { 
+      requiresAuth: true,
+      title: '设备管理',
+      role_need: ['员工'] 
+    }
+  },
+
+  {
+    path: '/employee_management', 
+    component: EmployeeManagement, 
+    meta: { 
+      requiresAuth: true,
+      title: '员工信息管理',
+      role_need: ['员工'] 
+    }
+  },
+    {
+    path: '/cashflow_management/total_salary', 
+    component: TotalSalary, 
+    meta: { 
+      requiresAuth: true,
+      title: '员工工资支出',
+      role_need: ['员工'] 
+    }
+  },
 ]
 
 const router = createRouter({

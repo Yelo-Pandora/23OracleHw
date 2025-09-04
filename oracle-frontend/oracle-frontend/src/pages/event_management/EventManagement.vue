@@ -1,4 +1,5 @@
 <template>
+  <DashboardLayout>
   <div class="event-management">
     <!-- 活动类型切换 -->
     <div class="event-type-switch">
@@ -37,10 +38,12 @@
       <CollaborationManagement />
     </div>
   </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import DashboardLayout from '@/components/BoardLayout.vue';
 import SaleEventManagement from './components/SaleEventManagement.vue'
 import VenueEventManagement from './components/VenueEventManagement.vue'
 import CollaborationManagement from './components/CollaborationManagement.vue'
