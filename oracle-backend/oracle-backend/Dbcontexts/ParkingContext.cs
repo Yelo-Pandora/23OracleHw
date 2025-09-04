@@ -559,11 +559,12 @@ namespace oracle_backend.Dbcontexts
 
                 foreach (var record in exitedCars)
                 {
-                    // 检查是否已支付
-                    var paymentKey = $"{record.Car.LICENSE_PLATE_NUMBER}_{record.Park.PARKING_SPACE_ID}_{record.Car.PARK_START:yyyyMMddHHmmss}";
+                    // 检查是否已支付（使用本地时间生成key，与支付时保持一致）
+                    var localParkStart = record.Car.PARK_START.ToLocalTime();
+                    var paymentKey = $"{record.Car.LICENSE_PLATE_NUMBER}_{record.Park.PARKING_SPACE_ID}_{localParkStart:yyyyMMddHHmmss}";
                     Console.WriteLine($"[DEBUG] 未支付查询 - 检查key: {paymentKey}");
                     Console.WriteLine($"[DEBUG] 是否存在于支付记录: {_paymentRecords.ContainsKey(paymentKey)}");
-                    
+
                     if (_paymentRecords.ContainsKey(paymentKey))
                         continue; // 已支付，跳过
 
@@ -622,8 +623,9 @@ namespace oracle_backend.Dbcontexts
 
                 foreach (var record in exitedCars)
                 {
-                    // 检查是否已支付
-                    var paymentKey = $"{record.Car.LICENSE_PLATE_NUMBER}_{record.Park.PARKING_SPACE_ID}_{record.Car.PARK_START:yyyyMMddHHmmss}";
+                    // 检查是否已支付（使用本地时间生成key，与支付时保持一致）
+                    var localParkStart = record.Car.PARK_START.ToLocalTime();
+                    var paymentKey = $"{record.Car.LICENSE_PLATE_NUMBER}_{record.Park.PARKING_SPACE_ID}_{localParkStart:yyyyMMddHHmmss}";
                     var isPaid = _paymentRecords.ContainsKey(paymentKey);
                     
                     // 根据状态过滤
@@ -1051,7 +1053,7 @@ namespace oracle_backend.Dbcontexts
         public Task<List<Models.ParkingPaymentRecord>> GetPaymentRecordsInTimeRange(DateTime start, DateTime end)
         {
             var records = _paymentRecords.Values
-                .Where(r => r.ParkStart >= start && r.ParkStart <= end)
+                .Where(r => r.ParkEnd.HasValue && r.ParkEnd.Value >= start && r.ParkEnd.Value <= end)
                 .ToList();
             return Task.FromResult(records);
         }

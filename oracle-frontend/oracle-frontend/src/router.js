@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from './user/user'
-// 指定页面对应的vue应用实例，开发完成后自行解除注释
+// 指定页面对应的vue应用实例
 import Login from './pages/login/LoginPage.vue'
 import Home from './pages/home/Home.vue'
 //测试用的EmployeeInfo页面
@@ -31,7 +31,7 @@ import ParkingManagement from './pages/parking_management/ParkingManagement.vue'
 import EventManagement from './pages/event_management/EventManagement.vue'
 import EquipmentManagement from './pages/equipment_management/EquipmentManagement.vue'
 
-// 定义路由，开发完成后自行解除注释
+// 定义路由
 const routes = [
   // 登陆界面
   {
@@ -206,7 +206,7 @@ const router = createRouter({
   routes,
 })
 
-//检查登陆状态，没登录的话会先回到登录界面
+//检查登陆状态
 router.beforeEach((to, from, next) => {
   let userStore
   let isLoggedIn = false
@@ -220,7 +220,6 @@ router.beforeEach((to, from, next) => {
     isLoggedIn = false
   }
   if (to.meta.requiresAuth && !isLoggedIn) {
-    // a. 如果页面需要登录，但用户未登录，则强制跳转到登录页
     next('/login') 
   }
   else if (to.path === '/login' && isLoggedIn) {
