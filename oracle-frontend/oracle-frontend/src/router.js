@@ -60,7 +60,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: '工资总支出',
-      role_need: ['员工']
+      role_need: ['员工'],
+      accessAuth: 2
     }
   },
 //   // 合作方信息管理页面
