@@ -52,6 +52,7 @@
       if (!route.meta || !route.meta.title) return false;
       if (route.path === '/login') return false; // 明确排除登录页
       if (!route.meta.role_need || !route.meta.role_need.includes(userRole)) return false;
+      if (route.meta.accessAuth && userStore.userInfo.authority > route.meta.accessAuth) return false;
       return true;
     });
   });

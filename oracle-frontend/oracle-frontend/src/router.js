@@ -9,7 +9,9 @@ import AccountContent from '@/pages/account_management/AccountContent.vue'
 import TempAuthEditor from '@/pages/account_management/TempAuthEditor.vue'
 // import Visualization from './pages/area_visualization/App.vue'
 // import Equipment from './pages/Equipment_management/App.vue'
-// import Employee from './pages/employee_management/App.vue'
+import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
+import TotalSalary from './pages/employee_management/TotalSalary.vue'
+
 // import Events from './pages/events_management/App.vue'
 // import Mall from './pages/mall_management/App.vue'
 // import Cashflow from './pages/cashflow_management/App.vue'
@@ -31,13 +33,37 @@ const routes = [
     meta: { requiresAuth: true, title: '主页', role_need: ['员工', '商户', '游客'] },
   },
   // 员工信息页面（测试）
+  // {
+  //   path: '/employee_management',
+  //   component: EmployeeInfo,
+  //   meta: {
+  //     requiresAuth: true,
+  //     title: '员工信息', // 这个 title 会显示在页眉和菜单中
+  //     role_need: ['员工']  // 假设只有“员工”角色能看到
+  //   }
+  // },
+//   //区域可视化页面
+//   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
+//   // 活动管理/活动查询页面
+//   { path: '/events_management', component: Events, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
+  // 员工信息管理页面
+  { 
+    path: '/employee_management', 
+    component: EmployeeManagement, 
+    meta: { 
+      requiresAuth: true,
+      title: '员工信息管理',
+      role_need: ['员工'] 
+    }
+  },
   {
-    path: '/employee_management',
-    component: EmployeeInfo,
+    path: '/cashflow_management/total_salary',
+    component: TotalSalary,
     meta: {
       requiresAuth: true,
-      title: '员工信息', // 这个 title 会显示在页眉和菜单中
-      role_need: ['员工']  // 假设只有“员工”角色能看到
+      title: '工资总支出',
+      role_need: ['员工'],
+      accessAuth: 2
     }
   },
   // 账号信息管理页面

@@ -189,7 +189,7 @@ namespace oracle_backend.Controllers
         }
 
         // 2.6.1 添加新员工
-        [HttpPost("add staff")]
+        [HttpPost("AddStaff")]
         public async Task<IActionResult> AddStaff(
             [FromQuery, Required] string operatorAccount,
             [FromBody] StaffDto dto)
@@ -257,7 +257,7 @@ namespace oracle_backend.Controllers
         }
 
         // 2.6.2 员工权限管理
-        [HttpPatch("modify staff authority")]
+        [HttpPatch("ModifyStaffAuthority")]
         public async Task<IActionResult> ModifyStaffAuthority(
             [FromQuery, Required] string operatorAccount,
             [FromQuery] int staffId,
@@ -306,7 +306,7 @@ namespace oracle_backend.Controllers
         }
 
         // 2.6.3 员工/管理员修改自己/下属的信息
-        [HttpPatch("modify staff infomation")]
+        [HttpPatch("ModifyStaffInfo")]
         public async Task<IActionResult> UpdateStaff(
             [FromQuery, Required] int staffId,
             [FromQuery, Required] string operatorAccount,
@@ -361,7 +361,7 @@ namespace oracle_backend.Controllers
             return BadRequest("无权限修改");
         }
         // 2.6.5 员工工资管理(底薪，奖金，罚金)
-        [HttpPost("staff salary management")]
+        [HttpPost("StaffSalaryManagement")]
         public async Task<IActionResult> ManageStaffSalary(
             [FromQuery, Required] string operatorAccount,
             [FromQuery, Required] int staffId,
