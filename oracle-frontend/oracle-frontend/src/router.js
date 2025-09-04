@@ -85,7 +85,7 @@ const routes = [
         props: true // 3. 将路由参数 (:accountId) 作为 props 传递给组件
       }
     ]
-  }
+  },
 //   //区域可视化页面
 //   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   // 活动管理/活动查询页面
