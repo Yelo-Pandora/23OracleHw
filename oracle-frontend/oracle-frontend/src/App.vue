@@ -18,13 +18,15 @@
     body, html {
       margin: 0;
       padding: 0;
-      height: 100%;
+      min-height: 100%;
       font-family: 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
-      overflow: hidden;
+      /* 允许页面垂直滚动，避免内容被裁剪 */
+      overflow-x: hidden;
+      overflow-y: auto;
       background-color: #f4f4f4; /* 背景加载前的底色 */
     }
 
     #app {
-      height: 100%;
+      min-height: 100%;
     }
 </style>
