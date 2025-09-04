@@ -202,7 +202,6 @@ onMounted(async () => {
 
     // 设置当前登录员工信息（假设userStore.account为当前登录账号）
     userEmployee.value = employees.value.find(emp => emp.account === userStore.userInfo.account) || null;
-    console.log(employees.value);
 })
 
 </script>

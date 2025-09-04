@@ -12,10 +12,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="table_row" v-for="item in totalSalaries" :key="item.year + '-' + item.month">
-              <td class="table_cell c1">{{ item.year }}</td>
-              <td class="table_cell c2">{{ item.month }}</td>
-              <td class="table_cell c1">{{ item.total }}</td>
+            <tr class="table_row" v-for="item in monthSalaryCosts" :key="item.MONTH_TIME">
+              <td class="table_cell c1">{{ item.MONTH_TIME.split('-')[0] }}</td>
+              <td class="table_cell c2">{{ item.MONTH_TIME.split('-')[1] }}</td>
+              <td class="table_cell c1">{{ item.TOTAL_COST }}</td>
               <td class="table_cell c2">
                 <button class="action-btn detail-btn" @click="viewDetail(item)">查看详情</button>
               </td>
@@ -28,8 +28,9 @@
       :show="showDetailModal"
       :year="currentYear"
       :month="currentMonth"
-      :salaryList="currentSalaryList"
+      :operatorAccount="userStore.userInfo.account"
       @close="showDetailModal = false"
+      @salaryUpdated="refreshSalaryData"
     />
   </DashboardLayout>
 </template>
@@ -37,117 +38,38 @@
 <script setup>
 import DashboardLayout from '@/components/BoardLayout.vue';
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
-import { computed } from 'vue';
 import SalaryDetailModal from './SalaryDetailModal.vue';
+import { ref, onMounted } from 'vue';
+import { useUserStore } from '@/user/user';
 
-const employees = ref([]);
-const salarySlips = ref([]);
+const monthSalaryCosts = ref([]);
 const showDetailModal = ref(false);
 const currentYear = ref('');
 const currentMonth = ref('');
-const currentSalaryList = ref([]);
+const userStore = useUserStore();
 
-// 计算每月总工资（年、月、总工资），按年降序、月降序
-const totalSalaries = computed(() => {
-  // 按年月分组
-  const map = {};
-  for (const slip of salarySlips.value) {
-    const year = slip.year;
-    const month = slip.month;
-    const key = `${year}-${month}`;
-    if (!map[key]) {
-      map[key] = { year, month, total: 0 };
-    }
-    // 工资 = salary + bonus - fine
-    map[key].total += Number(slip.salary || 0) + Number(slip.bonus || 0) - Number(slip.fine || 0);
+async function fetchMonthSalaryCosts() {
+  try {
+    const res = await axios.get('/api/Staff/AllMonthSalaryCost');
+    monthSalaryCosts.value = res.data;
+  } catch (error) {
+    console.error('Error fetching month salary cost:', error);
   }
-  // 转数组并排序
-  return Object.values(map).sort((a, b) => {
-    if (a.year !== b.year) return b.year - a.year;
-    return b.month - a.month;
-  });
-});
+}
 
 function viewDetail(item) {
-  currentYear.value = item.year;
-  currentMonth.value = item.month;
-  currentSalaryList.value = salarySlips.value.filter(slip => slip.year === item.year && slip.month === item.month)
-    .map(slip => {
-      const emp = employees.value.find(e => e.id === slip.staffId);
-      return {
-        name: emp ? emp.name : '',
-        staffId: slip.staffId,
-        account: emp ? emp.account : '',
-        username: emp ? emp.username : '',
-        dept: emp ? emp.department : '',
-        salary: slip.salary,
-        bonus: slip.bonus,
-        fine: slip.fine
-      };
-    });
+  currentYear.value = item.MONTH_TIME.split('-')[0];
+  currentMonth.value = item.MONTH_TIME.split('-')[1];
   showDetailModal.value = true;
 }
 
+const refreshSalaryData = async () => {
+  await fetchMonthSalaryCosts();
+};
+
 onMounted(async () => {
-    // 获取所有员工
-    try{
-        const staff = await axios.get('/api/Staff/AllStaffs');
-        employees.value = staff.data.map(item => ({
-            id: item.STAFF_ID,
-            name: item.STAFF_NAME,
-            sex: item.STAFF_SEX,
-            department: item.STAFF_APARTMENT,
-            position: item.STAFF_POSITION,
-            salary: item.STAFF_SALARY
-        }));
-    } catch (error) {
-        console.error("Error fetching staff data:", error);
-    }
-
-    // 对于每个employee, GetAccountByStaffId
-    try {
-        for (const emp of employees.value) {
-            if (!emp.id) continue;
-            const account = await axios.get('/api/Accounts/GetAccById', {
-                params: {
-                    staffId: emp.id
-                }
-            });
-            const acc = account.data;
-            emp.account = acc.ACCOUNT;
-            emp.username = acc.USERNAME;
-            emp.authority = acc.AUTHORITY;
-        }
-    } catch (error) {
-        console.error("Error fetching account data:", error);
-    }
-
-    // SalarySlip
-    try {
-      const res = await axios.get('/api/Staff/AllsalarySlip');
-      salarySlips.value = res.data.map(slip => ({
-        staffId: slip.STAFF_ID,
-        year: String(slip.MONTH_TIME).split('-')[0],
-        month: String(slip.MONTH_TIME).split('-')[1],
-        bonus: slip.BONUS,
-        fine: slip.FINE,
-        attendence: slip.ATD_COUNT
-      }));
-      // 查找employees获得salary
-      for (const slip of salarySlips.value) {
-        const emp = employees.value.find(e => e.id === slip.staffId);
-        if (emp) {
-          slip.salary = emp.salary;
-        } else {
-          slip.salary = 0;
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching salary slip data:", error);
-    }
-    console.log(salarySlips.value)
-})
+  await fetchMonthSalaryCosts();
+});
 </script>
 
 <style scoped>
@@ -186,7 +108,13 @@ onMounted(async () => {
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, transform 0.18s;
+}
+.action-btn:hover {
+  transform: scale(1.08);
+}
+.action-btn:active {
+  transform: scale(0.96);
 }
 .detail-btn {
   background: #f7b731;
