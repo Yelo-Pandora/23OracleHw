@@ -1,20 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from './user/user'
-// 指定页面对应的vue应用实例，开发完成后自行解除注释
+// 指定页面对应的vue应用实例
 import Login from './pages/login/LoginPage.vue'
 import Home from './pages/home/Home.vue'
 //测试用的EmployeeInfo页面
 import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
-// import Visualization from './pages/area_visualization/App.vue'
-// import Equipment from './pages/Equipment_management/App.vue'
-// import Employee from './pages/employee_management/App.vue'
-// import Events from './pages/events_management/App.vue'
-// import Mall from './pages/mall_management/App.vue'
-// import Cashflow from './pages/cashflow_management/App.vue'
-// import Collaboration from './pages/collaboration_management/App.vue'
-// import Parking from './pages/parking_management/App.vue'
+// 真实页面
+import Mall from './pages/mall_management/MallManagement.vue'
+import Parking from './pages/parking_management/ParkingManagement.vue'
+import ParkingQuery from './pages/parking_query/ParkingQuery.vue'
+import ParkingBilling from './pages/parking_billing/ParkingBilling.vue'
+import VehicleManagement from './pages/vehicle_management/VehicleManagement.vue'
+import ParkingReport from './pages/parking_report/ParkingReport.vue'
 
-// 定义路由，开发完成后自行解除注释
+// 定义路由
 const routes = [
   // 登陆界面
   {
@@ -34,26 +33,46 @@ const routes = [
     component: EmployeeInfo,
     meta: {
       requiresAuth: true,
-      title: '员工信息', // 这个 title 会显示在页眉和菜单中
-      role_need: ['员工']  // 假设只有“员工”角色能看到
+      title: '员工信息',
+      role_need: ['员工']
     }
   },
-//   //区域可视化页面
-//   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-//   // 活动管理/活动查询页面
-//   { path: '/events_management', component: Events, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-//   // 员工信息管理页面
-//   { path: '/employee_management', component: Employee, meta: { requiresAuth: true, role_need: ['员工'] } },
-//   // 合作方信息管理页面
-//   { path: '/collaboration_management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工']} },
-//   //商场(店铺)管理/商场平面图查看页面
-//   { path: '/mall_management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-//   //停车场管理/车位查询页面
-//   { path: '/parking_management', component: Parking, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
-//   //设备管理页面
-//   { path: '/equipment_management', component: Equipment, meta: { requiresAuth: true, role_need: ['员工'] } },
-//   //现金流管理页面
-//   { path: '/cashflow_management', component: Cashflow, meta: { requiresAuth: true, role_need: ['员工'] } },
+  // 商场管理
+  {
+    path: '/mall-management',
+    component: Mall,
+    meta: { requiresAuth: true, title: '商场管理', role_need: ['员工', '商户', '游客'] }
+  },
+  // 停车场管理
+  {
+    path: '/parking-management',
+    component: Parking,
+    meta: { requiresAuth: true, title: '停车场管理', role_need: ['员工'] }
+  },
+  // 停车收费
+  {
+    path: '/parking-billing',
+    component: ParkingBilling,
+    meta: { requiresAuth: true, title: '停车收费', role_need: ['员工'] }
+  },
+  // 停车查询
+  {
+    path: '/parking-query',
+    component: ParkingQuery,
+    meta: { requiresAuth: true, title: '停车查询', role_need: ['游客', '商户', '员工'] }
+  },
+  // 停车报表
+  {
+    path: '/parking-report',
+    component: ParkingReport,
+    meta: { requiresAuth: true, title: '停车报表', role_need: ['员工'] }
+  },
+  // 车辆管理
+  {
+    path: '/vehicle-management',
+    component: VehicleManagement,
+    meta: { requiresAuth: true, title: '车辆管理', role_need: ['员工'] }
+  },
 ]
 
 const router = createRouter({
@@ -61,21 +80,56 @@ const router = createRouter({
   routes,
 })
 
-//检查登陆状态，没登录的话会先回到登录界面
+//检查登陆状态
 router.beforeEach((to, from, next) => {
-  const userStore = useUserStore()
-  const isLoggedIn = !!userStore.token // 通过 token 判断用户是否登录
+  let userStore
+  let isLoggedIn = false
+  try {
+    userStore = useUserStore()
+    isLoggedIn = !!userStore.token
+  } catch (err) {
+    console.warn('useUserStore() not available yet in router guard:', err)
+    userStore = { token: null, role: '游客' }
+    isLoggedIn = false
+  }
   if (to.meta.requiresAuth && !isLoggedIn) {
-    // a. 如果页面需要登录，但用户未登录，则强制跳转到登录页
     next('/login') 
   }
-  else if (to.name === 'login' && isLoggedIn) {
-    // b. 如果用户已登录，但又尝试访问登录页，则直接跳转到首页
+  else if (to.path === '/login' && isLoggedIn) {
     next('/')
   }
   else {
-    // c. 其他所有情况（无需登录的页面，或需要登录且已登录的页面），直接放行
-    next() 
+    const requiredRoles = to.meta.role_need
+    if (requiredRoles && requiredRoles.length > 0) {
+      const rawUserRole = userStore.role || '游客'
+      const roleMap = {
+        guest: '游客',
+        visitor: '游客',
+        merchant: '商户',
+        shop: '商户',
+        staff: '员工',
+        employee: '员工'
+      }
+      const normalized = roleMap[String(rawUserRole).toLowerCase()] || rawUserRole
+
+      const isAllowed = (roles, userR) => {
+        return roles.includes(userR) || roles.includes(String(userR).toLowerCase())
+      }
+
+      if (!isAllowed(requiredRoles, rawUserRole) && !isAllowed(requiredRoles, normalized)) {
+        console.warn(`访问被拒绝: 角色 ${rawUserRole} 无权访问 ${to.path}`)
+        const fallback = router.getRoutes().find(r => r.meta && Array.isArray(r.meta.role_need) && (isAllowed(r.meta.role_need, rawUserRole) || isAllowed(r.meta.role_need, normalized)))
+        const fallbackPath = fallback ? (fallback.path || '/') : '/login'
+
+        if (fallbackPath && fallbackPath !== to.path) {
+          next(fallbackPath)
+        } else {
+          next(false)
+        }
+        return
+      }
+    }
+    next()
   }
   if (to.meta.title) {
     document.title = to.meta.title;
