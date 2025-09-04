@@ -49,10 +49,10 @@
         <SalarySlipModal
             :show="showSalarySlipWindow"
             :employeeInfo="employees.find(emp => emp.id === currentEmployeeId)"
-            :salarySlip="salarySlip.filter(slip => slip.staffId === currentEmployeeId)"
             :operatorAccount="userStore.userInfo.account"
             :operatorAuthority="userEmployee?.authority"
             @close="showSalarySlipWindow = false"
+            @salaryUpdated="refreshEmployeeInfo"
         />
         <AddStaffModal
             :show="showAddStaffModal"
@@ -71,6 +71,37 @@
 </template>
 
 <script setup>
+async function refreshEmployeeInfo() {
+    // 重新获取所有员工信息
+    try{
+        const staff = await axios.get('/api/Staff/AllStaffs');
+        employees.value = staff.data.map(item => ({
+            id: item.STAFF_ID,
+            name: item.STAFF_NAME,
+            sex: item.STAFF_SEX,
+            department: item.STAFF_APARTMENT,
+            position: item.STAFF_POSITION,
+            salary: item.STAFF_SALARY
+        }));
+        // 重新获取账号信息
+        for (const emp of employees.value) {
+            if (!emp.id) continue;
+            const account = await axios.get('/api/Accounts/GetAccById', {
+                params: {
+                    staffId: emp.id
+                }
+            });
+            const acc = account.data;
+            emp.account = acc.ACCOUNT;
+            emp.username = acc.USERNAME;
+            emp.authority = acc.AUTHORITY;
+        }
+        // 更新当前登录员工信息
+        userEmployee.value = employees.value.find(emp => emp.account === userStore.userInfo.account) || null;
+    } catch (error) {
+        console.error("Error fetching staff data:", error);
+    }
+}
 import DashboardLayout from '@/components/BoardLayout.vue';
 import SalarySlipModal from './SalarySlipModal.vue';
 import AddStaffModal from './AddStaffModal.vue';
@@ -87,7 +118,6 @@ const currentEmployeeId = ref(null);
 const employees = ref([]);
 const userEmployee = ref(null);
 
-const salarySlip = ref([]);
 const showSalarySlipWindow = ref(false);
 const showAddStaffModal = ref(false);
 const showEditEmployeeModal = ref(false);
@@ -170,24 +200,9 @@ onMounted(async () => {
         console.error("Error fetching account data:", error);
     }
 
-    // SalarySlip
-    try {
-        const salarySlips = await axios.get('/api/Staff/AllsalarySlip');
-        // 赋给employee
-        salarySlip.value = salarySlips.data.map(item => ({
-            staffId: item.STAFF_ID,
-            date: item.MONTH_TIME,
-            attendence: item.ATD_COUNT,
-            bonus: item.BONUS,
-            fine: item.FINE,
-        }));
-    }
-    catch (error) {
-        console.error("Error fetching salary slip data:", error);
-    }
-
     // 设置当前登录员工信息（假设userStore.account为当前登录账号）
     userEmployee.value = employees.value.find(emp => emp.account === userStore.userInfo.account) || null;
+    console.log(employees.value);
 })
 
 </script>
