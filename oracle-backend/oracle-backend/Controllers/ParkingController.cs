@@ -55,6 +55,37 @@ namespace oracle_backend.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// 检查账号是否具有最高权限（权限=9）
+        /// </summary>
+        private async Task<bool> CheckHighestAuthority(string operatorAccount)
+        {
+            try
+            {
+                _logger.LogInformation("开始检查账号权限：{OperatorAccount}", operatorAccount);
+                
+                var account = await _accountContext.FindAccount(operatorAccount);
+                if (account == null)
+                {
+                    _logger.LogWarning("账号 {OperatorAccount} 不存在", operatorAccount);
+                    return false;
+                }
+                
+                _logger.LogInformation("账号 {OperatorAccount} 权限等级：{Authority}", operatorAccount, account.AUTHORITY);
+                
+                // 只有权限为1的账号才能修改停车场信息
+                var hasPermission = account.AUTHORITY == 1;
+                _logger.LogInformation("账号 {OperatorAccount} 权限检查结果：{HasPermission}", operatorAccount, hasPermission);
+                
+                return hasPermission;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "检查账号权限时发生错误：{OperatorAccount}", operatorAccount);
+                return false;
+            }
+        }
+
         #region DTO类定义
 
         /// <summary>
@@ -251,6 +282,7 @@ namespace oracle_backend.Controllers
             public DateTime? StartDate { get; set; }
             public DateTime? EndDate { get; set; }
             public bool ForceRegenerate { get; set; } = false; // 是否强制重新生成
+            public bool ExcludeToday { get; set; } = true; // 是否排除今天（默认排除，当天出场不自动支付）
         }
 
 
@@ -373,14 +405,14 @@ namespace oracle_backend.Controllers
 
             try
             {
-                // 1. 验证操作员权限（管理员权限）
+                // 1. 验证操作员权限（需要最高权限9）
                 if (!string.IsNullOrEmpty(dto.OperatorAccount))
                 {
-                    var hasPermission = await _accountContext.CheckAuthority(dto.OperatorAccount, 1);
+                    var hasPermission = await CheckHighestAuthority(dto.OperatorAccount);
                     if (!hasPermission)
                     {
-                        _logger.LogWarning("操作员 {OperatorAccount} 权限不足", dto.OperatorAccount);
-                        return BadRequest(new { error = "操作员权限不足，需要管理员权限" });
+                        _logger.LogWarning("操作员 {OperatorAccount} 权限不足，需要最高权限", dto.OperatorAccount);
+                        return BadRequest(new { error = "操作员权限不足，需要最高权限" });
                     }
                 }
 
@@ -521,8 +553,8 @@ namespace oracle_backend.Controllers
                 // 验证操作员权限（员工/商户/管理员都可以查询）
                 if (!string.IsNullOrEmpty(operatorAccount))
                 {
-                    var hasPermission = await _accountContext.CheckAuthority(operatorAccount, 3);
-                    if (!hasPermission)
+                    var account = await _accountContext.FindAccount(operatorAccount);
+                    if (account == null || account.AUTHORITY > 5)
                     {
                         _logger.LogWarning("操作员 {OperatorAccount} 权限不足", operatorAccount);
                         return BadRequest(new { success = false, error = "权限不足，需要员工及以上权限" });
@@ -634,8 +666,8 @@ namespace oracle_backend.Controllers
                 // 验证操作员权限
                 if (!string.IsNullOrEmpty(operatorAccount))
                 {
-                    var hasPermission = await _accountContext.CheckAuthority(operatorAccount, 3);
-                    if (!hasPermission)
+                    var account = await _accountContext.FindAccount(operatorAccount);
+                    if (account == null || account.AUTHORITY > 5)
                     {
                         _logger.LogWarning("操作员 {OperatorAccount} 权限不足", operatorAccount);
                         return BadRequest(new { error = "权限不足，需要员工及以上权限" });
@@ -739,8 +771,8 @@ namespace oracle_backend.Controllers
                 // 验证操作员权限
                 if (!string.IsNullOrEmpty(operatorAccount))
                 {
-                    var hasPermission = await _accountContext.CheckAuthority(operatorAccount, 3);
-                    if (!hasPermission)
+                    var account = await _accountContext.FindAccount(operatorAccount);
+                    if (account == null || account.AUTHORITY > 5)
                     {
                         _logger.LogWarning("操作员 {OperatorAccount} 权限不足", operatorAccount);
                         return BadRequest(new { error = "权限不足，需要员工及以上权限" });
@@ -1305,6 +1337,13 @@ namespace oracle_backend.Controllers
                 var start = dto.StartDate ?? DateTime.Today.AddDays(-7);
                 var end = dto.EndDate ?? DateTime.Today.AddDays(1);
 
+                // 如果需要排除今天，则将结束时间限定到昨天 23:59:59
+                if (dto.ExcludeToday)
+                {
+                    var endOfYesterday = DateTime.Today.AddSeconds(-1);
+                    if (end > endOfYesterday) end = endOfYesterday;
+                }
+
                 _logger.LogInformation("开始为停车记录生成支付记录：时间范围 {StartDate} - {EndDate}", start, end);
                 Console.WriteLine($"[DEBUG] 开始为停车记录生成支付记录：时间范围 {start} - {end}");
 
@@ -1364,7 +1403,7 @@ namespace oracle_backend.Controllers
                         
                         // 获取停车场实际费用（从PARK表关联到PARKING_SPACE_DISTRIBUTION再到PARKING_LOT）
                         var parkRecord = await _parkingContext.PARK
-                            .FirstOrDefaultAsync(p => p.LICENSE_PLATE_NUMBER == car.LICENSE_PLATE_NUMBER);
+                            .FirstOrDefaultAsync(p => p.LICENSE_PLATE_NUMBER == car.LICENSE_PLATE_NUMBER && p.PARK_START == car.PARK_START);
                         
                         if (parkRecord == null)
                         {
@@ -1385,12 +1424,14 @@ namespace oracle_backend.Controllers
                                 PaymentMethod = "现金"
                             };
 
-                            // 添加到内存中的支付记录
-                            var defaultRecordId = Guid.NewGuid().ToString();
-                            _parkingContext.PaymentRecords[defaultRecordId] = defaultPaymentRecord;
+                            // 添加到内存中的支付记录（使用统一的复合主键以便前端识别为已支付）
+                            var defaultLocalParkStart = car.PARK_START.ToLocalTime();
+                            var defaultParkingSpaceId = defaultPaymentRecord.ParkingSpaceId;
+                            var defaultPaymentKey = $"{car.LICENSE_PLATE_NUMBER}_{defaultParkingSpaceId}_{defaultLocalParkStart:yyyyMMddHHmmss}";
+                            _parkingContext.PaymentRecords[defaultPaymentKey] = defaultPaymentRecord;
                             generatedCount++;
 
-                            Console.WriteLine($"[DEBUG]   使用默认费率生成支付记录成功，ID: {defaultRecordId}");
+                            Console.WriteLine($"[DEBUG]   使用默认费率生成支付记录成功，Key: {defaultPaymentKey}");
                             Console.WriteLine($"[DEBUG]   当前内存中支付记录总数: {_parkingContext.PaymentRecords.Count}");
                             continue; // 跳过后续的复杂查询
                         }
@@ -1441,7 +1482,7 @@ namespace oracle_backend.Controllers
                         var finalPaymentRecord = new Models.ParkingPaymentRecord
                         {
                             LicensePlateNumber = car.LICENSE_PLATE_NUMBER,
-                            ParkingSpaceId = random.Next(1001, 2000), // 随机车位ID
+                            ParkingSpaceId = parkRecord.PARKING_SPACE_ID,
                             ParkStart = car.PARK_START,
                             ParkEnd = car.PARK_END,
                             TotalFee = fee,
@@ -1450,12 +1491,13 @@ namespace oracle_backend.Controllers
                             PaymentMethod = "现金"
                         };
 
-                        // 添加到内存中的支付记录
-                        var finalRecordId = Guid.NewGuid().ToString();
-                        _parkingContext.PaymentRecords[finalRecordId] = finalPaymentRecord;
+                        // 添加到内存中的支付记录（使用统一的复合主键以便前端识别为已支付）
+                        var localParkStart = car.PARK_START.ToLocalTime();
+                        var paymentKey = $"{car.LICENSE_PLATE_NUMBER}_{parkRecord.PARKING_SPACE_ID}_{localParkStart:yyyyMMddHHmmss}";
+                        _parkingContext.PaymentRecords[paymentKey] = finalPaymentRecord;
                         generatedCount++;
 
-                        Console.WriteLine($"[DEBUG]   生成支付记录成功，ID: {finalRecordId}");
+                        Console.WriteLine($"[DEBUG]   生成支付记录成功，Key: {paymentKey}");
                         Console.WriteLine($"[DEBUG]   当前内存中支付记录总数: {_parkingContext.PaymentRecords.Count}");
                         
                         _logger.LogInformation("为车辆 {LicensePlate} 生成支付记录：费用 {Fee} 元", 
@@ -1884,19 +1926,24 @@ namespace oracle_backend.Controllers
                 Console.WriteLine($"[DEBUG]   天数差: {(endDate - startDate).Days}");
                 Console.WriteLine($"[DEBUG]   小时差: {(endDate - startDate).TotalHours:F2}");
 
-                // 使用EF Core LINQ查询，避免SQL参数绑定问题
-                var allCarsInTimeRange = await _parkingContext.CAR
-                    .Where(c => c.PARK_START >= startDate && c.PARK_START <= endDate)
-                    .ToListAsync();
-
-                var completedCarsInTimeRange = allCarsInTimeRange
-                    .Where(c => c.PARK_END.HasValue)
-                    .ToList();
-
-                var totalAllParkingCount = allCarsInTimeRange.Count;
-                var totalCompletedParkingCount = completedCarsInTimeRange.Count;
-
-                Console.WriteLine($"[DEBUG] EF Core查询结果: 总记录={totalAllParkingCount}, 已完成={totalCompletedParkingCount}");
+                // 使用EF Core LINQ查询，基于“出场”口径统计完成车辆，并按区域可选过滤
+                var completedCarsInRange = areaId.HasValue
+                    ? await (from c in _parkingContext.CAR
+                             join p in _parkingContext.PARK on new { c.LICENSE_PLATE_NUMBER, c.PARK_START } equals new { p.LICENSE_PLATE_NUMBER, p.PARK_START }
+                             join psd in _parkingContext.PARKING_SPACE_DISTRIBUTION on p.PARKING_SPACE_ID equals psd.PARKING_SPACE_ID
+                             where c.PARK_END.HasValue
+                                   && c.PARK_END.Value >= startDate && c.PARK_END.Value <= endDate
+                                   && psd.AREA_ID == areaId.Value
+                             select new { Car = c, Park = p })
+                             .ToListAsync()
+                    : await (from c in _parkingContext.CAR
+                             join p in _parkingContext.PARK on new { c.LICENSE_PLATE_NUMBER, c.PARK_START } equals new { p.LICENSE_PLATE_NUMBER, p.PARK_START }
+                             where c.PARK_END.HasValue
+                                   && c.PARK_END.Value >= startDate && c.PARK_END.Value <= endDate
+                             select new { Car = c, Park = p })
+                             .ToListAsync();
+                var totalExitCount = completedCarsInRange.Count;
+                Console.WriteLine($"[DEBUG] EF Core查询结果: 出场记录数={totalExitCount}");
 
                 // 统计内存中的支付记录
                 var paymentRecordsInTimeRange = await _parkingContext.GetPaymentRecordsInTimeRange(startDate, endDate);
@@ -1939,114 +1986,55 @@ namespace oracle_backend.Controllers
                     Console.WriteLine($"[DEBUG] 区域筛选后支付记录数: {paymentRecordsInTimeRange.Count}");
                 }
 
-                // 使用包含所有停车记录的数据（包括未出场的）
-                var totalParkingCount = totalAllParkingCount; // 直接使用数据库中的记录数
-                
-                // 计算收入：只使用支付记录中的实际收入，如果没有支付记录则收入为0
-                var totalRevenue = 0m;
-                var totalParkingHours = 0.0;
-                var recordsWithRevenue = 0;
+                // 采用“出场”口径的汇总与每日统计
+                var totalParkingCount = totalExitCount; // 总出场次数
 
-                Console.WriteLine($"[DEBUG] ========== 收入计算详细过程 ==========");
-                Console.WriteLine($"[DEBUG] 支付记录总数: {paymentRecordsInTimeRange.Count}");
-                Console.WriteLine($"[DEBUG] 已完成停车记录数: {totalCompletedParkingCount}");
+                // 总收入：使用支付记录，按出场时间归属（已在 GetPaymentRecordsInTimeRange 中按 ParkEnd 过滤）
+                var totalRevenue = paymentRecordsInTimeRange.Sum(r => r.TotalFee);
 
-                // 只使用支付记录中的实际收入
-                if (paymentRecordsInTimeRange.Any())
-                {
-                    Console.WriteLine($"[DEBUG] 使用支付记录计算收入:");
-                    foreach (var paymentRecord in paymentRecordsInTimeRange)
-                    {
-                        var duration = paymentRecord.ParkEnd.HasValue ? 
-                            (paymentRecord.ParkEnd.Value - paymentRecord.ParkStart).TotalHours : 0;
-                        var calculatedFee = paymentRecord.TotalFee;
-                        
-                        Console.WriteLine($"[DEBUG]   车牌号: {paymentRecord.LicensePlateNumber}, 入场: {paymentRecord.ParkStart:yyyy-MM-dd HH:mm}, 出场: {paymentRecord.ParkEnd:yyyy-MM-dd HH:mm}, 时长: {duration:F1}小时, 费用: ¥{calculatedFee}");
-                        
-                        totalRevenue += calculatedFee;
-                        if (paymentRecord.ParkEnd.HasValue)
-                        {
-                            totalParkingHours += duration;
-                            recordsWithRevenue++;
-                        }
-                    }
-                    Console.WriteLine($"[DEBUG]   支付记录总收入: ¥{totalRevenue}");
-                }
-                else
-                {
-                    Console.WriteLine($"[DEBUG] 无支付记录，收入为0");
-                    Console.WriteLine($"[DEBUG]   说明: 系统只统计实际存在的支付记录，不会估算收入");
-                    totalRevenue = 0m;
-                    totalParkingHours = 0.0;
-                    recordsWithRevenue = 0;
-                }
+                // 总停车时长与平均时长：按“出场车辆”真实计算（是否支付不影响时长统计）
+                var totalParkingHours = completedCarsInRange
+                    .Where(x => x.Car.PARK_END.HasValue)
+                    .Sum(x => (x.Car.PARK_END!.Value - x.Car.PARK_START).TotalHours);
+                var averageParkingHours = totalParkingCount > 0 ? totalParkingHours / totalParkingCount : 0.0;
 
-                var averageParkingHours = recordsWithRevenue > 0 ? totalParkingHours / recordsWithRevenue : 3.5;
+                Console.WriteLine($"[DEBUG] ========== 汇总 ==========");
+                Console.WriteLine($"[DEBUG] 总出场次数: {totalParkingCount}");
+                Console.WriteLine($"[DEBUG] 总收入(出场口径): ¥{totalRevenue}");
+                Console.WriteLine($"[DEBUG] 总停车时长(小时): {totalParkingHours:F2}");
+                Console.WriteLine($"[DEBUG] 平均停车时长(小时): {averageParkingHours:F2}");
 
-                Console.WriteLine($"[DEBUG] ========== 平均停车时长计算 ==========");
-                if (recordsWithRevenue > 0)
-                {
-                    Console.WriteLine($"[DEBUG] 总停车时长: {totalParkingHours:F1}小时");
-                    Console.WriteLine($"[DEBUG] 有收入记录数: {recordsWithRevenue}");
-                    Console.WriteLine($"[DEBUG] 计算过程: {totalParkingHours:F1} ÷ {recordsWithRevenue} = {averageParkingHours:F1}小时");
-                }
-                else
-                {
-                    Console.WriteLine($"[DEBUG] 无收入记录，使用默认值: 3.5小时");
-                }
-                Console.WriteLine($"[DEBUG] 最终平均停车时长: {averageParkingHours:F1}小时");
-                Console.WriteLine($"[DEBUG] =================================");
-
-                Console.WriteLine($"[DEBUG] ========== 收入计算总结 ==========");
-                Console.WriteLine($"[DEBUG] 最终总收入: ¥{totalRevenue}");
-                Console.WriteLine($"[DEBUG] 总停车时长: {totalParkingHours:F1}小时");
-                Console.WriteLine($"[DEBUG] 有收入记录数: {recordsWithRevenue}");
-                Console.WriteLine($"[DEBUG] 平均停车时长: {averageParkingHours:F1}小时");
-                Console.WriteLine($"[DEBUG] =================================");
-
-                // 生成每日统计 - 基于真实数据库数据
+                // 生成每日统计（出场口径）
                 var dailyStats = new List<DailyStatisticsDto>();
                 var days = (endDate - startDate).Days + 1;
 
                 for (int i = 0; i < days; i++)
                 {
                     var date = startDate.AddDays(i);
-                    var nextDate = date.AddDays(1);
-                    
-                    // 使用EF Core LINQ查询该日期的停车记录
-                    var dailyCars = allCarsInTimeRange
-                        .Where(c => c.PARK_START.Date == date.Date)
+
+                    // 当天出场的车辆
+                    var dailyExits = completedCarsInRange
+                        .Where(x => x.Car.PARK_END.HasValue && x.Car.PARK_END.Value.Date == date.Date)
                         .ToList();
-                    
-                    var dailyCompletedCars = dailyCars
-                        .Where(c => c.PARK_END.HasValue)
-                        .ToList();
-                    
-                    var dailyCount = dailyCars.Count;
-                    var completedCount = dailyCompletedCars.Count;
-                    
-                    // 计算该日期的收入：只使用支付记录，不使用估算值
-                    var dailyRevenue = 0m;
+                    var dailyCount = dailyExits.Count;
+
+                    // 当天的支付记录（按出场时间归属）
                     var dailyPaymentRecords = paymentRecordsInTimeRange
-                        .Where(p => p.ParkStart.Date == date.Date)
+                        .Where(p => p.ParkEnd.HasValue && p.ParkEnd.Value.Date == date.Date)
                         .ToList();
-                    
-                    if (dailyPaymentRecords.Any())
-                    {
-                        dailyRevenue = dailyPaymentRecords.Sum(p => p.TotalFee);
-                        Console.WriteLine($"[DEBUG] {date:yyyy-MM-dd} 使用支付记录: {dailyPaymentRecords.Count}条, 收入: ¥{dailyRevenue}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"[DEBUG] {date:yyyy-MM-dd} 无支付记录，收入为0");
-                    }
-                    
+                    var dailyRevenue = dailyPaymentRecords.Sum(p => p.TotalFee);
+
+                    // 当天平均停车时长（出场车辆）
+                    var dailyAvgHours = dailyExits.Any()
+                        ? dailyExits.Average(x => (x.Car.PARK_END!.Value - x.Car.PARK_START).TotalHours)
+                        : 0.0;
+
                     dailyStats.Add(new DailyStatisticsDto
                     {
                         Date = date,
                         ParkingCount = dailyCount,
                         Revenue = dailyRevenue,
-                        AverageParkingHours = 3.5
+                        AverageParkingHours = dailyAvgHours
                     });
                 }
 
