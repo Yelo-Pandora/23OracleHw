@@ -22,30 +22,6 @@ import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 const role = computed(() => userStore.role || '游客');
 
-// const navItems = computed(() => {
-//     if (role.value === '员工') {
-//         return [
-//             { label: '首页', path: '/' },
-//             { label: '商场管理', path: '/area/mall-management' },
-//             { label: '停车场管理', path: '/area/parking-management' },
-//             { label: '活动管理（含合作方）', path: '/area/event-management' },
-//             { label: '设备管理', path: '/area/equipment-management' },
-//         ];
-//     }
-//     if (role.value === '商户') {
-//         return [
-//             { label: '首页', path: '/' },
-//             { label: '车位查询', path: '/area/parking-query' },
-//             { label: '活动查询', path: '/area/event-query' },
-//         ];
-//     }
-//     return [
-//         { label: '首页', path: '/' },
-//         { label: '车位查询', path: '/area/parking-query' },
-//         { label: '活动查询', path: '/area/event-query' },
-//     ];
-// });
-
 const route = useRoute();
 const router = useRouter();
 const hasSubRoute = computed(() => !/^\/area(?:\/)?$/.test(route.path));

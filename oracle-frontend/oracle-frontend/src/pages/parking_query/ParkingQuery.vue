@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
   <div class="parking-query">
     <h2>车位状态查询</h2>
     
@@ -139,7 +138,6 @@
       </div>
     </div>
   </div>
-  </DashboardLayout>
 </template>
 
 <script setup>

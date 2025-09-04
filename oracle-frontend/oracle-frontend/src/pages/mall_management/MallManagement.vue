@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
   <div class="mall-management-container">
     <div class="page-header">
       <h1>商场管理</h1>
@@ -94,11 +93,9 @@
       <router-view />
     </section>
   </div>
-  </DashboardLayout>
 </template>
 
 <script setup>
-import DashboardLayout from '@/components/BoardLayout.vue';
 import { ref, onMounted, watch, computed } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'

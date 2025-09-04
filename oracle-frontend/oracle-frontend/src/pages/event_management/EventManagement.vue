@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
   <div class="event-management">
     <!-- 活动类型切换 -->
     <div class="event-type-switch">
@@ -38,7 +37,6 @@
       <CollaborationManagement />
     </div>
   </div>
-  </DashboardLayout>
 </template>
 
 <script setup>

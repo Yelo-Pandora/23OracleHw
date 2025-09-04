@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
   <div class="parking-management">
     <h2>停车场信息管理</h2>
     
@@ -235,7 +234,6 @@
       </div>
     </div>
   </div>
-  </DashboardLayout>
 </template>
 
 <script setup>

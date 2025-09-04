@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
     <div class="total_salary">
       <div class="content">
         <table>
@@ -31,7 +30,6 @@
       :salaryList="currentSalaryList"
       @close="showDetailModal = false"
     />
-  </DashboardLayout>
 </template>
 
 <script setup>

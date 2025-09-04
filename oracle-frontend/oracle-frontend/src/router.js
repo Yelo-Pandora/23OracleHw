@@ -64,11 +64,11 @@ const routes = [
       { path: '', redirect: '/area/mall-management' },
   { path: 'mall-management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户'], title: '商场管理' } },
       { path: 'parking-management', component: Parking, meta: { requiresAuth: true, role_need: ['员工'] } },
-      { path: 'event-management', component: Events, meta: { requiresAuth: true, role_need: ['员工'] } },
-      { path: 'collaboration-management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工'] } },
+      { path: 'event-management', component: EventManagement, meta: { requiresAuth: true, role_need: ['员工'] } },
+      // { path: 'collaboration-management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工'] } },
       { path: 'equipment-management', component: Equipment, meta: { requiresAuth: true, role_need: ['员工'] } },
-      { path: 'staff-management', component: Staff, meta: { requiresAuth: true, role_need: ['员工'] } },
-      { path: 'mall-map', component: MallMap, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
+      { path: '/cashflow_management/total_salary', component: TotalSalary, meta: { requiresAuth: true, role_need: ['员工'],redirect: '/cashflow_management/total_salary' } },
+      // { path: 'mall-map', component: MallMap, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
       { path: 'parking-query', component: ParkingQuery, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
       { path: 'event-query', component: EventQuery, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
   { path: 'store-management', component: StoreManagement, meta: { requiresAuth: true, role_need: ['商户', '员工'], title: '店铺管理' } },
@@ -76,7 +76,7 @@ const routes = [
   },
   // 商场管理页面（直接 /mall-management 重定向到 /area/mall-management）
   {
-    path: '/mall-management',
+    path: '/area/mall-management',
     redirect: '/area/mall-management',
     meta: { requiresAuth: true, title: '商场管理', role_need: ['员工'] },
     children: [
@@ -127,6 +127,7 @@ const routes = [
   },
    // 车位查询
   { path: '/area/parking-query', 
+    redirect: '/area/parking-query',
     component: ParkingQuery, 
     meta: { 
       requiresAuth: true, 
@@ -135,7 +136,8 @@ const routes = [
     }
    },
       // 车位管理
-  { path: '/area/parking_management', 
+  { path: '/area/parking-management', 
+    redirect: '/area/parking-management',
     component: ParkingManagement, 
     meta: { 
       requiresAuth: true, 
@@ -144,7 +146,8 @@ const routes = [
     }
    },
   // 活动管理/活动查询页面
-  { path: '/area/events_query', 
+  { path: '/area/event-query', 
+    redirect: '/area/event-query',
     component: EventQuery, 
     meta: { 
       requiresAuth: true, 
@@ -152,7 +155,9 @@ const routes = [
       role_need: ['员工', '商户', '游客'] 
     }
    },
-     { path: '/area/events_management', 
+  { 
+    path: '/event-management', 
+      redirect: '/area/event-management',
     component: EventManagement, 
     meta: { 
       requiresAuth: true, 
@@ -162,6 +167,7 @@ const routes = [
    },
   {
     path: '/cashflow_management/total_salary',
+    redirect: '/cashflow_management/total_salary',
     component: TotalSalary,
     meta: {
       requiresAuth: true,
@@ -173,6 +179,7 @@ const routes = [
   // 设备管理页面
   {
     path: '/area/equipment-management', 
+    redirect: '/area/equipment-management',
     component: EquipmentManagement, 
     meta: { 
       requiresAuth: true,

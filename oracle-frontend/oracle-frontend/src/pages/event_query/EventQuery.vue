@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
   <div class="placeholder-page">
     <div class="header">
       <h2>活动查询</h2>
@@ -200,7 +199,6 @@
       </div>
     </div>
   </div>
-  </DashboardLayout>
 </template>
 
 <script setup>
