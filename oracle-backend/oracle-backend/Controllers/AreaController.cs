@@ -308,7 +308,7 @@ namespace oracle_backend.Controllers
             public string? Type { get; set; }
         }
         // 修改区域信息的接口
-        [HttpPatch("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateArea(int id, [FromBody] AreaUpdateDto dto)
         {
             // 开启事务，确保所有操作的原子性
