@@ -13,7 +13,6 @@ import TotalSalary from './pages/employee_management/TotalSalary.vue'
 import Mall from './pages/mall_management/MallManagement.vue'
 import Parking from './pages/parking_management/ParkingManagement.vue'
 import Events from './pages/event_management/EventManagement.vue'
-import Collaboration from './pages/collaboration_management/App.vue'
 import Equipment from './pages/equipment_management/EquipmentManagement.vue'
 import Staff from './pages/staff_management/StaffManagement.vue'
 import ParkingQuery from './pages/parking_query/ParkingQuery.vue'
@@ -74,15 +73,15 @@ const routes = [
       { path: 'store-management', component: StoreManagement, meta: { requiresAuth: true, role_need: ['商户', '员工'], title: '店铺管理' } },
     ]
   },
-  // {
-  //   path: '/area_management',
-  //   component: () => import('@/pages/area_management/App.vue'),
-  //   meta: {
-  //     requiresAuth: true,
-  //     title: '区域管理',
-  //     role_need: ['员工']  // 只有员工角色可以访问
-  //   }
-  // },
+  {
+    path: '/new_area_management',
+    component: () => import('@/pages/new_area_management/App.vue'),
+    meta: {
+      requiresAuth: true,
+      title: '区划管理',
+      role_need: ['员工']  // 只有员工角色可以访问
+    }
+  },
   // 商场管理页面（直接 /mall-management 重定向到 /area/mall-management）
   {
     path: '/area/mall-management',

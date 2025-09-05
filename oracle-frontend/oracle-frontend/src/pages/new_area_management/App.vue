@@ -50,10 +50,10 @@ const activeTab = ref('list');
 const editingarea = ref(null);
 const listKey = ref(0);
 
-// 判断 authority 字段是否为 1 或 2
+// 判断 authority 字段
 const hasAccess = computed(() => {
   const auth = Number(userStore.userInfo?.authority)
-  return auth === 1 || auth === 2
+  return auth === 1 || auth === 2 || auth === 3 || auth === 4;
 })
 
 const goHome = () => {

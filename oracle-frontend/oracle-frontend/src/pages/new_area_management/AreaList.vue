@@ -8,12 +8,30 @@
           <input type="number" v-model="searchParams.id" min="1">
         </div>
         <div class="form-group">
-          <label>区域名称:</label>
-          <input type="text" v-model="searchParams.name">
+          <label>是否空置:</label>
+          <select v-model="searchParams.isEmpty">
+            <option value="">全部</option>
+            <option value="1">是</option>
+            <option value="0">否</option>
+          </select>
         </div>
         <div class="form-group">
-          <label>负责人:</label>
-          <input type="text" v-model="searchParams.contactor">
+          <label>最小区域面积:</label>
+          <input type="number" v-model="searchParams.areaMin" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>最大区域面积:</label>
+          <input type="number" v-model="searchParams.areaMax" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>区域类型:</label>
+          <select v-model="searchParams.category">
+            <option value="">全部</option>
+            <option value="RETAIL">商铺</option>
+            <option value="PARKING">停车</option>
+            <option value="EVENT">活动</option>
+            <option value="OTHER">其他</option>
+          </select>
         </div>
         <button type="submit" class="btn-search">查询</button>
         <button type="button" @click="resetSearch" class="btn-reset">重置</button>
@@ -30,22 +48,32 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>名称</th>
-            <th>负责人</th>
-            <th>电话</th>
-            <th>邮箱</th>
+            <th>类别</th>
+            <th>是否空置</th>
+            <th>面积</th>
+            <th>基础租金</th>
+            <th>租赁状态</th>
+            <th>场地费</th>
+            <th>容量</th>
+            <th>停车费</th>
+            <th>类型(其他)</th>
             <th v-if="userStore.role === '员工'">操作</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="collab in areas" :key="collab.area_ID">
-            <td>{{ collab.area_ID }}</td>
-            <td>{{ collab.area_NAME }}</td>
-            <td>{{ collab.CONTACTOR || '-' }}</td>
-            <td>{{ collab.PHONE_NUMBER || '-' }}</td>
-            <td>{{ collab.EMAIL || '-' }}</td>
+          <tr v-for="a in areas" :key="a.AREA_ID">
+            <td>{{ a.AREA_ID }}</td>
+            <td>{{ a.CATEGORY || '-' }}</td>
+            <td>{{ a.ISEMPTY === 1 ? '是' : (a.ISEMPTY === 0 ? '否' : '-') }}</td>
+            <td>{{ a.AREA_SIZE != null ? a.AREA_SIZE : '-' }}</td>
+            <td>{{ a.BaseRent != null ? a.BaseRent : '-' }}</td>
+            <td>{{ a.RentStatus || '-' }}</td>
+            <td>{{ a.AreaFee != null ? a.AreaFee : '-' }}</td>
+            <td>{{ a.Capacity != null ? a.Capacity : '-' }}</td>
+            <td>{{ a.ParkingFee != null ? a.ParkingFee : '-' }}</td>
+            <td>{{ a.Type || '-' }}</td>
             <td v-if="userStore.role === '员工'">
-              <button @click="editarea(collab)" class="btn-edit">编辑</button>
+              <button @click="editarea(a)" class="btn-edit">编辑</button>
             </td>
           </tr>
         </tbody>
@@ -61,15 +89,20 @@ import axios from 'axios';
 import alert from '@/utils/alert';
 import { useRouter } from 'vue-router';
 
+const emit = defineEmits(['edit-area']);
+
 const userStore = useUserStore();
 const router = useRouter();
 const areas = ref([]);
 const loading = ref(false);
 
+// 前端搜索参数：与后端 AreasController 匹配
 const searchParams = reactive({
-  id: null,
-  name: '',
-  contactor: ''
+  id: null, // 如果填写则调用 ByID
+  category: '', // 对应后端的 category
+  isEmpty: '', // 对应后端的 isEmpty (0/1)
+  areaMin: null, // 前端本地过滤
+  areaMax: null
 });
 
 // 检查登录状态
@@ -81,25 +114,48 @@ const checkAuth = () => {
   return true;
 };
 
+// 执行搜索：当有 id 时调用 ByID，否则调用 ByCategory
 const searchareas = async () => {
   if (!checkAuth()) return;
 
   loading.value = true;
   try {
-    const params = {};
-    params.operatorAccountId = userStore.token;
-    if (searchParams.id) params.id = searchParams.id;
-    if (searchParams.name) params.name = searchParams.name;
-    if (searchParams.contactor) params.contactor = searchParams.contactor;
+    let response;
+    if (searchParams.id) {
+      const params = { id: searchParams.id };
+      response = await axios.get('/api/Areas/ByID', { params });
+      // 后端返回单对象或 404
+      areas.value = response.data ? [response.data] : [];
+    } else {
+      const params = {};
+      if (searchParams.category) params.category = searchParams.category;
+      if (searchParams.isEmpty !== '') params.isEmpty = searchParams.isEmpty;
 
-    const response = await axios.get('/api/area', { params });
-    areas.value = response.data;
+      response = await axios.get('/api/Areas/ByCategory', { params });
+      areas.value = Array.isArray(response.data) ? response.data : [];
+    }
+
+    // 前端根据面积 min/max 做二次过滤（后端接口未提供范围筛选）
+    if (searchParams.areaMin != null || searchParams.areaMax != null) {
+      areas.value = areas.value.filter(a => {
+        const size = a.AREA_SIZE || 0;
+        if (searchParams.areaMin != null && size < searchParams.areaMin) return false;
+        if (searchParams.areaMax != null && size > searchParams.areaMax) return false;
+        return true;
+      });
+    }
   } catch (error) {
     console.error('查询区域失败:', error);
     if (error.response && error.response.status === 401) {
       await alert('登录已过期，请重新登录');
       userStore.logout();
       router.push('/login');
+    }
+    else if (error && error.status === 400) {
+      await alert('查询失败，请检查请求参数');
+    }
+    else if (error && error.status === 404) {
+      await alert('未找到相关区域');
     } else {
       await alert('查询失败，' + (error || '，请稍后重试'));
     }
@@ -110,8 +166,10 @@ const searchareas = async () => {
 
 const resetSearch = () => {
   searchParams.id = null;
-  searchParams.name = '';
-  searchParams.contactor = '';
+  searchParams.category = '';
+  searchParams.isEmpty = '';
+  searchParams.areaMin = null;
+  searchParams.areaMax = null;
   areas.value = [];
 };
 
@@ -126,8 +184,6 @@ onMounted(() => {
     searchareas();
   }
 });
-
-const emit = defineEmits(['edit-area']);
 </script>
 
 <style scoped>
@@ -211,4 +267,11 @@ const emit = defineEmits(['edit-area']);
   padding: 20px;
   color: #6c757d;
 }
+
+.form-group select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
 </style>

@@ -10,52 +10,58 @@
       </div>
 
       <div class="form-group">
-        <label for="areaName">区域名称 <span class="required">*</span></label>
-        <input
-          type="text"
-          id="areaName"
-          v-model="formData.areaName"
-          required
-          maxlength="50"
-          :class="{ 'error': errors.areaName }"
-        >
-        <div class="error-message" v-if="errors.areaName">{{ errors.areaName }}</div>
+        <label for="category">区域类别 <span class="required">*</span></label>
+        <select id="category" v-model="formData.category" :class="{ 'error': errors.category }">
+          <option value="">请选择</option>
+          <option value="RETAIL">商铺</option>
+          <option value="PARKING">停车</option>
+          <option value="EVENT">活动</option>
+          <option value="OTHER">其他</option>
+        </select>
+        <div class="error-message" v-if="errors.category">{{ errors.category }}</div>
       </div>
 
       <div class="form-group">
-        <label for="contactor">负责人</label>
-        <input
-          type="text"
-          id="contactor"
-          v-model="formData.contactor"
-          maxlength="50"
-          :class="{ 'error': errors.contactor }"
-        >
-        <div class="error-message" v-if="errors.contactor">{{ errors.contactor }}</div>
+        <label for="isEmpty">是否空置</label>
+        <select id="isEmpty" v-model.number="formData.isEmpty">
+          <option :value="0">否</option>
+          <option :value="1">是</option>
+        </select>
       </div>
 
       <div class="form-group">
-        <label for="phoneNumber">联系电话</label>
-        <input
-          type="tel"
-          id="phoneNumber"
-          v-model="formData.phoneNumber"
-          maxlength="20"
-          :class="{ 'error': errors.phoneNumber }"
-        >
-        <div class="error-message" v-if="errors.phoneNumber">{{ errors.phoneNumber }}</div>
+        <label for="areaSize">区域面积 (平方米)</label>
+        <input type="number" id="areaSize" v-model.number="formData.areaSize" min="0" step="0.01">
       </div>
 
       <div class="form-group">
-        <label for="email">邮箱</label>
-        <input
-          type="email"
-          id="email"
-          v-model="formData.email"
-          maxlength="50"
-          :class="{ 'error': errors.email }"
-        >
-        <div class="error-message" v-if="errors.email">{{ errors.email }}</div>
+        <label for="baseRent">基础租金</label>
+        <input type="number" id="baseRent" v-model.number="formData.baseRent" min="0" step="0.01">
+      </div>
+
+      <div class="form-group">
+        <label for="rentStatus">租赁状态</label>
+        <input type="text" id="rentStatus" v-model="formData.rentStatus">
+      </div>
+
+      <div class="form-group">
+        <label for="areaFee">场地费</label>
+        <input type="number" id="areaFee" v-model.number="formData.areaFee" min="0" step="0.01">
+      </div>
+
+      <div class="form-group">
+        <label for="capacity">容量</label>
+        <input type="number" id="capacity" v-model.number="formData.capacity" min="0" step="1">
+      </div>
+
+      <div class="form-group">
+        <label for="parkingFee">停车费</label>
+        <input type="number" id="parkingFee" v-model.number="formData.parkingFee" min="0" step="0.01">
+      </div>
+
+      <div class="form-group">
+        <label for="type">类型(其他)</label>
+        <input type="text" id="type" v-model="formData.type">
       </div>
 
       <div class="form-actions">
@@ -94,13 +100,18 @@ const props = defineProps({
   }
 });
 
-// 将传入的 area 对象映射到本地 formData
+// 将传入的 area 对象映射到本地 formData，字段与后端 AreasController 返回的字段保持一致
 const formData = reactive({
   areaId: null,
-  areaName: '',
-  contactor: '',
-  phoneNumber: '',
-  email: ''
+  category: '',
+  isEmpty: 0,
+  areaSize: null,
+  baseRent: null,
+  rentStatus: '',
+  areaFee: null,
+  capacity: null,
+  parkingFee: null,
+  type: ''
 });
 
 const errors = reactive({});
@@ -118,13 +129,18 @@ const checkAuth = () => {
 };
 
 // 使用传入的 area 对象回显，不再发起额外的 GET 请求
-const populateFromProp = (collab) => {
-  if (!collab) return;
-  formData.areaId = collab.area_ID || null;
-  formData.areaName = collab.area_NAME || '';
-  formData.contactor = collab.CONTACTOR || '';
-  formData.phoneNumber = collab.PHONE_NUMBER || '';
-  formData.email = collab.EMAIL || '';
+const populateFromProp = (a) => {
+  if (!a) return;
+  formData.areaId = a.AREA_ID ?? null;
+  formData.category = a.CATEGORY ?? '';
+  formData.isEmpty = (typeof a.ISEMPTY === 'number') ? a.ISEMPTY : 0;
+  formData.areaSize = a.AREA_SIZE ?? null;
+  formData.baseRent = a.BaseRent ?? null;
+  formData.rentStatus = a.RentStatus ?? '';
+  formData.areaFee = a.AreaFee ?? null;
+  formData.capacity = a.Capacity ?? null;
+  formData.parkingFee = a.ParkingFee ?? null;
+  formData.type = a.Type ?? '';
   loading.value = false;
 };
 
@@ -137,37 +153,19 @@ const validateForm = () => {
   // 重置错误信息
   Object.keys(errors).forEach(key => delete errors[key]);
 
-  // 验证区域名称
-  if (!formData.areaName.trim()) {
-    errors.areaName = '区域名称是必填项';
-    isValid = false;
-  } else if (formData.areaName.length > 50) {
-    errors.areaName = '名称长度不能超过50个字符';
+  if (!formData.category) {
+    errors.category = '区域类别是必填项';
     isValid = false;
   }
 
-  // 验证负责人
-  if (formData.contactor && formData.contactor.length > 50) {
-    errors.contactor = '联系人姓名长度不能超过50个字符';
+  if (formData.areaSize != null && formData.areaSize < 0) {
+    errors.areaSize = '面积不能为负数';
     isValid = false;
   }
 
-  // 验证电话号码
-  if (formData.phoneNumber) {
-    const phoneRegex = /^1[3-9]\d{9}$/; // 简单的手机号验证
-    if (!phoneRegex.test(formData.phoneNumber)) {
-      errors.phoneNumber = '无效的电话号码格式';
-      isValid = false;
-    }
-  }
-
-  // 验证邮箱
-  if (formData.email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      errors.email = '无效的电子邮件格式';
-      isValid = false;
-    }
+  if (formData.baseRent != null && formData.baseRent < 0) {
+    errors.baseRent = '基础租金不能为负数';
+    isValid = false;
   }
 
   return isValid;
@@ -180,38 +178,47 @@ const submitForm = async () => {
   submitting.value = true;
 
   try {
+    // AreasController 的 DTO 字段
     const body = {
-      areaName: formData.areaName,
-      Contactor: formData.contactor,
-      PhoneNumber: formData.phoneNumber,
-      Email: formData.email
+      AreaId: formData.areaId,
+      IsEmpty: formData.isEmpty,
+      AreaSize: formData.areaSize,
+      Category: formData.category,
+      RentStatus: formData.rentStatus,
+      BaseRent: formData.baseRent,
+      Capacity: formData.capacity,
+      AreaFee: formData.areaFee,
+      Type: formData.type,
+      ParkingFee: formData.parkingFee
     };
 
-    // operatorAccountId 通过查询参数传递（userStore.token 即为操作账号 ID）
-    const operator = encodeURIComponent(userStore.token);
-    const url = `/api/area/${formData.areaId}?operatorAccountId=${operator}`;
+    const operator = encodeURIComponent(userStore.token || '');
+    // 后端无接口
+    const url = `/api/Areas/${formData.areaId}?operatorAccountId=${operator}`;
 
-  await axios.put(url, body);
+    await axios.put(url, body);
 
-  await alert('更新成功！');
+    await alert('更新成功！');
     emit('saved');
-  } catch (error) {
-    if (error.response) {
-      if (error.response.status === 401) {
+  } catch (err) {
+    if (err.response) {
+      if (err.response.status === 401) {
         await alert('登录已过期，请重新登录');
         userStore.logout();
         router.push('/login');
-      } else if (error.response.status === 400) {
-        await alert(error.response.data || '更新失败，请检查输入数据');
-      } else if (error.response.status === 404) {
+      } else if (err.response.status === 400) {
+        await alert(err.response.data || '更新失败，请检查输入数据');
+      } else if (err.response.status === 404) {
         await alert('区域不存在');
+      } else if (err.response.status === 405) {
+        await alert('该区域无法更新，可能存在关联的租赁或其他记录');
       } else {
-        await alert('更新失败，' + (error || '，请稍后重试'));
+        await alert('更新失败，' + (err.message || '请稍后重试'));
       }
     } else {
       await alert('更新失败，请检查网络连接');
     }
-    console.error('更新区域错误:', error);
+    console.error('更新区域错误:', err);
   } finally {
     submitting.value = false;
   }
@@ -225,7 +232,7 @@ const deleting = ref(false);
 
 const deletearea = async () => {
   if (!checkAuth()) return;
-    if (!formData.areaId) {
+  if (!formData.areaId) {
     await alert('无效的区域ID');
     return;
   }
@@ -235,30 +242,32 @@ const deletearea = async () => {
 
   deleting.value = true;
   try {
-    const operator = encodeURIComponent(userStore.token);
-    const url = `/api/area/${formData.areaId}?operatorAccountId=${operator}`;
+    const operator = encodeURIComponent(userStore.token || '');
+    const url = `/api/Areas/${formData.areaId}?operatorAccountId=${operator}`;
 
-  await axios.delete(url);
+    await axios.delete(url);
 
-  await alert('删除成功！');
-  emit('deleted');
-  } catch (error) {
-    if (error.response) {
-      if (error.response.status === 401) {
+    await alert('删除成功！');
+    emit('deleted');
+  } catch (err) {
+    if (err.response) {
+      if (err.response.status === 401) {
         await alert('登录已过期，请重新登录');
         userStore.logout();
         router.push('/login');
-      } else if (error.response.status === 400) {
-        await alert(error.response.data || '删除失败，请检查请求');
-      } else if (error.response.status === 404) {
+      } else if (err.response.status === 400) {
+        await alert(err.response.data || '删除失败，请检查请求');
+      } else if (err.response.status === 404) {
         await alert('区域不存在');
+      } else if (err.response.status === 405) {
+        await alert('该区域无法删除，可能存在关联的租赁或其他记录');
       } else {
         await alert('删除失败，请稍后重试');
       }
     } else {
       await alert('删除失败，请检查网络连接');
     }
-    console.error('删除区域错误:', error);
+    console.error('删除区域错误:', err);
   } finally {
     deleting.value = false;
   }
@@ -293,6 +302,12 @@ const emit = defineEmits(['saved', 'cancel', 'deleted']);
   border: 1px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
+}
+
+.form-group select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .readonly-field {
