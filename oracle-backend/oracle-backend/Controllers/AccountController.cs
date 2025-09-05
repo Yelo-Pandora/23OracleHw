@@ -268,6 +268,7 @@ namespace oracle_backend.Controllers
         [HttpPost("getauth")]
         public async Task<IActionResult> GetAuthority(string account)
         {
+
             var goalaccount = await _context.FindAccount(account);
             if (goalaccount == null)
             {
@@ -279,6 +280,21 @@ namespace oracle_backend.Controllers
                 return Ok(goalaccount.AUTHORITY);
             }
         }
+
+        //查询指定账号的信息
+        [HttpGet("info/{accountId}")]
+        public async Task<IActionResult> GetAccountInfo(string accountId)
+        {
+            _logger.LogInformation($"--- GetAccountInfo 被调用，收到的 accountId 是: [{accountId}] ---");
+            var account = await _context.FindAccount(accountId);
+            if (account == null)
+            {
+                _logger.LogWarning("指定的账号不存在");
+                return NotFound("账号不存在");
+            }
+            return Ok(account);
+        }
+        
         // 根据员工ID获取Account
         [HttpGet("GetAccById")]
         public async Task<IActionResult> GetAccountByStaffId(int staffId)

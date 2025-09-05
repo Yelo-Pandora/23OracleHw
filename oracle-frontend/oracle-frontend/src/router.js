@@ -171,7 +171,15 @@ const routes = [
       role_need: ['员工'] 
     }
   },
-
+{
+  path: '/collaboration_management',
+  component: () => import('@/pages/collaboration_management/App.vue'),
+  meta: {
+    requiresAuth: true,
+    title: '合作方管理',
+    role_need: ['员工']  // 只有员工角色可以访问
+  }
+},
   {
     path: '/employee_management', 
     component: EmployeeManagement, 
@@ -207,7 +215,6 @@ const routes = [
     component: ParkingQuery,
     meta: { requiresAuth: true, title: '车位查询', role_need: ['员工', '商户', '游客'] }
   },
-
 ]
 
 const router = createRouter({
@@ -229,7 +236,8 @@ router.beforeEach((to, from, next) => {
     isLoggedIn = false
   }
   if (to.meta.requiresAuth && !isLoggedIn) {
-    next('/login') 
+    // a. 如果页面需要登录，但用户未登录，则强制跳转到登录页
+    next('/login')
   }
   else if (to.path === '/login' && isLoggedIn) {
     // b. 如果用户已登录，但又尝试访问登录页，则直接跳转到首页
