@@ -170,41 +170,6 @@ const populateFromProp = (a) => {
 // 初始用传入的 prop 填充
 populateFromProp(props.area);
 
-// 当 category 变化时，清空不相关字段（只能编辑与当前类型相关的字段）
-watch(() => formData.category, (newCat, oldCat) => {
-  // allowed fields per category
-  const keep = new Set();
-  keep.add('areaId');
-  keep.add('category');
-  keep.add('isEmpty');
-  keep.add('areaSize');
-
-  if (newCat === 'RETAIL') {
-    keep.add('baseRent');
-    keep.add('rentStatus');
-  } else if (newCat === 'EVENT') {
-    keep.add('areaFee');
-    keep.add('capacity');
-  } else if (newCat === 'PARKING') {
-    keep.add('parkingFee');
-  } else if (newCat === 'OTHER') {
-    keep.add('type');
-  }
-
-  // fields to potentially clear
-  const maybeClear = ['baseRent', 'rentStatus', 'areaFee', 'capacity', 'parkingFee', 'type'];
-  for (const f of maybeClear) {
-    if (!keep.has(f)) {
-      // clear to appropriate empty value
-      if (f === 'rentStatus' || f === 'type') formData[f] = '';
-      else formData[f] = null;
-    }
-  }
-});
-
-// watch the select-bound category and confirm before applying change
-// CATEGORY cannot be changed here, so no watch/confirmation logic is required
-
 const validateForm = () => {
   let isValid = true;
 
@@ -260,52 +225,59 @@ const submitForm = async () => {
 
   submitting.value = true;
 
-  try {
-    // AreasController 的 DTO 字段
-    const body = {
-      AreaId: formData.areaId,
-      IsEmpty: formData.isEmpty,
-      AreaSize: formData.areaSize,
-  Category: formData.category,
-  // only include fields which are relevant to the current category; others are sent as null/empty by our watcher
-  RentStatus: formData.rentStatus,
-  BaseRent: formData.baseRent,
-  Capacity: formData.capacity,
-  AreaFee: formData.areaFee,
-  Type: formData.type,
-  ParkingFee: formData.parkingFee
-    };
+    try {
+      // 后端 AreasController 使用 PATCH 更新：只发送 AreaUpdateDto 中可选字段
+      const patchBody = {};
 
-    const operator = encodeURIComponent(userStore.token || '');
-    // 后端无接口
-    const url = `/api/Areas/${formData.areaId}?operatorAccountId=${operator}`;
+      // 通用字段
+      if (typeof formData.isEmpty === 'number') patchBody.IsEmpty = formData.isEmpty;
+      if (formData.areaSize !== null && formData.areaSize !== undefined) patchBody.AreaSize = formData.areaSize;
 
-    await axios.put(url, body);
+      // 根据类别只包含相关字段（如果用户输入了值）
+      if (formData.category === 'RETAIL') {
+        if (formData.rentStatus !== null && formData.rentStatus !== undefined && String(formData.rentStatus) !== '') patchBody.RentStatus = formData.rentStatus;
+        if (formData.baseRent !== null && formData.baseRent !== undefined) patchBody.BaseRent = formData.baseRent;
+      }
+      if (formData.category === 'EVENT') {
+        if (formData.areaFee !== null && formData.areaFee !== undefined) patchBody.AreaFee = formData.areaFee;
+        if (formData.capacity !== null && formData.capacity !== undefined) patchBody.Capacity = formData.capacity;
+      }
+      if (formData.category === 'PARKING') {
+        if (formData.parkingFee !== null && formData.parkingFee !== undefined) patchBody.ParkingFee = formData.parkingFee;
+      }
+      if (formData.category === 'OTHER') {
+        if (formData.type !== null && formData.type !== undefined && String(formData.type) !== '') patchBody.Type = formData.type;
+      }
 
-    await alert('更新成功！');
-    emit('saved');
-  } catch (err) {
+      const operator = encodeURIComponent(userStore.token || '');
+      const url = `/api/Areas/${formData.areaId}?operatorAccountId=${operator}`;
+
+      await axios.patch(url, patchBody);
+
+      await alert('更新成功！');
+      emit('saved');
+    } catch (err) {
     if (err.response) {
       if (err.response.status === 401) {
         await alert('登录已过期，请重新登录');
         userStore.logout();
         router.push('/login');
       } else if (err.response.status === 400) {
-        await alert(err.response.data || '更新失败，请检查输入数据');
+        await alert(err || '更新失败，请检查输入数据');
       } else if (err.response.status === 404) {
         await alert('区域不存在');
       } else if (err.response.status === 405) {
-        await alert('该区域无法更新，可能存在关联的租赁或其他记录');
+        await alert('该区域无法更新，' + (err));
       } else {
-        await alert('更新失败，' + (err.message || '请稍后重试'));
+        await alert('更新失败，' + (err || '请稍后重试'));
       }
     } else {
       await alert('更新失败，请检查网络连接');
     }
     console.error('更新区域错误:', err);
-  } finally {
-    submitting.value = false;
-  }
+    } finally {
+      submitting.value = false;
+    }
 };
 
 const cancel = () => {
