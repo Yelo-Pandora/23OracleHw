@@ -22,7 +22,6 @@ import AreaManagement from './pages/area_management/AreaManagement.vue'
 import StoreStatusRequest from '@/pages/mall_management/StoreStatusRequest.vue';
 import StoreStatusApproval from '@/pages/mall_management/StoreStatusApproval.vue';
 import CreateMerchant from '@/pages/mall_management/CreateMerchant.vue';
-import MallMap from '@/pages/mall_map/MallMap.vue';
 import StoreManagement from '@/pages/store_management/StoreManagement.vue';
 import StoreDetail from '@/pages/store_management/StoreDetail.vue';
 import MerchantRentStatisticsReport from '@/pages/mall_management/MerchantRentStatisticsReport.vue';

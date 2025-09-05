@@ -61,7 +61,7 @@ onMounted(() => {
     body {
         background: linear-gradient(45deg, #f5f7fa, #c3cfe2, #f5f7fa, #c3cfe2);
         background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
+        animation: gradientBG 10s ease infinite;
     }
 
     @keyframes gradientBG {
