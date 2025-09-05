@@ -313,48 +313,47 @@ const loadParkingData = async () => {
 // 加载停车场概览数据
 const loadParkingLots = async () => {
   try {
-    console.log('开始调用API: /api/Parking/summary?operatorAccount=parking_wang')
-    // 从API获取数据
-    const response = await fetch('/api/Parking/summary?operatorAccount=admin')
+    console.log('开始调用API: /api/Parking/summary?operatorAccount=' + getCurrentUserAccount())
+    const response = await fetch(`/api/Parking/summary?operatorAccount=${encodeURIComponent(getCurrentUserAccount())}`)
     console.log('API响应状态:', response.status, response.ok)
     
     if (response.ok) {
       const data = await response.json()
       console.log('API返回的原始数据:', data)
       
-      if ((data.success || data.Success) && (data.data || data.Data)) {
-        // 转换API数据格式为前端需要的格式
-        parkingLots.value = (data.data || data.Data).map(lot => ({
+      // 修改这里：正确处理后端的ApiResponseDto格式
+      if (data.Success && Array.isArray(data.Data)) {
+        parkingLots.value = data.Data.map(lot => ({
           areaId: lot.AreaId,
           name: `停车场${lot.AreaId}`,
           totalSpaces: lot.TotalSpaces,
           occupiedSpaces: lot.OccupiedSpaces,
           availableSpaces: lot.AvailableSpaces,
-          occupancyRate: lot.OccupancyRate / 100, // 转换为小数
+          occupancyRate: lot.OccupancyRate / 100, // 注意：后端返回的是百分比
           parkingFee: lot.ParkingFee,
           status: lot.Status,
-          lastUpdateTime: lot.LastUpdateTime
+          lastUpdateTime: lot.LastUpdateTime,
+          canPark: lot.CanPark  // 添加这个字段
         }))
         console.log('从API加载停车场数据成功:', parkingLots.value)
-        console.log('parkingLots.value长度:', parkingLots.value.length)
         return
+      } else {
+        console.error('API返回格式错误:', data)
+        throw new Error('API返回数据格式不正确')
       }
     }
-    console.error('API返回数据格式错误')
+    throw new Error(`HTTP错误: ${response.status}`)
   } catch (error) {
     console.error('API调用失败:', error)
+    throw new Error('无法从数据库加载停车场数据')
   }
-  
-  // 如果API失败，抛出错误
-  throw new Error('无法从数据库加载停车场数据')
 }
-
 // 加载停车位数据
 const loadParkingSpaces = async () => {
   try {
-    console.log('开始调用停车位API:', `/api/Parking/spaces?operatorAccount=parking_wang&areaId=${selectedParkingLot.value}`)
+    console.log('开始调用停车位API:', `/api/Parking/spaces?operatorAccount=${encodeURIComponent(getCurrentUserAccount())}&areaId=${selectedParkingLot.value}`)
     // 从API获取数据
-    const response = await fetch(`/api/Parking/spaces?operatorAccount=admin&areaId=${selectedParkingLot.value}`)
+    const response = await fetch(`/api/Parking/spaces?operatorAccount=${encodeURIComponent(getCurrentUserAccount())}&areaId=${selectedParkingLot.value}`)
     console.log('停车位API响应状态:', response.status, response.ok)
     
     if (response.ok) {
@@ -630,26 +629,45 @@ const getUserAuthority = async () => {
   }
 }
 
+const BJ_MIN = 8 * 60
+const parseToUtcMs = (val) => {
+  if (val == null || val === '') return null
+  if (val instanceof Date) return val.getTime()
+  if (typeof val === 'number') return Number(val)
+  const s = String(val).trim()
+  if (/Z$|[+-]\d{2}:\d{2}$/.test(s)) return new Date(s).getTime()
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/)
+  if (m) {
+    const [, y, mo, d, h, mi, se] = m
+    // 无时区：按UTC裸时间解释
+    return Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(se || '0'))
+  }
+  m = s.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/)
+  if (m) {
+    const [, y, mo, d, h, mi, se] = m
+    // 斜杠格式，无时区：按UTC裸时间解释
+    return Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(se || '0'))
+  }
+  const t = new Date(s).getTime()
+  return isNaN(t) ? null : t
+}
+
 const formatDateTime = (dateTime) => {
-  if (!dateTime) return '-'
-  const date = new Date(dateTime)
-  return date.toLocaleString('zh-CN')
+  const ms = parseToUtcMs(dateTime)
+  if (ms == null) return '-'
+  return new Date(ms).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })
 }
 
 const calculateDuration = (parkStart) => {
-  if (!parkStart) return '-'
-  const start = new Date(parkStart)
-  const now = new Date()
-  const diff = now - start
-  
+  const startMs = parseToUtcMs(parkStart)
+  if (startMs == null) return '-'
+  let diff = Date.now() - startMs
+  const MAX_MS = 50 * 365 * 24 * 60 * 60 * 1000
+  if (!isFinite(diff) || diff < 0 || diff > MAX_MS) diff = 0
   const hours = Math.floor(diff / (1000 * 60 * 60))
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-  
-  if (hours > 0) {
-    return `${hours}小时${minutes}分钟`
-  } else {
-    return `${minutes}分钟`
-  }
+  if (hours > 0) return `${hours}小时${minutes}分钟`
+  return `${minutes}分钟`
 }
 
 // 生命周期

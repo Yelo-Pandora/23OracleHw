@@ -120,12 +120,15 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/user/user'
 import { Line } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js'
 
 ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement)
 
 const router = useRouter()
+const userStore = useUserStore()
+const getOperatorAccount = () => userStore?.userInfo?.account || userStore?.token || 'unknown'
 
 const reportParams = ref({
   startDate: '',
@@ -219,7 +222,6 @@ const hourlyTrafficChartData = computed(() => {
   }
 })
 
-// 将可能的 TimeSpan 格式(如 "03:30:00")转成小时数，或直接解析数值
 const toHours = (val) => {
   if (val == null) return 0
   if (typeof val === 'number') return val
@@ -233,6 +235,15 @@ const toHours = (val) => {
   }
   const n = parseFloat(s)
   return isNaN(n) ? 0 : n
+}
+
+const bjToUtcIso = (s) => {
+  if (!s) return null
+  const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})$/)
+  if (!m) return new Date(s).toISOString()
+  const [, y, mo, d, h, mi, se] = m
+  const utcMs = Date.UTC(Number(y), Number(mo)-1, Number(d), Number(h), Number(mi), Number(se)) - 8*60*60000
+  return new Date(utcMs).toISOString()
 }
 
 const generateReport = async () => {
@@ -278,10 +289,10 @@ const generateReport = async () => {
     const { start, end } = alignRange(reportParams.value.startDate, reportParams.value.endDate, rt)
 
     const requestData = {
-      startDate: start,
-      endDate: end,
+      startDate: bjToUtcIso(start),
+      endDate: bjToUtcIso(end),
       areaId: reportParams.value.areaId ? parseInt(reportParams.value.areaId) : null,
-      operatorAccount: 'admin',
+      operatorAccount: getOperatorAccount(),
       reportType: rt
     }
 
@@ -387,7 +398,26 @@ const goBack = () => router.push('/parking-management')
 
 const formatDate = (dateString) => {
   if (!dateString) return '-'
-  return new Date(dateString).toLocaleDateString('zh-CN')
+  const s = String(dateString).trim()
+  // 仅日期：直接显示，避免跨时区偏移导致前一天
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s
+  try {
+    if (/Z$|[+-]\d{2}:\d{2}$/.test(s)) {
+      const d = new Date(s)
+      return d.toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' })
+    }
+    // 含时间无时区：按北京时间解释
+    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/)
+    if (m) {
+      const [, y, mo, d, h, mi, se] = m
+      const utcMs = Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(se || '0')) - 8 * 60 * 60000
+      return new Date(utcMs).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' })
+    }
+    // 兜底
+    return new Date(s).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' })
+  } catch {
+    return '-'
+  }
 }
 
 onMounted(() => {

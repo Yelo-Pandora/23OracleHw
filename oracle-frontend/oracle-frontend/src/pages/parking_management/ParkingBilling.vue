@@ -47,6 +47,14 @@
           />
         </div>
         <div class="form-group">
+          <label>选择停车场：</label>
+          <select v-model="selectedParkingLot" class="form-select" @change="loadAvailableSpaces">
+            <option v-for="lot in parkingLotOptions" :key="lot.AreaId" :value="String(lot.AreaId)">
+              {{ lot.ParkingLotName || (`停车场${lot.AreaId}`) }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>选择车位：</label>
           <select v-model="entryForm.parkingSpaceId" class="form-select">
             <option value="">请选择车位</option>
@@ -199,8 +207,8 @@
                <tr v-for="record in paymentRecords" :key="record.id">
                  <td>{{ record.licensePlateNumber }}</td>
                  <td>{{ record.parkingSpaceId }}</td>
-                 <td>{{ formatDateTime(record.parkStart) }}</td>
-                 <td>{{ formatDateTime(record.parkEnd) }}</td>
+                 <td>{{ record.displayParkStart || '-' }}</td>
+                 <td>{{ record.displayParkEnd || '-' }}</td>
                  <td>{{ formatDuration(record.parkingDuration) }}</td>
                  <td>¥{{ record.totalFee }}</td>
                  <td>
@@ -227,9 +235,12 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 // 路由
 const router = useRouter()
+const userStore = useUserStore()
+const getOperatorAccount = () => userStore?.userInfo?.account || userStore?.token || 'unknown'
 
 // 响应式数据
 const activeTab = ref('entry')
@@ -262,6 +273,8 @@ const recordFilter = ref({
 })
 
 // 数据
+const parkingLotOptions = ref([])
+const selectedParkingLot = ref('')
 const availableSpaces = ref([])
 const exitResult = ref(null)
 const paymentRecords = ref([])
@@ -283,7 +296,7 @@ const processVehicleEntry = async () => {
       body: JSON.stringify({
         licensePlateNumber: entryForm.value.licensePlate,
         parkingSpaceId: parseInt(entryForm.value.parkingSpaceId),
-        operatorAccount: 'admin'
+        operatorAccount: getOperatorAccount()
       })
     })
 
@@ -323,7 +336,7 @@ const processVehicleExit = async () => {
       },
       body: JSON.stringify({
         licensePlateNumber: exitForm.value.licensePlate,
-        operatorAccount: 'admin'
+        operatorAccount: getOperatorAccount()
       })
     })
 
@@ -344,8 +357,8 @@ const processVehicleExit = async () => {
         paymentForm.value = {
           licensePlate: r.licensePlateNumber || '',
           parkingSpaceId: r.parkingSpaceId != null ? String(r.parkingSpaceId) : '',
-          parkStart: formatForInput(r.parkStart),
-          parkEnd: formatForInput(r.parkEnd),
+          parkStart: toBeijingInput(r.parkStart),
+          parkEnd: toBeijingInput(r.parkEnd),
           // keep raw full-precision timestamps for backend matching
           rawParkStart: r.parkStart || '',
           rawParkEnd: r.parkEnd || '',
@@ -375,7 +388,7 @@ const processPayment = async () => {
 
   try {
     loading.value = true
-    const response = await fetch(`/api/Parking/Pay?operatorAccount=admin`, {
+    const response = await fetch(`/api/Parking/Pay?operatorAccount=${encodeURIComponent(getOperatorAccount())}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -384,8 +397,8 @@ const processPayment = async () => {
         licensePlateNumber: paymentForm.value.licensePlate,
         parkingSpaceId: parseInt(paymentForm.value.parkingSpaceId),
         // use raw timestamps if present to avoid precision/timezone mismatch
-        parkStart: paymentForm.value.rawParkStart || new Date(paymentForm.value.parkStart).toISOString(),
-        parkEnd: paymentForm.value.rawParkEnd || (paymentForm.value.parkEnd ? new Date(paymentForm.value.parkEnd).toISOString() : null),
+        parkStart: paymentForm.value.rawParkStart || beijingInputToIso(paymentForm.value.parkStart),
+        parkEnd: paymentForm.value.rawParkEnd || (paymentForm.value.parkEnd ? beijingInputToIso(paymentForm.value.parkEnd) : null),
         totalFee: parseFloat(paymentForm.value.totalFee),
         paymentMethod: paymentForm.value.paymentMethod,
         paymentReference: paymentForm.value.paymentReference || ''
@@ -441,12 +454,15 @@ const loadPaymentRecords = async () => {
       const normalized = records.map((r, index) => {
         const licensePlateNumber = r.licensePlateNumber || r.LicensePlateNumber || ''
         const parkStart = r.parkStart || r.ParkStart || null
+        const parkEnd = r.parkEnd || r.ParkEnd || null
         return {
           id: `${licensePlateNumber}-${parkStart || index}`,
           licensePlateNumber,
           parkingSpaceId: r.parkingSpaceId ?? r.ParkingSpaceId ?? '-',
           parkStart,
-          parkEnd: r.parkEnd || r.ParkEnd || null,
+          parkEnd,
+          displayParkStart: formatDateTime(parkStart),
+          displayParkEnd: parkEnd ? formatDateTime(parkEnd) : '-',
           // 有些后端返回 decimal -> string/number，统一成数字并保底
           totalFee: typeof (r.totalFee ?? r.TotalFee) === 'string' 
             ? parseFloat(r.totalFee ?? r.TotalFee) || 0 
@@ -462,19 +478,8 @@ const loadPaymentRecords = async () => {
         console.log('样例标准化后记录:', normalized[0])
       }
       
-      // 如果没有支付记录，尝试生成
-      if (normalized.length === 0) {
-        console.log('没有支付记录，尝试生成...')
-        const generateSuccess = await generatePaymentRecords()
-        if (generateSuccess) {
-          // 重新加载
-          console.log('重新加载支付记录...')
-          await loadPaymentRecords()
-          return
-        }
-      }
-
-      // 不再自动将未支付记录改为已支付，必须在“停车费支付”中点击“确认支付”
+      
+      
     } else {
       console.error('加载支付记录失败:', data.error)
       showMessage('加载支付记录失败: ' + (data.error || '未知错误'), 'error')
@@ -485,7 +490,6 @@ const loadPaymentRecords = async () => {
   }
 }
 
-// 移除自动支付逻辑：支付状态仅在“确认支付”后改变
 
 const generatePaymentRecords = async () => {
   try {
@@ -505,7 +509,7 @@ const generatePaymentRecords = async () => {
       body: JSON.stringify({
         startDate: startDate,
         endDate: endDate,
-        forceRegenerate: true  // 强制重新生成
+        forceRegenerate: false  // 不强制，每次只在不存在时生成
       })
     })
     
@@ -535,37 +539,39 @@ const generatePaymentRecords = async () => {
 
 const loadAvailableSpaces = async () => {
   try {
-    // 调用API获取可用车位
-    const response = await fetch('/api/Parking/spaces?operatorAccount=admin')
-    const data = await response.json()
+    if (!selectedParkingLot.value) {
+      availableSpaces.value = []
+      return
+    }
+    const params = new URLSearchParams()
+    params.set('areaId', String(Number(selectedParkingLot.value)))
+    const acc = getOperatorAccount && getOperatorAccount()
+    if (acc && acc !== 'guest-token' && acc !== 'unknown') {
+      params.set('operatorAccount', acc)
+    }
+    const response = await fetch(`/api/Parking/spaces?${params.toString()}`)
+    const data = await response.json().catch(() => ({}))
     
-    if (response.ok && (data.success || data.Success)) {
-      const spaces = data.data || data.Data || []
-      // 过滤出可用的车位
+    if (response.ok && (data.success || data.Success || Array.isArray(data))) {
+      const spaces = (data.data || data.Data || data) || []
+      // 过滤出可用的车位（兼容中英文与大小写）
       availableSpaces.value = spaces
-        .filter(space => space.status === '空闲' || space.status === '无车')
-        .map(space => ({
-          id: space.parkingSpaceId,
-          name: `车位${space.parkingSpaceId}`,
-          status: space.status
+        .map(s => ({
+          id: s.parkingSpaceId ?? s.ParkingSpaceId ?? s.id,
+          status: s.status ?? s.Status ?? '',
         }))
+        .filter(s => {
+          const st = String(s.status).toLowerCase()
+          return st === '空闲' || st === '无车' || st === 'available' || st === 'free'
+        })
+        .map(s => ({ id: s.id, name: `车位${s.id}`, status: s.status }))
     } else {
-      console.log('获取车位信息失败，使用默认数据')
-      // 如果API失败，使用默认数据
-      availableSpaces.value = [
-        { id: 1, name: '车位1', status: '空闲' },
-        { id: 2, name: '车位2', status: '空闲' },
-        { id: 3, name: '车位3', status: '空闲' }
-      ]
+      console.error('获取车位信息失败:', response.status, data?.error || '')
+      availableSpaces.value = []
     }
   } catch (error) {
     console.error('获取车位信息出错:', error)
-    // 出错时使用默认数据
-    availableSpaces.value = [
-      { id: 1, name: '车位1', status: '空闲' },
-      { id: 2, name: '车位2', status: '空闲' },
-      { id: 3, name: '车位3', status: '空闲' }
-    ]
+    availableSpaces.value = []
   }
 }
 
@@ -583,21 +589,83 @@ const showMessage = (msg, type = 'success') => {
 
 const formatDateTime = (dateTime) => {
   if (!dateTime) return '-'
-  const date = new Date(dateTime)
-  return date.toLocaleString('zh-CN')
+  const s = String(dateTime).trim()
+  // 1) 无时区的斜杠/连字符格式：按 UTC 裸时间解析，再转北京时间
+  let m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/)
+  if (m) {
+    const [, y, mo, d, h, mi, se] = m
+    const utcMs = Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(se || '0'))
+    const bj = new Date(utcMs + 8 * 60 * 60 * 1000) // UTC+8
+    const pad = (n) => String(n).padStart(2, '0')
+    const yyyy = bj.getUTCFullYear()
+    const MM = pad(bj.getUTCMonth() + 1)
+    const DD = pad(bj.getUTCDate())
+    const HH = pad(bj.getUTCHours())
+    const MMm = pad(bj.getUTCMinutes())
+    const SS = pad(bj.getUTCSeconds())
+    return `${yyyy}/${MM}/${DD} ${HH}:${MMm}:${SS}`
+  }
+  // 2) 标准 ISO（带 Z/±HH:mm）：按其时区解析后以北京时间显示
+  if (/Z$|[+-]\d{2}:\d{2}$/.test(s)) {
+    return new Date(s).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })
+  }
+  // 3) 其他兜底
+  const t = new Date(s)
+  if (isNaN(t.getTime())) return '-'
+  return t.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })
 }
 
-// 转为本地 "YYYY-MM-DDTHH:MM"，匹配 input[type=datetime-local]
-const formatForInput = (dateTime) => {
-  if (!dateTime) return ''
-  const d = new Date(dateTime)
+// 固定使用北京时间(UTC+8)进行显示/解析
+const BEIJING_OFFSET_MIN = 8 * 60
+
+// 解析任意后端时间到 UTC 毫秒
+const parseToUtcMillis = (dateTime) => {
+  if (dateTime == null || dateTime === '') return null
+  if (typeof dateTime === 'number') return Number(dateTime)
+  const s = String(dateTime).trim()
+  // 含 Z 或时区偏移，直接按内置解析为 UTC 毫秒
+  if (/Z$|[+-]\d{2}:\d{2}$/.test(s)) return new Date(s).getTime()
+  // 无时区：按 UTC 时间解释（常见后端行为），再转换
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/)
+  if (m) {
+    const [, y, mo, d, h, mi, se] = m
+    // 无时区：按UTC时间解释
+    return Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(se || '0'))
+  }
+  // 支持斜杠格式 YYYY/M/D HH:mm:ss 也按UTC解释
+  m = s.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/)
+  if (m) {
+    const [, y, mo, d, h, mi, se] = m
+    return Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(se || '0'))
+  }
+  // 兜底
+  const t = new Date(s).getTime()
+  return isNaN(t) ? null : t
+}
+
+// 将任意时间转换为北京时间的 "YYYY-MM-DDTHH:MM" 字符串（用于 input[type=datetime-local]）
+const toBeijingInput = (dateTime) => {
+  const utc = parseToUtcMillis(dateTime)
+  if (utc == null) return ''
+  const bj = new Date(utc + BEIJING_OFFSET_MIN * 60000) // 转到北京时区的本地表现
   const pad = (n) => String(n).padStart(2, '0')
-  const yyyy = d.getFullYear()
-  const mm = pad(d.getMonth() + 1)
-  const dd = pad(d.getDate())
-  const hh = pad(d.getHours())
-  const mi = pad(d.getMinutes())
+  const yyyy = bj.getUTCFullYear()
+  const mm = pad(bj.getUTCMonth() + 1)
+  const dd = pad(bj.getUTCDate())
+  const hh = pad(bj.getUTCHours())
+  const mi = pad(bj.getUTCMinutes())
   return `${yyyy}-${mm}-${dd}T${hh}:${mi}`
+}
+
+// 将北京时间的 "YYYY-MM-DDTHH:MM" 输入值转回 ISO(UTC) 字符串（给后端）
+const beijingInputToIso = (ymdHm) => {
+  if (!ymdHm) return null
+  const m = String(ymdHm).trim().match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/)
+  if (!m) return null
+  const [, y, mo, d, h, mi] = m
+  // 先得到“北京时间对应的 UTC 毫秒”（减去 8 小时）
+  const utcMs = Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi)) - BEIJING_OFFSET_MIN * 60000
+  return new Date(utcMs).toISOString()
 }
 
 const formatDuration = (duration) => {
@@ -659,8 +727,8 @@ const autofillPaymentByPlate = async (plate) => {
         paymentForm.value = {
           licensePlate: target.licensePlateNumber,
           parkingSpaceId: target.parkingSpaceId != null ? String(target.parkingSpaceId) : '',
-          parkStart: formatForInput(target.parkStart),
-          parkEnd: formatForInput(target.parkEnd),
+          parkStart: toBeijingInput(target.parkStart),
+          parkEnd: toBeijingInput(target.parkEnd),
           rawParkStart: target.parkStart || '',
           rawParkEnd: target.parkEnd || '',
           totalFee: target.totalFee != null ? String(target.totalFee) : '',
@@ -690,9 +758,29 @@ watch(() => paymentForm.value.licensePlate, (val) => {
   }, 400)
 })
 
+// 加载停车场选项
+const loadParkingLotOptions = async () => {
+  try {
+    const resp = await fetch('/api/Parking/ParkingLots')
+    if (resp.ok) {
+      const data = await resp.json()
+      const list = (data.data || data.Data || data) || []
+      parkingLotOptions.value = list
+      if (!selectedParkingLot.value && list.length > 0) {
+        selectedParkingLot.value = String(list[0].AreaId)
+      }
+      await loadAvailableSpaces()
+    } else {
+      console.error('加载停车场列表失败:', resp.status)
+    }
+  } catch (e) {
+    console.error('加载停车场列表出错:', e)
+  }
+}
+
 // 生命周期
 onMounted(() => {
-  loadAvailableSpaces()
+  loadParkingLotOptions()
   loadPaymentRecords()
 })
 </script>

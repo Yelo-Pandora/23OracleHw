@@ -54,8 +54,8 @@
               <td class="license-plate">{{ vehicle.licensePlate }}</td>
               <td>{{ vehicle.parkingLot }}</td>
               <td>{{ vehicle.parkingSpaceId }}</td>
-              <td>{{ formatDateTime(vehicle.parkStart) }}</td>
-              <td>{{ vehicle.parkEnd ? formatDateTime(vehicle.parkEnd) : '---' }}</td>
+              <td>{{ vehicle.displayParkStart || (vehicle.parkStart ? formatDateTime(vehicle.parkStart) : '---') }}</td>
+              <td>{{ vehicle.displayParkEnd || (vehicle.parkEnd ? formatDateTime(vehicle.parkEnd) : '---') }}</td>
               <td>{{ calculateDuration(vehicle.parkStart, vehicle.parkEnd, vehicle.currentDuration) }}</td>
               <td>
                 <span :class="getStatusClass(vehicle.status)">
@@ -141,6 +141,8 @@ const searchByLicensePlate = async () => {
           parkingSpaceId: vehicleData.ParkingSpaceId,
           parkStart: vehicleData.ParkStart,
           parkEnd: null, // 当前在停车辆没有出场时间
+          displayParkStart: formatDateTime(vehicleData.ParkStart),
+          displayParkEnd: '---',
           status: vehicleData.IsCurrentlyParked ? '在停' : '已离开',
           currentDuration: vehicleData.CurrentDuration
         }]
@@ -186,6 +188,8 @@ const searchByParkingLot = async () => {
           parkingSpaceId: vehicle.ParkingSpaceId,
           parkStart: vehicle.ParkStart,
           parkEnd: null, // 当前在停车辆没有出场时间
+          displayParkStart: formatDateTime(vehicle.ParkStart),
+          displayParkEnd: '---',
           status: vehicle.IsCurrentlyParked ? '在停' : '已离开',
           currentDuration: vehicle.CurrentDuration
         }))
@@ -212,77 +216,84 @@ const searchByParkingLot = async () => {
   }
 }
 
-
-
+const BEIJING_OFFSET_MIN = 8 * 60
+const parseToUtcMillis = (dateTime) => {
+  if (dateTime == null || dateTime === '') return null
+  if (typeof dateTime === 'number') return Number(dateTime)
+  const s = String(dateTime).trim()
+  // 带时区：直接解析为UTC毫秒
+  if (/Z$|[+-]\d{2}:\d{2}$/.test(s)) return new Date(s).getTime()
+  // 无时区：按UTC裸时间解释（与 Query 页一致）
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/)
+  if (m) {
+    const [, y, mo, d, h, mi, se] = m
+    return Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(se || '0'))
+  }
+  m = s.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/)
+  if (m) {
+    const [, y, mo, d, h, mi, se] = m
+    return Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(se || '0'))
+  }
+  const t = new Date(s).getTime()
+  return isNaN(t) ? null : t
+}
 const formatDateTime = (dateTime) => {
-  if (!dateTime) return '-'
-  const date = new Date(dateTime)
-  return date.toLocaleString('zh-CN')
+  const utcMs = parseToUtcMillis(dateTime)
+  if (utcMs == null) return '-'
+  return new Date(utcMs).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })
 }
 
 const calculateDuration = (parkStart, parkEnd, currentDuration) => {
-  if (parkEnd) {
-    // 如果已离开，计算总停车时长
-    const start = new Date(parkStart)
-    const end = new Date(parkEnd)
-    const diff = end - start
-    
+  // 优先根据入/出场时间计算（使用统一的 UTC 解析，避免时区偏差）
+  const startMs = parseToUtcMillis(parkStart)
+  const endMs = parkEnd ? parseToUtcMillis(parkEnd) : Date.now()
+  if (startMs != null) {
+    let diff = (endMs != null ? endMs : Date.now()) - startMs
+    // 合理性校验（避免负数或超过50年这种明显异常）
+    const MAX_MS = 50 * 365 * 24 * 60 * 60 * 1000
+    if (!isFinite(diff) || diff < 0 || diff > MAX_MS) diff = 0
+
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    
-    if (days > 0) {
-      return `${days}天${hours}小时${minutes}分钟`
-    } else if (hours > 0) {
-      return `${hours}小时${minutes}分钟`
-    } else {
-      return `${minutes}分钟`
-    }
-  } else if (currentDuration) {
-    // 如果还在停车，使用后端返回的当前时长
-    // currentDuration是TimeSpan格式，如"17:48:30.7141460"或"1.17:48:30.7141460"
+
+    if (days > 0) return `${days}天${hours}小时${minutes}分钟`
+    if (hours > 0) return `${hours}小时${minutes}分钟`
+    return `${minutes}分钟`
+  }
+
+  // 兜底：若没有 parkStart，才使用后端的 currentDuration（.NET TimeSpan 格式）
+  if (currentDuration) {
     let totalMinutes = 0
     if (typeof currentDuration === 'string') {
-      // 解析TimeSpan字符串，可能包含天数 "d.hh:mm:ss.ffffff"
-      if (currentDuration.includes('.')) {
-        // 包含天数的格式 "1.17:48:30.7141460"
-        const dayPart = currentDuration.split('.')[0]
-        const timePart = currentDuration.split('.')[1]
-        const days = parseInt(dayPart) || 0
-        const timeParts = timePart.split(':')
-        const hours = parseInt(timeParts[0]) || 0
-        const minutes = parseInt(timeParts[1]) || 0
+      // 解析 d.hh:mm:ss[.fffffff] 或 hh:mm:ss[.fffffff]
+      const withDay = currentDuration.match(/^(\d+)\.(\d{1,2}):(\d{2}):(\d{2})(?:\.\d+)?$/)
+      const noDay = currentDuration.match(/^(\d{1,2}):(\d{2}):(\d{2})(?:\.\d+)?$/)
+      if (withDay) {
+        const days = parseInt(withDay[1]) || 0
+        const hours = parseInt(withDay[2]) || 0
+        const minutes = parseInt(withDay[3]) || 0
         totalMinutes = days * 24 * 60 + hours * 60 + minutes
-      } else {
-        // 不包含天数的格式 "17:48:30.7141460"
-        const parts = currentDuration.split(':')
-        if (parts.length >= 3) {
-          const hours = parseInt(parts[0]) || 0
-          const minutes = parseInt(parts[1]) || 0
-          totalMinutes = hours * 60 + minutes
-        }
+      } else if (noDay) {
+        const hours = parseInt(noDay[1]) || 0
+        const minutes = parseInt(noDay[2]) || 0
+        totalMinutes = hours * 60 + minutes
       }
     } else if (typeof currentDuration === 'number') {
       // 如果是毫秒数
       totalMinutes = Math.floor(currentDuration / 60000)
     }
-    
-    // 正确计算天、小时、分钟
+
     const days = Math.floor(totalMinutes / (24 * 60))
     const hours = Math.floor((totalMinutes % (24 * 60)) / 60)
     const mins = totalMinutes % 60
-    
-    // 显示格式：如果有天数就显示天数
-    if (days > 0) {
-      return `${days}天${hours}小时${mins}分钟`
-    } else if (hours > 0) {
-      return `${hours}小时${mins}分钟`
-    } else {
-      return `${mins}分钟`
-    }
-  } else {
-    return '-'
+
+    if (days > 0) return `${days}天${hours}小时${mins}分钟`
+    if (hours > 0) return `${hours}小时${mins}分钟`
+    return `${mins}分钟`
   }
+
+  return '-'
 }
 
 const getStatusClass = (status) => {
