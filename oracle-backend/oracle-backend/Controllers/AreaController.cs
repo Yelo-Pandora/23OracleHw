@@ -285,5 +285,138 @@ namespace oracle_backend.Controllers
                 return StatusCode(500, "服务器内部错误");
             }
         }
+
+        //用来更新区域信息的DTO
+        public class AreaUpdateDto
+        {
+            // Area 表中的通用属性
+            public int? IsEmpty { get; set; }
+            public int? AreaSize { get; set; }
+
+            // RetailArea 特有属性
+            public string? RentStatus { get; set; }
+            public double? BaseRent { get; set; }
+
+            // EventArea 特有属性
+            public int? Capacity { get; set; }
+            public int? AreaFee { get; set; }
+
+            // ParkingLot 特有属性
+            public int? ParkingFee { get; set; }
+
+            // OtherArea 特有属性
+            public string? Type { get; set; }
+        }
+        // 修改区域信息的接口
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateArea(int id, [FromBody] AreaUpdateDto dto)
+        {
+            // 开启事务，确保所有操作的原子性
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // 查找并更新基表记录
+                var areaToUpdate = await _context.Areas.FindAsync(id);
+
+                if (areaToUpdate == null)
+                {
+                    return NotFound($"未找到ID为 '{id}' 的区域。");
+                }
+
+                // 更新基表属性
+                if (dto.IsEmpty.HasValue) areaToUpdate.ISEMPTY = dto.IsEmpty.Value;
+                if (dto.AreaSize.HasValue) areaToUpdate.AREA_SIZE = dto.AreaSize.Value;
+                _context.Entry(areaToUpdate).State = EntityState.Modified;
+
+                // 在一个 switch 语句内处理子表的修复（INSERT）或更新（UPDATE）
+                switch (areaToUpdate.CATEGORY.ToUpper())
+                {
+                    case "RETAIL":
+                        var retailArea = await _context.RetailAreas.FindAsync(id);
+                        if (retailArea == null)
+                        {
+                            // 子表记录缺失，插入数据
+                            var rentStatus = dto.RentStatus ?? "正常营业";
+                            var baseRent = dto.BaseRent ?? 0;
+                            await _context.Database.ExecuteSqlInterpolatedAsync(
+                                $"INSERT INTO RETAIL_AREA (AREA_ID, RENT_STATUS, BASE_RENT) VALUES ({id}, {rentStatus}, {baseRent})");
+                        }
+                        else
+                        {
+                            // 子表记录存在，执行更新
+                            if (dto.RentStatus != null) retailArea.RENT_STATUS = dto.RentStatus;
+                            if (dto.BaseRent.HasValue) retailArea.BASE_RENT = dto.BaseRent.Value;
+                            _context.Entry(retailArea).State = EntityState.Modified;
+                        }
+                        break;
+
+                    case "EVENT":
+                        var eventArea = await _context.EventAreas.FindAsync(id);
+                        if (eventArea == null)
+                        {
+                            // 子表记录缺失，插入数据
+                            var capacity = dto.Capacity ?? 0;
+                            var areaFee = dto.AreaFee ?? 0;
+                            await _context.Database.ExecuteSqlInterpolatedAsync(
+                                $"INSERT INTO EVENT_AREA (AREA_ID, CAPACITY, AREA_FEE) VALUES ({id}, {capacity}, {areaFee})");
+                        }
+                        else
+                        {
+                            // 子表记录存在，执行更新
+                            if (dto.Capacity.HasValue) eventArea.CAPACITY = dto.Capacity.Value;
+                            if (dto.AreaFee.HasValue) eventArea.AREA_FEE = dto.AreaFee.Value;
+                            _context.Entry(eventArea).State = EntityState.Modified;
+                        }
+                        break;
+
+                    case "PARKING":
+                        var parkingLot = await _context.ParkingLots.FindAsync(id);
+                        if (parkingLot == null)
+                        {
+                            // 子表记录缺失，插入数据
+                            var parkingFee = dto.ParkingFee ?? 0;
+                            await _context.Database.ExecuteSqlInterpolatedAsync(
+                                $"INSERT INTO PARKING_LOT (AREA_ID, PARKING_FEE) VALUES ({id}, {parkingFee})");
+                        }
+                        else
+                        {
+                            // 子表记录存在，执行更新
+                            if (dto.ParkingFee.HasValue) parkingLot.PARKING_FEE = dto.ParkingFee.Value;
+                            _context.Entry(parkingLot).State = EntityState.Modified;
+                        }
+                        break;
+
+                    case "OTHER":
+                        var otherArea = await _context.OtherAreas.FindAsync(id);
+                        if (otherArea == null)
+                        {
+                            // 子表记录缺失，插入数据
+                            var type = dto.Type ?? "未知";
+                            await _context.Database.ExecuteSqlInterpolatedAsync(
+                                $"INSERT INTO OTHER_AREA (AREA_ID, TYPE) VALUES ({id}, {type})");
+                        }
+                        else
+                        {
+                            // 子表记录存在，执行更新
+                            if (dto.Type != null) otherArea.TYPE = dto.Type;
+                            _context.Entry(otherArea).State = EntityState.Modified;
+                        }
+                        break;
+                }
+
+                // 提交所有更改
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return Ok(new { message = "区域信息更新成功" });
+            }
+            catch (Exception ex)
+            {
+                // 如果发生任何错误，回滚所有操作
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, $"更新区域 {id} 失败。");
+                return StatusCode(500, "更新区域信息失败，服务器内部错误。");
+            }
+        }
     }
 }
