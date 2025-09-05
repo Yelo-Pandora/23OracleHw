@@ -12,7 +12,7 @@
         <!-- 员工专属快捷入口 -->
         <template v-if="isStaff">
           <router-link class="card" to="/area/mall-management">商场管理</router-link>
-          <router-link class="card" to="/area/parking-management">停车场管理</router-link>
+          <router-link class="card" to="/parking-management">停车场管理</router-link>
           <router-link class="card" to="/area/event-management">活动管理</router-link>
           <router-link class="card" to="/area/equipment-management">设备管理</router-link>
           <router-link class="card" to="/employee_management">员工信息管理</router-link>
