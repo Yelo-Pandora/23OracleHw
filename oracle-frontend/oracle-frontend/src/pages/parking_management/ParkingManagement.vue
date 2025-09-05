@@ -1,5 +1,6 @@
 <template>
-  <div class="parking-management">
+  <DashboardLayout>
+    <div class="parking-management" v-if="!isChildActive">
     <h2>停车场信息管理</h2>
     
     <!-- 上半部分：停车场状态表格 -->
@@ -234,12 +235,14 @@
       </div>
     </div>
   </div>
+  <router-view v-else />
+</DashboardLayout>
 </template>
 
 <script setup>
 import DashboardLayout from '@/components/BoardLayout.vue';
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/user/user'
 
 // 响应式数据
@@ -267,6 +270,8 @@ let refreshTimer = null
 // 路由
 const router = useRouter()
 const userStore = useUserStore()
+const route = useRoute()
+const isChildActive = computed(() => (route.path || '').startsWith('/parking-management/') )
 
 // SVG画布尺寸
 const canvasSize = { w: 1200, h: 800 }
@@ -469,7 +474,7 @@ const goToVehicleManagement = () => {
     alert('权限不足：需要管理员(权限=1)才能访问“车辆管理”。')
     return
   }
-  router.push('/vehicle-management')
+  router.push('/parking-management/vehicle-management')
 }
 
 const goToParkingBilling = () => {
@@ -477,7 +482,7 @@ const goToParkingBilling = () => {
     alert('权限不足：需要管理员(权限=1)才能访问“计费管理”。')
     return
   }
-  router.push('/parking-billing')
+  router.push('/parking-management/parking-billing')
 }
 
 const goToParkingReport = () => {
@@ -485,7 +490,7 @@ const goToParkingReport = () => {
     alert('权限不足：需要管理员(权限=1)才能访问“停车报表”。')
     return
   }
-  router.push('/parking-report')
+  router.push('/parking-management/parking-report')
 }
 
 const showSpaceDetail = (slot) => {
