@@ -18,7 +18,7 @@ import Equipment from './pages/equipment_management/EquipmentManagement.vue'
 import Staff from './pages/staff_management/StaffManagement.vue'
 import ParkingQuery from './pages/parking_query/ParkingQuery.vue'
 import EventQuery from './pages/event_query/EventQuery.vue'
-import AreaManagement from './pages/area_management/App.vue'
+import AreaManagement from './pages/area_management/AreaManagement.vue'
 import StoreStatusRequest from '@/pages/mall_management/StoreStatusRequest.vue';
 import StoreStatusApproval from '@/pages/mall_management/StoreStatusApproval.vue';
 import CreateMerchant from '@/pages/mall_management/CreateMerchant.vue';

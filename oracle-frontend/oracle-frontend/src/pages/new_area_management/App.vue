@@ -17,7 +17,6 @@
           <div class="header-actions">
             <button class="btn-primary" @click="activeTab = 'list'">区域列表</button>
             <button class="btn-primary" @click="activeTab = 'add'" v-if="userStore.role === '员工'">添加区域</button>
-            <button class="btn-primary" @click="activeTab = 'report'" v-if="userStore.role === '员工'">统计报表</button>
           </div>
         </div>
 
@@ -42,10 +41,9 @@
 import { ref, computed } from 'vue';
 import { useUserStore } from '@/user/user';
 import DashboardLayout from '@/components/BoardLayout.vue';
-import areaList from './areaList.vue';
-import Addarea from './Addarea.vue';
-import Editarea from './Editarea.vue';
-import areaReport from './areaReport.vue';
+import areaList from './AreaList.vue';
+import Addarea from './AddArea.vue';
+import Editarea from './EditArea.vue';
 
 const userStore = useUserStore();
 const activeTab = ref('list');
