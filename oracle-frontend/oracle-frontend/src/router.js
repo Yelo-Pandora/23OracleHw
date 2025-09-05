@@ -29,6 +29,9 @@ import MyRentStatisticsReport from '@/pages/store_management/MyRentStatisticsRep
 import ParkingManagement from './pages/parking_management/ParkingManagement.vue'
 import EventManagement from './pages/event_management/EventManagement.vue'
 import EquipmentManagement from './pages/equipment_management/EquipmentManagement.vue'
+import VehicleManagement from './pages/parking_management/VehicleManagement.vue'
+import ParkingBilling from './pages/parking_management/ParkingBilling.vue'
+import ParkingReport from './pages/parking_management/ParkingReport.vue'
 
 // 定义路由
 const routes = [
@@ -61,16 +64,14 @@ const routes = [
     meta: { requiresAuth: true, title: '区域管理', role_need: ['员工', '商户', '游客'] },
     children: [
       { path: '', redirect: '/area/mall-management' },
-  { path: 'mall-management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户'], title: '商场管理' } },
-      { path: 'parking-management', component: Parking, meta: { requiresAuth: true, role_need: ['员工'] } },
+      { path: 'mall-management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户'], title: '商场管理' } },
       { path: 'event-management', component: EventManagement, meta: { requiresAuth: true, role_need: ['员工'] } },
       // { path: 'collaboration-management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工'] } },
       { path: 'equipment-management', component: Equipment, meta: { requiresAuth: true, role_need: ['员工'] } },
       { path: '/cashflow_management/total_salary', component: TotalSalary, meta: { requiresAuth: true, role_need: ['员工'],redirect: '/cashflow_management/total_salary' } },
       // { path: 'mall-map', component: MallMap, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
-      { path: 'parking-query', component: ParkingQuery, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
       { path: 'event-query', component: EventQuery, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
-  { path: 'store-management', component: StoreManagement, meta: { requiresAuth: true, role_need: ['商户', '员工'], title: '店铺管理' } },
+      { path: 'store-management', component: StoreManagement, meta: { requiresAuth: true, role_need: ['商户', '员工'], title: '店铺管理' } },
     ]
   },
   // 商场管理页面（直接 /mall-management 重定向到 /area/mall-management）
@@ -125,25 +126,9 @@ const routes = [
     meta: { requiresAuth: true, title: '我的租金统计', role_need: ['商户'] }
   },
    // 车位查询
-  { path: '/area/parking-query', 
-    redirect: '/area/parking-query',
-    component: ParkingQuery, 
-    meta: { 
-      requiresAuth: true, 
-      title: '车位查询',
-      role_need: ['员工', '商户', '游客'] 
-    }
-   },
+
       // 车位管理
-  { path: '/area/parking-management', 
-    redirect: '/area/parking-management',
-    component: ParkingManagement, 
-    meta: { 
-      requiresAuth: true, 
-      title: '停车场管理',
-      role_need: ['员工'] 
-    }
-   },
+
   // 活动管理/活动查询页面
   { path: '/area/event-query', 
     redirect: '/area/event-query',
@@ -205,6 +190,24 @@ const routes = [
       role_need: ['员工'] 
     }
   },
+  // 停车场管理 (顶层路由)
+  {
+    path: '/parking-management',
+    component: ParkingManagement,
+    meta: { requiresAuth: true, title: '停车场管理', role_need: ['员工'] },
+    children: [
+      { path: 'vehicle-management', component: VehicleManagement, meta: { requiresAuth: true, role_need: ['员工'], title: '车辆管理' } },
+      { path: 'parking-billing', component: ParkingBilling, meta: { requiresAuth: true, role_need: ['员工'], title: '计费管理' } },
+      { path: 'parking-report', component: ParkingReport, meta: { requiresAuth: true, role_need: ['员工'], title: '停车报表' } },
+    ]
+  },
+  // 车位查询 (顶层路由)
+  {
+    path: '/parking-query',
+    component: ParkingQuery,
+    meta: { requiresAuth: true, title: '车位查询', role_need: ['员工', '商户', '游客'] }
+  },
+
 ]
 
 const router = createRouter({
