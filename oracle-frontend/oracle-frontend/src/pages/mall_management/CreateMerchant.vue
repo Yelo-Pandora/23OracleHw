@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
     <div class="page-container">
       <div class="page-header">
         <h1>新增店面区域</h1>
@@ -34,13 +33,11 @@
         <div v-if="success" class="form-message success">{{ success }}</div>
       </form>
     </div>
-  </DashboardLayout>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-import DashboardLayout from '@/components/BoardLayout.vue'
 import { useUserStore } from '@/stores/user'
 
 const areaId = ref(null)

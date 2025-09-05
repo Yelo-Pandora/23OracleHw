@@ -66,7 +66,7 @@
     // 不在侧边栏显示的菜单标题列表（仅影响侧边栏显示，不删除路由）
     const excludedTitles = ['店铺详情', '商户租金统计报表']
 
-    
+
     const baseList = router.options.routes.filter(route => {
       if (!route.meta || !route.meta.title) return false;
       if (route.path === '/login') return false; // 明确排除登录页
@@ -87,6 +87,7 @@
     })
 
     const order = {
+      '主页': 0,
       '商场管理': 10,
       '停车场管理': 20,
       '活动管理': 30,

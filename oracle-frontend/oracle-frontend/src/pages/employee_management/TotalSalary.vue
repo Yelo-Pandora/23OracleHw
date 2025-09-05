@@ -1,4 +1,5 @@
 <template>
+  <DashboardLayout>
     <div class="total_salary">
       <div class="content">
         <table>
@@ -23,13 +24,12 @@
         </table>
       </div>
     </div>
-    <SalaryDetailModal
-      :show="showDetailModal"
-      :year="currentYear"
-      :month="currentMonth"
-      :salaryList="currentSalaryList"
-      @close="showDetailModal = false"
-    />
+    <SalaryDetailModal :show="showDetailModal"
+                       :year="currentYear"
+                       :month="currentMonth"
+                       :salaryList="currentSalaryList"
+                       @close="showDetailModal = false" />
+  </DashboardLayout>
 </template>
 
 <script setup>

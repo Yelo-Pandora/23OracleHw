@@ -14,7 +14,6 @@ import Mall from './pages/mall_management/MallManagement.vue'
 import Parking from './pages/parking_management/ParkingManagement.vue'
 import Events from './pages/event_management/EventManagement.vue'
 import Equipment from './pages/equipment_management/EquipmentManagement.vue'
-import Staff from './pages/staff_management/StaffManagement.vue'
 import ParkingQuery from './pages/parking_query/ParkingQuery.vue'
 import EventQuery from './pages/event_query/EventQuery.vue'
 import AreaManagement from './pages/area_management/AreaManagement.vue'
@@ -46,46 +45,10 @@ const routes = [
     component: Home,
     meta: { requiresAuth: true, title: '主页', role_need: ['员工', '商户', '游客'] },
   },
-  // 员工信息页面（测试）
-  // {
-  //   path: '/employee_management',
-  //   component: EmployeeInfo,
-  //   meta: {
-  //     requiresAuth: true,
-  //     title: '员工信息', // 这个 title 会显示在页眉和菜单中
-  //     role_need: ['员工']  // 假设只有“员工”角色能看到
-  //   }
-  // },
-// 区域管理主页面（左侧跳转，右侧内容）
+  //商场管理页面
   {
-    path: '/area',
-    component: AreaManagement,
-    meta: { requiresAuth: true, title: '区域管理', role_need: ['员工', '商户', '游客'] },
-    children: [
-      { path: '', redirect: '/area/mall-management' },
-      { path: 'mall-management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户'], title: '商场管理' } },
-      { path: 'event-management', component: EventManagement, meta: { requiresAuth: true, role_need: ['员工'] } },
-      // { path: 'collaboration-management', component: Collaboration, meta: { requiresAuth: true, role_need: ['员工'] } },
-      { path: 'equipment-management', component: Equipment, meta: { requiresAuth: true, role_need: ['员工'] } },
-      { path: '/cashflow_management/total_salary', component: TotalSalary, meta: { requiresAuth: true, role_need: ['员工'],redirect: '/cashflow_management/total_salary' } },
-      // { path: 'mall-map', component: MallMap, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
-      { path: 'event-query', component: EventQuery, meta: { requiresAuth: true, role_need: ['游客', '商户', '员工'] } },
-      { path: 'store-management', component: StoreManagement, meta: { requiresAuth: true, role_need: ['商户', '员工'], title: '店铺管理' } },
-    ]
-  },
-  {
-    path: '/new_area_management',
-    component: () => import('@/pages/new_area_management/App.vue'),
-    meta: {
-      requiresAuth: true,
-      title: '区划管理',
-      role_need: ['员工']  // 只有员工角色可以访问
-    }
-  },
-  // 商场管理页面（直接 /mall-management 重定向到 /area/mall-management）
-  {
-    path: '/area/mall-management',
-    redirect: '/area/mall-management',
+    path: '/mall-management',
+    component: Mall,
     meta: { requiresAuth: true, title: '商场管理', role_need: ['员工'] },
     children: [
       { path: 'store-status-approval', component: StoreStatusApproval, meta: { requiresAuth: true, title: '店面状态审批', role_need: ['员工'] } },
@@ -138,8 +101,8 @@ const routes = [
       // 车位管理
 
   // 活动管理/活动查询页面
-  { path: '/area/event-query',
-    redirect: '/area/event-query',
+  { path: '/event-query',
+    //redirect: '/area/event-query',
     component: EventQuery,
     meta: {
       requiresAuth: true,
@@ -149,7 +112,7 @@ const routes = [
    },
   {
     path: '/event-management',
-      redirect: '/area/event-management',
+      //redirect: '/area/event-management',
     component: EventManagement,
     meta: {
       requiresAuth: true,
@@ -159,7 +122,6 @@ const routes = [
    },
   {
     path: '/cashflow_management/total_salary',
-    redirect: '/cashflow_management/total_salary',
     component: TotalSalary,
     meta: {
       requiresAuth: true,
@@ -170,8 +132,8 @@ const routes = [
 
   // 设备管理页面
   {
-    path: '/area/equipment-management',
-    redirect: '/area/equipment-management',
+    path: '/equipment-management',
+    //redirect: '/area/equipment-management',
     component: EquipmentManagement,
     meta: {
       requiresAuth: true,

@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
     <div class="report-container">
       <div class="page-header">
         <h1>商户信息统计报表</h1>
@@ -108,7 +107,6 @@
         </div>
       </div>
     </div>
-  </DashboardLayout>
 </template>
 
 <script setup>

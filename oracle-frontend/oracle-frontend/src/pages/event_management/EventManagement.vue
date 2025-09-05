@@ -1,42 +1,41 @@
 <template>
-  <div class="event-management">
-    <!-- 活动类型切换 -->
-    <div class="event-type-switch">
-      <button 
-        class="type-btn" 
-        :class="{ active: activeTab === 'sale' }"
-        @click="switchTab('sale')">
-        促销活动管理
-      </button>
-      <button 
-        class="type-btn" 
-        :class="{ active: activeTab === 'venue' }"
-        @click="switchTab('venue')">
-        场地活动管理
-      </button>
-      <button 
-        class="type-btn" 
-        :class="{ active: activeTab === 'collaboration' }"
-        @click="switchTab('collaboration')">
-        合作方管理
-      </button>
-    </div>
+  <DashboardLayout>
+    <div class="event-management">
+      <!-- 活动类型切换 -->
+      <div class="event-type-switch">
+        <button class="type-btn"
+                :class="{ active: activeTab === 'sale' }"
+                @click="switchTab('sale')">
+          促销活动管理
+        </button>
+        <button class="type-btn"
+                :class="{ active: activeTab === 'venue' }"
+                @click="switchTab('venue')">
+          场地活动管理
+        </button>
+        <button class="type-btn"
+                :class="{ active: activeTab === 'collaboration' }"
+                @click="switchTab('collaboration')">
+          合作方管理
+        </button>
+      </div>
 
-    <!-- 促销活动管理 -->
-    <div v-if="activeTab === 'sale'" class="tab-content">
-      <SaleEventManagement />
-    </div>
+      <!-- 促销活动管理 -->
+      <div v-if="activeTab === 'sale'" class="tab-content">
+        <SaleEventManagement />
+      </div>
 
-    <!-- 场地活动管理 -->
-    <div v-if="activeTab === 'venue'" class="tab-content">
-      <VenueEventManagement />
-    </div>
+      <!-- 场地活动管理 -->
+      <div v-if="activeTab === 'venue'" class="tab-content">
+        <VenueEventManagement />
+      </div>
 
-    <!-- 合作方管理 -->
-    <div v-if="activeTab === 'collaboration'" class="tab-content">
-      <CollaborationManagement />
+      <!-- 合作方管理 -->
+      <div v-if="activeTab === 'collaboration'" class="tab-content">
+        <CollaborationManagement />
+      </div>
     </div>
-  </div>
+  </DashboardLayout>
 </template>
 
 <script setup>

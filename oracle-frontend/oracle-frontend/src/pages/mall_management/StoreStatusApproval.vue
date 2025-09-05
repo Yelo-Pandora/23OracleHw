@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
     <div class="page-container">
       <div class="page-header">
         <h1>店面状态审批管理</h1>
@@ -94,7 +93,6 @@
         {{ message }}
       </div>
     </div>
-  </DashboardLayout>
 </template>
 
 <script setup>
