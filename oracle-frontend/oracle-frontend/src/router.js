@@ -13,7 +13,6 @@ import TotalSalary from './pages/employee_management/TotalSalary.vue'
 import Mall from './pages/mall_management/MallManagement.vue'
 import Parking from './pages/parking_management/ParkingManagement.vue'
 import Events from './pages/event_management/EventManagement.vue'
-import Collaboration from './pages/collaboration_management/App.vue'
 import Equipment from './pages/equipment_management/EquipmentManagement.vue'
 import ParkingQuery from './pages/parking_query/ParkingQuery.vue'
 import EventQuery from './pages/event_query/EventQuery.vue'
@@ -45,6 +44,16 @@ const routes = [
     path: '/',
     component: Home,
     meta: { requiresAuth: true, title: '主页', role_need: ['员工', '商户', '游客'] },
+  },
+  //区域管理页面
+  {
+    path: '/new_area_management',
+    component: () => import('@/pages/new_area_management/App.vue'),
+    meta: {
+      requiresAuth: true,
+      title: '区划管理',
+      role_need: ['员工']  // 只有员工角色可以访问
+    }
   },
   //商场管理页面
   {
