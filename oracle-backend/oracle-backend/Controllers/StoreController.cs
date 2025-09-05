@@ -1887,11 +1887,11 @@ namespace oracle_backend.Controllers
         /// <param name="operatorAccount">操作员账号</param>
         /// <returns>租金统计报表数据</returns>
         [HttpGet("RentStatisticsReport")]
-        public async Task<IActionResult> GetRentStatisticsReport([FromQuery] string period, [FromQuery] string dimension = "all", [FromQuery] string operatorAccount = "")
+        public async Task<IActionResult> GetRentStatisticsReport([FromQuery] string startPeriod, [FromQuery] string endPeriod, [FromQuery] string dimension = "all", [FromQuery] string operatorAccount = "")
         {
             try
             {
-                _logger.LogInformation("生成商户租金统计报表：时间段 {Period}, 维度 {Dimension}, 操作员 {OperatorAccount}", period, dimension, operatorAccount);
+                _logger.LogInformation("生成商户租金统计报表：时间段 {StartPeriod}-{EndPeriod}, 维度 {Dimension}, 操作员 {OperatorAccount}", startPeriod, endPeriod, dimension, operatorAccount);
 
                 // 验证操作员权限（需要管理员或财务权限）
                 if (!string.IsNullOrEmpty(operatorAccount))
@@ -1904,22 +1904,22 @@ namespace oracle_backend.Controllers
                 }
 
                 // 验证时间格式
-                if (string.IsNullOrEmpty(period))
+                if (string.IsNullOrEmpty(startPeriod) || string.IsNullOrEmpty(endPeriod))
                 {
-                    return BadRequest(new { error = "请提供统计时间段 (YYYYMM格式)" });
+                    return BadRequest(new { error = "请提供完整的统计时间段 (YYYYMM格式)" });
                 }
 
-                if (period.Length != 6 || !int.TryParse(period, out _))
+                if (startPeriod.Length != 6 || !int.TryParse(startPeriod, out _) || endPeriod.Length != 6 || !int.TryParse(endPeriod, out _))
                 {
                     return BadRequest(new { error = "时间格式错误，应为YYYYMM格式，如202412" });
                 }
 
-                var report = await GenerateRentStatisticsReport(period, dimension);
+                var report = await GenerateRentStatisticsReport(startPeriod, dimension);
 
                 return Ok(new
                 {
                     message = "租金统计报表生成成功",
-                    period = period,
+                    period = $"{startPeriod}-{endPeriod}",
                     dimension = dimension,
                     generateTime = DateTime.Now,
                     operatorAccount = operatorAccount,
@@ -2107,7 +2107,12 @@ namespace oracle_backend.Controllers
             var timeReport = await GenerateTimeBasedReport(period);
             var areaReport = await GenerateAreaBasedReport(period);
             var collectionStats = await _storeContext.GetRentCollectionStatistics(period);
+            var areaStats = await _storeContext.GetRentStatisticsByArea();
+            var totalStoresCount = areaStats.Count(a => a.IsOccupied);
 
+            // Build comprehensive report including both summary and trend data for timeAnalysis
+            dynamic dt = timeReport;
+            dynamic da = areaReport;
             return new
             {
                 title = $"{period}年月商户租金综合统计报表",
@@ -2115,7 +2120,7 @@ namespace oracle_backend.Controllers
                 executiveSummary = new
                 {
                     reportPeriod = period,
-                    totalStores = collectionStats.TotalBills,
+                    totalStores = totalStoresCount,
                     totalRevenue = collectionStats.TotalAmount,
                     collectionRate = collectionStats.CollectionRate,
                     status = GetOverallStatus(collectionStats.CollectionRate),
@@ -2137,8 +2142,13 @@ namespace oracle_backend.Controllers
                     pendingBills = collectionStats.TotalBills - collectionStats.PaidBills - collectionStats.OverdueBills,
                     onTimePaymentRate = collectionStats.TotalBills > 0 ? Math.Round((double)collectionStats.PaidBills / collectionStats.TotalBills * 100, 2) : 0
                 },
-                timeAnalysis = ((dynamic)timeReport).summary,
-                areaAnalysis = ((dynamic)areaReport).statistics,
+                // include both summary and trend for timeAnalysis
+                timeAnalysis = new
+                {
+                    summary = dt.summary,
+                    trend = dt.trend
+                },
+                areaAnalysis = da.statistics,
                 recommendations = GenerateRecommendations(collectionStats)
             };
         }

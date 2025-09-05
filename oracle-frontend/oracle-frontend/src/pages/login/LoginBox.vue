@@ -54,7 +54,7 @@
   import { ref, computed, defineEmits } from 'vue'; // 添加 defineEmits
   import axios from 'axios';
   import { useRouter } from 'vue-router'
-  import { useUserStore } from '@/user/user'
+  import { useUserStore } from '@/stores/user'
 
   const emit = defineEmits(['switchToRegister', 'switchToForgotPassword']); // 定义 emit 事件
 
@@ -88,7 +88,7 @@
     }
 
     try {
-      const response = await axios.post('/api/Accounts/login', {
+      const response = await axios.post('api/Accounts/login', {
         acc: username.value,
         pass: password.value,
         identity: role.value,

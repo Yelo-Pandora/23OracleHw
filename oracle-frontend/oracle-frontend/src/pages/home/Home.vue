@@ -5,14 +5,33 @@
       这里的所有内容，都会被自动插入到 DashboardLayout 组件的 <slot> 位置。
     -->
     <div class="home-content">
-      <h1>欢迎, Admin!</h1>
-      <p>这里是您的仪表盘主页。</p>
+      <h1>欢迎回来</h1>
+      <p>您当前的身份: <strong>{{ roleLabel }}</strong></p>
 
-      <!-- 您可以把图二中的各种卡片、图表组件放在这里 -->
       <div class="card-container">
-        <div class="card">信息卡片 1</div>
-        <div class="card">信息卡片 2</div>
-        <div class="card">信息卡片 3</div>
+        <!-- 员工专属快捷入口 -->
+        <template v-if="isStaff">
+          <router-link class="card" to="/area/mall-management">商场管理</router-link>
+          <router-link class="card" to="/parking-management">停车场管理</router-link>
+          <router-link class="card" to="/area/event-management">活动管理</router-link>
+          <router-link class="card" to="/area/equipment-management">设备管理</router-link>
+          <router-link class="card" to="/employee_management">员工信息管理</router-link>
+          <router-link class="card" to="/cashflow_management/total_salary">员工工资支出</router-link>
+          
+        </template>
+
+        <!-- 商户专属快捷入口 -->
+        <template v-else-if="isMerchant">
+          <router-link class="card" to="/store-management">我的店铺</router-link>
+          <router-link class="card" to="/area/parking-query">车位查询</router-link>
+          <router-link class="card" to="/area/event-query">活动查询</router-link>
+        </template>
+
+        <!-- 游客视图 -->
+        <template v-else>
+          <router-link class="card" to="/area/parking-query">车位查询</router-link>
+          <router-link class="card" to="/area/event-query">活动查询</router-link>
+        </template>
       </div>
     </div>
   </DashboardLayout>
@@ -21,8 +40,14 @@
 <script setup>
   // 1. 导入布局组件
   import DashboardLayout from '@/components/BoardLayout.vue';
-  import { useUserStore } from '@/user/user';
+  import { useUserStore } from '@/stores/user';
   const userStore = useUserStore();
+  import { computed } from 'vue';
+
+  const role = computed(() => userStore.role || '游客');
+  const isStaff = computed(() => role.value === '员工');
+  const isMerchant = computed(() => role.value === '商户');
+  const roleLabel = computed(() => role.value);
 </script>
 
 <style scoped>
