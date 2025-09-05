@@ -227,9 +227,11 @@
                 type="text" 
                 v-model="reservationForm.StaffPosition" 
                 required
-                class="form-input"
-                placeholder="请输入员工职位"
+                readonly
+                class="form-input readonly-input"
+                :placeholder="getCurrentUserRole()"
               >
+              <small class="form-hint">自动填入当前登录用户身份</small>
             </div>
             <div class="form-group">
               <label>预计人数</label>
@@ -618,6 +620,10 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
+
+// 用户store
+const userStore = useUserStore()
 
 // 响应式数据
 const loading = ref(false)
@@ -715,6 +721,11 @@ const formatDate = (dateString) => {
   })
 }
 
+// 获取当前用户身份
+const getCurrentUserRole = () => {
+  return userStore.role || '员工'
+}
+
 const calculateDuration = (start, end) => {
   if (!start || !end) return ''
   const startDate = new Date(start)
@@ -787,7 +798,7 @@ const resetReservationForm = () => {
     RentEndTime: '',
     RentPurpose: '',
     CollaborationName: '',
-    StaffPosition: '',
+    StaffPosition: getCurrentUserRole(), // 自动填入当前用户身份
     ExpectedHeadcount: null,
     ExpectedFee: null,
     Capacity: null
@@ -1118,6 +1129,9 @@ onMounted(() => {
   const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
   reportForm.StartDate = thirtyDaysAgo.toISOString().split('T')[0]
   reportForm.EndDate = today.toISOString().split('T')[0]
+  
+  // 初始化员工职位为当前用户身份
+  reservationForm.StaffPosition = getCurrentUserRole()
 })
 </script>
 
@@ -1502,6 +1516,20 @@ onMounted(() => {
 .form-textarea:focus {
   outline: none;
   border-color: #409eff;
+}
+
+.readonly-input {
+  background-color: #f5f7fa !important;
+  color: #606266 !important;
+  cursor: not-allowed;
+}
+
+.form-hint {
+  display: block;
+  color: #909399;
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.4;
 }
 
 .form-textarea {
