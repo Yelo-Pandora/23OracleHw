@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
     <div class="page-container">
       <div class="page-header">
         <h1>租金管理</h1>
@@ -81,7 +80,6 @@
         </div>
       </div>
     </div>
-  </DashboardLayout>
 </template>
 
 <script setup>

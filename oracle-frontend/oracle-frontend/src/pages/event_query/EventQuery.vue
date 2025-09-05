@@ -1,204 +1,186 @@
 <template>
-  <div class="placeholder-page">
-    <div class="header">
-      <h2>活动查询</h2>
-    </div>
-
-    <!-- 筛选区域 -->
-    <div class="filter-section">
-      <div class="filter-container">
-        <el-form :model="filterForm" class="filter-form">
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <el-form-item label="活动状态">
-                <el-select v-model="filterForm.status" placeholder="请选择活动状态" clearable style="width: 100%;">
-                  <el-option label="未开始" value="upcoming"></el-option>
-                  <el-option label="进行中" value="ongoing"></el-option>
-                  <el-option label="已结束" value="completed"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="10">
-              <el-form-item label="活动日期">
-                <el-date-picker
-                  v-model="filterForm.dateRange"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  value-format="yyyy-MM-dd"
-                  clearable
-                  style="width: 100%;"
-                >
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6" class="button-col">
-              <el-form-item>
-                <div class="buttons-container">
-                  <!-- 查询按钮 -->
-                  <button
-                    type="button"
-                    @click="handleQueryClick"
-                    :disabled="queryLoading"
-                    class="custom-button custom-button--primary"
-                    :class="{ 'is-loading': queryLoading, 'is-clicked': isQueryClicked }"
-                  >
-                    <span v-if="!queryLoading">查询</span>
-                    <span v-else>查询中...</span>
-                  </button>
-                  <!-- 清除筛选按钮 -->
-                  <button
-                    type="button"
-                    @click="handleClearFilters"
-                    class="custom-button custom-button--secondary"
-                  >
-                    清除筛选
-                  </button>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
+  <DashboardLayout>
+    <div class="placeholder-page">
+      <div class="header">
+        <h2>活动查询</h2>
       </div>
 
-      <!-- 筛选按钮区域 -->
-      <div class="filter-buttons-section">
-        <div class="filter-buttons">
-          <button
-            type="button"
-            @click="applyFilter('type', 'venue')"
-            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.type === 'venue' }]"
-          >
-            场地活动
-          </button>
-          <button
-            type="button"
-            @click="applyFilter('type', 'promotion')"
-            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.type === 'promotion' }]"
-          >
-            促销活动
-          </button>
-          
-          <button
-            type="button"
-            @click="applyFilter('status', 'upcoming')"
-            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.status === 'upcoming' }]"
-          >
-            未开始
-          </button>
-          <button
-            type="button"
-            @click="applyFilter('status', 'ongoing')"
-            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.status === 'ongoing' }]"
-          >
-            进行中
-          </button>
-          <button
-            type="button"
-            @click="applyFilter('status', 'completed')"
-            :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.status === 'completed' }]"
-          >
-            已结束
-          </button>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- 内容区域 -->
-    <div class="content-section">
-      <div v-if="loading" class="empty-state">
-        <i class="el-icon-loading"></i>
-        <p>加载中...</p>
-      </div>
-
-      <div v-else-if="activities.length === 0" class="empty-state">
-        <i class="el-icon-date"></i>
-        <p>暂无活动数据</p>
-      </div>
-
-      <div v-else>
-        <div class="card-container">
-          <el-row :gutter="20">
-            <el-col v-for="activity in activities" :key="activity.EVENT_ID" :span="8" style="margin-bottom: 20px;">
-              <div class="activity-card">
-                <div class="card-header">
-                  <div class="card-title">{{ activity.EVENT_NAME }}</div>
-                </div>
-                <div class="card-content">
-                  <!-- 时间 -->
-                  <div class="card-detail">
-                    <i class="el-icon-time detail-icon"></i>
-                    <span class="detail-text">时间: {{ formatDate(activity.EVENT_START) }} 至 {{ formatDate(activity.EVENT_END) }}</span>
+      <!-- 筛选区域 -->
+      <div class="filter-section">
+        <div class="filter-container">
+          <el-form :model="filterForm" class="filter-form">
+            <el-row :gutter="20">
+              <el-col :span="8">
+                <el-form-item label="活动状态">
+                  <el-select v-model="filterForm.status" placeholder="请选择活动状态" clearable style="width: 100%;">
+                    <el-option label="未开始" value="upcoming"></el-option>
+                    <el-option label="进行中" value="ongoing"></el-option>
+                    <el-option label="已结束" value="completed"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10">
+                <el-form-item label="活动日期">
+                  <el-date-picker v-model="filterForm.dateRange"
+                                  type="daterange"
+                                  range-separator="至"
+                                  start-placeholder="开始日期"
+                                  end-placeholder="结束日期"
+                                  value-format="yyyy-MM-dd"
+                                  clearable
+                                  style="width: 100%;">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6" class="button-col">
+                <el-form-item>
+                  <div class="buttons-container">
+                    <!-- 查询按钮 -->
+                    <button type="button"
+                            @click="handleQueryClick"
+                            :disabled="queryLoading"
+                            class="custom-button custom-button--primary"
+                            :class="{ 'is-loading': queryLoading, 'is-clicked': isQueryClicked }">
+                      <span v-if="!queryLoading">查询</span>
+                      <span v-else>查询中...</span>
+                    </button>
+                    <!-- 清除筛选按钮 -->
+                    <button type="button"
+                            @click="handleClearFilters"
+                            class="custom-button custom-button--secondary">
+                      清除筛选
+                    </button>
                   </div>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
 
-                  <!-- 根据活动类型显示不同字段 -->
-                  <!-- 场地活动特有字段 -->
-                  <template v-if="activeFilters.type === 'venue'">
-                    <div class="card-detail">
-                      <i class="el-icon-user detail-icon"></i>
-                      <span class="detail-text">容量: {{ activity.Capacity }}</span>
-                    </div>
-                    <div class="card-detail">
-                      <i class="el-icon-money detail-icon"></i>
-                      <span class="detail-text">花费: {{ activity.Cost }}</span>
-                    </div>
-                    <div class="card-detail">
-                      <i class="el-icon-price-tag detail-icon"></i>
-                      <span class="detail-text">收费: {{ activity.Fee }}</span>
-                    </div>
-                    <div class="card-detail">
-                      <i class="el-icon-user-solid detail-icon"></i>
-                      <span class="detail-text">参与人数: {{ activity.Participants }}</span>
-                    </div>
-                  </template>
+        <!-- 筛选按钮区域 -->
+        <div class="filter-buttons-section">
+          <div class="filter-buttons">
+            <button type="button"
+                    @click="applyFilter('type', 'venue')"
+                    :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.type === 'venue' }]">
+              场地活动
+            </button>
+            <button type="button"
+                    @click="applyFilter('type', 'promotion')"
+                    :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.type === 'promotion' }]">
+              促销活动
+            </button>
 
-                  <!-- 促销活动特有字段 -->
-                  <template v-else-if="activeFilters.type === 'promotion'">
-                    <div class="card-detail">
-                      <i class="el-icon-document detail-icon"></i>
-                      <span class="detail-text">描述: {{ activity.Description }}</span>
-                    </div>
-                  </template>
+            <button type="button"
+                    @click="applyFilter('status', 'upcoming')"
+                    :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.status === 'upcoming' }]">
+              未开始
+            </button>
+            <button type="button"
+                    @click="applyFilter('status', 'ongoing')"
+                    :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.status === 'ongoing' }]">
+              进行中
+            </button>
+            <button type="button"
+                    @click="applyFilter('status', 'completed')"
+                    :class="['custom-button', 'custom-button--secondary', { 'is-active': activeFilters.status === 'completed' }]">
+              已结束
+            </button>
 
+          </div>
+        </div>
+      </div>
+
+      <!-- 内容区域 -->
+      <div class="content-section">
+        <div v-if="loading" class="empty-state">
+          <i class="el-icon-loading"></i>
+          <p>加载中...</p>
+        </div>
+
+        <div v-else-if="activities.length === 0" class="empty-state">
+          <i class="el-icon-date"></i>
+          <p>暂无活动数据</p>
+        </div>
+
+        <div v-else>
+          <div class="card-container">
+            <el-row :gutter="20">
+              <el-col v-for="activity in activities" :key="activity.EVENT_ID" :span="8" style="margin-bottom: 20px;">
+                <div class="activity-card">
+                  <div class="card-header">
+                    <div class="card-title">{{ activity.EVENT_NAME }}</div>
+                  </div>
+                  <div class="card-content">
+                    <!-- 时间 -->
+                    <div class="card-detail">
+                      <i class="el-icon-time detail-icon"></i>
+                      <span class="detail-text">时间: {{ formatDate(activity.EVENT_START) }} 至 {{ formatDate(activity.EVENT_END) }}</span>
+                    </div>
+
+                    <!-- 根据活动类型显示不同字段 -->
+                    <!-- 场地活动特有字段 -->
+                    <template v-if="activeFilters.type === 'venue'">
+                      <div class="card-detail">
+                        <i class="el-icon-user detail-icon"></i>
+                        <span class="detail-text">容量: {{ activity.Capacity }}</span>
+                      </div>
+                      <div class="card-detail">
+                        <i class="el-icon-money detail-icon"></i>
+                        <span class="detail-text">花费: {{ activity.Cost }}</span>
+                      </div>
+                      <div class="card-detail">
+                        <i class="el-icon-price-tag detail-icon"></i>
+                        <span class="detail-text">收费: {{ activity.Fee }}</span>
+                      </div>
+                      <div class="card-detail">
+                        <i class="el-icon-user-solid detail-icon"></i>
+                        <span class="detail-text">参与人数: {{ activity.Participants }}</span>
+                      </div>
+                    </template>
+
+                    <!-- 促销活动特有字段 -->
+                    <template v-else-if="activeFilters.type === 'promotion'">
+                      <div class="card-detail">
+                        <i class="el-icon-document detail-icon"></i>
+                        <span class="detail-text">描述: {{ activity.Description }}</span>
+                      </div>
+                    </template>
+
+                  </div>
+                  <div class="card-footer">
+                    <span :class="getStatusClass(activity.status)">
+                      {{ getStatusText(activity.status) }}
+                    </span>
+                  </div>
                 </div>
-                <div class="card-footer">
-                  <span :class="getStatusClass(activity.status)">
-                    {{ getStatusText(activity.status) }}
-                  </span>
-                </div>
-              </div>
-            </el-col>
-          </el-row>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分页控件 -->
+      <div v-if="total > pageSize" class="pagination-container">
+        <div class="pagination-info">
+          共 {{ total }} 条，第 {{ currentPage }} / {{ totalPages }} 页
+        </div>
+        <div class="pagination-controls">
+          <button class="custom-button custom-button--secondary"
+                  :disabled="currentPage <= 1"
+                  @click="handlePrevPage">
+            上一页
+          </button>
+          <button class="custom-button custom-button--secondary"
+                  :disabled="currentPage >= totalPages"
+                  @click="handleNextPage"
+                  style="margin-left: 10px;">
+            下一页
+          </button>
         </div>
       </div>
     </div>
-
-    <!-- 分页控件 -->
-    <div v-if="total > pageSize" class="pagination-container">
-      <div class="pagination-info">
-        共 {{ total }} 条，第 {{ currentPage }} / {{ totalPages }} 页
-      </div>
-      <div class="pagination-controls">
-        <button
-          class="custom-button custom-button--secondary"
-          :disabled="currentPage <= 1"
-          @click="handlePrevPage"
-        >
-          上一页
-        </button>
-        <button
-          class="custom-button custom-button--secondary"
-          :disabled="currentPage >= totalPages"
-          @click="handleNextPage"
-          style="margin-left: 10px;"
-        >
-          下一页
-        </button>
-      </div>
-    </div>
-  </div>
+  </DashboardLayout>
 </template>
 
 <script setup>

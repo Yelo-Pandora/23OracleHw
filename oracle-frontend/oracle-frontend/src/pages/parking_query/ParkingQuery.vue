@@ -1,144 +1,142 @@
 <template>
-  <div class="parking-query">
-    <h2>车位状态查询</h2>
-    
-    <!-- 停车场选择 -->
-    <div class="parking-selector">
-      <label>选择停车场：</label>
-      <select v-model="selectedParkingLot" @change="loadParkingData">
-        <option value="">选择停车场</option>
-        <option v-for="lot in parkingLotOptions" :key="lot.AreaId" :value="String(lot.AreaId)">
-          {{ lot.ParkingLotName || (`停车场${lot.AreaId}`) }}
-        </option>
-      </select>
-    </div>
+  <DashboardLayout>
+    <div class="parking-query">
+      <h2>车位状态查询</h2>
 
-    <!-- 停车场概述 -->
-    <div class="parking-overview">
-      <h3>停车场概述 - {{ getSelectedParkingLotName() }}</h3>
-      <div class="overview-stats">
-        <div class="stat-item">
-          <span class="stat-label">总车位数：</span>
-          <span class="stat-value">{{ parkingSummary.totalSpaces }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">已占用：</span>
-          <span class="stat-value occupied">{{ parkingSummary.occupiedSpaces }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">空闲：</span>
-          <span class="stat-value available">{{ parkingSummary.availableSpaces }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">占用率：</span>
-          <span class="stat-value">{{ (parkingSummary.occupancyRate * 100).toFixed(1) }}%</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">停车场状态：</span>
-          <span class="stat-value" :class="getStatusClass(parkingSummary.status)">{{ parkingSummary.status }}</span>
+      <!-- 停车场选择 -->
+      <div class="parking-selector">
+        <label>选择停车场：</label>
+        <select v-model="selectedParkingLot" @change="loadParkingData">
+          <option value="">选择停车场</option>
+          <option v-for="lot in parkingLotOptions" :key="lot.AreaId" :value="String(lot.AreaId)">
+            {{ lot.ParkingLotName || (`停车场${lot.AreaId}`) }}
+          </option>
+        </select>
+      </div>
+
+      <!-- 停车场概述 -->
+      <div class="parking-overview">
+        <h3>停车场概述 - {{ getSelectedParkingLotName() }}</h3>
+        <div class="overview-stats">
+          <div class="stat-item">
+            <span class="stat-label">总车位数：</span>
+            <span class="stat-value">{{ parkingSummary.totalSpaces }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">已占用：</span>
+            <span class="stat-value occupied">{{ parkingSummary.occupiedSpaces }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">空闲：</span>
+            <span class="stat-value available">{{ parkingSummary.availableSpaces }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">占用率：</span>
+            <span class="stat-value">{{ (parkingSummary.occupancyRate * 100).toFixed(1) }}%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">停车场状态：</span>
+            <span class="stat-value" :class="getStatusClass(parkingSummary.status)">{{ parkingSummary.status }}</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 停车场平面图 -->
-    <div class="parking-layout">
-      <h3>停车场平面图</h3>
-      <div class="legend">
-        <div class="legend-item">
-          <div class="legend-color available"></div>
-          <span>空闲</span>
+      <!-- 停车场平面图 -->
+      <div class="parking-layout">
+        <h3>停车场平面图</h3>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color available"></div>
+            <span>空闲</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color occupied"></div>
+            <span>占用</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color maintenance"></div>
+            <span>维护中</span>
+          </div>
         </div>
-        <div class="legend-item">
-          <div class="legend-color occupied"></div>
-          <span>占用</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color maintenance"></div>
-          <span>维护中</span>
-        </div>
-      </div>
-      
-      <!-- SVG停车场布局 -->
-      <div class="svg-container">
-        <svg :viewBox="`0 0 ${canvasSize.w} ${canvasSize.h}`" preserveAspectRatio="xMidYMid meet" @click="onSvgClick">
-          <defs>
-            <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto-start-reverse">
-              <path d="M0,0 L0,6 L9,3 z" fill="#666" />
-            </marker>
-          </defs>
-          
-          <!-- 背景 -->
-          <rect :width="canvasSize.w" :height="canvasSize.h" fill="#f7f7f7" stroke="#666" stroke-width="2" />
-          
-          <!-- 走道/过道 -->
-          <g class="walkways">
-            <rect :x="walk.inner.x" :y="walk.inner.y" :width="walk.inner.w" :height="walk.inner.h" 
-                  fill="none" stroke="#bbb" stroke-width="1.5" stroke-dasharray="6 6" />
-            <line v-for="(x,i) in walk.vertical" :key="'wv-'+i" 
-                  :x1="x" :y1="walk.inner.y" :x2="x" :y2="walk.inner.y + walk.inner.h" 
-                  stroke="#bbb" stroke-dasharray="8 8" />
-            <line v-for="(y,i) in walk.horizontal" :key="'wh-'+i" 
-                  :x1="walk.inner.x" :y1="y" :x2="walk.inner.x + walk.inner.w" :y2="y" 
-                  stroke="#bbb" stroke-dasharray="8 8" />
-          </g>
-          
-          <!-- 停车位网格 -->
-          <g class="parking-slots">
-            <g v-for="slot in parkingSlots" :key="slot.id">
-              <polygon
-                :points="getSlotPoints(slot)"
-                :fill="getSlotFill(slot)"
-                stroke="#222" 
-                stroke-width="1"
-                @click.stop="showSpaceDetail(slot)"
-                @mouseenter="hoveredSlot = slot"
-                @mouseleave="hoveredSlot = null"
-                style="cursor: pointer;"
-              />
-              <text 
-                :x="slot.x + slot.w/2" 
-                :y="slot.y + slot.h/2" 
-                text-anchor="middle" 
-                dominant-baseline="middle" 
-                fill="#fff" 
-                font-size="10"
-                font-weight="bold"
-              >
-                {{ slot.no }}
-              </text>
+
+        <!-- SVG停车场布局 -->
+        <div class="svg-container">
+          <svg :viewBox="`0 0 ${canvasSize.w} ${canvasSize.h}`" preserveAspectRatio="xMidYMid meet" @click="onSvgClick">
+            <defs>
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto-start-reverse">
+                <path d="M0,0 L0,6 L9,3 z" fill="#666" />
+              </marker>
+            </defs>
+
+            <!-- 背景 -->
+            <rect :width="canvasSize.w" :height="canvasSize.h" fill="#f7f7f7" stroke="#666" stroke-width="2" />
+
+            <!-- 走道/过道 -->
+            <g class="walkways">
+              <rect :x="walk.inner.x" :y="walk.inner.y" :width="walk.inner.w" :height="walk.inner.h"
+                    fill="none" stroke="#bbb" stroke-width="1.5" stroke-dasharray="6 6" />
+              <line v-for="(x,i) in walk.vertical" :key="'wv-'+i"
+                    :x1="x" :y1="walk.inner.y" :x2="x" :y2="walk.inner.y + walk.inner.h"
+                    stroke="#bbb" stroke-dasharray="8 8" />
+              <line v-for="(y,i) in walk.horizontal" :key="'wh-'+i"
+                    :x1="walk.inner.x" :y1="y" :x2="walk.inner.x + walk.inner.w" :y2="y"
+                    stroke="#bbb" stroke-dasharray="8 8" />
             </g>
-          </g>
-          
-          <!-- 入口和出口标识 -->
-          <g class="entrance-exit">
-            <rect x="20" y="20" width="80" height="30" fill="#4CAF50" stroke="#2E7D32" stroke-width="2" rx="5" />
-            <text x="60" y="37" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="12" font-weight="bold">入口</text>
-            
-            <rect x="1100" y="20" width="80" height="30" fill="#F44336" stroke="#C62828" stroke-width="2" rx="5" />
-            <text x="1140" y="37" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="12" font-weight="bold">出口</text>
-          </g>
-          
-          <!-- 车道指示 -->
-          <g class="road-indicators">
-            <line x1="0" y1="50" x2="1200" y2="50" stroke="#666" stroke-width="3" stroke-dasharray="10 5" />
-            <text x="600" y="40" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10">主车道</text>
-          </g>
-        </svg>
-        
-        <!-- 悬停提示 -->
-        <div v-if="hoveredSlot" class="tooltip" :style="{ left: tooltipPosition.x + 'px', top: tooltipPosition.y + 'px' }">
-          <div><b>车位编号：</b>{{ hoveredSlot.id }}</div>
-          <div><b>状态：</b>{{ hoveredSlot.occupied ? '占用' : '空闲' }}</div>
-          <div v-if="hoveredSlot.occupied && hoveredSlot.licensePlate">
-            <b>车牌号：</b>{{ hoveredSlot.licensePlate }}
-          </div>
-          <div v-if="hoveredSlot.occupied && hoveredSlot.parkStart">
-            <b>入场时间：</b>{{ formatDateTime(hoveredSlot.parkStart) }}
+
+            <!-- 停车位网格 -->
+            <g class="parking-slots">
+              <g v-for="slot in parkingSlots" :key="slot.id">
+                <polygon :points="getSlotPoints(slot)"
+                         :fill="getSlotFill(slot)"
+                         stroke="#222"
+                         stroke-width="1"
+                         @click.stop="showSpaceDetail(slot)"
+                         @mouseenter="hoveredSlot = slot"
+                         @mouseleave="hoveredSlot = null"
+                         style="cursor: pointer;" />
+                <text :x="slot.x + slot.w/2"
+                      :y="slot.y + slot.h/2"
+                      text-anchor="middle"
+                      dominant-baseline="middle"
+                      fill="#fff"
+                      font-size="10"
+                      font-weight="bold">
+                  {{ slot.no }}
+                </text>
+              </g>
+            </g>
+
+            <!-- 入口和出口标识 -->
+            <g class="entrance-exit">
+              <rect x="20" y="20" width="80" height="30" fill="#4CAF50" stroke="#2E7D32" stroke-width="2" rx="5" />
+              <text x="60" y="37" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="12" font-weight="bold">入口</text>
+
+              <rect x="1100" y="20" width="80" height="30" fill="#F44336" stroke="#C62828" stroke-width="2" rx="5" />
+              <text x="1140" y="37" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="12" font-weight="bold">出口</text>
+            </g>
+
+            <!-- 车道指示 -->
+            <g class="road-indicators">
+              <line x1="0" y1="50" x2="1200" y2="50" stroke="#666" stroke-width="3" stroke-dasharray="10 5" />
+              <text x="600" y="40" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10">主车道</text>
+            </g>
+          </svg>
+
+          <!-- 悬停提示 -->
+          <div v-if="hoveredSlot" class="tooltip" :style="{ left: tooltipPosition.x + 'px', top: tooltipPosition.y + 'px' }">
+            <div><b>车位编号：</b>{{ hoveredSlot.id }}</div>
+            <div><b>状态：</b>{{ hoveredSlot.occupied ? '占用' : '空闲' }}</div>
+            <div v-if="hoveredSlot.occupied && hoveredSlot.licensePlate">
+              <b>车牌号：</b>{{ hoveredSlot.licensePlate }}
+            </div>
+            <div v-if="hoveredSlot.occupied && hoveredSlot.parkStart">
+              <b>入场时间：</b>{{ formatDateTime(hoveredSlot.parkStart) }}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
