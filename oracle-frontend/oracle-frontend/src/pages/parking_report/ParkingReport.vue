@@ -21,9 +21,9 @@
           <label>停车场：</label>
           <select v-model="reportParams.areaId" class="area-select">
             <option value="">全部</option>
-            <option value="1001">停车场1001</option>
-            <option value="1002">停车场1002</option>
-            <option value="1003">停车场1003</option>
+            <option v-for="lot in parkingLotOptions" :key="lot.AreaId" :value="String(lot.AreaId)">
+              {{ lot.ParkingLotName || (`停车场${lot.AreaId}`) }}
+            </option>
           </select>
         </div>
 
@@ -138,6 +138,23 @@ const reportData = ref(null)
 const loading = ref(false)
 const hasSearched = ref(false)
 const errorMessage = ref('')
+
+// 动态加载停车场下拉选项
+const parkingLotOptions = ref([])
+const loadParkingLotOptions = async () => {
+  try {
+    const resp = await fetch('/api/Parking/ParkingLots')
+    if (resp.ok) {
+      const data = await resp.json()
+      const list = (data.data || data.Data || data) || []
+      parkingLotOptions.value = list
+    } else {
+      console.error('加载停车场列表失败，状态码:', resp.status)
+    }
+  } catch (e) {
+    console.error('加载停车场列表出错:', e)
+  }
+}
 
 const chartOptions = {
   responsive: true,
@@ -378,6 +395,9 @@ onMounted(() => {
   const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
   reportParams.value.endDate = today.toISOString().split('T')[0]
   reportParams.value.startDate = weekAgo.toISOString().split('T')[0]
+  // 先拉取停车场下拉选项
+  loadParkingLotOptions()
+  // 默认生成一次（全部停车场）
   generateReport()
 })
 </script>
