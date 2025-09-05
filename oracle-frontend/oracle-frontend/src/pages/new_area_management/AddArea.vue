@@ -49,7 +49,11 @@
         <div v-if="formData.category === 'RETAIL'">
           <div class="form-group">
             <label for="rentStatus">租赁状态</label>
-            <input type="text" id="rentStatus" v-model="formData.rentStatus" maxlength="50">
+            <select id="rentStatus" v-model="formData.rentStatus">
+              <option value="">未租赁</option>
+              <option value="租赁中">租赁中</option>
+              <option value="已租赁">已租赁</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="baseRent">基础租金</label>

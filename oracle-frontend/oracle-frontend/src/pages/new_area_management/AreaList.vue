@@ -16,12 +16,11 @@
           </select>
         </div>
         <div class="form-group">
-          <label>最小区域面积:</label>
-          <input type="number" v-model="searchParams.areaMin" min="0" step="0.01">
-        </div>
-        <div class="form-group">
-          <label>最大区域面积:</label>
-          <input type="number" v-model="searchParams.areaMax" min="0" step="0.01">
+          <label>区域面积范围:</label>
+          <div style="display:flex; gap:8px;">
+            <input type="number" v-model.number="searchParams.areaMin" placeholder="最小" min="0" step="0.01">
+            <input type="number" v-model.number="searchParams.areaMax" placeholder="最大" min="0" step="0.01">
+          </div>
         </div>
         <div class="form-group">
           <label>区域类型:</label>
@@ -33,13 +32,53 @@
             <option value="OTHER">其他</option>
           </select>
         </div>
-        <button type="submit" class="btn-search">查询</button>
-        <button type="button" @click="resetSearch" class="btn-reset">重置</button>
+        <!-- category specific quick filters -->
+        <div v-if="searchParams.category === 'RETAIL'" class="form-group">
+          <label>基础租金范围:</label>
+          <div style="display:flex; gap:8px;">
+            <input type="number" v-model.number="searchParams.baseRentMin" placeholder="最小" min="0" step="0.01">
+            <input type="number" v-model.number="searchParams.baseRentMax" placeholder="最大" min="0" step="0.01">
+          </div>
+        </div>
+        <div v-if="searchParams.category === 'RETAIL'" class="form-group">
+          <label>租赁状态:</label>
+          <select v-model="searchParams.rentStatus">
+            <option value="ALL">全部</option>
+            <option value="UNRENTED">未租赁</option>
+            <option value="租赁中">租赁中</option>
+            <option value="已租赁">已租赁</option>
+          </select>
+        </div>
+        <div v-if="searchParams.category === 'EVENT'" class="form-group">
+          <label>场地费范围:</label>
+          <div style="display:flex; gap:8px;">
+            <input type="number" v-model.number="searchParams.areaFeeMin" placeholder="最小" min="0" step="0.01">
+            <input type="number" v-model.number="searchParams.areaFeeMax" placeholder="最大" min="0" step="0.01">
+          </div>
+        </div>
+        <div v-if="searchParams.category === 'EVENT'" class="form-group">
+          <label>容量范围:</label>
+          <div style="display:flex; gap:8px;">
+            <input type="number" v-model.number="searchParams.capacityMin" placeholder="最小" min="0">
+            <input type="number" v-model.number="searchParams.capacityMax" placeholder="最大" min="0">
+          </div>
+        </div>
+        <div v-if="searchParams.category === 'PARKING'" class="form-group">
+          <label>停车费范围:</label>
+          <div style="display:flex; gap:8px;">
+            <input type="number" v-model.number="searchParams.parkingFeeMin" placeholder="最小" min="0" step="0.01">
+            <input type="number" v-model.number="searchParams.parkingFeeMax" placeholder="最大" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="form-actions-row">
+          <button type="submit" class="btn-search">查询</button>
+          <button type="button" @click="resetSearch" class="btn-reset">重置</button>
+        </div>
       </form>
     </div>
 
     <div class="results-section">
-      <h3>查询结果</h3>
+      <h3>查询结果（点击表头以排序）</h3>
       <div v-if="loading" class="loading">加载中...</div>
       <div v-else-if="areas.length === 0" class="no-results">
         暂无区域数据
@@ -47,21 +86,21 @@
       <table v-else class="area-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>类别</th>
-            <th>是否空置</th>
-            <th>面积</th>
-            <th>基础租金</th>
-            <th>租赁状态</th>
-            <th>场地费</th>
-            <th>容量</th>
-            <th>停车费</th>
-            <th>类型(其他)</th>
+            <th @click="toggleSort('AREA_ID')" class="sortable">ID <span v-if="sort.key==='AREA_ID'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
+            <th @click="toggleSort('CATEGORY')" class="sortable">类别 <span v-if="sort.key==='CATEGORY'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
+            <th @click="toggleSort('ISEMPTY')" class="sortable">是否空置 <span v-if="sort.key==='ISEMPTY'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
+            <th @click="toggleSort('AREA_SIZE')" class="sortable">面积 <span v-if="sort.key==='AREA_SIZE'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
+            <th @click="toggleSort('BaseRent')" class="sortable">基础租金 <span v-if="sort.key==='BaseRent'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
+            <th @click="toggleSort('RentStatus')" class="sortable">租赁状态 <span v-if="sort.key==='RentStatus'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
+            <th @click="toggleSort('AreaFee')" class="sortable">场地费 <span v-if="sort.key==='AreaFee'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
+            <th @click="toggleSort('Capacity')" class="sortable">容量 <span v-if="sort.key==='Capacity'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
+            <th @click="toggleSort('ParkingFee')" class="sortable">停车费 <span v-if="sort.key==='ParkingFee'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
+            <th @click="toggleSort('Type')" class="sortable">类型(其他) <span v-if="sort.key==='Type'">{{ sort.order === 'asc' ? '▲' : (sort.order === 'desc' ? '▼' : '') }}</span></th>
             <th v-if="userStore.role === '员工'">操作</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="a in areas" :key="a.AREA_ID">
+          <tr v-for="a in displayedAreas" :key="a.AREA_ID">
             <td>{{ a.AREA_ID }}</td>
             <td>{{ a.CATEGORY || '-' }}</td>
             <td>{{ a.ISEMPTY === 1 ? '是' : (a.ISEMPTY === 0 ? '否' : '-') }}</td>
@@ -84,6 +123,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useUserStore } from '@/user/user';
 import axios from 'axios';
 import alert from '@/utils/alert';
@@ -95,6 +135,7 @@ const userStore = useUserStore();
 const router = useRouter();
 const areas = ref([]);
 const loading = ref(false);
+const sort = reactive({ key: '', order: '' }); // order: 'asc' | 'desc' | ''
 
 // 前端搜索参数：与后端 AreasController 匹配
 const searchParams = reactive({
@@ -103,6 +144,16 @@ const searchParams = reactive({
   isEmpty: '', // 对应后端的 isEmpty (0/1)
   areaMin: null, // 前端本地过滤
   areaMax: null
+  // category specific filters
+  , baseRentMin: null
+  , baseRentMax: null
+  , rentStatus: 'ALL'
+  , areaFeeMin: null
+  , areaFeeMax: null
+  , capacityMin: null
+  , capacityMax: null
+  , parkingFeeMin: null
+  , parkingFeeMax: null
 });
 
 // 检查登录状态
@@ -136,14 +187,69 @@ const searchareas = async () => {
     }
 
     // 前端根据面积 min/max 做二次过滤（后端接口未提供范围筛选）
+    // 基本面积范围过滤
     if (searchParams.areaMin != null || searchParams.areaMax != null) {
       areas.value = areas.value.filter(a => {
-        const size = a.AREA_SIZE || 0;
-        if (searchParams.areaMin != null && size < searchParams.areaMin) return false;
-        if (searchParams.areaMax != null && size > searchParams.areaMax) return false;
+        const size = a.AREA_SIZE != null ? Number(a.AREA_SIZE) : null;
+        if (searchParams.areaMin != null && (size == null || size < searchParams.areaMin)) return false;
+        if (searchParams.areaMax != null && (size == null || size > searchParams.areaMax)) return false;
         return true;
       });
     }
+
+    // RETAIL 特定过滤
+    if (searchParams.category === 'RETAIL') {
+      if (searchParams.baseRentMin != null || searchParams.baseRentMax != null) {
+        areas.value = areas.value.filter(a => {
+          const rent = a.BaseRent != null ? Number(a.BaseRent) : null;
+          if (searchParams.baseRentMin != null && (rent == null || rent < searchParams.baseRentMin)) return false;
+          if (searchParams.baseRentMax != null && (rent == null || rent > searchParams.baseRentMax)) return false;
+          return true;
+        });
+      }
+      // rentStatus: 'ALL' | 'UNRENTED' | '租赁中' | '已租赁'
+      if (searchParams.rentStatus && searchParams.rentStatus !== 'ALL') {
+        if (searchParams.rentStatus === 'UNRENTED') {
+          areas.value = areas.value.filter(a => !a.RentStatus);
+        } else {
+          areas.value = areas.value.filter(a => (a.RentStatus || '') === searchParams.rentStatus);
+        }
+      }
+    }
+
+    // EVENT 特定过滤
+    if (searchParams.category === 'EVENT') {
+      if (searchParams.areaFeeMin != null || searchParams.areaFeeMax != null) {
+        areas.value = areas.value.filter(a => {
+          const fee = a.AreaFee != null ? Number(a.AreaFee) : null;
+          if (searchParams.areaFeeMin != null && (fee == null || fee < searchParams.areaFeeMin)) return false;
+          if (searchParams.areaFeeMax != null && (fee == null || fee > searchParams.areaFeeMax)) return false;
+          return true;
+        });
+      }
+      if (searchParams.capacityMin != null || searchParams.capacityMax != null) {
+        areas.value = areas.value.filter(a => {
+          const cap = a.Capacity != null ? Number(a.Capacity) : null;
+          if (searchParams.capacityMin != null && (cap == null || cap < searchParams.capacityMin)) return false;
+          if (searchParams.capacityMax != null && (cap == null || cap > searchParams.capacityMax)) return false;
+          return true;
+        });
+      }
+    }
+
+    // PARKING 特定过滤
+    if (searchParams.category === 'PARKING') {
+      if (searchParams.parkingFeeMin != null || searchParams.parkingFeeMax != null) {
+        areas.value = areas.value.filter(a => {
+          const pfee = a.ParkingFee != null ? Number(a.ParkingFee) : null;
+          if (searchParams.parkingFeeMin != null && (pfee == null || pfee < searchParams.parkingFeeMin)) return false;
+          if (searchParams.parkingFeeMax != null && (pfee == null || pfee > searchParams.parkingFeeMax)) return false;
+          return true;
+        });
+      }
+    }
+
+    // apply sorting later via computed displayedAreas
   } catch (error) {
     console.error('查询区域失败:', error);
     if (error.response && error.response.status === 401) {
@@ -170,13 +276,63 @@ const resetSearch = () => {
   searchParams.isEmpty = '';
   searchParams.areaMin = null;
   searchParams.areaMax = null;
+  searchParams.baseRentMin = null;
+  searchParams.baseRentMax = null;
+  searchParams.rentStatus = 'ALL';
+  searchParams.areaFeeMin = null;
+  searchParams.areaFeeMax = null;
+  searchParams.capacityMin = null;
+  searchParams.capacityMax = null;
+  searchParams.parkingFeeMin = null;
+  searchParams.parkingFeeMax = null;
   areas.value = [];
+  sort.key = '';
+  sort.order = '';
 };
 
 const editarea = (collab) => {
   // 直接把列表中的对象发给父组件/编辑组件，避免再次请求接口回显
   emit('edit-area', collab);
 };
+
+const toggleSort = (key) => {
+  if (sort.key !== key) {
+    sort.key = key;
+    sort.order = 'asc';
+    return;
+  }
+  // same key -> cycle asc -> desc -> ''
+  if (sort.order === 'asc') sort.order = 'desc';
+  else if (sort.order === 'desc') { sort.key = ''; sort.order = ''; }
+  else sort.order = 'asc';
+};
+
+const displayedAreas = computed(() => {
+  const list = Array.isArray(areas.value) ? areas.value.slice() : [];
+  if (!sort.key) return list;
+
+  const key = sort.key;
+  const order = sort.order === 'asc' ? 1 : -1;
+
+  list.sort((a, b) => {
+    const va = a[key];
+    const vb = b[key];
+    // normalize null/undefined
+    if (va == null && vb == null) return 0;
+    if (va == null) return -1 * order;
+    if (vb == null) return 1 * order;
+
+    // numeric compare if both are numbers
+    const na = Number(va);
+    const nb = Number(vb);
+    if (!isNaN(na) && !isNaN(nb)) return (na - nb) * order;
+
+    // fallback to string compare
+    return String(va).localeCompare(String(vb)) * order;
+  });
+
+  return list;
+});
 
 // 组件挂载时自动加载数据
 onMounted(() => {
@@ -216,8 +372,31 @@ onMounted(() => {
   border-radius: 4px;
 }
 
+.form-group > div[style] input {
+  width: 100%;
+}
+
+/* make inline range inputs more compact on wider grids */
+.form-group > div[style] {
+  display: flex;
+  gap: 8px;
+}
+.form-group > div[style] input[type="number"] {
+  max-width: 140px;
+}
+
+.form-actions-row {
+  grid-column: 1 / -1; /* span full width of the grid */
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start; /* keep buttons at start (left) */
+  align-items: center;
+  padding-top: 6px;
+}
+
 .btn-search, .btn-reset {
-  padding: 8px 15px;
+  padding: 10px 18px;
+  min-width: 260px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -246,6 +425,11 @@ onMounted(() => {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #ddd;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
 }
 
 .area-table th {

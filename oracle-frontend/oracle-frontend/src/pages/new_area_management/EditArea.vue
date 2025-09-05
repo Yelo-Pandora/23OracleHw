@@ -1,24 +1,28 @@
 <template>
   <div class="edit-area">
     <h2>编辑区域信息</h2>
-    <div v-if="loading" class="loading">加载中...</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
-    <form v-else @submit.prevent="submitForm" class="area-form">
+
+    <!-- 权限检查：只有 authority 为 1 或 2 的用户可以编辑 -->
+    <div v-if="!hasEditAccess" class="no-access">
+      <h3>无权访问</h3>
+      <p>您没有修改或删除区域的权限。如需操作请联系管理员。</p>
+      <div class="no-access-actions">
+        <button class="btn-cancel" @click="cancel">返回</button>
+      </div>
+    </div>
+
+    <div v-else>
+      <div v-if="loading" class="loading">加载中...</div>
+      <div v-else-if="error" class="error">{{ error }}</div>
+      <form v-else @submit.prevent="submitForm" class="area-form">
       <div class="form-group">
         <label>区域ID</label>
         <div class="readonly-field">{{ formData.areaId }}</div>
       </div>
 
       <div class="form-group">
-        <label for="category">区域类别 <span class="required">*</span></label>
-        <select id="category" v-model="formData.category" :class="{ 'error': errors.category }">
-          <option value="">请选择</option>
-          <option value="RETAIL">商铺</option>
-          <option value="PARKING">停车</option>
-          <option value="EVENT">活动</option>
-          <option value="OTHER">其他</option>
-        </select>
-        <div class="error-message" v-if="errors.category">{{ errors.category }}</div>
+        <label>区域类别</label>
+        <div class="readonly-field">{{ formData.category }}</div>
       </div>
 
       <div class="form-group">
@@ -34,32 +38,41 @@
         <input type="number" id="areaSize" v-model.number="formData.areaSize" min="0" step="0.01">
       </div>
 
-      <div class="form-group">
+      <!-- RETAIL only -->
+      <div v-if="formData.category === 'RETAIL'" class="form-group">
         <label for="baseRent">基础租金</label>
         <input type="number" id="baseRent" v-model.number="formData.baseRent" min="0" step="0.01">
       </div>
 
-      <div class="form-group">
+      <div v-if="formData.category === 'RETAIL'" class="form-group">
         <label for="rentStatus">租赁状态</label>
-        <input type="text" id="rentStatus" v-model="formData.rentStatus">
+        <select id="rentStatus" v-model="formData.rentStatus">
+          <option value="">未租赁</option>
+          <option value="租赁中">租赁中</option>
+          <option value="已租赁">已租赁</option>
+        </select>
       </div>
 
-      <div class="form-group">
+
+      <!-- EVENT only -->
+      <div v-if="formData.category === 'EVENT'" class="form-group">
         <label for="areaFee">场地费</label>
         <input type="number" id="areaFee" v-model.number="formData.areaFee" min="0" step="0.01">
       </div>
 
-      <div class="form-group">
+      <div v-if="formData.category === 'EVENT'" class="form-group">
         <label for="capacity">容量</label>
         <input type="number" id="capacity" v-model.number="formData.capacity" min="0" step="1">
       </div>
 
-      <div class="form-group">
+      <!-- PARKING only -->
+      <div v-if="formData.category === 'PARKING'" class="form-group">
         <label for="parkingFee">停车费</label>
         <input type="number" id="parkingFee" v-model.number="formData.parkingFee" min="0" step="0.01">
       </div>
 
-      <div class="form-group">
+      <!-- OTHER only -->
+      <div v-if="formData.category === 'OTHER'" class="form-group">
         <label for="type">类型(其他)</label>
         <input type="text" id="type" v-model="formData.type">
       </div>
@@ -78,12 +91,13 @@
           {{ deleting ? '删除中...' : '删除' }}
         </button>
       </div>
-    </form>
+      </form>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, computed, watch } from 'vue';
 import { useUserStore } from '@/user/user';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
@@ -114,10 +128,18 @@ const formData = reactive({
   type: ''
 });
 
+// CATEGORY is read-only in this editor (display-only like areaId)
+
 const errors = reactive({});
 const loading = ref(true);
 const submitting = ref(false);
 const error = ref('');
+
+// 只有 authority 为 1 或 2 的用户可以编辑或删除
+const hasEditAccess = computed(() => {
+  const auth = Number(userStore.userInfo?.authority);
+  return auth === 1 || auth === 2;
+});
 
 // 检查登录状态
 const checkAuth = () => {
@@ -142,10 +164,46 @@ const populateFromProp = (a) => {
   formData.parkingFee = a.ParkingFee ?? null;
   formData.type = a.Type ?? '';
   loading.value = false;
+  // CATEGORY is display-only; no select sync needed
 };
 
 // 初始用传入的 prop 填充
 populateFromProp(props.area);
+
+// 当 category 变化时，清空不相关字段（只能编辑与当前类型相关的字段）
+watch(() => formData.category, (newCat, oldCat) => {
+  // allowed fields per category
+  const keep = new Set();
+  keep.add('areaId');
+  keep.add('category');
+  keep.add('isEmpty');
+  keep.add('areaSize');
+
+  if (newCat === 'RETAIL') {
+    keep.add('baseRent');
+    keep.add('rentStatus');
+  } else if (newCat === 'EVENT') {
+    keep.add('areaFee');
+    keep.add('capacity');
+  } else if (newCat === 'PARKING') {
+    keep.add('parkingFee');
+  } else if (newCat === 'OTHER') {
+    keep.add('type');
+  }
+
+  // fields to potentially clear
+  const maybeClear = ['baseRent', 'rentStatus', 'areaFee', 'capacity', 'parkingFee', 'type'];
+  for (const f of maybeClear) {
+    if (!keep.has(f)) {
+      // clear to appropriate empty value
+      if (f === 'rentStatus' || f === 'type') formData[f] = '';
+      else formData[f] = null;
+    }
+  }
+});
+
+// watch the select-bound category and confirm before applying change
+// CATEGORY cannot be changed here, so no watch/confirmation logic is required
 
 const validateForm = () => {
   let isValid = true;
@@ -163,9 +221,30 @@ const validateForm = () => {
     isValid = false;
   }
 
-  if (formData.baseRent != null && formData.baseRent < 0) {
-    errors.baseRent = '基础租金不能为负数';
-    isValid = false;
+  // only validate fields relevant to current category
+  if (formData.category === 'RETAIL') {
+    if (formData.baseRent != null && formData.baseRent < 0) {
+      errors.baseRent = '基础租金不能为负数';
+      isValid = false;
+    }
+  }
+
+  if (formData.category === 'EVENT') {
+    if (formData.areaFee != null && formData.areaFee < 0) {
+      errors.areaFee = '场地费不能为负数';
+      isValid = false;
+    }
+    if (formData.capacity != null && formData.capacity < 0) {
+      errors.capacity = '容量不能为负数';
+      isValid = false;
+    }
+  }
+
+  if (formData.category === 'PARKING') {
+    if (formData.parkingFee != null && formData.parkingFee < 0) {
+      errors.parkingFee = '停车费不能为负数';
+      isValid = false;
+    }
   }
 
   return isValid;
@@ -173,6 +252,10 @@ const validateForm = () => {
 
 const submitForm = async () => {
   if (!checkAuth()) return;
+  if (!hasEditAccess.value) {
+    await alert('您没有权限修改该区域');
+    return;
+  }
   if (!validateForm()) return;
 
   submitting.value = true;
@@ -183,13 +266,14 @@ const submitForm = async () => {
       AreaId: formData.areaId,
       IsEmpty: formData.isEmpty,
       AreaSize: formData.areaSize,
-      Category: formData.category,
-      RentStatus: formData.rentStatus,
-      BaseRent: formData.baseRent,
-      Capacity: formData.capacity,
-      AreaFee: formData.areaFee,
-      Type: formData.type,
-      ParkingFee: formData.parkingFee
+  Category: formData.category,
+  // only include fields which are relevant to the current category; others are sent as null/empty by our watcher
+  RentStatus: formData.rentStatus,
+  BaseRent: formData.baseRent,
+  Capacity: formData.capacity,
+  AreaFee: formData.areaFee,
+  Type: formData.type,
+  ParkingFee: formData.parkingFee
     };
 
     const operator = encodeURIComponent(userStore.token || '');
@@ -232,6 +316,10 @@ const deleting = ref(false);
 
 const deletearea = async () => {
   if (!checkAuth()) return;
+  if (!hasEditAccess.value) {
+    await alert('您没有权限删除该区域');
+    return;
+  }
   if (!formData.areaId) {
     await alert('无效的区域ID');
     return;
@@ -372,5 +460,24 @@ const emit = defineEmits(['saved', 'cancel', 'deleted']);
 
 .error {
   color: #dc3545;
+}
+
+.no-access {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+.no-access h3 {
+  margin-bottom: 8px;
+}
+.no-access p {
+  color: #666;
+  margin-bottom: 12px;
+}
+.no-access-actions .btn-cancel {
+  padding: 8px 14px;
 }
 </style>
