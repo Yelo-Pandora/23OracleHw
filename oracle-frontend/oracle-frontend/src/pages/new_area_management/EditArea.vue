@@ -252,7 +252,7 @@ const submitForm = async () => {
       const operator = encodeURIComponent(userStore.token || '');
       const url = `/api/Areas/${formData.areaId}?operatorAccountId=${operator}`;
 
-      await axios.patch(url, patchBody);
+      await axios.put(url, patchBody);
 
       await alert('更新成功！');
       emit('saved');
