@@ -6,9 +6,10 @@
     <div class="parking-selector">
       <label>选择停车场：</label>
       <select v-model="selectedParkingLot" @change="loadParkingData">
-        <option value="1001">停车场1001</option>
-        <option value="1002">停车场1002</option>
-        <option value="1003">停车场1003</option>
+        <option value="">选择停车场</option>
+        <option v-for="lot in parkingLotOptions" :key="lot.AreaId" :value="String(lot.AreaId)">
+          {{ lot.ParkingLotName || (`停车场${lot.AreaId}`) }}
+        </option>
       </select>
     </div>
 
@@ -145,10 +146,31 @@ import DashboardLayout from '@/components/BoardLayout.vue';
 import { ref, computed, onMounted } from 'vue'
 
 // 响应式数据
-const selectedParkingLot = ref('1001')
+const selectedParkingLot = ref('')
 const parkingSlots = ref([])
 const hoveredSlot = ref(null)
 const loading = ref(false)
+
+// 动态加载停车场下拉选项
+const loadParkingLotOptions = async () => {
+  try {
+    const resp = await fetch('/api/Parking/ParkingLots')
+    if (resp.ok) {
+      const data = await resp.json()
+      const list = (data.data || data.Data || data) || []
+      parkingLotOptions.value = list
+      if (!selectedParkingLot.value && list.length > 0) {
+        selectedParkingLot.value = String(list[0].AreaId)
+      }
+      // 初次加载完选项后再拉取数据
+      await loadParkingData()
+    } else {
+      console.error('加载停车场列表失败，状态码:', resp.status)
+    }
+  } catch (e) {
+    console.error('加载停车场列表出错:', e)
+  }
+}
 const parkingSummary = ref({
   totalSpaces: 0,
   occupiedSpaces: 0,
@@ -294,7 +316,8 @@ const formatDateTime = (dateTime) => {
 
 // 生命周期
 onMounted(() => {
-  loadParkingData()
+  // 先加载停车场下拉选项，再加载数据
+  loadParkingLotOptions()
 })
 </script>
 
