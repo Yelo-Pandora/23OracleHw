@@ -8,7 +8,7 @@
           <!-- v-for遍历计算出来的路由对象 -->
           <li v-for="route in visibleRoutes"
               :key="route.path"
-              :class="{ active: $route.path === route.path }">
+              :class="{ active: isActiveRoute(route.path) }">
             <!-- 'to'属性直接绑定到路由的path -->
             <router-link :to="route.path">
               <span>{{ route.meta.title }}</span>
@@ -63,28 +63,54 @@
       return roles.includes(userR) || roles.includes(String(userR).toLowerCase()) || roles.includes(normalizedR)
     }
 
-  // 不在侧边栏显示的菜单标题列表（仅影响侧边栏显示，不删除路由）
-  const excludedTitles = ['店铺详情', '商户租金统计报表']
+    // 不在侧边栏显示的菜单标题列表（仅影响侧边栏显示，不删除路由）
+    const excludedTitles = ['店铺详情', '商户租金统计报表']
 
-    return router.options.routes.filter(route => {
-  if (!route.meta || !route.meta.title) return false;
+    
+    const baseList = router.options.routes.filter(route => {
+      if (!route.meta || !route.meta.title) return false;
       if (route.path === '/login') return false; // 明确排除登录页
       if (excludedTitles.includes(route.meta.title)) return false; // 排除特定标题
-  if (normalized === '游客' && route.meta.title === '区域管理') return false;
-  if (normalized === '商户' && route.meta.title === '我的租金') return false;
-  if (normalized === '商户' && route.meta.title === '我的租金统计') return false;
-  if (normalized === '商户' && route.meta.title === '区域管理') return false;
-  // 额外规则：当当前用户是“员工”时，不在侧边栏显示“店铺管理”这一项（store-management）
-  if (normalized === '员工' && route.meta.title === '店铺管理') return false;
-  if (normalized === '员工' && route.meta.title === '区域管理') return false;
-  if (normalized === '员工' && route.meta.title === '工资总支出') return false;
-    if (normalized === '员工' && route.meta.title === '活动查询') return false;
-  if (normalized === '员工' && route.meta.title === '车位查询') return false;
+      if (normalized === '游客' && route.meta.title === '区域管理') return false;
+      if (normalized === '商户' && route.meta.title === '我的租金') return false;
+      if (normalized === '商户' && route.meta.title === '我的租金统计') return false;
+      if (normalized === '商户' && route.meta.title === '区域管理') return false;
+      // 额外规则：当当前用户是“员工”时，不在侧边栏显示“店铺管理”这一项（store-management）
+      if (normalized === '员工' && route.meta.title === '店铺管理') return false;
+      if (normalized === '员工' && route.meta.title === '区域管理') return false;
+      if (normalized === '员工' && route.meta.title === '工资总支出') return false;
+      if (normalized === '员工' && route.meta.title === '活动查询') return false;
+      if (normalized === '员工' && route.meta.title === '车位查询') return false;
       if (!route.meta.role_need) return false
       if (!isAllowed(route.meta.role_need, rawUserRole, normalized)) return false
       return true;
-    });
+    })
+
+    const order = {
+      '商场管理': 10,
+      '停车场管理': 20,
+      '活动管理': 30,
+      '设备管理': 40,
+    }
+    const indexMap = new Map(router.options.routes.map((r, i) => [r.path, i]))
+    baseList.sort((a, b) => {
+      const pa = order[a.meta?.title] ?? 999
+      const pb = order[b.meta?.title] ?? 999
+      if (pa !== pb) return pa - pb
+      // 次级按原始路由声明顺序
+      return (indexMap.get(a.path) ?? 9999) - (indexMap.get(b.path) ?? 9999)
+    })
+
+    return baseList
   });
+
+  const isActiveRoute = (menuPath) => {
+    const current = router.currentRoute.value.path || ''
+    if (menuPath === '/parking-management') {
+      return current === '/parking-management' || current.startsWith('/parking-management/')
+    }
+    return current === menuPath
+  }
 
   function logout() {
     userStore.logout()
