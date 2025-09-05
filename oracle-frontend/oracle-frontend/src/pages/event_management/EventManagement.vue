@@ -1,4 +1,5 @@
 <template>
+  <DashboardLayout>
   <div class="event-management">
     <!-- 活动类型切换 -->
     <div class="event-type-switch">
@@ -16,20 +17,21 @@
       </button>
     </div>
 
-    <!-- 促销活动管理 -->
-    <div v-if="activeTab === 'sale'" class="tab-content">
-      <SaleEventManagement />
-    </div>
-
+      <!-- 促销活动管理 -->
+      <div v-if="activeTab === 'sale'" class="tab-content">
+        <SaleEventManagement />
+      </div>
     <!-- 场地活动管理 -->
     <div v-if="activeTab === 'venue'" class="tab-content">
       <VenueEventManagement />
     </div>
   </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import DashboardLayout from '@/components/BoardLayout.vue';
 import SaleEventManagement from './components/SaleEventManagement.vue'
 import VenueEventManagement from './components/VenueEventManagement.vue'
 

@@ -1,21 +1,31 @@
-<!-- src/App.vue -->
 <template>
   <div class="page-wrapper">
     <div class="background-container"></div>
-    
-    <header class="system-header">
-        <div class="logo"></div>
-        <div class="title">商业综合体管理系统</div>
-    </header>
 
+    <header class="system-header">
+      <img src="@/assets/登录.svg" alt="系统Logo" class="logo">
+      <div class="title">商业综合体管理系统</div>
+    </header>
+    <!-- 切换组件 -->
     <main class="content-center">
-      <LoginBox />
+      <LoginBox v-if="currentView === 'login'"
+                @switchToRegister="currentView = 'register'"
+                @switchToForgotPassword="currentView = 'forgotPassword'" />
+      <RegisterBox v-else-if="currentView === 'register'"
+                   @switchToLogin="currentView = 'login'" />
+      <ForgotPasswordBox v-else-if="currentView === 'forgotPassword'"
+                         @switchToLogin="currentView = 'login'" />
     </main>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import LoginBox from './LoginBox.vue';
+import RegisterBox from './RegisterBox.vue';
+import ForgotPasswordBox from './ForgotBox.vue';
+
+  const currentView = ref('login'); // 控制显示 LoginBox 还是 RegisterBox
 </script>
 
 <style>
@@ -23,6 +33,10 @@ import LoginBox from './LoginBox.vue';
   .page-wrapper {
     height: 100%;
     position: relative;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
   }
 
   .background-container {
@@ -50,8 +64,6 @@ import LoginBox from './LoginBox.vue';
     .system-header .logo {
       width: 40px;
       height: 40px;
-      background-color: #007BFF;
-      border-radius: 50%;
       margin-right: 15px;
     }
 

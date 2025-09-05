@@ -12,22 +12,23 @@
         <!-- 员工专属快捷入口 -->
         <template v-if="isStaff">
           <router-link class="card" to="/area/mall-management">商场管理</router-link>
-          <router-link class="card" to="/area/parking-management">停车场管理</router-link>
+          <router-link class="card" to="/parking-management">停车场管理</router-link>
           <router-link class="card" to="/area/event-management">活动管理</router-link>
-          <router-link class="card" to="/area/staff-management">员工管理</router-link>
           <router-link class="card" to="/area/equipment-management">设备管理</router-link>
+          <router-link class="card" to="/employee_management">员工信息管理</router-link>
+          <router-link class="card" to="/cashflow_management/total_salary">员工工资支出</router-link>
+          
         </template>
 
         <!-- 商户专属快捷入口 -->
         <template v-else-if="isMerchant">
-          <router-link class="card" to="/area/store-management">我的店铺</router-link>
+          <router-link class="card" to="/store-management">我的店铺</router-link>
           <router-link class="card" to="/area/parking-query">车位查询</router-link>
           <router-link class="card" to="/area/event-query">活动查询</router-link>
         </template>
 
         <!-- 游客视图 -->
         <template v-else>
-          <router-link class="card" to="/area/mall-map">商场平面图</router-link>
           <router-link class="card" to="/area/parking-query">车位查询</router-link>
           <router-link class="card" to="/area/event-query">活动查询</router-link>
         </template>
