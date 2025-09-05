@@ -24,9 +24,9 @@
           <label>按停车场查询：</label>
           <select v-model="selectedParkingLot" @change="searchByParkingLot">
             <option value="">选择停车场</option>
-            <option value="1001">停车场1001</option>
-            <option value="1002">停车场1002</option>
-            <option value="1003">停车场1003</option>
+            <option v-for="lot in parkingLotOptions" :key="lot.AreaId" :value="String(lot.AreaId)">
+              {{ lot.ParkingLotName || (`停车场${lot.AreaId}`) }}
+            </option>
           </select>
           <button @click="searchByParkingLot" class="search-btn">查询</button>
         </div>
@@ -90,6 +90,28 @@ const selectedParkingLot = ref('')
 const searchResults = ref([])
 const hasSearched = ref(false)
 const loading = ref(false)
+
+// 停车场下拉选项（从后端动态加载）
+const parkingLotOptions = ref([])
+
+const loadParkingLotOptions = async () => {
+  try {
+    const resp = await fetch('/api/Parking/ParkingLots')
+    if (resp.ok) {
+      const data = await resp.json()
+      const list = (data.data || data.Data || data) || []
+      parkingLotOptions.value = list
+      // 如果未选择，默认选第一个
+      if (!selectedParkingLot.value && list.length > 0) {
+        selectedParkingLot.value = String(list[0].AreaId)
+      }
+    } else {
+      console.error('加载停车场列表失败，状态码:', resp.status)
+    }
+  } catch (e) {
+    console.error('加载停车场列表出错:', e)
+  }
+}
 
 
 // 方法
@@ -279,6 +301,7 @@ const goBack = () => {
 // 生命周期
 onMounted(() => {
   // 页面加载时的初始化
+  loadParkingLotOptions()
 })
 </script>
 
