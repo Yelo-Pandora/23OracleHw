@@ -45,6 +45,16 @@ const routes = [
     component: Home,
     meta: { requiresAuth: true, title: '主页', role_need: ['员工', '商户', '游客'] },
   },
+  //区域管理页面
+  {
+    path: '/new_area_management',
+    component: () => import('@/pages/new_area_management/App.vue'),
+    meta: {
+      requiresAuth: true,
+      title: '区划管理',
+      role_need: ['员工']  // 只有员工角色可以访问
+    }
+  },
   //商场管理页面
   {
     path: '/mall-management',
