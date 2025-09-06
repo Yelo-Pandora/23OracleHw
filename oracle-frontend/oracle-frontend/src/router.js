@@ -8,7 +8,7 @@ import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
 import AccountContent from '@/pages/account_management/AccountContent.vue'
 import TempAuthEditor from '@/pages/account_management/TempAuthEditor.vue'
 // import Visualization from './pages/area_visualization/App.vue'
-// import Equipment from './pages/Equipment_management/App.vue'
+import DeviceManagement from '@/pages/equipment_management/Equipment_management.vue'
 import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
 import TotalSalary from './pages/employee_management/TotalSalary.vue'
 
@@ -100,7 +100,29 @@ const routes = [
     title: '合作方管理',
     role_need: ['员工']  // 只有员工角色可以访问
   }
-}
+},
+{
+  path: '/equipment_management',
+  component: DeviceManagement,
+  meta: {
+    requiresAuth: true,
+    title: '设备信息',
+    role_need: ['员工']
+  },
+  children: [
+    {
+      path: '',
+      name: 'DeviceList',
+      component: () => import('@/pages/equipment_management/EquipmentList.vue'),
+    },
+    {
+      path: ':id',
+      name: 'DeviceDetail',
+      component: () => import('@/pages/equipment_management/EquipmentDetail.vue'),
+      props: true
+    }
+  ]
+},
 //   //商场(店铺)管理/商场平面图查看页面
 //   { path: '/mall_management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   //停车场管理/车位查询页面
