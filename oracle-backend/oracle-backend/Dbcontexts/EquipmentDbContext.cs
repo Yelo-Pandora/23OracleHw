@@ -70,7 +70,12 @@ namespace oracle_backend.Dbcontexts
              .HasOne(ro => ro.equipmentNavigation)
              .WithMany()
              .HasForeignKey(ro => ro.EQUIPMENT_ID)
-             .OnDelete(DeleteBehavior.Cascade);
+             .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<RepairOrder>()
+                .HasOne(ro => ro.staffNavigation)
+                .WithMany()
+                .HasForeignKey(ro => ro.STAFF_ID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //员工实体配置
             modelBuilder.Entity<Staff>(entity =>

@@ -7,7 +7,6 @@ import Home from './pages/home/Home.vue'
 import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
 import AccountContent from '@/pages/account_management/AccountContent.vue'
 import TempAuthEditor from '@/pages/account_management/TempAuthEditor.vue'
-import DeviceManagement from '@/pages/equipment_management/Equipment_management.vue'
 // import Visualization from './pages/area_visualization/App.vue'
 // import Equipment from './pages/Equipment_management/App.vue'
 import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
@@ -86,31 +85,7 @@ const routes = [
         props: true // 3. 将路由参数 (:accountId) 作为 props 传递给组件
       }
     ]
-  },
-  //设备管理页面
-  {
-    path: '/equipment_management',
-    component: DeviceManagement,
-    meta: {
-      requiresAuth: true,
-      title: '设备信息',
-      role_need: ['员工']
-    },
-    children: [
-      {
-        path: '',
-        name: 'DeviceList',
-        component: () => import('@/pages/equipment_management/EquipmentList.vue'),
-      },
-      {
-        path: ':id',
-        name: 'DeviceDetail',
-        component: () => import('@/pages/equipment_management/EquipmentDetail.vue'),
-        props: true
-      }
-    ]
-  },
-
+  }
 //   //区域可视化页面
 //   {path: '/area_visualization', component: Visualization, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   // 活动管理/活动查询页面
