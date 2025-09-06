@@ -246,7 +246,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/user/user'
 
 // 响应式数据
-const selectedParkingLot = ref('3001')
+const selectedParkingLot = ref('')
 const parkingLots = ref([])
 const parkingSlots = ref([])
 const showDetailModal = ref(false)
@@ -295,16 +295,22 @@ const loadParkingData = async () => {
   try {
     loading.value = true
     console.log('开始加载停车场数据...')
-    
+
     // 先加载停车场概览数据
     await loadParkingLots()
     console.log('停车场概览数据加载完成:', parkingLots.value)
-    
-    // 然后加载选中停车场的车位数据
+
+    // 若未选择任何停车场，默认选中第一个
+    if (!selectedParkingLot.value && parkingLots.value.length > 0) {
+      selectedParkingLot.value = String(parkingLots.value[0].areaId)
+      console.log('默认选择停车场:', selectedParkingLot.value)
+    }
+
+    // 然后加载选中停车场的车位数据（若有选择）
     await loadParkingSpaces()
     console.log('停车位数据加载完成:', parkingSlots.value.length, '个车位')
   } catch (error) {
-    console.error('加载停车场数据失败:', error)
+    console.warn('加载停车场数据出现问题(已降级处理):', error?.message || error)
   } finally {
     loading.value = false
   }
@@ -351,58 +357,73 @@ const loadParkingLots = async () => {
 // 加载停车位数据
 const loadParkingSpaces = async () => {
   try {
-    console.log('开始调用停车位API:', `/api/Parking/spaces?operatorAccount=${encodeURIComponent(getCurrentUserAccount())}&areaId=${selectedParkingLot.value}`)
-    // 从API获取数据
-    const response = await fetch(`/api/Parking/spaces?operatorAccount=${encodeURIComponent(getCurrentUserAccount())}&areaId=${selectedParkingLot.value}`)
-    console.log('停车位API响应状态:', response.status, response.ok)
-    
-    if (response.ok) {
-      const data = await response.json()
-      console.log('停车位API返回的原始数据:', data)
-      
-      if ((data.success || data.Success) && (data.data || data.Data)) {
-        // 转换API数据格式并生成坐标
-        const totalSpaces = (data.data || data.Data).length
-        const perRow = 10 // 固定10行
-        const cols = Math.ceil(totalSpaces / perRow)
-        
-        parkingSlots.value = (data.data || data.Data).map((space, index) => {
-          const row = Math.floor(index / cols)
-          const col = index % cols
-          const x = 50 + col * 35  // 增加列间距，每行车位之间有空隙
-          const y = 120 + row * 70
-          
-          return {
-            id: space.ParkingSpaceId || space.parkingSpaceId,
-            no: (space.ParkingSpaceId || space.parkingSpaceId).toString(),
-            x: x,
-            y: y,
-            w: 28,
-            h: 16,
-            skew: -6,
-            occupied: (space.Status || space.status) === '占用',
-            status: (space.Status || space.status) === '占用' ? 'occupied' : 'available',
-            licensePlate: space.LicensePlateNumber || space.licensePlateNumber,
-            parkStart: space.ParkStart || space.parkStart,
-            updateTime: space.UpdateTime || space.updateTime
-          }
-        })
-        
-        console.log('从API加载停车位数据成功:', parkingSlots.value.length, '个车位')
-        console.log('生成的坐标数据:', parkingSlots.value.slice(0, 5)) // 显示前5个车位的坐标
-        
-        // 更新表格中的统计数据
-        updateParkingLotStats()
-        return
-      }
+    if (!selectedParkingLot.value) {
+      console.warn('未选择停车场，跳过加载车位数据')
+      return
     }
-    console.error('API返回停车位数据格式错误')
+
+    const params = new URLSearchParams()
+    params.set('areaId', String(selectedParkingLot.value))
+    const acc = getCurrentUserAccount()
+    if (acc) params.set('operatorAccount', acc)
+
+    const url = `/api/Parking/spaces?${params.toString()}`
+    console.log('开始调用停车位API:', url)
+    const response = await fetch(url)
+    console.log('停车位API响应状态:', response.status, response.ok)
+
+    if (!response.ok) {
+      console.warn('停车位API未返回数据，使用空车位集合以保证页面可用')
+      parkingSlots.value = []
+      updateParkingLotStats()
+      return
+    }
+
+    const data = await response.json().catch(() => ({}))
+    console.log('停车位API返回的原始数据:', data)
+
+    const list = (data.data || data.Data || data) || []
+    if (Array.isArray(list)) {
+      const totalSpaces = list.length
+      const perRow = 10 // 固定10行
+      const cols = Math.ceil(totalSpaces / perRow)
+
+      parkingSlots.value = list.map((space, index) => {
+        const row = Math.floor(index / cols)
+        const col = index % cols
+        const x = 50 + col * 35  // 增加列间距，每行车位之间有空隙
+        const y = 120 + row * 70
+
+        return {
+          id: space.ParkingSpaceId || space.parkingSpaceId || space.id || index + 1,
+          no: String(space.ParkingSpaceId || space.parkingSpaceId || space.id || index + 1),
+          x,
+          y,
+          w: 28,
+          h: 16,
+          skew: -6,
+          occupied: (space.Status || space.status) === '占用' || String(space.Status || space.status).toLowerCase() === 'occupied',
+          status: ((space.Status || space.status) === '占用' || String(space.Status || space.status).toLowerCase() === 'occupied') ? 'occupied' : 'available',
+          licensePlate: space.LicensePlateNumber || space.licensePlateNumber,
+          parkStart: space.ParkStart || space.parkStart,
+          updateTime: space.UpdateTime || space.updateTime
+        }
+      })
+
+      console.log('从API加载停车位数据成功:', parkingSlots.value.length, '个车位')
+      // 更新表格中的统计数据
+      updateParkingLotStats()
+      return
+    }
+
+    console.warn('停车位API数据格式非数组，使用空集合')
+    parkingSlots.value = []
+    updateParkingLotStats()
   } catch (error) {
-    console.error('停车位API调用失败:', error)
+    console.warn('停车位API调用失败(已降级处理):', error?.message || error)
+    parkingSlots.value = []
+    updateParkingLotStats()
   }
-  
-    // 如果API失败，抛出错误
-  throw new Error('无法从数据库加载停车位数据')
 }
 
 
@@ -629,6 +650,9 @@ const getUserAuthority = async () => {
   }
 }
 
+// 统一北京时间显示/计算（与 Query 页一致）：
+// 1) 带时区(Z/±HH:mm)：按其时区解析
+// 2) 无时区(包含 2025/9/5 17:44:04、2025-09-05 17:44:04)：按“UTC裸时间”解释，再以北京时间显示
 const BJ_MIN = 8 * 60
 const parseToUtcMs = (val) => {
   if (val == null || val === '') return null
@@ -1136,6 +1160,8 @@ onUnmounted(() => {
   }
 }
 </style>
+
+
 
 
 
