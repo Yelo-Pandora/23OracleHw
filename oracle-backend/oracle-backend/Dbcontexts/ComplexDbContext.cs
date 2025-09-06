@@ -28,6 +28,7 @@ namespace oracle_backend.Dbcontexts
         public DbSet<Collaboration> Collaborations { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<StoreAccount> StoreAccounts { get; set; }
         public DbSet<TempAuthority> TempAuthorities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

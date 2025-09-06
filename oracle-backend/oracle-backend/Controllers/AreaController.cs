@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using static oracle_backend.Controllers.AccountController;
 
 namespace oracle_backend.Controllers
 {
@@ -416,6 +417,83 @@ namespace oracle_backend.Controllers
                 await transaction.RollbackAsync();
                 _logger.LogError(ex, $"更新区域 {id} 失败。");
                 return StatusCode(500, "更新区域信息失败，服务器内部错误。");
+            }
+        }
+
+        // 区域租赁详情查询DTO
+        public class TenantAreaDetailsDto
+        {
+            // 商户的详细信息
+            public Store StoreInfo { get; set; }
+
+            // 该商户租赁的区域列表
+            public List<RetailAreaDto> RentedAreas { get; set; }
+        }
+
+        // 为RetailArea创建一个DTO，方便返回给前端
+        public class RetailAreaDto
+        {
+            public int AreaId { get; set; }
+            public int IsEmpty { get; set; }
+            public int? AreaSize { get; set; }
+            public string RentStatus { get; set; }
+            public double BaseRent { get; set; }
+        }
+        //获取对应租户的店铺和租赁区域详情
+        [HttpGet("tenant-dashboard")]
+        public async Task<IActionResult> GetMyStoreAndAreaDetails([FromQuery, Required] string tenantAccount)
+        {
+            try
+            {
+                // 1. 根据商户账号找到关联的 Store
+                var storeLink = await _context.StoreAccounts
+                                                     .Include(sa => sa.storeNavigation) // **关键：预加载 Store 信息**
+                                                     .FirstOrDefaultAsync(sa => sa.ACCOUNT == tenantAccount);
+
+                if (storeLink == null || storeLink.storeNavigation == null)
+                {
+                    return NotFound("未找到与此账号关联的店铺信息。");
+                }
+
+                var store = storeLink.storeNavigation;
+
+                // 2. 根据 Store ID 查找其租赁的区域
+                var rentedAreaIds = await _context.RentStores
+                                                        .Where(rs => rs.STORE_ID == store.STORE_ID)
+                                                        .Select(rs => rs.AREA_ID)
+                                                        .ToListAsync();
+
+                List<RetailArea> rentedAreas = new List<RetailArea>();
+                if (rentedAreaIds.Any())
+                {
+                    rentedAreas = await _context.RetailAreas
+                                                      .Where(area => rentedAreaIds.Contains(area.AREA_ID))
+                                                      .ToListAsync();
+                }
+
+                // 3. 组装最终的 DTO
+                var responseDto = new TenantAreaDetailsDto
+                {
+                    // 【核心修改】直接将整个 store 对象赋值给 StoreInfo
+                    StoreInfo = store,
+
+                    // RentedAreas 的映射保持不变
+                    RentedAreas = rentedAreas.Select(area => new RetailAreaDto
+                    {
+                        AreaId = area.AREA_ID,
+                        IsEmpty = area.ISEMPTY,
+                        AreaSize = area.AREA_SIZE,
+                        RentStatus = area.RENT_STATUS,
+                        BaseRent = area.BASE_RENT
+                    }).ToList()
+                };
+
+                return Ok(responseDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"获取商户 {tenantAccount} 的店铺和区域信息时出错。");
+                return StatusCode(500, $"获取商户 {tenantAccount} 的店铺和区域信息时出错。");
             }
         }
     }
