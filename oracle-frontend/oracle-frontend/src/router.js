@@ -16,7 +16,6 @@ import Events from './pages/event_management/EventManagement.vue'
 import Equipment from './pages/equipment_management/EquipmentManagement.vue'
 import ParkingQuery from './pages/parking_query/ParkingQuery.vue'
 import EventQuery from './pages/event_query/EventQuery.vue'
-import AreaManagement from './pages/area_management/AreaManagement.vue'
 import StoreStatusRequest from '@/pages/mall_management/StoreStatusRequest.vue';
 import StoreStatusApproval from '@/pages/mall_management/StoreStatusApproval.vue';
 import CreateMerchant from '@/pages/mall_management/CreateMerchant.vue';
@@ -53,6 +52,16 @@ const routes = [
       requiresAuth: true,
       title: '区划管理',
       role_need: ['员工']  // 只有员工角色可以访问
+    }
+  },
+  //针对商户的已有店面查询页面
+  {
+    path: '/new_area-search',
+    component: () => import('@/pages/new_area_management/AreaSearch.vue'),
+    meta: {
+      requiresAuth: true,
+      title: '已有店面查询',
+      role_need: ['商户']  // 商户角色可以访问
     }
   },
   //商场管理页面
@@ -106,10 +115,6 @@ const routes = [
     component: MyRentStatisticsReport,
     meta: { requiresAuth: true, title: '我的租金统计', role_need: ['商户'] }
   },
-   // 车位查询
-
-      // 车位管理
-
   // 活动管理/活动查询页面
   { path: '/event-query',
     //redirect: '/area/event-query',
@@ -130,16 +135,6 @@ const routes = [
       role_need: ['员工']
     }
    },
-  {
-    path: '/cashflow_management/total_salary',
-    component: TotalSalary,
-    meta: {
-      requiresAuth: true,
-      title: '工资总支出',
-      role_need: ['员工']
-    }
-  },
-
   // 设备管理页面
   {
     path: '/equipment-management',
@@ -151,6 +146,7 @@ const routes = [
       role_need: ['员工']
     }
   },
+  //合作方管理页面
   {
     path: '/collaboration_management',
     component: () => import('@/pages/collaboration_management/App.vue'),
@@ -160,6 +156,7 @@ const routes = [
       role_need: ['员工']  // 只有员工角色可以访问
     }
   },
+  // 员工信息管理页面
   {
     path: '/employee_management',
     component: EmployeeManagement,
@@ -169,6 +166,7 @@ const routes = [
       role_need: ['员工']
     }
   },
+  // 员工工资支出页面
   {
     path: '/cashflow_management/total_salary',
     component: TotalSalary,
