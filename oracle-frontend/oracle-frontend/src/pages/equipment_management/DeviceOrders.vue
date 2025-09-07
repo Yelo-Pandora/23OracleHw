@@ -70,7 +70,7 @@
             <i class="fas fa-check-circle"></i> 完成工单
           </button>
 
-          <button v-else
+          <button v-else-if="props.deviceStatus === '维修中'"
                   class="btn-confirm"
                   @click="confirmOrder(order)">
             <i class="fas fa-check-double"></i> 确认工单
