@@ -387,7 +387,7 @@
     color: #c0392b;
   }
 
-  /* 模态框样式与CreateOrderModal相同，可以提取到公共样式文件中 */
+/*模态框*/
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -455,6 +455,7 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
+    box-sizing: border-box;
   }
 
   .modal-footer {
@@ -516,9 +517,9 @@
     gap: 6px;
   }
 
-    .btn-create-order:hover {
-      background-color: #2980b9;
-    }
+  .btn-create-order:hover {
+    background-color: #2980b9;
+  }
 
   .loading-orders {
     display: flex;
@@ -547,9 +548,9 @@
     color: #6c757d;
   }
 
-    .no-orders i {
-      font-size: 32px;
-    }
+  .no-orders i {
+    font-size: 32px;
+  }
 
   .orders-list {
     display: flex;
@@ -621,9 +622,9 @@
     font-size: 14px;
   }
 
-    .btn-submit:hover {
-      background-color: #2980b9;
-    }
+  .btn-submit:hover {
+    background-color: #2980b9;
+  }
 
   .btn-complete {
     padding: 6px 12px;
