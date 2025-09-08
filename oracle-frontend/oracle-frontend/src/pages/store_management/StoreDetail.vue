@@ -266,20 +266,21 @@ async function loadForRole() {
 
   try {
     if (role.value === '商户') {
-      // For merchants, get their store info from their own API endpoint
-      const response = await axios.get('/api/Store/GetMyRentBills', { params: { merchantAccount: account } });
-      if (response.data && Array.isArray(response.data.bills) && response.data.bills.length > 0) {
-        const firstBill = response.data.bills[0];
-        stores.value = [{
-          STORE_ID: firstBill.StoreId,
-          STORE_NAME: firstBill.StoreName
-        }];
-        
-        // If we found the store, auto-select it and load its details
-        if (stores.value.length > 0) {
-          selectedStoreId.value = stores.value[0].STORE_ID;
-          await loadMerchantInfo();
-        }
+      // For merchants, get their store list from a dedicated endpoint
+      const response = await axios.get('/api/Store/GetMyStores', { params: { merchantAccount: account } });
+      if (response.data && Array.isArray(response.data.stores) && response.data.stores.length > 0) {
+          stores.value = response.data.stores.map(s => ({
+            STORE_ID: s.StoreId,
+            STORE_NAME: s.StoreName || `#${s.StoreId}`
+          }));
+
+          // auto-select the first store and load its details
+          selectedStoreId.value = stores.value[0]?.STORE_ID || null;
+          if (selectedStoreId.value) {
+            await loadMerchantInfo();
+          }
+      } else {
+        stores.value = []
       }
     } else if (role.value === '员工') {
       // For employees, load all stores for selection

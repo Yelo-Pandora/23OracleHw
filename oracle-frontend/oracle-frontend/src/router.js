@@ -23,6 +23,7 @@ import StoreStatusApproval from '@/pages/mall_management/StoreStatusApproval.vue
 import CreateMerchant from '@/pages/mall_management/CreateMerchant.vue';
 import StoreManagement from '@/pages/store_management/StoreManagement.vue';
 import StoreDetail from '@/pages/store_management/StoreDetail.vue';
+import GetStore from '@/pages/store_management/GetStore.vue';
 import MerchantRentStatisticsReport from '@/pages/mall_management/MerchantRentStatisticsReport.vue';
 import MyRentStatisticsReport from '@/pages/store_management/MyRentStatisticsReport.vue';
 import ParkingManagement from './pages/parking_management/ParkingManagement.vue'
@@ -85,7 +86,12 @@ const routes = [
         path: 'store-management',
         component: StoreManagement,
         meta: { requiresAuth: true, title: '我的店铺', role_need: ['商户'] },
-      },
+    },
+    {
+    path: '/store-management/get-store',
+    component: GetStore,
+    meta: { requiresAuth: true, title: '申请租赁店面', role_need: ['\u5546\u6237'] }
+    },
     ]
   },
   // 店铺管理页面
