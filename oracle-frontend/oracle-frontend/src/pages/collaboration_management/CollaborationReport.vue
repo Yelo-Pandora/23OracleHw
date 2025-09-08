@@ -62,7 +62,6 @@
               <canvas id="collabChart"></canvas>
             </div>
           </div>
-
       <div class="summary-cards">
         <div class="summary-card">
           <div class="card-title">合作方总数</div>
@@ -202,6 +201,7 @@ const generateReport = async () => {
     }
 
     const response = await axios.get('/api/Collaboration/report', { params });
+    
   reportData.value = response.data;
   // 不在这里渲染图表，避免预留空白。用户选择图表类型后才渲染。
   showChart.value = false;
@@ -218,7 +218,6 @@ const generateReport = async () => {
     loading.value = false;
   }
 };
-
 // 图表渲染: 基于 reportData 的 Collaboration 项目展示不同类型图表
 const renderCharts = () => {
   // 销毁已有实例
@@ -394,7 +393,7 @@ const exportPDF = async () => {
         // 忽略SVG序列化错误
       }
     });
-
+    
     // 隐藏交互控件（例如图表类型选择），使其不出现在导出的克隆中
     try {
       const controls = clone.querySelectorAll('.chart-controls');

@@ -23,7 +23,7 @@
       <!-- 面包屑动态显示当前路由的标题 -->
         <div class="breadcrumb">{{ $route.meta.title }}</div>
         <div class="user-profile">
-          <div class="avatar"></div>
+          <img class="avatar" src="@/assets/Vue.svg"></img>
           <span>{{ userStore.userInfo?.username || '用户' }}</span>
           <button v-if="userStore.token" class="logout-btn" @click="logout">退出</button>
         </div>
@@ -83,6 +83,8 @@
       if (normalized === '员工' && route.meta.title === '车位查询') return false;
       if (!route.meta.role_need) return false
       if (!isAllowed(route.meta.role_need, rawUserRole, normalized)) return false
+      // if (!route.meta.role_need || !route.meta.role_need.includes(userRole)) return false;
+      if (route.meta.accessAuth && userStore.userInfo.authority > route.meta.accessAuth) return false;
       return true;
     })
 
@@ -252,9 +254,8 @@
       .header .user-profile .avatar {
         width: 36px;
         height: 36px;
-        border-radius: 50%;
-        background-color: #ccc;
         margin-right: 10px;
+        border-radius: 50%;
       }
 
 

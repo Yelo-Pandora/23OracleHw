@@ -41,14 +41,36 @@ namespace oracle_backend.Controllers
         public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentList([FromQuery] string OperatorID)
         {
             _logger.LogInformation("正在读取设备列表信息");
+
             try
             {
-                var operatorAccount = await _accountContext.FindAccount(OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
+                // 检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
 
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                // 获取操作员账号
+                var operatorAccount = await _accountContext.FindAccount(OperatorID);
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
+
+                // 查询设备列表
                 var list = await _context.Equipments
                     .Select(e => new EquipmentListDto
                     {
@@ -61,14 +83,11 @@ namespace oracle_backend.Controllers
                                     .FirstOrDefault()
                     })
                     .ToListAsync();
+
                 if (!list.Any())
                     return NotFound("不存在任何设备");
-                return Ok(list);
-                //var equipment = await _context.Equipments.ToListAsync(); 
-                ////if (!equipment.Any())
-                //return NotFound("不存在任何设备");
 
-                //return Ok(equipment);
+                return Ok(list);
             }
             catch (Exception ex)
             {
@@ -76,6 +95,7 @@ namespace oracle_backend.Controllers
                 return StatusCode(500, "服务器内部错误");
             }
         }
+
 
         //查询具体设备
         public class EquipmentDetailDto
@@ -100,17 +120,36 @@ namespace oracle_backend.Controllers
             _logger.LogInformation("正在查询设备信息");
             try
             {
-                var operatorAccount = await _accountContext.FindAccount(OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
+                _logger.LogInformation($"收到 OperatorID = {OperatorID}");
+                // 检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
 
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                // 获取操作员账号
+                var operatorAccount = await _accountContext.FindAccount(OperatorID);
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
 
                 var equipment = await _context.Equipments.FindAsync(equipmentID);
                 if (equipment == null)
                     return NotFound("未找到该设备");
-
                 if (equipment.EQUIPMENT_STATUS == EquipmentStatus.Offline)
                     return BadRequest("该设备离线，无法获取状态");
                 var area_ID = await _context.EquipmentLocations
@@ -142,18 +181,18 @@ namespace oracle_backend.Controllers
         {
             public const string Running = "运行中";
             public const string Faulted = "故障";
-            public const string Offline = "离线";
+            public const string Offline = "离线";          //设备离线，如断网，无法操作
             public const string UnderMaintenance = "维修中";
             public const string Standby = "待机";
+            public const string Discarded = "废弃";        //新增废弃状态，删除设备后的状态
         }
 
-        //显示可操作列表
-        private static readonly string[] AirConditionerActions={ "关机", "制冷模式", "制热模式", "调节温度" };
-        private static readonly string[] LightingActions={ "关灯", "调亮", "调暗" };
-        private static readonly string[] ElevatorActions={ "停止", "开门", "关门","紧急停止"};
-        private static readonly string[] StandbyAirActions={ "开机" };
-        private static readonly string[] StandbyLightActions={ "开灯" };
-        private static readonly string[] StandbyElevatorActions={ "启动" };
+        private static readonly string[] AirConditionerActions = { "关机", "制冷模式", "制热模式", "调节温度", "紧急停止" };
+        private static readonly string[] LightingActions = { "关灯", "调亮", "调暗", "紧急停止" };
+        private static readonly string[] ElevatorActions = { "停止", "开门", "关门", "紧急停止" };
+        private static readonly string[] StandbyAirActions = { "开机", "紧急停止" };
+        private static readonly string[] StandbyLightActions = { "开灯", "紧急停止" };
+        private static readonly string[] StandbyElevatorActions = { "启动", "紧急停止" };
 
         [HttpGet("ActionsList")]
         public async Task<IActionResult> GetAvailableActions([FromQuery] int id, [FromQuery] string OperatorID)
@@ -161,12 +200,31 @@ namespace oracle_backend.Controllers
             _logger.LogInformation($"正在加载设备 {id} 的可操作列表");
             try
             {
-                var operatorAccount = await _accountContext.FindAccount(OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
+                // 检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
 
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                // 获取操作员账号
+                var operatorAccount = await _accountContext.FindAccount(OperatorID);
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
 
                 var equipment = await _context.Equipments.FindAsync(id);
                 if (equipment == null)
@@ -199,6 +257,10 @@ namespace oracle_backend.Controllers
                     case EquipmentStatus.Faulted:
                         actions.Add("当前状态不可操作");
                         break;
+                    case EquipmentStatus.Discarded:
+                        actions.Add("设备已废弃，不可操作");
+                        break;
+
                 }
                 return Ok(actions);
             }
@@ -223,16 +285,39 @@ namespace oracle_backend.Controllers
             _logger.LogInformation($"正在操作设备{dto.EquipmentID}:{dto.Operation}");
             try
             {
-                var operatorAccount = await _accountContext.FindAccount(dto.OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
+                // 检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(dto.OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
 
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                // 获取操作员账号
+                var operatorAccount = await _accountContext.FindAccount(dto.OperatorID);
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(dto.OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
 
                 var equipment = await _context.Equipments.FindAsync(dto.EquipmentID);
                 if (equipment == null)
                     return NotFound("未找到该设备");
+                if (equipment.EQUIPMENT_STATUS == EquipmentStatus.Discarded)
+                    return BadRequest("该设备已被弃用，无法操作");
+                string originalStatus = equipment.EQUIPMENT_STATUS;
+
 
                 if (equipment.EQUIPMENT_STATUS == EquipmentStatus.Offline ||
                     equipment.EQUIPMENT_STATUS == EquipmentStatus.UnderMaintenance ||
@@ -241,15 +326,26 @@ namespace oracle_backend.Controllers
                     return BadRequest($"设备当前状态为{equipment.EQUIPMENT_STATUS}，不可操作");
                 }
 
-                //验证操作是否适用于当前状态
+                //特殊情况，设备制停，转变成故障状态
+                if (dto.Operation == "紧急停止")
+                {
+                    equipment.EQUIPMENT_STATUS = EquipmentStatus.Faulted;
+                    _context.LogOperation(dto.EquipmentID, dto.OperatorID, dto.Operation, true, originalStatus, EquipmentStatus.Faulted);
+                    _logger.LogInformation($"设备{dto.EquipmentID}紧急停止成功，状态变更为故障");
+                    await _context.SaveChangesAsync();
+                    return Ok(new
+                    {
+                        status = equipment.EQUIPMENT_STATUS,
+                        result = "紧急制停操作成功，设备已进入故障状态",
+                        statusChanged = true
+                    });
+                }
+
                 if (!IsOperationValidForStatus(dto.Operation, equipment.EQUIPMENT_STATUS, equipment.EQUIPMENT_TYPE))
                 {
                     return BadRequest("当前状态下不支持此操作");
                 }
-
-                //调用模拟接口执行操作
                 bool result = SimulateDeviceOperation();
-                string originalStatus = equipment.EQUIPMENT_STATUS;
 
                 if (result)
                 {
@@ -262,7 +358,7 @@ namespace oracle_backend.Controllers
                     if (equipment.EQUIPMENT_STATUS != newStatus)
                     {
                         equipment.EQUIPMENT_STATUS = newStatus;
-                        _context.LogOperation(dto.EquipmentID,dto.OperatorID, dto.Operation,true, originalStatus, newStatus);
+                        _context.LogOperation(dto.EquipmentID, dto.OperatorID, dto.Operation, true, originalStatus, newStatus);
                         _logger.LogInformation($"设备{dto.EquipmentID}状态变更:{originalStatus} -> {newStatus}");
                     }
                     _logger.LogInformation("操作成功:设备={EquipmentId}, 操作员={Operator}, 操作={Operation}",
@@ -270,7 +366,7 @@ namespace oracle_backend.Controllers
                 }
                 else
                 {
-                    _context.LogOperation(dto.EquipmentID, dto.OperatorID, dto.Operation,false, originalStatus,originalStatus);
+                    _context.LogOperation(dto.EquipmentID, dto.OperatorID, dto.Operation, false, originalStatus, originalStatus);
                     _logger.LogWarning("操作失败:设备={EquipmentId},操作员={Operator},操作={Operation}",
                         dto.EquipmentID, dto.OperatorID, dto.Operation);
                 }
@@ -308,11 +404,7 @@ namespace oracle_backend.Controllers
                 case "关灯" when equipmentType == "照明":
                 case "停止" when equipmentType == "电梯":
                     return EquipmentStatus.Standby;
-
-                case "紧急停止" when equipmentType == "电梯":
-                    return EquipmentStatus.Faulted;
             }
-
             return currentStatus;
         }
 
@@ -369,11 +461,32 @@ namespace oracle_backend.Controllers
             _logger.LogInformation("正在查询工单列表");
             try
             {
+
+                // 检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(dto.OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
+
+                // 获取操作员账号
                 var operatorAccount = await _accountContext.FindAccount(dto.OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(dto.OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
 
                 var equipment = await _context.Equipments.FindAsync(dto.EquipmentID);
                 if (equipment == null)
@@ -399,7 +512,7 @@ namespace oracle_backend.Controllers
                     .ToListAsync();
 
                 if (!resultList.Any())
-                    return NotFound("不存在任何工单列表");
+                    return Ok(new List<RepairOrderDetailDto>());
 
                 return Ok(resultList);
             }
@@ -441,16 +554,38 @@ namespace oracle_backend.Controllers
             _logger.LogInformation("正在创建工单");
             try
             {
-                var operatorAccount = await _accountContext.FindAccount(dto.OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
+                // 检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(dto.OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
 
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                // 获取操作员账号
+                var operatorAccount = await _accountContext.FindAccount(dto.OperatorID);
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(dto.OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
 
                 var equipment = await _context.Equipments.FindAsync(dto.EquipmentId);
                 if (equipment == null)
                     return NotFound("设备不存在");
+
+                if (equipment.EQUIPMENT_STATUS == EquipmentStatus.Discarded)
+                    return BadRequest("该设备已被弃用");
 
                 if (equipment.EQUIPMENT_STATUS != EquipmentStatus.Faulted)
                     return BadRequest("该设备正常或正在维修中");
@@ -526,12 +661,31 @@ namespace oracle_backend.Controllers
         {
             try
             {
-                var confirmer = await _accountContext.FindAccount(dto.OperatorID);
-                if (confirmer == null)
-                    return BadRequest("操作员账号不存在");
+                //检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(dto.OperatorID, 2);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足，无权操作设备");
+                }
 
-                if (confirmer.AUTHORITY > 3)
-                    return BadRequest("权限不足，需要设备管理权限");
+                // 获取操作员账号
+                var operatorAccount = await _accountContext.FindAccount(dto.OperatorID);
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 2)
+                {
+                    //获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(dto.OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
 
                 var order = await _context.RepairOrders.FindAsync(
                     dto.EquipmentId, dto.StaffId, dto.RepairStart);
@@ -543,6 +697,10 @@ namespace oracle_backend.Controllers
                 var equipment = await _context.Equipments.FindAsync(dto.EquipmentId);
                 if (equipment == null)
                     return NotFound("设备不存在");
+
+                if (equipment.EQUIPMENT_STATUS != EquipmentStatus.UnderMaintenance)
+                    return BadRequest("工单已确认，无需再次操作");
+
                 //正常维修花销大于0,
                 if (order.REPAIR_COST > 0)
                 {
@@ -600,12 +758,33 @@ namespace oracle_backend.Controllers
             _logger.LogInformation("正在添加设备");
             try
             {
-                var operatorAccount = await _accountContext.FindAccount(OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                // 检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
 
+                // 获取操作员账号
+                var operatorAccount = await _accountContext.FindAccount(OperatorID);
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
+
+                Console.WriteLine(">>> 权限检查结束，未触发拒绝");
                 var equipment = await _context.Equipments.FindAsync(newEquipment.EQUIPMENT_ID);
                 if (equipment != null)
                     return BadRequest("该设备ID已存在，无法新增设备");
@@ -633,26 +812,49 @@ namespace oracle_backend.Controllers
             _logger.LogInformation("正在添加设备位置信息");
             try
             {
+                // 检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
+
+                // 获取操作员账号
                 var operatorAccount = await _accountContext.FindAccount(OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
 
                 var equipment = await _context.Equipments.FindAsync(equipmentID);
                 if (equipment == null)
                     return BadRequest("该设备ID不存在，无法添加设备位置信息");
 
+                if (equipment.EQUIPMENT_STATUS == EquipmentStatus.Discarded)
+                    return BadRequest("该设备已被弃用");
+
                 //检查设备位置是否已经存在
                 var locationExists = await _context.EquipmentLocations
-                    .CountAsync(el => el.EQUIPMENT_ID == equipmentID)>0;
+                    .CountAsync(el => el.EQUIPMENT_ID == equipmentID) > 0;
                 if (locationExists)
                     return BadRequest("该设备已经存在位置信息，无法重复添加");
 
                 var count = await _context.Areas
                      .Where(a => a.AREA_ID == areaID)
                      .CountAsync();
-                if (count<=0)
+                if (count <= 0)
                     return BadRequest($"区域ID {areaID} 不存在，无法添加设备位置信息");
 
 
@@ -688,24 +890,45 @@ namespace oracle_backend.Controllers
             _logger.LogInformation($"正在尝试删除设备ID={equipmentID}");
             try
             {
+                //检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
+
+                // 获取操作员账号
                 var operatorAccount = await _accountContext.FindAccount(OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
 
                 var equipment = await _context.Equipments.FindAsync(equipmentID);
                 if (equipment == null)
                     return NotFound("设备不存在");
 
-                var location = await _context.EquipmentLocations.FirstOrDefaultAsync(el => el.EQUIPMENT_ID == equipmentID);
+                var location = await _context.EquipmentLocations
+                    .FirstOrDefaultAsync(el => el.EQUIPMENT_ID == equipmentID);
                 if (location != null)
                 {
                     _context.EquipmentLocations.Remove(location);
-                    _logger.LogInformation($"删除关联位置记录，设备ID: {equipmentID}");
+                    _logger.LogInformation($"删除关联设备位置，设备ID: {equipmentID}");
                 }
 
-                _context.Equipments.Remove(equipment);
+                equipment.EQUIPMENT_STATUS = EquipmentStatus.Discarded;
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation($"设备删除成功，ID: {equipmentID}");
@@ -724,11 +947,31 @@ namespace oracle_backend.Controllers
             _logger.LogInformation($"正在尝试解绑设备位置，设备ID={equipmentID}");
             try
             {
+                // 检查操作员权限
+                var isAuthority = await _accountContext.CheckAuthority(OperatorID, 3);
+                if (!isAuthority)
+                {
+                    return BadRequest("操作者权限不足");
+                }
+
+                // 获取操作员账号
                 var operatorAccount = await _accountContext.FindAccount(OperatorID);
-                if (operatorAccount == null)
-                    return BadRequest("操作员账号不存在");
-                if (operatorAccount.AUTHORITY > 2)
-                    return BadRequest("权限不足，需要设备管理权限");
+                if (operatorAccount != null && operatorAccount.AUTHORITY == 3)
+                {
+                    // 获取对应员工
+                    var staffAccount = await _accountContext.CheckStaff(OperatorID);
+                    if (staffAccount == null)
+                        return BadRequest("该操作员无对应员工");
+
+                    var staff = await _context.Staffs
+                        .FirstOrDefaultAsync(s => s.STAFF_ID == staffAccount.STAFF_ID);
+
+                    if (staff == null)
+                        return BadRequest("不存在该员工");
+
+                    if (staff.STAFF_APARTMENT != "维修部")
+                        return BadRequest("该员工非维修部员工无权操作设备");
+                }
                 var location = await _context.EquipmentLocations.FirstOrDefaultAsync(el => el.EQUIPMENT_ID == equipmentID);
                 if (location == null)
                     return NotFound("设备位置不存在");

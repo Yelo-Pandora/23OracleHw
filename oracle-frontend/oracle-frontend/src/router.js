@@ -4,9 +4,11 @@ import { useUserStore } from './user/user'
 import Login from './pages/login/LoginPage.vue'
 import Home from './pages/home/Home.vue'
 //测试用的EmployeeInfo页面
-// import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
+import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
+import AccountContent from '@/pages/account_management/AccountContent.vue'
+import TempAuthEditor from '@/pages/account_management/TempAuthEditor.vue'
 // import Visualization from './pages/area_visualization/App.vue'
-// import Equipment from './pages/Equipment_management/App.vue'
+import DeviceManagement from '@/pages/equipment_management/Equipment_management.vue'
 import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
 import TotalSalary from './pages/employee_management/TotalSalary.vue'
 
@@ -135,17 +137,6 @@ const routes = [
       role_need: ['员工']
     }
    },
-  // 设备管理页面
-  {
-    path: '/equipment-management',
-    //redirect: '/area/equipment-management',
-    component: EquipmentManagement,
-    meta: {
-      requiresAuth: true,
-      title: '设备管理',
-      role_need: ['员工']
-    }
-  },
   //合作方管理页面
   {
     path: '/collaboration_management',
@@ -173,7 +164,8 @@ const routes = [
     meta: {
       requiresAuth: true,
       title: '员工工资支出',
-      role_need: ['员工']
+      role_need: ['员工'],
+      accessAuth: 2
     }
   },
   // 停车场管理 (顶层路由)
@@ -193,6 +185,47 @@ const routes = [
     component: ParkingQuery,
     meta: { requiresAuth: true, title: '车位查询', role_need: ['员工', '商户', '游客'] }
   },
+  {
+    path: '/account_management',
+    component: AccountContent,
+    meta: {
+      requiresAuth: true,
+      title: '账号信息',
+      role_need: ['员工', '商户'],
+    },
+    children: [
+      {
+        // 定义子路由
+        // :accountId 是一个动态参数，我们将用它来传递被操作的账号
+        path: 'temp-auth/:accountId',
+        name: 'TempAuthEditor',
+        component: TempAuthEditor,
+        props: true // 3. 将路由参数 (:accountId) 作为 props 传递给组件
+      }
+    ]
+  },
+{
+  path: '/equipment_management',
+  component: DeviceManagement,
+  meta: {
+    requiresAuth: true,
+    title: '设备信息',
+    role_need: ['员工']
+  },
+  children: [
+    {
+      path: '',
+      name: 'DeviceList',
+      component: () => import('@/pages/equipment_management/EquipmentList.vue'),
+    },
+    {
+      path: ':id',
+      name: 'DeviceDetail',
+      component: () => import('@/pages/equipment_management/EquipmentDetail.vue'),
+      props: true
+    }
+  ]
+},
 ]
 
 const router = createRouter({

@@ -64,7 +64,6 @@ import alert from '@/utils/alert';
 import { useRouter } from 'vue-router';
 
 import { computed } from 'vue';
-
 const userStore = useUserStore();
 const router = useRouter();
 const collaborations = ref([]);

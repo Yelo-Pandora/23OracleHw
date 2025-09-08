@@ -34,22 +34,59 @@
                     <tbody>
 
                         <tr v-for="item in filteredSalarySlip" :key="item.date">
-                            <td>{{ employeeInfo?.account }}</td>
-                            <td>{{ employeeInfo?.username }}</td>
-                            <td>{{ getYear(item.date) }}</td>
-                            <td>{{ getMonth(item.date) }}</td>
-                            <td>{{ employeeInfo?.salary }}</td>
-                            <td>{{ item.bonus }}</td>
-                            <td>{{ item.fine }}</td>
-                            <td>{{ item.attendence }}</td>
-                            <td>{{ calcTotalSalary(employeeInfo?.salary, item.bonus, item.fine) }}</td>
-                            <td><button class="salary-edit-btn">编辑</button></td>
+                                <td>{{ employeeInfo?.account }}</td>
+                                <td>{{ employeeInfo?.username }}</td>
+                                <td>{{ getYear(item.date) }}</td>
+                                <td>{{ getMonth(item.date) }}</td>
+                                <td>
+                                    <template v-if="editRow === item.date">
+                                        <input v-model.number="editForm.salary" type="number" min="0" class="salary-edit-input" />
+                                    </template>
+                                    <template v-else>{{ employeeInfo?.salary }}</template>
+                                </td>
+                                <td>
+                                    <template v-if="editRow === item.date">
+                                        <input v-model.number="editForm.bonus" type="number" min="0" class="salary-edit-input" />
+                                    </template>
+                                    <template v-else>{{ item.bonus }}</template>
+                                </td>
+                                <td>
+                                    <template v-if="editRow === item.date">
+                                        <input v-model.number="editForm.fine" type="number" min="0" class="salary-edit-input" />
+                                    </template>
+                                    <template v-else>{{ item.fine }}</template>
+                                </td>
+                                <td>
+                                    {{ item.attendence }}
+                                </td>
+                                <td>{{ calcTotalSalary(editRow === item.date ? editForm.salary : employeeInfo?.salary, editRow === item.date ? editForm.bonus : item.bonus, editRow === item.date ? editForm.fine : item.fine) }}</td>
+                                <td>
+                                    <button
+                                        class="salary-edit-btn"
+                                        :disabled="!canEditRow()"
+                                        :style="!canEditRow() ? 'background:#ccc;cursor:not-allowed;' : ''"
+                                        @click="onEdit(item)"
+                                    >
+                                        {{ editRow === item.date ? '保存' : '编辑' }}
+                                    </button>
+                                </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div>
-                <button class="temp-salary-close" @click="$emit('close')">关闭</button>
+            <div class="add-new">
+                <button class="add-salary-btn" @click="showAddRow = true" v-if="!showAddRow">+新增工资条目</button>
+                <div v-if="showAddRow" class="add-row-form">
+                    <input v-model="addForm.year" type="number" min="2000" max="2100" placeholder="年份" class="salary-edit-input" />
+                    <select v-model="addForm.month" class="salary-edit-input">
+                        <option v-for="m in monthOptions" :key="m" :value="m">{{ m }}</option>
+                    </select>
+                    <input v-model.number="addForm.bonus" type="number" min="0" placeholder="奖金" class="salary-edit-input" />
+                    <input v-model.number="addForm.fine" type="number" min="0" placeholder="罚金" class="salary-edit-input" />
+                    <button class="salary-edit-btn" @click="onAddSalarySlip">保存</button>
+                    <button class="salary-edit-btn salary-cancel-btn" @click="cancelAddRow">取消</button>
+                </div>
+                <button class="temp-salary-close" @click="handleClose">关闭</button>
             </div>
         </div>
     </div>
@@ -57,12 +94,37 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+import axios from 'axios';
 
 const props = defineProps({
     show: Boolean,
-    employeeInfo: Object, // {id, account, username, salary}
-    salarySlip: Array // 该员工所有工资条
+    employeeInfo: Object, // {account, authority, department, id, name, username, sex, position, salary}
+    operatorAccount: String,
+    operatorAuthority: [String, Number],
 });
+
+const salarySlip = ref([]);
+
+async function fetchSalarySlip() {
+    if (!props.employeeInfo?.id) return;
+    try {
+        const res = await axios.get('/api/Staff/AllsalarySlip');
+        salarySlip.value = (res.data || []).filter(item => item.STAFF_ID === props.employeeInfo.id).map(item => ({
+            staffId: item.STAFF_ID,
+            date: item.MONTH_TIME,
+            salary: item.BASE_SALARY || props.employeeInfo.salary,
+            attendence: item.ATD_COUNT,
+            bonus: item.BONUS,
+            fine: item.FINE,
+        }));
+    } catch (error) {
+        console.error('获取工资条失败:', error);
+    }
+}
+
+watch(() => props.show, (val) => {
+    if (val) fetchSalarySlip();
+}, {immediate: true});
 
 const now = new Date();
 
@@ -76,12 +138,11 @@ function getMonth(date) {
 }
 const monthOptions = Array.from({length:12}, (_,i)=>String(i+1).padStart(2,'0'));
 
-// 默认当前年份
 const selectedYear = ref(String(now.getFullYear()));
 const startMonth = ref('01');
 const endMonth = ref('12');
 
-watch(() => props.salarySlip, (val) => {
+watch(salarySlip, (val) => {
     // 若工资条数据变化，自动刷新年份选项
     const years = Array.from(new Set((val||[]).map(s => getYear(s.date)))).sort();
     if (!years.includes(selectedYear.value)) selectedYear.value = years[years.length-1] || String(now.getFullYear());
@@ -92,7 +153,7 @@ const filteredSalarySlip = computed(() => {
     const y = selectedYear.value;
     const sm = startMonth.value;
     const em = endMonth.value;
-    return (props.salarySlip||[]).filter(item => {
+    return (salarySlip.value||[]).filter(item => {
         const itemYear = getYear(item.date);
         const itemMonth = getMonth(item.date);
         if (itemYear !== y) return false;
@@ -100,6 +161,107 @@ const filteredSalarySlip = computed(() => {
     });
 });
 
+const editRow = ref(null);
+const editForm = ref({ salary: 0, bonus: 0, fine: 0, attendence: 0 });
+const showAddRow = ref(false);
+const addForm = ref({ year: String(now.getFullYear()), month: '01', salary: '', bonus: '', fine: '' });
+
+function cancelAddRow() {
+    showAddRow.value = false;
+    addForm.value = { year: String(now.getFullYear()), month: '01', salary: '', bonus: '', fine: '' };
+}
+
+async function onAddSalarySlip() {
+    const year = addForm.value.year;
+    const month = addForm.value.month;
+    // 检查是否重复(年，月相同)
+    if (salarySlip.value.some(s => getYear(s.date) === year && getMonth(s.date) === month)) {
+        alert(`${year}年${month}月已有工资条目，不可重复添加`);
+        return;
+    }
+    try {
+        await axios.post('/api/Staff/StaffSalaryManagement', {
+            BASE_SALARY: props.employeeInfo.salary,
+            FINE: addForm.value.fine,
+            BONUS: addForm.value.bonus
+        }, 
+            {
+                params: {
+                    operatorAccount: props.operatorAccount,
+                    staffId: props.employeeInfo.id,
+                    monthTime: `${year}-${month}`
+                }
+            }
+        );
+        await fetchSalarySlip(); // 保存成功后刷新工资条
+        alert('工资条目添加成功');
+        console.log(salarySlip.value);
+    } catch (error) {
+        console.error('添加工资条目失败:', error);
+        alert('添加工资条目失败');
+    }
+    cancelAddRow();
+}
+
+const emit = defineEmits(['close', 'salarySlipAdded']);
+function handleClose() {
+    // 关闭弹窗时取消编辑模式并撤销未保存的更改
+    editRow.value = null;
+    editForm.value = { salary: 0, bonus: 0, fine: 0, attendence: 0 };
+    // 如果正在新增工资条，则等同于点击取消
+    if (showAddRow.value) {
+        cancelAddRow();
+    }
+    emit('close');
+}
+
+function canEditRow() {
+    // 只有操作者权限高于被操作者且不是本人才能编辑
+    const myAuth = Number(props.operatorAuthority);
+    const targetAuth = Number(props.employeeInfo?.authority);
+    if (!props.operatorAccount || !props.employeeInfo) return false;
+    if (props.operatorAccount === props.employeeInfo.account) return false;
+    if (myAuth >= targetAuth) return false;
+    return true;
+}
+
+async function onEdit(item) {
+    if (editRow.value === item.date) {
+        try {
+            const staffId = props.employeeInfo.id;
+            const operatorAccount = props.operatorAccount;
+            // monthTime格式修正：yyyy-MM-01
+            let monthTime = item.date;
+            if (/^\d{4}-\d{2}$/.test(monthTime)) {
+                monthTime = monthTime + '-01';
+            }
+            await axios.post('/api/Staff/StaffSalaryManagement', {
+                BASE_SALARY: editForm.value.salary,
+                BONUS: editForm.value.bonus,
+                FINE: editForm.value.fine
+            }, {
+                params: {
+                    operatorAccount,
+                    staffId,
+                    monthTime
+                }
+            });
+            await fetchSalarySlip(); // 修改成功后刷新工资条
+            emit('salaryUpdated'); // 通知父组件刷新员工数据
+        } catch (e) {
+            alert('保存失败：' + (e?.response?.data || e.message));
+        }
+        editRow.value = null;
+    } else {
+        // 进入编辑
+        editRow.value = item.date;
+        editForm.value = {
+            salary: props.employeeInfo.salary,
+            bonus: item.bonus,
+            fine: item.fine,
+        };
+    }
+}
 
 function calcTotalSalary(base, bonus, fine) {
     const b = Number(base)||0, bo=Number(bonus)||0, f=Number(fine)||0;
@@ -225,8 +387,15 @@ function calcTotalSalary(base, bonus, fine) {
     cursor: pointer;
     font-weight: bold;
     align-self: center;
+    transition: background 0.18s, transform 0.18s;
 }
-.temp-salary-close:hover { background: #357ae8; }
+.temp-salary-close:hover {
+    background: #357ae8;
+    transform: scale(1.08);
+}
+.temp-salary-close:active {
+    transform: scale(0.96);
+}
 
 /* 年份和月份选择美化 */
 .salary-year-input {
@@ -273,9 +442,73 @@ function calcTotalSalary(base, bonus, fine) {
     font-size: 14px;
     cursor: pointer;
     font-weight: 500;
-    transition: background 0.2s;
+    transition: background 0.18s, transform 0.18s;
 }
 .salary-edit-btn:hover {
     background: #ff9800;
+    transform: scale(1.08);
+}
+.salary-edit-btn:active {
+    transform: scale(0.96);
+}
+
+.salary-edit-input {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1.5px solid #ffb74d;
+    border-radius: 7px;
+    font-size: 15px;
+    background: #fffbe6;
+    color: #333;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(255,183,77,0.08);
+    transition: border 0.2s, box-shadow 0.2s;
+}
+.salary-edit-input:focus {
+    width:80px;
+    border: 2px solid #ff9800;
+    box-shadow: 0 2px 12px rgba(255,152,0,0.18);
+}
+
+.add-salary-btn {
+    margin: 18px 0 0 0;
+    padding: 8px 32px;
+    border: none;
+    border-radius: 8px;
+    background: #43c07a;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    align-self: center;
+    transition: background 0.18s, transform 0.18s;
+}
+.add-salary-btn:hover {
+    background: #2e9c5c;
+    transform: scale(1.08);
+}
+.salary-edit-btn {
+    margin-left: 8px;
+}
+
+.add-row-form  {
+    margin:12px 0;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    align-items:center;
+}
+
+.add-new {
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.salary-cancel-btn {
+    background: #ccc;
+    color: #333;
 }
 </style>
