@@ -8,7 +8,7 @@
           <!-- v-for遍历计算出来的路由对象 -->
           <li v-for="route in visibleRoutes"
               :key="route.path"
-              :class="{ active: $route.path === route.path }">
+              :class="{ active: isActiveRoute(route.path) }">
             <!-- 'to'属性直接绑定到路由的path -->
             <router-link :to="route.path">
               <span>{{ route.meta.title }}</span>
@@ -18,13 +18,14 @@
       </nav>
     </aside>
 
-    <div class="main-content">
-      <header class="header">
-        <!-- 面包屑动态显示当前路由的标题 -->
+  <div class="main-content fade-in">
+    <header class="header">
+      <!-- 面包屑动态显示当前路由的标题 -->
         <div class="breadcrumb">{{ $route.meta.title }}</div>
         <div class="user-profile">
           <img class="avatar" src="@/assets/Vue.svg"></img>
           <span>{{ userStore.userInfo?.username || '用户' }}</span>
+          <button v-if="userStore.token" class="logout-btn" @click="logout">退出</button>
         </div>
       </header>
       <main class="page-content">
@@ -39,23 +40,85 @@
   // 通过useRouter()获取路由配置，并计算出visibleRoutes。
   import { computed } from 'vue';
   import { useRouter } from 'vue-router';
-  import { useUserStore } from '@/user/user';
+  import { useUserStore } from '@/stores/user';
 
   const router = useRouter();
   const userStore = useUserStore();
 
   const visibleRoutes = computed(() => {
-    const userRole = userStore.role;
-    if (!userRole) return [];
+    const rawUserRole = userStore.role || '游客'
+    // 与 router.beforeEach 中相同的 role 映射，保证中文/英文角色都能匹配
+    const roleMap = {
+      guest: '游客',
+      visitor: '游客',
+      merchant: '商户',
+      shop: '商户',
+      staff: '员工',
+      employee: '员工'
+    }
+    const normalized = roleMap[String(rawUserRole).toLowerCase()] || rawUserRole
 
-    return router.options.routes.filter(route => {
+    const isAllowed = (roles, userR, normalizedR) => {
+      if (!Array.isArray(roles)) return false
+      return roles.includes(userR) || roles.includes(String(userR).toLowerCase()) || roles.includes(normalizedR)
+    }
+
+    // 不在侧边栏显示的菜单标题列表（仅影响侧边栏显示，不删除路由）
+    const excludedTitles = ['店铺详情', '商户租金统计报表']
+
+
+    const baseList = router.options.routes.filter(route => {
       if (!route.meta || !route.meta.title) return false;
       if (route.path === '/login') return false; // 明确排除登录页
-      if (!route.meta.role_need || !route.meta.role_need.includes(userRole)) return false;
+      if (excludedTitles.includes(route.meta.title)) return false; // 排除特定标题
+      if (normalized === '游客' && route.meta.title === '区域管理') return false;
+      if (normalized === '商户' && route.meta.title === '我的租金') return false;
+      if (normalized === '商户' && route.meta.title === '我的租金统计') return false;
+      if (normalized === '商户' && route.meta.title === '区域管理') return false;
+      // 额外规则：当当前用户是“员工”时，不在侧边栏显示“店铺管理”这一项（store-management）
+      if (normalized === '员工' && route.meta.title === '店铺管理') return false;
+      if (normalized === '员工' && route.meta.title === '区域管理') return false;
+      if (normalized === '员工' && route.meta.title === '工资总支出') return false;
+      if (normalized === '员工' && route.meta.title === '活动查询') return false;
+      if (normalized === '员工' && route.meta.title === '车位查询') return false;
+      if (!route.meta.role_need) return false
+      if (!isAllowed(route.meta.role_need, rawUserRole, normalized)) return false
+      // if (!route.meta.role_need || !route.meta.role_need.includes(userRole)) return false;
       if (route.meta.accessAuth && userStore.userInfo.authority > route.meta.accessAuth) return false;
       return true;
-    });
+    })
+
+    const order = {
+      '主页': 0,
+      '商场管理': 10,
+      '停车场管理': 20,
+      '活动管理': 30,
+      '设备管理': 40,
+    }
+    const indexMap = new Map(router.options.routes.map((r, i) => [r.path, i]))
+    baseList.sort((a, b) => {
+      const pa = order[a.meta?.title] ?? 999
+      const pb = order[b.meta?.title] ?? 999
+      if (pa !== pb) return pa - pb
+      // 次级按原始路由声明顺序
+      return (indexMap.get(a.path) ?? 9999) - (indexMap.get(b.path) ?? 9999)
+    })
+
+    return baseList
   });
+
+  const isActiveRoute = (menuPath) => {
+    const current = router.currentRoute.value.path || ''
+    if (menuPath === '/parking-management') {
+      return current === '/parking-management' || current.startsWith('/parking-management/')
+    }
+    return current === menuPath
+  }
+
+  function logout() {
+    userStore.logout()
+    router.push('/login')
+  }
 </script>
 
 <style scoped>
