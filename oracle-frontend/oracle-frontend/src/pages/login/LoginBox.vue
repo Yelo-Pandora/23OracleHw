@@ -58,8 +58,6 @@
 
   const emit = defineEmits(['switchToRegister', 'switchToForgotPassword']); // 定义 emit 事件
 
-  const emit = defineEmits(['switchToRegister', 'switchToForgotPassword']); // 定义 emit 事件
-
   //响应式状态
   const role = ref('员工'); // '员工' 或 '商户' 或 '游客'
   const username = ref('');

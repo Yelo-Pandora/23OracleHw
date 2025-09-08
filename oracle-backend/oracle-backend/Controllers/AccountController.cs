@@ -387,20 +387,6 @@ namespace oracle_backend.Controllers
             return Ok(account);
         }
 
-        //查询指定账号的信息
-        [HttpGet("info/{accountId}")]
-        public async Task<IActionResult> GetAccountInfo(string accountId)
-        {
-            _logger.LogInformation($"--- GetAccountInfo 被调用，收到的 accountId 是: [{accountId}] ---");
-            var account = await _context.FindAccount(accountId);
-            if (account == null)
-            {
-                _logger.LogWarning("指定的账号不存在");
-                return NotFound("账号不存在");
-            }
-            return Ok(account);
-        }
-
         //查询指定账号的临时权限情况
         [HttpGet("tempauth/{accountId}")]
         public async Task<IActionResult> GetTempAuthorities(string accountId)
