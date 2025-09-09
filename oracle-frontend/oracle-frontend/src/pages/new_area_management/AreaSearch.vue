@@ -26,6 +26,9 @@
               <span class="value">{{ storeInfo.TENANT_NAME }}</span>
             </div>
           </div>
+          <router-link to="/store-management/get-store" class="manage-store-btn">
+            管理店铺
+          </router-link>
         </header>
 
         <!-- 页面主体：显示区域列表 -->
@@ -74,6 +77,7 @@
   import { useUserStore } from '@/user/user';
   import axios from 'axios';
   import DashboardLayout from '@/components/BoardLayout.vue';
+  import { RouterLink } from 'vue-router';
 
   const userStore = useUserStore();
 
@@ -128,19 +132,23 @@
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
     .view-header h1 {
-      margin-bottom: 1.5rem;
+      margin: 0;
+      white-space: nowrap;
     }
 
   .store-info-card {
     background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 1.5rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2rem;
+    color: #495057;
+    font-size: 1.2rem;
   }
 
   .info-item .label {
@@ -151,6 +159,7 @@
 
   .area-list-container h3 {
     margin-bottom: 1rem;
+    margin-top: 2rem;
   }
 
   .loading-state, .error-state, .no-results {
@@ -185,4 +194,23 @@
     .area-table th {
       background-color: #f8f9fa;
     }
+
+  .manage-store-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+    flex-shrink: 0;
+  }
+
+    .manage-store-btn:hover {
+      background-color: #0056b3;
+    }
+  .info-item {
+    display: flex;
+    align-items: center;
+  }
 </style>

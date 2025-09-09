@@ -1,5 +1,4 @@
 <template>
-  <DashboardLayout>
     <div class="page-container">
       <div class="page-header">
         <h1>申请租赁店面</h1>
@@ -69,7 +68,6 @@
         </form>
       </div>
     </div>
-  </DashboardLayout>
 </template>
 
 <script setup>

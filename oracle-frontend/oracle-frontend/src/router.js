@@ -82,11 +82,11 @@ const routes = [
         component: StoreStatusRequest,
         meta: { requiresAuth: true, title: '店面状态申请', role_need: ['商户'] },
       },
-      {
-        path: 'store-management',
-        component: StoreManagement,
-        meta: { requiresAuth: true, title: '我的店铺', role_need: ['商户'] },
-    },
+    //  {
+    //    path: 'store-management',
+    //    component: StoreManagement,
+    //    meta: { requiresAuth: true, title: '我的店铺', role_need: ['商户'] },
+    //},
     {
     path: '/store-management/get-store',
     component: GetStore,
