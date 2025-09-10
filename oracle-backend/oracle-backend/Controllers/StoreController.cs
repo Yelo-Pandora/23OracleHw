@@ -403,6 +403,140 @@ namespace oracle_backend.Controllers
             }
         }
 
+        // 使用已有账号申请创建商户（不会新建账户，仅将该账号与新店铺关联）
+        [HttpPost("CreateMerchantByExistingAccount")]
+        public async Task<IActionResult> CreateMerchantByExistingAccount([FromBody] CreateMerchantDto dto)
+        {
+            _logger.LogInformation("开始(ExistingAccount)创建新商户：{StoreName} by {Operator}", dto.StoreName, dto.OperatorAccount);
+
+            // 基本模型验证
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                _logger.LogWarning("(ExistingAccount)创建商户模型验证失败：{Errors}", string.Join(", ", errors));
+                return BadRequest(new { error = "输入数据验证失败", details = errors });
+            }
+
+            try
+            {
+                // 校验操作员账号必须存在
+                if (string.IsNullOrWhiteSpace(dto.OperatorAccount))
+                {
+                    return BadRequest(new { error = "OperatorAccount 必填且必须是已存在账号" });
+                }
+
+                var operatorAcc = await _accountContext.FindAccount(dto.OperatorAccount);
+                if (operatorAcc == null)
+                {
+                    return BadRequest(new { error = "指定的操作员账号不存在" });
+                }
+
+                // 验证租用时间
+                if (dto.RentEnd <= dto.RentStart)
+                {
+                    return BadRequest(new { error = "租用结束时间必须晚于起始时间" });
+                }
+
+                if (dto.RentStart.Date < DateTime.Today)
+                {
+                    return BadRequest(new { error = "租用起始时间不能早于今天" });
+                }
+
+                // 检查店面是否为空置状态
+                var isAreaAvailable = await _storeContext.IsAreaAvailable(dto.AreaId);
+                if (!isAreaAvailable)
+                {
+                    _logger.LogWarning("(ExistingAccount)店面 {AreaId} 不是空置状态", dto.AreaId);
+                    return BadRequest(new { error = "该店面已租用，请选择其他店面" });
+                }
+
+                // 验证租户信息是否重复
+                var tenantExists = await _storeContext.TenantExists(dto.TenantName, dto.ContactInfo);
+                if (tenantExists)
+                {
+                    _logger.LogWarning("(ExistingAccount)租户 {TenantName} 或联系方式 {ContactInfo} 已存在", dto.TenantName, dto.ContactInfo);
+                    return BadRequest(new { error = "该租户已在本综合体有店铺" });
+                }
+
+                try
+                {
+                    // 5. 生成店铺ID并创建店铺记录
+                    var storeId = await _storeContext.GetNextStoreId();
+
+                    var store = new Store
+                    {
+                        STORE_ID = storeId,
+                        STORE_NAME = dto.StoreName,
+                        STORE_STATUS = "正常营业",
+                        STORE_TYPE = dto.StoreType,
+                        TENANT_NAME = dto.TenantName,
+                        CONTACT_INFO = dto.ContactInfo,
+                        RENT_START = dto.RentStart,
+                        RENT_END = dto.RentEnd
+                    };
+
+                    _storeContext.STORE.Add(store);
+                    await _storeContext.SaveChangesAsync();
+
+                    // 6. 创建租用关系记录
+                    var rentStore = new RentStore
+                    {
+                        STORE_ID = storeId,
+                        AREA_ID = dto.AreaId
+                    };
+
+                    _storeContext.RENT_STORE.Add(rentStore);
+                    await _storeContext.SaveChangesAsync();
+
+                    // 7. 更新店面状态为已租用
+                    await _storeContext.UpdateAreaStatus(dto.AreaId, false, "已租用");
+                    await _storeContext.SaveChangesAsync();
+
+                    // 8. 将现有账号与店铺关联（不创建新账号）
+                    var storeAccount = new StoreAccount
+                    {
+                        ACCOUNT = dto.OperatorAccount,
+                        STORE_ID = storeId
+                    };
+
+                    _accountContext.STORE_ACCOUNT.Add(storeAccount);
+                    await _accountContext.SaveChangesAsync();
+
+                    _logger.LogInformation("(ExistingAccount)成功将账号 {Account} 关联为店铺 {StoreId}", dto.OperatorAccount, storeId);
+
+                    var result = new
+                    {
+                        message = "商户创建成功（使用现有账号）",
+                        storeId = storeId,
+                        storeName = dto.StoreName,
+                        account = dto.OperatorAccount,
+                        tenantName = dto.TenantName,
+                        areaId = dto.AreaId,
+                        rentStart = dto.RentStart,
+                        rentEnd = dto.RentEnd
+                    };
+
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "(ExistingAccount)创建商户过程中发生异常。商户名：{StoreName}", dto.StoreName);
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "(ExistingAccount)创建商户时发生错误：{StoreName}", dto.StoreName);
+                return StatusCode(500, new {
+                    error = "服务器内部错误，创建商户失败",
+                    details = ex.Message
+                });
+            }
+        }
+
         // 获取所有可用店面
         [HttpGet("AvailableAreas")]
         public async Task<IActionResult> GetAvailableAreas()
@@ -522,22 +656,32 @@ namespace oracle_backend.Controllers
                 var operator_account = await _accountContext.FindAccount(operatorAccount);
                 if (operator_account == null)
                 {
+                    _logger.LogWarning("GetMerchantInfo: operator account not found: {OperatorAccount}", operatorAccount);
                     return BadRequest(new { error = "操作员账号不存在" });
                 }
 
                 // 检查是否是管理员或对应的商户
                 bool isAdmin = operator_account.AUTHORITY <= 2; // 管理员或部门经理
                 bool isMerchant = false;
+                // 保存 storeAccount 以便日志记录
+                StoreAccount? storeAccount = null;
+
+                _logger.LogInformation("GetMerchantInfo called: requestedStoreId={StoreId}, operatorAccount={OperatorAccount}, operatorAuthority={Authority}, isAdmin={IsAdmin}",
+                    storeId, operatorAccount, operator_account.AUTHORITY, isAdmin);
 
                 if (!isAdmin)
                 {
-                    // 检查是否是对应的商户
-                    var storeAccount = await _accountContext.CheckStore(operatorAccount);
-                    isMerchant = storeAccount != null && storeAccount.STORE_ID == storeId;
+                    // 检查账号是否与请求的店铺ID直接关联（支持账号关联多个店铺的场景）
+                    storeAccount = await _accountContext.STORE_ACCOUNT
+                        .FirstOrDefaultAsync(sa => sa.ACCOUNT == operatorAccount && sa.STORE_ID == storeId);
+                    isMerchant = storeAccount != null;
+                    _logger.LogInformation("CheckStore (by account+store) result for {OperatorAccount}: matchedStoreId={StoreAccountId}", operatorAccount, storeAccount?.STORE_ID);
                 }
 
                 if (!isAdmin && !isMerchant)
                 {
+                    _logger.LogWarning("Access denied in GetMerchantInfo: operator={OperatorAccount}, authority={Authority}, isMerchant={IsMerchant}, storeAccountId={StoreAccountId}, requestedStoreId={Requested}",
+                        operatorAccount, operator_account.AUTHORITY, isMerchant, storeAccount?.STORE_ID, storeId);
                     return BadRequest(new { error = "无权限访问该商户信息" });
                 }
 
@@ -592,8 +736,11 @@ namespace oracle_backend.Controllers
 
                 if (!isAdmin)
                 {
-                    var storeAccount = await _accountContext.CheckStore(dto.OperatorAccount);
-                    isMerchant = storeAccount != null && storeAccount.STORE_ID == dto.StoreId;
+                    // 精确检查账号与指定店铺的关联（支持账号关联多个店铺）
+                    var storeAccount = await _accountContext.STORE_ACCOUNT
+                        .FirstOrDefaultAsync(sa => sa.ACCOUNT == dto.OperatorAccount && sa.STORE_ID == dto.StoreId);
+                    isMerchant = storeAccount != null;
+                    _logger.LogInformation("CheckStore (by account+store) result for {OperatorAccount}: matchedStoreId={StoreAccountId}", dto.OperatorAccount, storeAccount?.STORE_ID);
                 }
 
                 if (!isAdmin && !isMerchant)
@@ -725,15 +872,24 @@ namespace oracle_backend.Controllers
 
                 bool isAdmin = operator_account.AUTHORITY <= 2;
                 bool isMerchant = false;
+                StoreAccount? storeAccount = null;
+
+                _logger.LogInformation("GetEditableFields called: requestedStoreId={StoreId}, operatorAccount={OperatorAccount}, operatorAuthority={Authority}, isAdmin={IsAdmin}",
+                    storeId, operatorAccount, operator_account.AUTHORITY, isAdmin);
 
                 if (!isAdmin)
                 {
-                    var storeAccount = await _accountContext.CheckStore(operatorAccount);
-                    isMerchant = storeAccount != null && storeAccount.STORE_ID == storeId;
+                    // 精确检查账号与店铺的关联（支持账号关联多个店铺）
+                    storeAccount = await _accountContext.STORE_ACCOUNT
+                        .FirstOrDefaultAsync(sa => sa.ACCOUNT == operatorAccount && sa.STORE_ID == storeId);
+                    isMerchant = storeAccount != null;
+                    _logger.LogInformation("CheckStore (by account+store) result for {OperatorAccount}: matchedStoreId={StoreAccountId}", operatorAccount, storeAccount?.STORE_ID);
                 }
 
                 if (!isAdmin && !isMerchant)
                 {
+                    _logger.LogWarning("Access denied in GetEditableFields: operator={OperatorAccount}, authority={Authority}, isMerchant={IsMerchant}, storeAccountId={StoreAccountId}, requestedStoreId={Requested}",
+                        operatorAccount, operator_account.AUTHORITY, isMerchant, storeAccount?.STORE_ID, storeId);
                     return BadRequest(new { error = "无权限访问该商户信息" });
                 }
 
@@ -915,8 +1071,10 @@ namespace oracle_backend.Controllers
                 if (applicantAccount.AUTHORITY > 2)
                 {
                     // 非管理员，需要校验是否为该店铺的商户账号
-                    var storeAccount = await _accountContext.CheckStore(dto.ApplicantAccount);
-                    if (storeAccount == null || storeAccount.STORE_ID != dto.StoreId)
+                    // 非管理员，需要校验是否为该店铺的商户账号
+                    var storeAccount = await _accountContext.STORE_ACCOUNT
+                        .FirstOrDefaultAsync(sa => sa.ACCOUNT == dto.ApplicantAccount && sa.STORE_ID == dto.StoreId);
+                    if (storeAccount == null)
                     {
                         _logger.LogWarning("提交申请失败：申请人账号与店铺不匹配：申请人={Applicant}, 店铺={StoreId}", dto.ApplicantAccount, dto.StoreId);
                         return BadRequest(new { error = "申请人账号与店铺不匹配，只有商户本人或管理员/部门经理可提交申请" });
@@ -1875,6 +2033,51 @@ namespace oracle_backend.Controllers
             }
         }
 
+        /// <summary>
+        /// 获取商户自己所属的所有店铺（用于商户端选择店铺）
+        /// </summary>
+        [HttpGet("GetMyStores")]
+        public async Task<IActionResult> GetMyStores([FromQuery] string merchantAccount)
+        {
+            try
+            {
+                _logger.LogInformation("商户查询自己的店铺列表：商户账号 {MerchantAccount}", merchantAccount);
+
+                // 验证商户账号是否存在
+                var account = await _accountContext.FindAccount(merchantAccount);
+                if (account == null)
+                {
+                    return BadRequest(new { error = "商户账号不存在或无效" });
+                }
+
+                // 查找 STORE_ACCOUNT 表中所有与该账号关联的店铺记录
+                var storeAccounts = await _accountContext.STORE_ACCOUNT
+                    .Where(sa => sa.ACCOUNT == merchantAccount)
+                    .ToListAsync();
+
+                var stores = new List<object>();
+                foreach (var sa in storeAccounts)
+                {
+                    var store = await _storeContext.GetStoreById(sa.STORE_ID);
+                    if (store != null)
+                    {
+                        stores.Add(new { StoreId = store.STORE_ID, StoreName = store.STORE_NAME });
+                    }
+                    else
+                    {
+                        stores.Add(new { StoreId = sa.STORE_ID, StoreName = (string?)null });
+                    }
+                }
+
+                return Ok(new { message = "查询成功", merchantAccount = merchantAccount, total = stores.Count, stores = stores });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "商户查询所属店铺时发生异常：{MerchantAccount}", merchantAccount);
+                return StatusCode(500, new { error = "查询失败", details = ex.Message });
+            }
+        }
+
         #endregion
 
         #region 商户租金统计报表功能 (用例2.7.7)
@@ -1887,11 +2090,11 @@ namespace oracle_backend.Controllers
         /// <param name="operatorAccount">操作员账号</param>
         /// <returns>租金统计报表数据</returns>
         [HttpGet("RentStatisticsReport")]
-        public async Task<IActionResult> GetRentStatisticsReport([FromQuery] string period, [FromQuery] string dimension = "all", [FromQuery] string operatorAccount = "")
+        public async Task<IActionResult> GetRentStatisticsReport([FromQuery] string startPeriod, [FromQuery] string endPeriod, [FromQuery] string dimension = "all", [FromQuery] string operatorAccount = "")
         {
             try
             {
-                _logger.LogInformation("生成商户租金统计报表：时间段 {Period}, 维度 {Dimension}, 操作员 {OperatorAccount}", period, dimension, operatorAccount);
+                _logger.LogInformation("生成商户租金统计报表：时间段 {StartPeriod}-{EndPeriod}, 维度 {Dimension}, 操作员 {OperatorAccount}", startPeriod, endPeriod, dimension, operatorAccount);
 
                 // 验证操作员权限（需要管理员或财务权限）
                 if (!string.IsNullOrEmpty(operatorAccount))
@@ -1904,22 +2107,22 @@ namespace oracle_backend.Controllers
                 }
 
                 // 验证时间格式
-                if (string.IsNullOrEmpty(period))
+                if (string.IsNullOrEmpty(startPeriod) || string.IsNullOrEmpty(endPeriod))
                 {
-                    return BadRequest(new { error = "请提供统计时间段 (YYYYMM格式)" });
+                    return BadRequest(new { error = "请提供完整的统计时间段 (YYYYMM格式)" });
                 }
 
-                if (period.Length != 6 || !int.TryParse(period, out _))
+                if (startPeriod.Length != 6 || !int.TryParse(startPeriod, out _) || endPeriod.Length != 6 || !int.TryParse(endPeriod, out _))
                 {
                     return BadRequest(new { error = "时间格式错误，应为YYYYMM格式，如202412" });
                 }
 
-                var report = await GenerateRentStatisticsReport(period, dimension);
+                var report = await GenerateRentStatisticsReport(startPeriod, dimension);
 
                 return Ok(new
                 {
                     message = "租金统计报表生成成功",
-                    period = period,
+                    period = $"{startPeriod}-{endPeriod}",
                     dimension = dimension,
                     generateTime = DateTime.Now,
                     operatorAccount = operatorAccount,
@@ -2107,7 +2310,12 @@ namespace oracle_backend.Controllers
             var timeReport = await GenerateTimeBasedReport(period);
             var areaReport = await GenerateAreaBasedReport(period);
             var collectionStats = await _storeContext.GetRentCollectionStatistics(period);
+            var areaStats = await _storeContext.GetRentStatisticsByArea();
+            var totalStoresCount = areaStats.Count(a => a.IsOccupied);
 
+            // Build comprehensive report including both summary and trend data for timeAnalysis
+            dynamic dt = timeReport;
+            dynamic da = areaReport;
             return new
             {
                 title = $"{period}年月商户租金综合统计报表",
@@ -2115,7 +2323,7 @@ namespace oracle_backend.Controllers
                 executiveSummary = new
                 {
                     reportPeriod = period,
-                    totalStores = collectionStats.TotalBills,
+                    totalStores = totalStoresCount,
                     totalRevenue = collectionStats.TotalAmount,
                     collectionRate = collectionStats.CollectionRate,
                     status = GetOverallStatus(collectionStats.CollectionRate),
@@ -2137,8 +2345,13 @@ namespace oracle_backend.Controllers
                     pendingBills = collectionStats.TotalBills - collectionStats.PaidBills - collectionStats.OverdueBills,
                     onTimePaymentRate = collectionStats.TotalBills > 0 ? Math.Round((double)collectionStats.PaidBills / collectionStats.TotalBills * 100, 2) : 0
                 },
-                timeAnalysis = ((dynamic)timeReport).summary,
-                areaAnalysis = ((dynamic)areaReport).statistics,
+                // include both summary and trend for timeAnalysis
+                timeAnalysis = new
+                {
+                    summary = dt.summary,
+                    trend = dt.trend
+                },
+                areaAnalysis = da.statistics,
                 recommendations = GenerateRecommendations(collectionStats)
             };
         }

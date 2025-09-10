@@ -359,18 +359,6 @@ namespace oracle_backend.Controllers
                 return Ok(goalaccount.AUTHORITY);
             }
         }
-        // 根据员工ID获取Account
-        [HttpGet("GetAccById")]
-        public async Task<IActionResult> GetAccountByStaffId(int staffId)
-        {
-            var account = await _context.AccountFromStaffID(staffId);
-            if (account == null)
-            {
-                _logger.LogWarning("指定的员工ID不存在");
-                return BadRequest("员工ID不存在，请重新指定");
-            }
-            return Ok(account);
-        }
 
         //查询指定账号的信息
         [HttpGet("info/{accountId}")]
@@ -382,6 +370,19 @@ namespace oracle_backend.Controllers
             {
                 _logger.LogWarning("指定的账号不存在");
                 return NotFound("账号不存在");
+            }
+            return Ok(account);
+        }
+        
+        // 根据员工ID获取Account
+        [HttpGet("GetAccById")]
+        public async Task<IActionResult> GetAccountByStaffId(int staffId)
+        {
+            var account = await _context.AccountFromStaffID(staffId);
+            if (account == null)
+            {
+                _logger.LogWarning("指定的员工ID不存在");
+                return BadRequest("员工ID不存在，请重新指定");
             }
             return Ok(account);
         }
