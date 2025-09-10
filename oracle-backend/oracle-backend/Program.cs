@@ -33,6 +33,12 @@ namespace oracle_backend
                 options.UseOracle(connectionString);
             });
 
+            //添加对 CsahFlowDbcontext的依赖注入
+            builder.Services.AddDbContext<CashFlowDbContext>(options =>
+            {
+                options.UseOracle(connectionString);
+            });
+
             // 添加对 CollaborationDbContext 的依赖注入
             builder.Services.AddDbContext<CollaborationDbContext>(options =>
             {

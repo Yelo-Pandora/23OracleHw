@@ -4,13 +4,17 @@ import { useUserStore } from './user/user'
 import Login from './pages/login/LoginPage.vue'
 import Home from './pages/home/Home.vue'
 //测试用的EmployeeInfo页面
-import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
+//mport EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
+//import Cashflow from '@/pages/cashflow_management/CashflowDashboard.vue'
 import AccountContent from '@/pages/account_management/AccountContent.vue'
 import TempAuthEditor from '@/pages/account_management/TempAuthEditor.vue'
 // import Visualization from './pages/area_visualization/App.vue'
 import DeviceManagement from '@/pages/equipment_management/Equipment_management.vue'
 import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
 import TotalSalary from './pages/employee_management/TotalSalary.vue'
+import CashFlow from '@/pages/cashflow/cashflow_management.vue'
+import CashFlowOverview from '@/pages/cashflow/CashflowDashBoard.vue'
+import CashFlowDetails from '@/pages/cashflow/Cashflowdetail.vue'
 
 // import Events from './pages/events_management/App.vue'
 // import Mall from './pages/mall_management/App.vue'
@@ -122,7 +126,31 @@ const routes = [
       props: true
     }
   ]
-},
+  },
+  {
+    path: '/cashflow',
+    component: CashFlow,  
+    meta: {
+      requiresAuth: true,
+      title: '现金流信息',
+      role_need: ['员工']
+    },
+    children: [
+      {
+        path: '',
+        name: 'CashFlowOverview',  
+        component: CashFlowOverview,
+        meta: { title: '现金流总览' }
+      },
+      {
+        path: 'detail/:module',
+        name: 'CashFlowDetail',    
+        component: CashFlowDetails,
+        meta: { title: '详情页' },
+        props: true
+      }
+    ]
+  },
 //   //商场(店铺)管理/商场平面图查看页面
 //   { path: '/mall_management', component: Mall, meta: { requiresAuth: true, role_need: ['员工', '商户', '游客'] } },
 //   //停车场管理/车位查询页面
