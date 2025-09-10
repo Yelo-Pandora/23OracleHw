@@ -32,8 +32,8 @@
                 <!-- 关联的商户信息 -->
                 <div v-if="currentUserStoreInfo" class="role-details">
                   <h4>商户档案</h4>
-                  <p><strong>商户名称:</strong> {{ currentUserStoreInfo.storeName }}</p>
-                  <p><strong>租户姓名:</strong> {{ currentUserStoreInfo.tenantName }}</p>
+                  <p><strong>商户名称:</strong> {{ currentUserStoreInfo.StoreName }}</p>
+                  <p><strong>租户姓名:</strong> {{ currentUserStoreInfo.TenantName }}</p>
                 </div>
                 <!-- 如果没有信息 -->
                 <p v-if="!currentUserStaffInfo && !currentUserStoreInfo">

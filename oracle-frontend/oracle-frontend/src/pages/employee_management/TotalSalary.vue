@@ -24,14 +24,19 @@
         </table>
       </div>
     </div>
-    <SalaryDetailModal
+    <SalaryDetailModal :show="showDetailModal"
+                       :year="currentYear"
+                       :month="currentMonth"
+                       :salaryList="currentSalaryList"
+                       @close="showDetailModal = false" />
+    <!-- <SalaryDetailModal
       :show="showDetailModal"
       :year="currentYear"
       :month="currentMonth"
       :operatorAccount="userStore.userInfo.account"
       @close="showDetailModal = false"
       @salaryUpdated="refreshSalaryData"
-    />
+    /> -->
   </DashboardLayout>
 </template>
 
