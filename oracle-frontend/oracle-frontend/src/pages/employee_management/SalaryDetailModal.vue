@@ -140,20 +140,14 @@ function calcTotalSalary(base, bonus, fine) {
 
 async function fetchStaffAndSalarySlip() {
 	if (!props.year || !props.month) return;
-	try {
-		const [staffRes, slipRes] = await Promise.all([
-			axios.get('/api/Staff/AllStaffs'),
-			axios.get('/api/Staff/AllsalarySlip', { params: { monthTime: `${props.year}-${props.month}` } })
-		]);
-		staffList.value = staffRes.data || [];
-		salarySlipList.value = slipRes.data || [];
-		await fillEmployeeAccounts();
-	} catch (e) {
-		staffList.value = [];
-		salarySlipList.value = [];
-		employeeInfos.value = [];
-		console.log('Error fetching staff, salary slip, or account:', e);
-	}
+
+    const [staffRes, slipRes] = await Promise.all([
+        axios.get('/api/Staff/AllStaffs'),
+        axios.get('/api/Staff/AllsalarySlip', { params: { monthTime: `${props.year}-${props.month}` } })
+    ]);
+    staffList.value = staffRes.data || [];
+    salarySlipList.value = slipRes.data || [];
+    await fillEmployeeAccounts();
 }
 
 watch(() => [props.year, props.month, props.show], ([y, m, show]) => {
@@ -166,28 +160,24 @@ onMounted(() => {
 
 async function onEdit(emp) {
 	if (editRow.value === emp.staffId) {
-		try {
-			await axios.post('/api/Staff/StaffSalaryManagement', {
-				BASE_SALARY: Number(editForm.value.salary),
-				BONUS: Number(editForm.value.bonus),
-				FINE: Number(editForm.value.fine)
-			}, {
-				params: {
-					operatorAccount: props.operatorAccount,
-					staffId: emp.staffId,
-					monthTime: `${props.year}-${props.month}`
-				}
-			});
-			// 更新本地数据
-			emp.salary = editForm.value.salary;
-			emp.bonus = editForm.value.bonus;
-			emp.fine = editForm.value.fine;
-			editRow.value = null;
-			emit('salaryUpdated'); // 通知父组件刷新数据
-			alert('保存成功');
-		} catch (e) {
-			alert('保存失败：' + (e?.response?.data || e.message));
-		}
+        await axios.post('/api/Staff/StaffSalaryManagement', {
+            BASE_SALARY: Number(editForm.value.salary),
+            BONUS: Number(editForm.value.bonus),
+            FINE: Number(editForm.value.fine)
+        }, {
+            params: {
+                operatorAccount: props.operatorAccount,
+                staffId: emp.staffId,
+                monthTime: `${props.year}-${props.month}`
+            }
+        });
+        // 更新本地数据
+        emp.salary = editForm.value.salary;
+        emp.bonus = editForm.value.bonus;
+        emp.fine = editForm.value.fine;
+        editRow.value = null;
+        emit('salaryUpdated'); // 通知父组件刷新数据
+        alert('保存成功');
 	} else {
 		editRow.value = emp.staffId;
 		editForm.value = {
