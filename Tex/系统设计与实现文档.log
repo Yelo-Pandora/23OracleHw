@@ -1,0 +1,2111 @@
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.9.9)  10 SEP 2025 14:39
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**c:/Users/liuyo/Documents/GitHub/23OracleHw/Tex/系统设计与实现文档
+(c:/Users/liuyo/Documents/GitHub/23OracleHw/Tex/系统设计与实现文档.tex
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2025-01-18>
+(e:/texlive/2025/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2024/06/29 v1.4n Standard LaTeX document class
+(e:/texlive/2025/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2024/06/29 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count192
+\c@section=\count193
+\c@subsection=\count194
+\c@subsubsection=\count195
+\c@paragraph=\count196
+\c@subparagraph=\count197
+\c@figure=\count198
+\c@table=\count199
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen141
+) (e:/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.sty (e:/texlive/2025/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2025-01-18 L3 programming layer (loader) 
+ (e:/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
+File: l3backend-xetex.def 2024-05-08 L3 backend support: XeTeX
+\g__graphics_track_int=\count266
+\l__pdf_internal_box=\box52
+\g__pdf_backend_annotation_int=\count267
+\g__pdf_backend_link_int=\count268
+))
+Package: xeCJK 2022/08/05 v3.9.1 Typesetting CJK scripts with XeLaTeX
+ (e:/texlive/2025/texmf-dist/tex/latex/ctex/ctexhook.sty
+Package: ctexhook 2022/07/14 v2.5.10 Document and package hooks (CTEX)
+) (e:/texlive/2025/texmf-dist/tex/latex/l3packages/xtemplate/xtemplate.sty
+Package: xtemplate 2024-08-16 L3 Experimental prototype document functions
+)
+\l__xeCJK_tmp_int=\count269
+\l__xeCJK_tmp_box=\box53
+\l__xeCJK_tmp_dim=\dimen142
+\l__xeCJK_tmp_skip=\skip51
+\g__xeCJK_space_factor_int=\count270
+\l__xeCJK_begin_int=\count271
+\l__xeCJK_end_int=\count272
+\c__xeCJK_CJK_class_int=\XeTeXcharclass1
+\c__xeCJK_FullLeft_class_int=\XeTeXcharclass2
+\c__xeCJK_FullRight_class_int=\XeTeXcharclass3
+\c__xeCJK_HalfLeft_class_int=\XeTeXcharclass4
+\c__xeCJK_HalfRight_class_int=\XeTeXcharclass5
+\c__xeCJK_NormalSpace_class_int=\XeTeXcharclass6
+\c__xeCJK_CM_class_int=\XeTeXcharclass7
+\c__xeCJK_HangulJamo_class_int=\XeTeXcharclass8
+\l__xeCJK_last_skip=\skip52
+\c__xeCJK_none_node=\count273
+\g__xeCJK_node_int=\count274
+\c__xeCJK_CJK_node_dim=\dimen143
+\c__xeCJK_CJK-space_node_dim=\dimen144
+\c__xeCJK_default_node_dim=\dimen145
+\c__xeCJK_CJK-widow_node_dim=\dimen146
+\c__xeCJK_normalspace_node_dim=\dimen147
+\c__xeCJK_default-space_node_skip=\skip53
+\l__xeCJK_ccglue_skip=\skip54
+\l__xeCJK_ecglue_skip=\skip55
+\l__xeCJK_punct_kern_skip=\skip56
+\l__xeCJK_indent_box=\box54
+\l__xeCJK_last_penalty_int=\count275
+\l__xeCJK_last_bound_dim=\dimen148
+\l__xeCJK_last_kern_dim=\dimen149
+\l__xeCJK_widow_penalty_int=\count276
+
+LaTeX template Info: Declaring template type 'xeCJK/punctuation' taking 0
+(template)           argument(s) on line 2396.
+
+\l__xeCJK_fixed_punct_width_dim=\dimen150
+\l__xeCJK_mixed_punct_width_dim=\dimen151
+\l__xeCJK_middle_punct_width_dim=\dimen152
+\l__xeCJK_fixed_margin_width_dim=\dimen153
+\l__xeCJK_mixed_margin_width_dim=\dimen154
+\l__xeCJK_middle_margin_width_dim=\dimen155
+\l__xeCJK_bound_punct_width_dim=\dimen156
+\l__xeCJK_bound_margin_width_dim=\dimen157
+\l__xeCJK_margin_minimum_dim=\dimen158
+\l__xeCJK_kerning_total_width_dim=\dimen159
+\l__xeCJK_same_align_margin_dim=\dimen160
+\l__xeCJK_different_align_margin_dim=\dimen161
+\l__xeCJK_kerning_margin_width_dim=\dimen162
+\l__xeCJK_kerning_margin_minimum_dim=\dimen163
+\l__xeCJK_bound_dim=\dimen164
+\l__xeCJK_reverse_bound_dim=\dimen165
+\l__xeCJK_margin_dim=\dimen166
+\l__xeCJK_minimum_bound_dim=\dimen167
+\l__xeCJK_kerning_margin_dim=\dimen168
+\g__xeCJK_family_int=\count277
+\l__xeCJK_fam_int=\count278
+\g__xeCJK_fam_allocation_int=\count279
+\l__xeCJK_verb_case_int=\count280
+\l__xeCJK_verb_exspace_skip=\skip57
+ (e:/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.sty (e:/texlive/2025/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+Package: xparse 2024-08-16 L3 Experimental document command parser
+)
+Package: fontspec 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
+ (e:/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+Package: fontspec-xetex 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
+\l__fontspec_script_int=\count281
+\l__fontspec_language_int=\count282
+\l__fontspec_strnum_int=\count283
+\l__fontspec_tmp_int=\count284
+\l__fontspec_tmpa_int=\count285
+\l__fontspec_tmpb_int=\count286
+\l__fontspec_tmpc_int=\count287
+\l__fontspec_em_int=\count288
+\l__fontspec_emdef_int=\count289
+\l__fontspec_strong_int=\count290
+\l__fontspec_strongdef_int=\count291
+\l__fontspec_tmpa_dim=\dimen169
+\l__fontspec_tmpb_dim=\dimen170
+\l__fontspec_tmpc_dim=\dimen171
+ (e:/texlive/2025/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+) (e:/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.cfg))) (e:/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg
+File: xeCJK.cfg 2022/08/05 v3.9.1 Configuration file for xeCJK package
+))
+
+Package fontspec Info: 
+(fontspec)             Could not resolve font "SimHei/BI" (it probably doesn't
+(fontspec)             exist).
+
+
+Package fontspec Info: 
+(fontspec)             Could not resolve font "SimHei/B" (it probably doesn't
+(fontspec)             exist).
+
+
+Package fontspec Info: 
+(fontspec)             Could not resolve font "SimHei/I" (it probably doesn't
+(fontspec)             exist).
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'SimHei(0)' created for font 'SimHei' with
+(fontspec)             options [Script={CJK}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->"SimHei/OT:script=hani;language=dflt;"
+
+ (e:/texlive/2025/texmf-dist/tex/latex/lm/lmodern.sty
+Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/lmm/m/it on input line 23.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/lmsy/m/n on input line 24.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 25.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 26.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/lmm/b/it on input line 27.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/lmsy/b/n on input line 28.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 29.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 31.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 32.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/lmr/m/it on input line 33.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> OT1/lmss/bx/n on input line 36.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
+) (e:/texlive/2025/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+ (e:/texlive/2025/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\@emptytoks=\toks17
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)) (e:/texlive/2025/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2024/11/05 v2.17t AMS math features
+\@mathmargin=\skip58
+
+For additional information on amsmath, use the `?' option.
+(e:/texlive/2025/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+ (e:/texlive/2025/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks18
+\ex@=\dimen172
+)) (e:/texlive/2025/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen173
+) (e:/texlive/2025/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count292
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count293
+\leftroot@=\count294
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count295
+\DOTSCASE@=\count296
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box55
+\strutbox@=\box56
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen174
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count297
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count298
+\dotsspace@=\muskip17
+\c@parentequation=\count299
+\dspbrk@lvl=\count300
+\tag@help=\toks19
+\row@=\count301
+\column@=\count302
+\maxfields@=\count303
+\andhelp@=\toks20
+\eqnshift@=\dimen175
+\alignsep@=\dimen176
+\tagshift@=\dimen177
+\tagwidth@=\dimen178
+\totwidth@=\dimen179
+\lineht@=\dimen180
+\@envbody=\toks21
+\multlinegap=\skip59
+\multlinetaggap=\skip60
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2953.
+LaTeX Info: Redefining \] on input line 2954.
+) (e:/texlive/2025/texmf-dist/tex/generic/iftex/ifxetex.sty
+Package: ifxetex 2019/10/25 v0.7 ifxetex legacy package. Use iftex instead.
+ (e:/texlive/2025/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+)) (e:/texlive/2025/texmf-dist/tex/generic/iftex/ifluatex.sty
+Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
+) (e:/texlive/2025/texmf-dist/tex/latex/base/fixltx2e.sty
+Package: fixltx2e 2016/12/29 v2.1a fixes to LaTeX (obsolete)
+Applying: [2015/01/01] Old fixltx2e package on input line 46.
+
+
+Package fixltx2e Warning: fixltx2e is not required with releases after 2015
+(fixltx2e)                All fixes are now in the LaTeX kernel.
+(fixltx2e)                See the latexrelease package for details.
+
+Already applied: [0000/00/00] Old fixltx2e package on input line 53.
+) (e:/texlive/2025/texmf-dist/tex/latex/unicode-math/unicode-math.sty
+Package: unicode-math 2023/08/13 v0.8r Unicode maths in XeLaTeX and LuaLaTeX
+ (e:/texlive/2025/texmf-dist/tex/latex/unicode-math/unicode-math-xetex.sty
+Package: unicode-math-xetex 2023/08/13 v0.8r Unicode maths in XeLaTeX and LuaLaTeX
+ (e:/texlive/2025/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty
+Package: l3keys2e 2024-08-16 LaTeX2e option processing using LaTeX3 keys
+) (e:/texlive/2025/texmf-dist/tex/latex/base/fix-cm.sty
+Package: fix-cm 2020/11/24 v1.1t fixes to LaTeX
+ (e:/texlive/2025/texmf-dist/tex/latex/base/ts1enc.def
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding TS1 on input line 47.
+))
+\g__um_fam_int=\count304
+\g__um_fonts_used_int=\count305
+\l__um_primecount_int=\count306
+\g__um_primekern_muskip=\muskip18
+ (e:/texlive/2025/texmf-dist/tex/latex/unicode-math/unicode-math-table.tex))) (e:/texlive/2025/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verbatim
+ (e:/texlive/2025/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
+)) (e:/texlive/2025/texmf-dist/tex/latex/microtype/microtype.sty
+Package: microtype 2025/02/11 v3.2a Micro-typographical refinements (RS)
+ (e:/texlive/2025/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks23
+) (e:/texlive/2025/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2025/02/11 v2.5l e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count307
+)
+\MT@toks=\toks24
+\MT@tempbox=\box57
+\MT@count=\count308
+LaTeX Info: Redefining \noprotrusionifhmode on input line 1087.
+LaTeX Info: Redefining \leftprotrusion on input line 1088.
+\MT@prot@toks=\toks25
+LaTeX Info: Redefining \rightprotrusion on input line 1107.
+LaTeX Info: Redefining \textls on input line 1449.
+\MT@outer@kern=\dimen181
+LaTeX Info: Redefining \microtypecontext on input line 2053.
+LaTeX Info: Redefining \textmicrotypecontext on input line 2070.
+\MT@listname@count=\count309
+ (e:/texlive/2025/texmf-dist/tex/latex/microtype/microtype-xetex.def
+File: microtype-xetex.def 2025/02/11 v3.2a Definitions specific to xetex (RS)
+LaTeX Info: Redefining \lsstyle on input line 443.
+LaTeX Info: Redefining \lslig on input line 451.
+\MT@outer@space=\skip61
+)
+Package microtype Info: Loading configuration file microtype.cfg.
+ (e:/texlive/2025/texmf-dist/tex/latex/microtype/microtype.cfg
+File: microtype.cfg 2025/02/11 v3.2a microtype main configuration file (RS)
+)
+LaTeX Info: Redefining \microtypesetup on input line 3065.
+) (e:/texlive/2025/texmf-dist/tex/latex/parskip/parskip.sty
+Package: parskip 2021-03-14 v2.0h non-zero parskip adjustments
+ (e:/texlive/2025/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+ (e:/texlive/2025/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+) (e:/texlive/2025/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+))) (e:/texlive/2025/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2024-11-05 v7.01l Hypertext links for LaTeX
+ (e:/texlive/2025/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (e:/texlive/2025/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+ (e:/texlive/2025/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
+ (e:/texlive/2025/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode not found.
+)) (e:/texlive/2025/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (e:/texlive/2025/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2023-11-26 v2.56 Cross-referencing by name of section
+ (e:/texlive/2025/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (e:/texlive/2025/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count310
+) (e:/texlive/2025/texmf-dist/tex/generic/stringenc/stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
+)
+\@linkdim=\dimen182
+\Hy@linkcounter=\count311
+\Hy@pagecounter=\count312
+ (e:/texlive/2025/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2024-11-05 v7.01l Hyperref: PDFDocEncoding definition (HO)
+) (e:/texlive/2025/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count313
+ (e:/texlive/2025/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2024-11-05 v7.01l Hyperref: PDF Unicode definition (HO)
+)
+Package hyperref Info: Option `unicode' set `true' on input line 4040.
+Package hyperref Info: Hyper figures OFF on input line 4157.
+Package hyperref Info: Link nesting OFF on input line 4162.
+Package hyperref Info: Hyper index ON on input line 4165.
+Package hyperref Info: Plain pages OFF on input line 4172.
+Package hyperref Info: Backreferencing OFF on input line 4177.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4424.
+\c@Hy@tempcnt=\count314
+ (e:/texlive/2025/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip19
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4763.
+\XeTeXLinkMargin=\dimen183
+ (e:/texlive/2025/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+ (e:/texlive/2025/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+))
+\Fld@menulength=\count315
+\Field@Width=\dimen184
+\Fld@charsize=\dimen185
+Package hyperref Info: Hyper figures OFF on input line 6042.
+Package hyperref Info: Link nesting OFF on input line 6047.
+Package hyperref Info: Hyper index ON on input line 6050.
+Package hyperref Info: backreferencing OFF on input line 6057.
+Package hyperref Info: Link coloring OFF on input line 6062.
+Package hyperref Info: Link coloring with OCG OFF on input line 6067.
+Package hyperref Info: PDF/A mode OFF on input line 6072.
+ (e:/texlive/2025/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count316
+\c@Item=\count317
+\c@Hfootnote=\count318
+)
+Package hyperref Info: Driver (autodetected): hxetex.
+ (e:/texlive/2025/texmf-dist/tex/latex/hyperref/hxetex.def
+File: hxetex.def 2024-11-05 v7.01l Hyperref driver for XeTeX
+\pdfm@box=\box58
+\c@Hy@AnnotLevel=\count319
+\HyField@AnnotCount=\count320
+\Fld@listcount=\count321
+\c@bookmark@seq@number=\count322
+ (e:/texlive/2025/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
+ (e:/texlive/2025/texmf-dist/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend package
+with kernel methods
+) (e:/texlive/2025/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 285.
+)
+\Hy@SectionHShift=\skip62
+)
+Package hyperref Info: Option `breaklinks' set `true' on input line 35.
+ (e:/texlive/2025/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2024-10-27 v4.22 Multi-page Table package (DPC)
+\LTleft=\skip63
+\LTright=\skip64
+\LTpre=\skip65
+\LTpost=\skip66
+\LTchunksize=\count323
+\LTcapwidth=\dimen186
+\LT@head=\box59
+\LT@firsthead=\box60
+\LT@foot=\box61
+\LT@lastfoot=\box62
+\LT@gbox=\box63
+\LT@cols=\count324
+\LT@rows=\count325
+\c@LT@tables=\count326
+\c@LT@chunks=\count327
+\LT@p@ftn=\toks26
+) (e:/texlive/2025/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen187
+\lightrulewidth=\dimen188
+\cmidrulewidth=\dimen189
+\belowrulesep=\dimen190
+\belowbottomsep=\dimen191
+\aboverulesep=\dimen192
+\abovetopsep=\dimen193
+\cmidrulesep=\dimen194
+\cmidrulekern=\dimen195
+\defaultaddspace=\dimen196
+\@cmidla=\count328
+\@cmidlb=\count329
+\@aboverulesep=\dimen197
+\@belowrulesep=\dimen198
+\@thisruleclass=\count330
+\@lastruleclass=\count331
+\@thisrulewidth=\dimen199
+) (e:/texlive/2025/texmf-dist/tex/latex/mdwtools/footnote.sty
+Package: footnote 1997/01/28 1.13 Save footnotes around boxes
+\fn@notes=\box64
+\fn@width=\dimen256
+) (e:/texlive/2025/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+ (e:/texlive/2025/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+ (e:/texlive/2025/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+) (e:/texlive/2025/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: xetex.def on input line 106.
+ (e:/texlive/2025/texmf-dist/tex/latex/graphics-def/xetex.def
+File: xetex.def 2022/09/22 v5.0n Graphics/color driver for xetex
+))
+\Gin@req@height=\dimen257
+\Gin@req@width=\dimen258
+) (e:/texlive/2025/texmf-dist/tex/latex/grffile/grffile.sty
+Package: grffile 2019/11/11 v2.1 Extended file name support for graphics (legacy)
+Package grffile Info: This package is an empty stub for compatibility on input line 40.
+) (e:/texlive/2025/texmf-dist/tex/latex/setspace/setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
+) (./系统设计与实现文档.aux)
+\openout1 = `系统设计与实现文档.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 73.
+LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
+(Font)                  OT1/lmr/m/n --> TU/lmr/m/n on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/lmr/m/it --> TU/lmr/m/it on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/lmr/bx/n --> TU/lmr/bx/n on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/lmss/m/n --> TU/lmss/m/n on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/lmss/bx/n --> TU/lmss/bx/n on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/lmtt/m/n --> TU/lmtt/m/n on input line 73.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/lmtt/m/n --> TU/lmtt/bx/n on input line 73.
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'latinmodern-math.otf(0)' created for font
+(fontspec)             'latinmodern-math.otf' with options
+(fontspec)             [Ligatures=TeX,Scale=MatchLowercase,BoldItalicFont={},ItalicFont={},SmallCapsFont={},Script=Math,BoldFont={latinmodern-math.otf}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->s*[0.9999964596882403]"[latinmodern-math.otf]/OT:script=math;language=dflt;mapping=tex-text;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->s*[0.9999964596882403]"[latinmodern-math.otf]/OT:script=math;language=dflt;mapping=tex-text;"
+
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(0)/m/n' will be
+(Font)              scaled to size 10.0pt on input line 73.
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'latinmodern-math.otf(1)' created for font
+(fontspec)             'latinmodern-math.otf' with options
+(fontspec)             [Ligatures=TeX,Scale=MatchLowercase,BoldItalicFont={},ItalicFont={},SmallCapsFont={},Script=Math,SizeFeatures={{Size=8.5-},{Size=6-8.5,Font=latinmodern-math.otf,Style=MathScript},{Size=-6,Font=latinmodern-math.otf,Style=MathScriptScript}},BoldFont={latinmodern-math.otf}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <8.5->s*[0.9999964596882403]"[latinmodern-math.otf]/OT:script=math;language=dflt;mapping=tex-text;"<6-8.5>s*[0.9999964596882403]"[latinmodern-math.otf]/OT:script=math;language=dflt;+ssty=0;mapping=tex-text;"<-6>s*[0.9999964596882403]"[latinmodern-math.otf]/OT:script=math;language=dflt;+ssty=1;mapping=tex-text;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->s*[0.9999964596882403]"[latinmodern-math.otf]/OT:script=math;language=dflt;mapping=tex-text;"
+
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 10.0pt on input line 73.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `normal' on input line 73.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/lmr/m/n --> TU/latinmodern-math.otf(1)/m/n on input line 73.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `bold' on input line 73.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/lmr/bx/n --> TU/latinmodern-math.otf(1)/b/n on input line 73.
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 1.000096459334209.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 1.000096459334209.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 1.000096459334209.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 1.000096459334209.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 1.000096459334209.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'latinmodern-math.otf(2)' created for font
+(fontspec)             'latinmodern-math.otf' with options
+(fontspec)             [Ligatures=TeX,Scale=MatchLowercase,BoldItalicFont={},ItalicFont={},SmallCapsFont={},Script=Math,SizeFeatures={{Size=8.5-},{Size=6-8.5,Font=latinmodern-math.otf,Style=MathScript},{Size=-6,Font=latinmodern-math.otf,Style=MathScriptScript}},BoldFont={latinmodern-math.otf},ScaleAgain=1.0001,FontAdjustment={\fontdimen
+(fontspec)             8\font =6.77pt\relax \fontdimen 9\font =3.94pt\relax
+(fontspec)             \fontdimen 10\font =4.44pt\relax \fontdimen 11\font
+(fontspec)             =6.86pt\relax \fontdimen 12\font =3.45pt\relax
+(fontspec)             \fontdimen 13\font =3.63pt\relax \fontdimen 14\font
+(fontspec)             =3.63pt\relax \fontdimen 15\font =2.89pt\relax
+(fontspec)             \fontdimen 16\font =2.47pt\relax \fontdimen 17\font
+(fontspec)             =2.47pt\relax \fontdimen 18\font =2.5pt\relax
+(fontspec)             \fontdimen 19\font =2.0pt\relax \fontdimen 22\font
+(fontspec)             =2.5pt\relax \fontdimen 20\font =0pt\relax \fontdimen
+(fontspec)             21\font =0pt\relax }].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <8.5->s*[1.000096459334209]"[latinmodern-math.otf]/OT:script=math;language=dflt;mapping=tex-text;"<6-8.5>s*[1.000096459334209]"[latinmodern-math.otf]/OT:script=math;language=dflt;+ssty=0;mapping=tex-text;"<-6>s*[1.000096459334209]"[latinmodern-math.otf]/OT:script=math;language=dflt;+ssty=1;mapping=tex-text;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->s*[1.000096459334209]"[latinmodern-math.otf]/OT:script=math;language=dflt;mapping=tex-text;"
+
+LaTeX Font Info:    Encoding `OMS' has changed to `TU' for symbol font
+(Font)              `symbols' in the math version `normal' on input line 73.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/lmsy/m/n --> TU/latinmodern-math.otf(2)/m/n on input line 73.
+LaTeX Font Info:    Encoding `OMS' has changed to `TU' for symbol font
+(Font)              `symbols' in the math version `bold' on input line 73.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/lmsy/b/n --> TU/latinmodern-math.otf(2)/b/n on input line 73.
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9998964600422715.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9998964600422715.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9998964600422715.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9998964600422715.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9998964600422715.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'latinmodern-math.otf(3)' created for font
+(fontspec)             'latinmodern-math.otf' with options
+(fontspec)             [Ligatures=TeX,Scale=MatchLowercase,BoldItalicFont={},ItalicFont={},SmallCapsFont={},Script=Math,SizeFeatures={{Size=8.5-},{Size=6-8.5,Font=latinmodern-math.otf,Style=MathScript},{Size=-6,Font=latinmodern-math.otf,Style=MathScriptScript}},BoldFont={latinmodern-math.otf},ScaleAgain=0.9999,FontAdjustment={\fontdimen
+(fontspec)             8\font =0.4pt\relax \fontdimen 9\font =2.0pt\relax
+(fontspec)             \fontdimen 10\font =1.67pt\relax \fontdimen 11\font
+(fontspec)             =1.11pt\relax \fontdimen 12\font =6.0pt\relax
+(fontspec)             \fontdimen 13\font =0pt\relax }].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <8.5->s*[0.9998964600422715]"[latinmodern-math.otf]/OT:script=math;language=dflt;mapping=tex-text;"<6-8.5>s*[0.9998964600422715]"[latinmodern-math.otf]/OT:script=math;language=dflt;+ssty=0;mapping=tex-text;"<-6>s*[0.9998964600422715]"[latinmodern-math.otf]/OT:script=math;language=dflt;+ssty=1;mapping=tex-text;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->s*[0.9998964600422715]"[latinmodern-math.otf]/OT:script=math;language=dflt;mapping=tex-text;"
+
+LaTeX Font Info:    Encoding `OMX' has changed to `TU' for symbol font
+(Font)              `largesymbols' in the math version `normal' on input line 73.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/lmex/m/n --> TU/latinmodern-math.otf(3)/m/n on input line 73.
+LaTeX Font Info:    Encoding `OMX' has changed to `TU' for symbol font
+(Font)              `largesymbols' in the math version `bold' on input line 73.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/lmex/m/n --> TU/latinmodern-math.otf(3)/b/n on input line 73.
+LaTeX Info: Redefining \microtypecontext on input line 73.
+Package microtype Info: Applying patch `item' on input line 73.
+Package microtype Info: Applying patch `toc' on input line 73.
+Package microtype Info: Applying patch `eqnum' on input line 73.
+
+
+Package microtype Warning: Unable to apply patch `footnote' on input line 73.
+
+Package microtype Info: Applying patch `verbatim' on input line 73.
+LaTeX Info: Redefining \microtypesetup on input line 73.
+Package microtype Info: Character protrusion enabled (level 2).
+Package microtype Info: Using protrusion set `basicmath'.
+Package microtype Info: No adjustment of tracking.
+Package microtype Info: No adjustment of spacing.
+Package microtype Info: No adjustment of kerning.
+(e:/texlive/2025/texmf-dist/tex/latex/microtype/mt-LatinModernRoman.cfg
+File: mt-LatinModernRoman.cfg 2021/02/21 v1.1 microtype config. file: Latin Modern Roman (RS)
+)
+Package hyperref Info: Link coloring OFF on input line 73.
+ (./系统设计与实现文档.out) (./系统设计与实现文档.out)
+\@outlinefile=\write3
+\openout3 = `系统设计与实现文档.out'.
+
+
+
+LaTeX Font Warning: Font shape `TU/SimHei(0)/b/n' undefined
+(Font)              using `TU/SimHei(0)/m/n' instead on input line 80.
+
+
+
+[1
+
+]
+
+[2]
+
+[3]
+
+[4]
+
+[5]
+
+[6]
+
+[7]
+
+[8]
+
+[9]
+Overfull \hbox (73.10004pt too wide) in alignment at lines 550--554
+ [] [] 
+ []
+
+
+Overfull \hbox (73.10004pt too wide) in alignment at lines 554--561
+ [] [] 
+ []
+
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+
+[10]
+File: media/media/image2.png Graphic file (type bmp)
+<media/media/image2.png>
+
+
+[11]
+File: media/media/image3.png Graphic file (type bmp)
+<media/media/image3.png>
+
+
+[12]
+File: media/media/image4.png Graphic file (type bmp)
+<media/media/image4.png>
+
+Overfull \hbox (93.3177pt too wide) in paragraph at lines 580--581
+[][] 
+ []
+
+
+
+[13]
+
+Package xeCJK Warning: Unknown CJK family `\CJKttdefault' is being ignored.
+(xeCJK)                
+(xeCJK)                Try to use `\setCJKmonofont[<...>]{<...>}' to define
+(xeCJK)                it.
+
+File: media/media/image5.png Graphic file (type bmp)
+<media/media/image5.png>
+
+Overfull \hbox (80.4532pt too wide) in paragraph at lines 597--598
+[] 
+ []
+
+
+
+[14]
+Overfull \hbox (122.25pt too wide) in paragraph at lines 620--620
+[]    \TU/lmtt/m/n/10 [StringLength(50, MinimumLength = 3, ErrorMessage = " \TU/SimHei(0)/b/n/10 账 号 长 度 必 须 在 \TU/lmtt/m/n/10 3 \TU/SimHei(0)/b/n/10 到 \TU/lmtt/m/n/10 50 \TU/SimHei(0)/b/n/10 个 字 符 之 间 \TU/lmtt/m/n/10 ")][] 
+ []
+
+
+Overfull \hbox (85.5pt too wide) in paragraph at lines 620--620
+[]    \TU/lmtt/m/n/10 [StringLength(100, MinimumLength = 6, ErrorMessage = " \TU/SimHei(0)/b/n/10 密 码 长 度 至 少 为 \TU/lmtt/m/n/10 6 \TU/SimHei(0)/b/n/10 个 字 符 \TU/lmtt/m/n/10 ")][] 
+ []
+
+
+Overfull \hbox (96.0pt too wide) in paragraph at lines 620--620
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> Register([FromBody] AccountRegisterDto registerDto)[] 
+ []
+
+File: media/media/image6.png Graphic file (type bmp)
+<media/media/image6.png>
+
+Overfull \hbox (70.76653pt too wide) in paragraph at lines 622--623
+[][] 
+ []
+
+
+
+[15]
+File: media/media/image7.png Graphic file (type bmp)
+<media/media/image7.png>
+
+Overfull \hbox (62.72636pt too wide) in paragraph at lines 635--636
+[][] 
+ []
+
+
+
+[16]
+Overfull \hbox (47.00003pt too wide) in alignment at lines 659--663
+ [] [] 
+ []
+
+
+Overfull \hbox (47.00003pt too wide) in alignment at lines 663--674
+ [] [] 
+ []
+
+File: media/media/image8.png Graphic file (type bmp)
+<media/media/image8.png>
+
+
+[17]
+File: media/media/image9.png Graphic file (type bmp)
+<media/media/image9.png>
+File: media/media/image10.png Graphic file (type bmp)
+<media/media/image10.png>
+
+
+[18]
+File: media/media/image11.png Graphic file (type bmp)
+<media/media/image11.png>
+
+
+[19]
+File: media/media/image12.png Graphic file (type bmp)
+<media/media/image12.png>
+File: media/media/image13.png Graphic file (type bmp)
+<media/media/image13.png>
+
+
+[20]
+File: media/media/image14.png Graphic file (type bmp)
+<media/media/image14.png>
+
+Overfull \hbox (105.94553pt too wide) in paragraph at lines 705--706
+[][] 
+ []
+
+
+
+[21]
+
+[22]
+Overfull \hbox (148.5pt too wide) in paragraph at lines 734--734
+[]    \TU/lmtt/m/n/10 [Range(0, 9999999999.99, ErrorMessage = " \TU/SimHei(0)/b/n/10 薪 资 必 须 大 于 等 于 \TU/lmtt/m/n/10 0 \TU/SimHei(0)/b/n/10 ， 且 不 能 超 过 \TU/lmtt/m/n/10 10 \TU/SimHei(0)/b/n/10 位 整 数 和 \TU/lmtt/m/n/10 2 \TU/SimHei(0)/b/n/10 位 小 数 \TU/lmtt/m/n/10 ")][] 
+ []
+
+File: media/media/image15.png Graphic file (type bmp)
+<media/media/image15.png>
+
+Overfull \hbox (108.6862pt too wide) in paragraph at lines 736--737
+[][] 
+ []
+
+
+
+[23]
+
+[24]
+File: media/media/image16.png Graphic file (type bmp)
+<media/media/image16.png>
+
+Overfull \hbox (87.45082pt too wide) in paragraph at lines 747--748
+[][] 
+ []
+
+
+
+[25]
+Overfull \vbox (119.50613pt too high) has occurred while \output is active []
+
+
+
+[26]
+File: media/media/image17.png Graphic file (type bmp)
+<media/media/image17.png>
+
+Overfull \hbox (103.50766pt too wide) in paragraph at lines 758--759
+[][] 
+ []
+
+
+
+[27]
+
+[28]
+File: media/media/image18.png Graphic file (type bmp)
+<media/media/image18.png>
+
+Overfull \hbox (111.84253pt too wide) in paragraph at lines 770--771
+[][] 
+ []
+
+
+
+[29]
+Overfull \vbox (61.07927pt too high) has occurred while \output is active []
+
+
+
+[30]
+File: media/media/image19.png Graphic file (type bmp)
+<media/media/image19.png>
+
+Overfull \hbox (108.98007pt too wide) in paragraph at lines 786--787
+[][] 
+ []
+
+
+
+[31]
+Overfull \hbox (110.71097pt too wide) in alignment at lines 797--801
+ [] [] 
+ []
+
+
+Overfull \hbox (110.71097pt too wide) in alignment at lines 801--807
+ [] [] 
+ []
+
+
+
+[32]
+File: media/media/image12.png Graphic file (type bmp)
+<media/media/image12.png>
+
+Overfull \hbox (58.73923pt too wide) in paragraph at lines 809--811
+[]\TU/SimHei(0)/b/n/10 场 地 活 动 预 约 活 动 图：| [] 
+ []
+
+File: media/media/image13.png Graphic file (type bmp)
+<media/media/image13.png>
+
+Overfull \hbox (10.55586pt too wide) in paragraph at lines 812--814
+[]\TU/SimHei(0)/b/n/10 场 地 活 动 管 理 活 动 图：| [] 
+ []
+
+
+
+[33]
+File: media/media/image14.png Graphic file (type bmp)
+<media/media/image14.png>
+
+Overfull \hbox (115.04698pt too wide) in paragraph at lines 815--817
+[]\TU/SimHei(0)/b/n/10 场 地 活 动 结 算 收 费 活 动 图：| [] 
+ []
+
+
+
+[34]
+File: media/media/image15.png Graphic file (type bmp)
+<media/media/image15.png>
+
+Overfull \hbox (135.03317pt too wide) in paragraph at lines 818--820
+[]\TU/SimHei(0)/b/n/10 场 地 活 动 统 计 报 表 生 成 活 动 图：| [] 
+ []
+
+
+
+[35]
+File: media/media/image16.png Graphic file (type bmp)
+<media/media/image16.png>
+
+Overfull \hbox (95.03317pt too wide) in paragraph at lines 835--837
+[]\TU/SimHei(0)/b/n/10 新 增 促 销 活 动 活 动 图：| [] 
+ []
+
+
+
+[36]
+File: media/media/image17.png Graphic file (type bmp)
+<media/media/image17.png>
+
+Overfull \hbox (95.02435pt too wide) in paragraph at lines 838--840
+[]\TU/SimHei(0)/b/n/10 促 销 活 动 管 理 活 动 图：| [] 
+ []
+
+
+
+[37]
+File: media/media/image18.png Graphic file (type bmp)
+<media/media/image18.png>
+
+Overfull \hbox (135.04573pt too wide) in paragraph at lines 841--843
+[]\TU/SimHei(0)/b/n/10 促 销 活 动 统 计 报 表 生 成 活 动 图：| [] 
+ []
+
+
+
+[38]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+
+LaTeX Font Warning: Font shape `TU/SimHei(0)/m/it' undefined
+(Font)              using `TU/SimHei(0)/m/n' instead on input line 853.
+
+
+
+[39]
+
+[40]
+Overfull \hbox (132.75pt too wide) in paragraph at lines 960--960
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> CreateReservation([FromBody] VenueEventReservationDto dto)[] 
+ []
+
+
+Overfull \hbox (22.5pt too wide) in paragraph at lines 960--960
+[]        \TU/lmtt/m/n/10 return BadRequest(new { message = " \TU/SimHei(0)/b/n/10 结 束 时 间 需 晚 于 起 始 时 间 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 960--960
+[]    \TU/lmtt/m/n/10 var eventArea = await _context.EventAreas.FindAsync(dto.AreaId);[] 
+ []
+
+
+Overfull \hbox (169.5pt too wide) in paragraph at lines 960--960
+[]                     \TU/lmtt/m/n/10 ((ved.RENT_START <= dto.RentStartTime && ved.RENT_END > dto.RentStartTime) ||[] 
+ []
+
+
+Overfull \hbox (148.5pt too wide) in paragraph at lines 960--960
+[]                      \TU/lmtt/m/n/10 (ved.RENT_START < dto.RentEndTime && ved.RENT_END >= dto.RentEndTime) ||[] 
+ []
+
+
+Overfull \hbox (159.0pt too wide) in paragraph at lines 960--960
+[]                      \TU/lmtt/m/n/10 (ved.RENT_START >= dto.RentStartTime && ved.RENT_END <= dto.RentEndTime)))[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 960--960
+[]        \TU/lmtt/m/n/10 return BadRequest(new { message = " \TU/SimHei(0)/b/n/10 该 区 域 在 指 定 时 间 内 已 被 占 用 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (101.25pt too wide) in paragraph at lines 960--960
+[]    \TU/lmtt/m/n/10 var collaboration = await _context.Collaborations.FindAsync(dto.CollaborationId);[] 
+ []
+
+
+Overfull \hbox (54.0pt too wide) in paragraph at lines 960--960
+[]    \TU/lmtt/m/n/10 using var transaction = await _context.Database.BeginTransactionAsync();[] 
+ []
+
+
+
+[41]
+Overfull \hbox (17.25pt too wide) in paragraph at lines 960--960
+[]        \TU/lmtt/m/n/10 return StatusCode(500, new { message = " \TU/SimHei(0)/b/n/10 创 建 场 地 预 约 失 败 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+
+[42]
+Overfull \hbox (22.5pt too wide) in paragraph at lines 1041--1041
+[]    \TU/lmtt/m/n/10 public string? Status { get; set; } //  \TU/SimHei(0)/b/n/10 筹 备 中 \TU/lmtt/m/n/10 / \TU/SimHei(0)/b/n/10 进 行 中 \TU/lmtt/m/n/10 / \TU/SimHei(0)/b/n/10 已 结 束 \TU/lmtt/m/n/10 / \TU/SimHei(0)/b/n/10 已 取 消 [] 
+ []
+
+
+Overfull \hbox (169.5pt too wide) in paragraph at lines 1041--1041
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> UpdateVenueEvent(int eventId, [FromBody] VenueEventUpdateDto dto)[] 
+ []
+
+
+Overfull \hbox (6.75pt too wide) in paragraph at lines 1041--1041
+[]    \TU/lmtt/m/n/10 var venueEvent = await _context.VenueEvents.FindAsync(eventId);[] 
+ []
+
+
+Overfull \hbox (1.5pt too wide) in paragraph at lines 1041--1041
+[]        \TU/lmtt/m/n/10 return NotFound(new { message = " \TU/SimHei(0)/b/n/10 找 不 到 对 应 的 活 动 记 录 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (22.5pt too wide) in paragraph at lines 1041--1041
+[]        \TU/lmtt/m/n/10 return NotFound(new { message = " \TU/SimHei(0)/b/n/10 找 不 到 对 应 的 活 动 详 情 记 录 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 1041--1041
+[]        \TU/lmtt/m/n/10 return BadRequest(new { message = " \TU/SimHei(0)/b/n/10 活 动 已 结 束 ， 不 可 修 改 或 取 消 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+
+[43]
+Overfull \hbox (59.25pt too wide) in paragraph at lines 1041--1041
+[]        \TU/lmtt/m/n/10 if (dto.ParticipantAccounts != null && dto.ParticipantAccounts.Any())[] 
+ []
+
+
+Overfull \hbox (33.0pt too wide) in paragraph at lines 1041--1041
+[]            \TU/lmtt/m/n/10 var existingTempAuthorities = await _context.TempAuthorities[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 1041--1041
+[]            \TU/lmtt/m/n/10 _context.TempAuthorities.RemoveRange(existingTempAuthorities);[] 
+ []
+
+
+Overfull \hbox (190.5pt too wide) in paragraph at lines 1106--1106
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> CreateSettlement(int eventId, [FromBody] VenueEventSettlementDto dto)[] 
+ []
+
+
+
+[44]
+Overfull \hbox (1.5pt too wide) in paragraph at lines 1106--1106
+[]        \TU/lmtt/m/n/10 return NotFound(new { message = " \TU/SimHei(0)/b/n/10 找 不 到 对 应 的 活 动 记 录 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (54.0pt too wide) in paragraph at lines 1106--1106
+[]        \TU/lmtt/m/n/10 return BadRequest(new { message = " \TU/SimHei(0)/b/n/10 只 有 已 结 束 的 活 动 才 能 进 行 结 算 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (143.25pt too wide) in paragraph at lines 1106--1106
+[]        \TU/lmtt/m/n/10 var rentHours = (venueEventDetail.RENT_END - venueEventDetail.RENT_START).TotalHours;[] 
+ []
+
+
+Overfull \hbox (22.5pt too wide) in paragraph at lines 1106--1106
+[]        \TU/lmtt/m/n/10 var totalFee = dto.VenueFee + (dto.AdditionalServiceFee ?? 0);[] 
+ []
+
+
+Overfull \hbox (38.25pt too wide) in paragraph at lines 1106--1106
+[]            \TU/lmtt/m/n/10 EventName = venueEventDetail.venueEventNavigation.EVENT_NAME,[] 
+ []
+
+
+Overfull \hbox (75.0pt too wide) in paragraph at lines 1106--1106
+[]        \TU/lmtt/m/n/10 venueEventDetail.FUNDING = totalFee;  //  \TU/SimHei(0)/b/n/10 新 增 ： 将 总 费 用 存 储 到 \TU/lmtt/m/n/10 FUNDING \TU/SimHei(0)/b/n/10 字 段 [] 
+ []
+
+
+
+[45]
+Overfull \hbox (6.75pt too wide) in paragraph at lines 1106--1106
+[]        \TU/lmtt/m/n/10 return StatusCode(500, new { message = " \TU/SimHei(0)/b/n/10 创 建 结 算 单 失 败 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (132.75pt too wide) in paragraph at lines 1189--1189
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> GenerateReport([FromQuery] VenueEventReportRequestDto dto)[] 
+ []
+
+
+Overfull \hbox (22.5pt too wide) in paragraph at lines 1189--1189
+[]        \TU/lmtt/m/n/10 return BadRequest(new { message = " \TU/SimHei(0)/b/n/10 结 束 时 间 需 晚 于 起 始 时 间 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (122.25pt too wide) in paragraph at lines 1189--1189
+[]            \TU/lmtt/m/n/10 .Where(ved => ved.RENT_START >= dto.StartDate && ved.RENT_END <= dto.EndDate)[] 
+ []
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1189--1189
+[]            \TU/lmtt/m/n/10 return Ok(new { message = " \TU/SimHei(0)/b/n/10 该 时 间 段 内 无 场 地 活 动 记 录 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (101.25pt too wide) in paragraph at lines 1189--1189
+[]        \TU/lmtt/m/n/10 var totalRentHours = events.Sum(e => (e.RENT_END - e.RENT_START).TotalHours);[] 
+ []
+
+
+Overfull \hbox (90.75pt too wide) in paragraph at lines 1189--1189
+[]        \TU/lmtt/m/n/10 var totalRevenue = events.Sum(e => (e.eventAreaNavigation?.AREA_FEE ?? 0) *[] 
+ []
+
+
+Overfull \hbox (90.75pt too wide) in paragraph at lines 1189--1189
+[]                                           \TU/lmtt/m/n/10 (e.RENT_END - e.RENT_START).TotalHours);[] 
+ []
+
+
+
+[46]
+Overfull \hbox (164.25pt too wide) in paragraph at lines 1189--1189
+[]        \TU/lmtt/m/n/10 var eventsWithCapacity = events.Where(e => e.venueEventNavigation.CAPACITY > 0).ToList();[] 
+ []
+
+
+Overfull \hbox (374.25pt too wide) in paragraph at lines 1189--1189
+[]            \TU/lmtt/m/n/10 eventsWithCapacity.Average(e => (double)(e.venueEventNavigation.HEADCOUNT ?? 0) / e.venueEventNavigation.CAPACITY * 100) : 0;[] 
+ []
+
+
+Overfull \hbox (85.5pt too wide) in paragraph at lines 1189--1189
+[]                \TU/lmtt/m/n/10 TotalRevenue = g.Sum(e => (e.eventAreaNavigation?.AREA_FEE ?? 0) *[] 
+ []
+
+
+Overfull \hbox (80.25pt too wide) in paragraph at lines 1189--1189
+[]                                          \TU/lmtt/m/n/10 (e.RENT_END - e.RENT_START).TotalHours)[] 
+ []
+
+
+Overfull \hbox (22.5pt too wide) in paragraph at lines 1189--1189
+[]        \TU/lmtt/m/n/10 var eventDetails = events.Select(e => new VenueEventSummaryDto[] 
+ []
+
+
+Overfull \hbox (64.5pt too wide) in paragraph at lines 1189--1189
+[]            \TU/lmtt/m/n/10 RentHours = Math.Round((e.RENT_END - e.RENT_START).TotalHours, 2),[] 
+ []
+
+
+Overfull \hbox (195.75pt too wide) in paragraph at lines 1189--1189
+[]            \TU/lmtt/m/n/10 VenueFee = (e.eventAreaNavigation?.AREA_FEE ?? 0) * (e.RENT_END - e.RENT_START).TotalHours,[] 
+ []
+
+
+
+[47]
+Overfull \hbox (17.25pt too wide) in paragraph at lines 1189--1189
+[]        \TU/lmtt/m/n/10 return StatusCode(500, new { message = " \TU/SimHei(0)/b/n/10 生 成 统 计 报 表 失 败 \TU/lmtt/m/n/10 " });[] 
+ []
+
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+
+[48]
+Overfull \hbox (6.75pt too wide) in paragraph at lines 1231--1231
+[]\TU/lmtt/m/n/10 public async Task<SaleEvent> CreateSaleEventAsync(SaleEventDto dto)[] 
+ []
+
+
+Overfull \hbox (48.75pt too wide) in paragraph at lines 1231--1231
+[]    \TU/lmtt/m/n/10 int? maxId = await _context.SaleEvents.MaxAsync(e => (int?)e.EVENT_ID);[] 
+ []
+
+
+Overfull \hbox (48.75pt too wide) in paragraph at lines 1251--1251
+[]\TU/lmtt/m/n/10 public async Task<SaleEvent> UpdateSaleEventAsync(int id, SaleEventDto dto)[] 
+ []
+
+
+Overfull \hbox (90.75pt too wide) in paragraph at lines 1251--1251
+[]    \TU/lmtt/m/n/10 if (!string.IsNullOrEmpty(dto.EventName)) saleEvent.EVENT_NAME = dto.EventName;[] 
+ []
+
+
+Overfull \hbox (117.0pt too wide) in paragraph at lines 1251--1251
+[]    \TU/lmtt/m/n/10 if (!string.IsNullOrEmpty(dto.Description)) saleEvent.Description = dto.Description;[] 
+ []
+
+
+
+[49]
+Overfull \hbox (43.5pt too wide) in paragraph at lines 1251--1251
+[]    \TU/lmtt/m/n/10 if (dto.EventStart != default) saleEvent.EVENT_START = dto.EventStart;[] 
+ []
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1251--1251
+[]    \TU/lmtt/m/n/10 if (dto.EventEnd != default) saleEvent.EVENT_END = dto.EventEnd;[] 
+ []
+
+
+Overfull \hbox (54.0pt too wide) in paragraph at lines 1274--1274
+[]\TU/lmtt/m/n/10 public async Task<SaleEventReport> GenerateSaleEventReportAsync(int eventId)[] 
+ []
+
+
+Overfull \hbox (27.75pt too wide) in paragraph at lines 1274--1274
+[]    \TU/lmtt/m/n/10 var reportData = await FetchSalesDataFromExternalSystem(saleEvent);[] 
+ []
+
+
+Overfull \hbox (22.5pt too wide) in paragraph at lines 1274--1274
+[]        \TU/lmtt/m/n/10 ROI = CalculateROI(reportData.SalesIncrement, saleEvent.Cost),[] 
+ []
+
+
+Underfull \hbox (badness 2111) in paragraph at lines 1275--1276
+\TU/SimHei(0)/b/n/10 此 方 法 同 样 在 \TU/lmtt/m/n/10 SaleEventService \TU/SimHei(0)/b/n/10 中 实 现，|  用 于 生 成 单 个 促 销 活 动
+ []
+
+
+Underfull \hbox (badness 1983) in paragraph at lines 1275--1276
+\TU/SimHei(0)/b/n/10 的 效 果 报 告。|  它 首 先 获 取 活 动 的 基 本 信 息，|  然 后 通 过 一 个 模 拟 的
+ []
+
+
+Overfull \hbox (30.71097pt too wide) in alignment at lines 1284--1288
+ [] [] 
+ []
+
+
+Overfull \hbox (30.71097pt too wide) in alignment at lines 1288--1297
+ [] [] 
+ []
+
+[50]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (52.27979pt too wide) in paragraph at lines 1301--1303
+[]\TU/SimHei(0)/b/n/10 新 增 商 户 活 动 图：| [] 
+ []
+
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (72.27979pt too wide) in paragraph at lines 1304--1306
+[]\TU/SimHei(0)/b/n/10 商 户 信 息 管 理 活 动 图：| [] 
+ []
+
+
+
+[51]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (52.27979pt too wide) in paragraph at lines 1307--1309
+[]\TU/SimHei(0)/b/n/10 新 增 店 面 活 动 图：| [] 
+ []
+
+
+
+[52]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (72.27979pt too wide) in paragraph at lines 1310--1312
+[]\TU/SimHei(0)/b/n/10 店 面 状 态 管 理 活 动 图：| [] 
+ []
+
+
+
+[53]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (92.27979pt too wide) in paragraph at lines 1313--1315
+[]\TU/SimHei(0)/b/n/10 商 户 信 息 统 计 报 表 活 动 图：| [] 
+ []
+
+
+
+[54]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (72.27979pt too wide) in paragraph at lines 1316--1318
+[]\TU/SimHei(0)/b/n/10 商 户 租 金 收 取 活 动 图：| [] 
+ []
+
+
+
+[55]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (92.27979pt too wide) in paragraph at lines 1319--1321
+[]\TU/SimHei(0)/b/n/10 商 户 租 金 统 计 报 表 活 动 图：| [] 
+ []
+
+
+
+[56]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+
+[57]
+Overfull \hbox (101.25pt too wide) in paragraph at lines 1423--1423
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> CreateRetailArea([FromBody] CreateRetailAreaDto dto)[] 
+ []
+
+
+Overfull \hbox (17.25pt too wide) in paragraph at lines 1423--1423
+[]    \TU/lmtt/m/n/10 _logger.LogInformation(" \TU/SimHei(0)/b/n/10 开 始 新 增 店 面 区 域 ： \TU/lmtt/m/n/10 {AreaId}", dto.AreaId);[] 
+ []
+
+
+
+[58]
+Overfull \hbox (117.0pt too wide) in paragraph at lines 1423--1423
+[]        \TU/lmtt/m/n/10 _logger.LogWarning(" \TU/SimHei(0)/b/n/10 新 增 店 面 模 型 验 证 失 败 ： \TU/lmtt/m/n/10 {Errors}", string.Join(", ", errors));[] 
+ []
+
+
+Overfull \hbox (75.0pt too wide) in paragraph at lines 1423--1423
+[]        \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 输 入 数 据 验 证 失 败 \TU/lmtt/m/n/10 ", details = errors });[] 
+ []
+
+
+Overfull \hbox (143.25pt too wide) in paragraph at lines 1423--1423
+[]            \TU/lmtt/m/n/10 var hasPermission = await _accountContext.CheckAuthority(dto.OperatorAccount, 1);[] 
+ []
+
+
+Overfull \hbox (143.25pt too wide) in paragraph at lines 1423--1423
+[]                \TU/lmtt/m/n/10 _logger.LogWarning(" \TU/SimHei(0)/b/n/10 操 作 员  \TU/lmtt/m/n/10 {OperatorAccount}  \TU/SimHei(0)/b/n/10 权 限 不 足 \TU/lmtt/m/n/10 ", dto.OperatorAccount);[] 
+ []
+
+
+Overfull \hbox (96.0pt too wide) in paragraph at lines 1423--1423
+[]                \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 操 作 员 权 限 不 足 ， 需 要 管 理 员 权 限 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (190.5pt too wide) in paragraph at lines 1423--1423
+[]        \TU/lmtt/m/n/10 var existingArea = await _storeContext.AREA.FirstOrDefaultAsync(a => a.AREA_ID == dto.AreaId);[] 
+ []
+
+
+Overfull \hbox (17.25pt too wide) in paragraph at lines 1423--1423
+[]            \TU/lmtt/m/n/10 _logger.LogWarning(" \TU/SimHei(0)/b/n/10 区 域 \TU/lmtt/m/n/10 ID {AreaId}  \TU/SimHei(0)/b/n/10 已 存 在 \TU/lmtt/m/n/10 ", dto.AreaId);[] 
+ []
+
+
+Overfull \hbox (54.0pt too wide) in paragraph at lines 1423--1423
+[]            \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 该 区 域 \TU/lmtt/m/n/10 ID \TU/SimHei(0)/b/n/10 已 存 在 ， 请 重 新 设 置 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (159.0pt too wide) in paragraph at lines 1423--1423
+[]        \TU/lmtt/m/n/10 _logger.LogInformation(" \TU/SimHei(0)/b/n/10 成 功 创 建 店 面 区 域 ： \TU/lmtt/m/n/10 {AreaId} \TU/SimHei(0)/b/n/10 ， 面 积 ： \TU/lmtt/m/n/10 {AreaSize} \TU/SimHei(0)/b/n/10 ， 租 金 ： \TU/lmtt/m/n/10 {BaseRent}",[] 
+ []
+
+
+
+[59]
+Overfull \hbox (59.25pt too wide) in paragraph at lines 1423--1423
+[]        \TU/lmtt/m/n/10 _logger.LogError(ex, " \TU/SimHei(0)/b/n/10 创 建 店 面 区 域 时 发 生 错 误 ： \TU/lmtt/m/n/10 {AreaId}", dto.AreaId);[] 
+ []
+
+
+Overfull \hbox (33.0pt too wide) in paragraph at lines 1423--1423
+[]        \TU/lmtt/m/n/10 if (ex.InnerException?.Message?.Contains("ORA-00001") == true ||[] 
+ []
+
+
+Overfull \hbox (6.75pt too wide) in paragraph at lines 1423--1423
+[]            \TU/lmtt/m/n/10 ex.InnerException?.Message?.Contains("UNIQUE") == true)[] 
+ []
+
+
+Overfull \hbox (54.0pt too wide) in paragraph at lines 1423--1423
+[]            \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 该 区 域 \TU/lmtt/m/n/10 ID \TU/SimHei(0)/b/n/10 已 存 在 ， 请 重 新 设 置 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+
+[60]
+Overfull \hbox (80.25pt too wide) in paragraph at lines 1504--1504
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> CreateMerchant([FromBody] CreateMerchantDto dto)[] 
+ []
+
+
+Overfull \hbox (38.25pt too wide) in paragraph at lines 1504--1504
+[]    \TU/lmtt/m/n/10 _logger.LogInformation(" \TU/SimHei(0)/b/n/10 开 始 创 建 新 商 户 ： \TU/lmtt/m/n/10 {StoreName}", dto.StoreName);[] 
+ []
+
+
+Overfull \hbox (143.25pt too wide) in paragraph at lines 1504--1504
+[]            \TU/lmtt/m/n/10 var hasPermission = await _accountContext.CheckAuthority(dto.OperatorAccount, 1);[] 
+ []
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1504--1504
+[]                \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 操 作 员 权 限 不 足 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (75.0pt too wide) in paragraph at lines 1504--1504
+[]        \TU/lmtt/m/n/10 if (dto.RentEnd <= dto.RentStart || dto.RentStart.Date < DateTime.Today)[] 
+ []
+
+
+Overfull \hbox (64.5pt too wide) in paragraph at lines 1504--1504
+[]        \TU/lmtt/m/n/10 if (await _storeContext.TenantExists(dto.TenantName, dto.ContactInfo))[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 1504--1504
+[]            \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 该 租 户 已 在 本 综 合 体 有 店 铺 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (90.75pt too wide) in paragraph at lines 1504--1504
+[]        \TU/lmtt/m/n/10 var rentStore = new RentStore { STORE_ID = storeId, AREA_ID = dto.AreaId };[] 
+ []
+
+
+
+[61]
+Overfull \hbox (43.5pt too wide) in paragraph at lines 1504--1504
+[]        \TU/lmtt/m/n/10 await _storeContext.UpdateAreaStatus(dto.AreaId, false, " \TU/SimHei(0)/b/n/10 已 租 用 \TU/lmtt/m/n/10 ");[] 
+ []
+
+
+Overfull \hbox (127.5pt too wide) in paragraph at lines 1504--1504
+[]        \TU/lmtt/m/n/10 var storeAccount = new StoreAccount { ACCOUNT = accountName, STORE_ID = storeId };[] 
+ []
+
+
+Overfull \hbox (132.75pt too wide) in paragraph at lines 1504--1504
+[]        \TU/lmtt/m/n/10 return Ok(new { message = " \TU/SimHei(0)/b/n/10 商 户 创 建 成 功 \TU/lmtt/m/n/10 ", storeId, accountName, initialPassword });[] 
+ []
+
+
+Overfull \hbox (122.25pt too wide) in paragraph at lines 1567--1567
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> UpdateMerchantInfo([FromBody] UpdateMerchantInfoDto dto)[] 
+ []
+
+
+Overfull \hbox (27.75pt too wide) in paragraph at lines 1567--1567
+[]    \TU/lmtt/m/n/10 _logger.LogInformation(" \TU/SimHei(0)/b/n/10 开 始 更 新 商 户 信 息 ： \TU/lmtt/m/n/10 {StoreId}", dto.StoreId);[] 
+ []
+
+
+
+[62]
+Overfull \hbox (106.5pt too wide) in paragraph at lines 1567--1567
+[]        \TU/lmtt/m/n/10 var operator_account = await _accountContext.FindAccount(dto.OperatorAccount);[] 
+ []
+
+
+Overfull \hbox (54.0pt too wide) in paragraph at lines 1567--1567
+[]        \TU/lmtt/m/n/10 if (operator_account == null) return BadRequest(" \TU/SimHei(0)/b/n/10 操 作 员 账 号 不 存 在 \TU/lmtt/m/n/10 ");[] 
+ []
+
+
+Overfull \hbox (463.5pt too wide) in paragraph at lines 1567--1567
+[]        \TU/lmtt/m/n/10 bool isMerchant = !isAdmin && await _accountContext.STORE_ACCOUNT.AnyAsync(sa => sa.ACCOUNT == dto.OperatorAccount && sa.STORE_ID == dto.StoreId);[] 
+ []
+
+
+Overfull \hbox (17.25pt too wide) in paragraph at lines 1567--1567
+[]        \TU/lmtt/m/n/10 if (!isAdmin && !isMerchant) return BadRequest(" \TU/SimHei(0)/b/n/10 无 权 限 修 改 \TU/lmtt/m/n/10 ");[] 
+ []
+
+
+Overfull \hbox (1.5pt too wide) in paragraph at lines 1567--1567
+[]        \TU/lmtt/m/n/10 var store = await _storeContext.GetStoreById(dto.StoreId);[] 
+ []
+
+
+Overfull \hbox (69.75pt too wide) in paragraph at lines 1567--1567
+[]        \TU/lmtt/m/n/10 if (store.STORE_STATUS != " \TU/SimHei(0)/b/n/10 正 常 营 业 \TU/lmtt/m/n/10 " && store.STORE_STATUS != " \TU/SimHei(0)/b/n/10 歇 业 中 \TU/lmtt/m/n/10 ")[] 
+ []
+
+
+Overfull \hbox (243.0pt too wide) in paragraph at lines 1567--1567
+[]        \TU/lmtt/m/n/10 if (!string.IsNullOrEmpty(dto.ContactInfo)) { store.CONTACT_INFO = dto.ContactInfo; hasChanges = true; }[] 
+ []
+
+
+Overfull \hbox (232.5pt too wide) in paragraph at lines 1567--1567
+[]            \TU/lmtt/m/n/10 if (!string.IsNullOrEmpty(dto.StoreType)) { store.STORE_TYPE = dto.StoreType; hasChanges = true; }[] 
+ []
+
+
+Overfull \hbox (1.5pt too wide) in paragraph at lines 1567--1567
+[]        \TU/lmtt/m/n/10 else if (dto.StoreType != null || dto.StoreStatus != null)[] 
+ []
+
+Missing character: There is no ≤ (U+2264) in font [lmroman10-regular]:mapping=tex-text;!
+
+
+[63]
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1631--1631
+[]    \TU/lmtt/m/n/10 [Required] public string ChangeType { get; set; } //  \TU/SimHei(0)/b/n/10 退 租 \TU/lmtt/m/n/10 / \TU/SimHei(0)/b/n/10 维 修 等 [] 
+ []
+
+
+Overfull \hbox (190.5pt too wide) in paragraph at lines 1631--1631
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> SubmitStatusChangeRequest([FromBody] StoreStatusChangeRequestDto dto)[] 
+ []
+
+
+Overfull \hbox (1.5pt too wide) in paragraph at lines 1631--1631
+[]        \TU/lmtt/m/n/10 var store = await _storeContext.GetStoreById(dto.StoreId);[] 
+ []
+
+
+Overfull \hbox (48.75pt too wide) in paragraph at lines 1631--1631
+[]        \TU/lmtt/m/n/10 var applicationNo = "SA" + DateTime.Now.ToString("yyyyMMddHHmmss");[] 
+ []
+
+
+Overfull \hbox (90.75pt too wide) in paragraph at lines 1631--1631
+[]        \TU/lmtt/m/n/10 _logger.LogInformation(" \TU/SimHei(0)/b/n/10 状 态 变 更 申 请 详 情 ： \TU/lmtt/m/n/10 {ApplicationNo}", applicationNo);[] 
+ []
+
+
+Overfull \hbox (48.75pt too wide) in paragraph at lines 1631--1631
+[]        \TU/lmtt/m/n/10 return Ok(new { message = " \TU/SimHei(0)/b/n/10 状 态 变 更 申 请 提 交 成 功 \TU/lmtt/m/n/10 ", applicationNo });[] 
+ []
+
+
+Overfull \hbox (132.75pt too wide) in paragraph at lines 1631--1631
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> ApproveStatusChange([FromBody] StoreStatusApprovalDto dto)[] 
+ []
+
+
+Overfull \hbox (122.25pt too wide) in paragraph at lines 1631--1631
+[]        \TU/lmtt/m/n/10 var hasPermission = await _accountContext.CheckAuthority(dto.ApproverAccount, 2);[] 
+ []
+
+
+Overfull \hbox (1.5pt too wide) in paragraph at lines 1631--1631
+[]        \TU/lmtt/m/n/10 var store = await _storeContext.GetStoreById(dto.StoreId);[] 
+ []
+
+
+
+[64]
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1631--1631
+[]            \TU/lmtt/m/n/10 return Ok(new { message = " \TU/SimHei(0)/b/n/10 审 批 通 过 ， 店 面 状 态 已 更 新 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (358.5pt too wide) in paragraph at lines 1676--1676
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> GetMerchantStatisticsReport([FromQuery] string operatorAccount, [FromQuery] string dimension = "all")[] 
+ []
+
+
+Overfull \hbox (101.25pt too wide) in paragraph at lines 1676--1676
+[]        \TU/lmtt/m/n/10 var hasPermission = await _accountContext.CheckAuthority(operatorAccount, 2);[] 
+ []
+
+
+Overfull \hbox (54.0pt too wide) in paragraph at lines 1676--1676
+[]                \TU/lmtt/m/n/10 reportData = await _storeContext.GetStoreStatisticsByType();[] 
+ []
+
+
+Overfull \hbox (54.0pt too wide) in paragraph at lines 1676--1676
+[]                \TU/lmtt/m/n/10 reportData = await _storeContext.GetStoreStatisticsByArea();[] 
+ []
+
+
+Overfull \hbox (64.5pt too wide) in paragraph at lines 1676--1676
+[]                \TU/lmtt/m/n/10 reportData = await _storeContext.GetStoreStatisticsByStatus();[] 
+ []
+
+
+
+[65]
+Overfull \hbox (54.0pt too wide) in paragraph at lines 1676--1676
+[]                    \TU/lmtt/m/n/10 byType = await _storeContext.GetStoreStatisticsByType(),[] 
+ []
+
+
+Overfull \hbox (54.0pt too wide) in paragraph at lines 1676--1676
+[]                    \TU/lmtt/m/n/10 byArea = await _storeContext.GetStoreStatisticsByArea(),[] 
+ []
+
+
+Overfull \hbox (69.75pt too wide) in paragraph at lines 1676--1676
+[]                    \TU/lmtt/m/n/10 byStatus = await _storeContext.GetStoreStatisticsByStatus()[] 
+ []
+
+
+Overfull \hbox (69.75pt too wide) in paragraph at lines 1676--1676
+[]        \TU/lmtt/m/n/10 return Ok(new { reportTitle = " \TU/SimHei(0)/b/n/10 商 户 信 息 统 计 报 表 \TU/lmtt/m/n/10 ", data = reportData });[] 
+ []
+
+
+Overfull \hbox (111.75pt too wide) in paragraph at lines 1718--1718
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> GenerateMonthlyRentBills([FromBody] string billPeriod)[] 
+ []
+
+
+Overfull \hbox (27.75pt too wide) in paragraph at lines 1718--1718
+[]        \TU/lmtt/m/n/10 if (string.IsNullOrEmpty(billPeriod) || billPeriod.Length != 6)[] 
+ []
+
+
+Overfull \hbox (59.25pt too wide) in paragraph at lines 1718--1718
+[]        \TU/lmtt/m/n/10 var bills = await _storeContext.GenerateMonthlyRentBills(billPeriod);[] 
+ []
+
+
+Overfull \hbox (180.0pt too wide) in paragraph at lines 1718--1718
+[]        \TU/lmtt/m/n/10 return Ok(new { message = $" \TU/SimHei(0)/b/n/10 成 功 生 成 \TU/lmtt/m/n/10 {bills.Count} \TU/SimHei(0)/b/n/10 张 租 金 单 \TU/lmtt/m/n/10 ", generatedBills = bills.Count });[] 
+ []
+
+
+Overfull \hbox (48.75pt too wide) in paragraph at lines 1718--1718
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> PayRent([FromBody] PayRentRequest request)[] 
+ []
+
+
+
+[66]
+Overfull \hbox (22.5pt too wide) in paragraph at lines 1718--1718
+[]        \TU/lmtt/m/n/10 var success = await _storeContext.ProcessRentPayment(request);[] 
+ []
+
+
+Overfull \hbox (689.25pt too wide) in paragraph at lines 1764--1764
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> GetRentStatisticsReport([FromQuery] string startPeriod, [FromQuery] string endPeriod, [FromQuery] string dimension = "all", [FromQuery] string operatorAccount = "")[] 
+ []
+
+
+Overfull \hbox (122.25pt too wide) in paragraph at lines 1764--1764
+[]            \TU/lmtt/m/n/10 var hasPermission = await _accountContext.CheckAuthority(operatorAccount, 2);[] 
+ []
+
+
+Overfull \hbox (353.25pt too wide) in paragraph at lines 1764--1764
+[]        \TU/lmtt/m/n/10 if (string.IsNullOrEmpty(startPeriod) || startPeriod.Length != 6 || string.IsNullOrEmpty(endPeriod) || endPeriod.Length != 6)[] 
+ []
+
+
+Overfull \hbox (106.5pt too wide) in paragraph at lines 1764--1764
+[]                \TU/lmtt/m/n/10 report = await _storeContext.GetRentCollectionStatistics(startPeriod);[] 
+ []
+
+
+
+[67]
+Overfull \hbox (27.75pt too wide) in paragraph at lines 1764--1764
+[]                \TU/lmtt/m/n/10 report = await _storeContext.GetRentStatisticsByArea();[] 
+ []
+
+
+Overfull \hbox (148.5pt too wide) in paragraph at lines 1764--1764
+[]                    \TU/lmtt/m/n/10 timeReport = await _storeContext.GetRentCollectionStatistics(startPeriod),[] 
+ []
+
+
+Overfull \hbox (64.5pt too wide) in paragraph at lines 1764--1764
+[]                    \TU/lmtt/m/n/10 areaReport = await _storeContext.GetRentStatisticsByArea()[] 
+ []
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1764--1764
+[]        \TU/lmtt/m/n/10 return Ok(new { message = " \TU/SimHei(0)/b/n/10 租 金 统 计 报 表 生 成 成 功 \TU/lmtt/m/n/10 ", report });[] 
+ []
+
+
+Overfull \hbox (70.71097pt too wide) in alignment at lines 1774--1778
+ [] [] 
+ []
+
+
+Overfull \hbox (70.71097pt too wide) in alignment at lines 1778--1785
+ [] [] 
+ []
+
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (82.27979pt too wide) in paragraph at lines 1789--1791
+[]\TU/SimHei(0)/b/n/10 停 车 场 信 息 管 理 活 动 图：| [] 
+ []
+
+
+
+[68]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (102.27979pt too wide) in paragraph at lines 1792--1794
+[]\TU/SimHei(0)/b/n/10 停 车 场 车 位 状 态 查 询 活 动 图：| [] 
+ []
+
+
+
+[69]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (92.27979pt too wide) in paragraph at lines 1795--1797
+[]\TU/SimHei(0)/b/n/10 停 车 场 出 入 车 计 费 活 动 图：| [] 
+ []
+
+
+
+[70]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (112.27979pt too wide) in paragraph at lines 1798--1800
+[]\TU/SimHei(0)/b/n/10 停 车 场 内 车 辆 状 态 查 询 活 动 图：| [] 
+ []
+
+
+
+[71]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+Overfull \hbox (102.27979pt too wide) in paragraph at lines 1801--1803
+[]\TU/SimHei(0)/b/n/10 停 车 场 信 息 统 计 报 表 活 动 图：| [] 
+ []
+
+
+
+[72]
+File: media/media/image1.png Graphic file (type bmp)
+<media/media/image1.png>
+
+
+[73]
+Overfull \hbox (174.75pt too wide) in paragraph at lines 1881--1881
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> UpdateParkingLotInfo(int areaId, [FromBody] ParkingLotInfoDto dto)[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 1881--1881
+[]    \TU/lmtt/m/n/10 _logger.LogInformation(" \TU/SimHei(0)/b/n/10 开 始 更 新 停 车 场 信 息 ： 区 域 \TU/lmtt/m/n/10 ID {AreaId}", areaId);[] 
+ []
+
+
+
+[74]
+Overfull \hbox (122.25pt too wide) in paragraph at lines 1881--1881
+[]        \TU/lmtt/m/n/10 var hasPermission = await _accountContext.CheckAuthority(dto.OperatorAccount, 1);[] 
+ []
+
+
+Overfull \hbox (75.0pt too wide) in paragraph at lines 1881--1881
+[]            \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 操 作 员 权 限 不 足 ， 需 要 管 理 员 权 限 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (64.5pt too wide) in paragraph at lines 1881--1881
+[]        \TU/lmtt/m/n/10 var parkingLotExists = await _parkingContext.ParkingLotExists(areaId);[] 
+ []
+
+
+Overfull \hbox (1.5pt too wide) in paragraph at lines 1881--1881
+[]            \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 停 车 场 区 域 不 存 在 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (27.75pt too wide) in paragraph at lines 1881--1881
+[]        \TU/lmtt/m/n/10 var validStatuses = new[] { " \TU/SimHei(0)/b/n/10 正 常 运 营 \TU/lmtt/m/n/10 ", " \TU/SimHei(0)/b/n/10 维 护 中 \TU/lmtt/m/n/10 ", " \TU/SimHei(0)/b/n/10 暂 停 服 务 \TU/lmtt/m/n/10 " };[] 
+ []
+
+
+Overfull \hbox (106.5pt too wide) in paragraph at lines 1881--1881
+[]            \TU/lmtt/m/n/10 var statistics = await _parkingContext.GetParkingStatusStatistics(areaId);[] 
+ []
+
+
+Overfull \hbox (248.25pt too wide) in paragraph at lines 1881--1881
+[]        \TU/lmtt/m/n/10 var updateSuccess = await _parkingContext.UpdateParkingLotInfo(areaId, dto.ParkingFee, dto.Status, null);[] 
+ []
+
+
+Overfull \hbox (12.0pt too wide) in paragraph at lines 1881--1881
+[]            \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 更 新 停 车 场 信 息 失 败 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+
+[75]
+Overfull \hbox (48.75pt too wide) in paragraph at lines 1881--1881
+[]        \TU/lmtt/m/n/10 _logger.LogError(ex, " \TU/SimHei(0)/b/n/10 更 新 停 车 场 信 息 时 发 生 错 误 ： \TU/lmtt/m/n/10 {AreaId}", areaId);[] 
+ []
+
+
+Overfull \hbox (148.5pt too wide) in paragraph at lines 1944--1944
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> GetParkingSummary([FromQuery] string? operatorAccount = null)[] 
+ []
+
+
+Overfull \hbox (122.25pt too wide) in paragraph at lines 1944--1944
+[]            \TU/lmtt/m/n/10 var hasPermission = await _accountContext.CheckAuthority(operatorAccount, 3);[] 
+ []
+
+
+Overfull \hbox (59.25pt too wide) in paragraph at lines 1944--1944
+[]        \TU/lmtt/m/n/10 var allParkingLots = await _parkingContext.PARKING_LOT.ToListAsync();[] 
+ []
+
+
+
+[76]
+Overfull \hbox (132.75pt too wide) in paragraph at lines 1944--1944
+[]            \TU/lmtt/m/n/10 var statistics = await _parkingContext.GetParkingStatusStatistics(lot.AREA_ID);[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 1944--1944
+[]            \TU/lmtt/m/n/10 var status = _parkingContext.GetParkingLotStatus(lot.AREA_ID);[] 
+ []
+
+
+Overfull \hbox (80.25pt too wide) in paragraph at lines 1944--1944
+[]                \TU/lmtt/m/n/10 CanPark = statistics.AvailableSpaces > 0 && status == " \TU/SimHei(0)/b/n/10 正 常 运 营 \TU/lmtt/m/n/10 ",[] 
+ []
+
+
+Overfull \hbox (59.25pt too wide) in paragraph at lines 1997--1997
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> VehicleEntry([FromBody] VehicleEntryDto dto)[] 
+ []
+
+
+
+[77]
+Overfull \hbox (122.25pt too wide) in paragraph at lines 1997--1997
+[]        \TU/lmtt/m/n/10 var hasPermission = await _accountContext.CheckAuthority(dto.OperatorAccount, 1);[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 1997--1997
+[]        \TU/lmtt/m/n/10 if (!hasPermission) return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 权 限 不 足 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (243.0pt too wide) in paragraph at lines 1997--1997
+[]        \TU/lmtt/m/n/10 var (success, message) = await _parkingContext.VehicleEntry(dto.LicensePlateNumber, dto.ParkingSpaceId);[] 
+ []
+
+
+Overfull \hbox (48.75pt too wide) in paragraph at lines 1997--1997
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> VehicleExit([FromBody] VehicleExitDto dto)[] 
+ []
+
+
+Overfull \hbox (122.25pt too wide) in paragraph at lines 1997--1997
+[]        \TU/lmtt/m/n/10 var hasPermission = await _accountContext.CheckAuthority(dto.OperatorAccount, 1);[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 1997--1997
+[]        \TU/lmtt/m/n/10 if (!hasPermission) return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 权 限 不 足 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (69.75pt too wide) in paragraph at lines 1997--1997
+[]        \TU/lmtt/m/n/10 var result = await _parkingContext.VehicleExit(dto.LicensePlateNumber);[] 
+ []
+
+
+Overfull \hbox (106.5pt too wide) in paragraph at lines 1997--1997
+[]        \TU/lmtt/m/n/10 if (result == null) return NotFound(new { error = " \TU/SimHei(0)/b/n/10 未 找 到 车 辆 当 日 停 车 记 录 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (17.25pt too wide) in paragraph at lines 1997--1997
+[]        \TU/lmtt/m/n/10 return Ok(new { data = result, message = " \TU/SimHei(0)/b/n/10 已 计 算 停 车 费 用 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (90.75pt too wide) in paragraph at lines 2045--2045
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> GetCurrentVehicles([FromQuery] int? areaId = null)[] 
+ []
+
+
+
+[78]
+Overfull \hbox (185.25pt too wide) in paragraph at lines 2045--2045
+[]            \TU/lmtt/m/n/10 var currentVehicles = await _parkingContext.GetCurrentVehiclesByParkingLot(areaId.Value);[] 
+ []
+
+
+Overfull \hbox (59.25pt too wide) in paragraph at lines 2045--2045
+[]            \TU/lmtt/m/n/10 var currentVehicles = await _parkingContext.GetCurrentVehicles();[] 
+ []
+
+
+Overfull \hbox (22.5pt too wide) in paragraph at lines 2045--2045
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> GetVehicleStatus(string licensePlate)[] 
+ []
+
+
+Overfull \hbox (243.0pt too wide) in paragraph at lines 2045--2045
+[]        \TU/lmtt/m/n/10 var vehicleStatus = await _parkingContext.GetVehicleStatusByLicensePlate(licensePlate.Trim().ToUpper());[] 
+ []
+
+
+Overfull \hbox (22.5pt too wide) in paragraph at lines 2045--2045
+[]            \TU/lmtt/m/n/10 return Ok(new { message = " \TU/SimHei(0)/b/n/10 未 查 询 到 该 车 牌 号 的 在 停 记 录 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+
+[79]
+Overfull \hbox (190.5pt too wide) in paragraph at lines 2086--2086
+[]\TU/lmtt/m/n/10 public async Task<IActionResult> GetParkingStatisticsReport([FromBody] ParkingStatisticsReportDto dto)[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 2086--2086
+[]            \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 权 限 不 足 ， 需 要 管 理 员 权 限 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (43.5pt too wide) in paragraph at lines 2086--2086
+[]            \TU/lmtt/m/n/10 return BadRequest(new { error = " \TU/SimHei(0)/b/n/10 开 始 时 间 必 须 早 于 结 束 时 间 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+Overfull \hbox (159.0pt too wide) in paragraph at lines 2086--2086
+[]        \TU/lmtt/m/n/10 var reportData = await GetRealParkingStatistics(dto.StartDate, dto.EndDate, dto.AreaId);[] 
+ []
+
+
+Overfull \hbox (48.75pt too wide) in paragraph at lines 2086--2086
+[]        \TU/lmtt/m/n/10 return Ok(new { data = reportData, message = " \TU/SimHei(0)/b/n/10 成 功 生 成 统 计 报 表 \TU/lmtt/m/n/10 " });[] 
+ []
+
+
+
+[80]
+
+[81] (./系统设计与实现文档.aux)
+ ***********
+LaTeX2e <2024-11-01> patch level 2
+L3 programming layer <2022/08/05>
+ ***********
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+Package rerunfilecheck Info: File `系统设计与实现文档.out' has not changed.
+(rerunfilecheck)             Checksum: DCC8CED7AE590869DE1D243AA418CE6F;8924.
+ ) 
+Here is how much of TeX's memory you used:
+ 19406 strings out of 473832
+ 389459 string characters out of 5733159
+ 941138 words of memory out of 5000000
+ 42230 multiletter control sequences out of 15000+600000
+ 560167 words of font info for 62 fonts, out of 8000000 for 9000
+ 1348 hyphenation exceptions out of 8191
+ 74i,6n,114p,1049b,918s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on 系统设计与实现文档.pdf (81 pages).
