@@ -109,13 +109,13 @@
               <el-col v-for="activity in activities" :key="activity.EVENT_ID" :span="8" style="margin-bottom: 20px;">
                 <div class="activity-card">
                   <div class="card-header">
-                    <div class="card-title">{{ activity.EVENT_NAME }}</div>
+                    <div class="card-title">{{ activity.EventName }}</div>
                   </div>
                   <div class="card-content">
                     <!-- 时间 -->
                     <div class="card-detail">
                       <i class="el-icon-time detail-icon"></i>
-                      <span class="detail-text">时间: {{ formatDate(activity.EVENT_START) }} 至 {{ formatDate(activity.EVENT_END) }}</span>
+                      <span class="detail-text">时间: {{ formatDate(activity.RENT_START) }} 至 {{ formatDate(activity.RENT_END) }}</span>
                     </div>
 
                     <!-- 根据活动类型显示不同字段 -->
@@ -126,8 +126,8 @@
                         <span class="detail-text">容量: {{ activity.Capacity }}</span>
                       </div>
                       <div class="card-detail">
-                        <i class="el-icon-money detail-icon"></i>
-                        <span class="detail-text">花费: {{ activity.Cost }}</span>
+                        <i class="el-icon-location detail-icon"></i>
+                        <span class="detail-text">占用场地: {{ activity.AREA_ID }}</span>
                       </div>
                       <div class="card-detail">
                         <i class="el-icon-price-tag detail-icon"></i>
@@ -135,7 +135,7 @@
                       </div>
                       <div class="card-detail">
                         <i class="el-icon-user-solid detail-icon"></i>
-                        <span class="detail-text">参与人数: {{ activity.Participants }}</span>
+                        <span class="detail-text">参与人数: {{ activity.Headcount || 0 }}</span>
                       </div>
                     </template>
 
@@ -230,10 +230,10 @@ const formatDate = (dateString) => {
 // 计算活动状态
 function calcStatus(activity) {
   const now = new Date();
-  const start = new Date(activity.EVENT_START);
-  const end = new Date(activity.EVENT_END);
+  const start = new Date(activity.RENT_START);
+  const end = new Date(activity.RENT_END);
   if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      console.warn('Invalid date for activity:', activity.EVENT_NAME);
+      console.warn('Invalid date for activity:', activity.EventName);
       return 'completed';
   }
   if (now < start) return 'upcoming';
@@ -314,8 +314,8 @@ const handleQueryClick = async () => {
     if (filterForm.value.dateRange && filterForm.value.dateRange.length === 2) {
       const [start, end] = filterForm.value.dateRange;
       list = list.filter(a => {
-         const activityStartDate = formatDate(a.EVENT_START);
-         const activityEndDate = formatDate(a.EVENT_END);
+         const activityStartDate = formatDate(a.RENT_START);
+         const activityEndDate = formatDate(a.RENT_END);
 
          const filterStart = new Date(start);
          const filterEnd = new Date(end);
