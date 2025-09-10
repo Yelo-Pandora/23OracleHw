@@ -23,7 +23,7 @@
 							<th>奖金</th>
 							<th>罚金</th>
 							<th>总工资</th>
-							<th>操作</th>
+							<th v-if="editable">操作</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -55,7 +55,7 @@
 								<template v-else>{{ emp.fine }}</template>
 							</td>
 							<td>{{ calcTotalSalary(editRow === emp.staffId ? editForm.salary : emp.salary, editRow === emp.staffId ? editForm.bonus : emp.bonus, editRow === emp.staffId ? editForm.fine : emp.fine) }}</td>
-							<td>
+							<td v-if="editable">
 								<button class="salary-edit-btn" @click="onEdit(emp)">{{ editRow === emp.staffId ? '保存' : '编辑' }}</button>
 							</td>
 						</tr>
@@ -73,7 +73,12 @@ const props = defineProps({
 	show: Boolean,
 	year: String,
 	month: String,
-	operatorAccount: String
+	operatorAccount: String,
+	//新增显示可编辑属性，便于现金流使用，默认可编辑
+  editable: {
+    type: Boolean,
+    default: true
+  }
 });
 
 const emit = defineEmits(['close', 'salaryUpdated']);

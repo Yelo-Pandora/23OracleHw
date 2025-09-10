@@ -4,18 +4,19 @@ import { useUserStore } from './user/user'
 import Login from './pages/login/LoginPage.vue'
 import Home from './pages/home/Home.vue'
 //测试用的EmployeeInfo页面
-import EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
+//mport EmployeeInfo from '@/pages/employee_management/EmployeeInfo.vue'
+//import Cashflow from '@/pages/cashflow_management/CashflowDashboard.vue'
 import AccountContent from '@/pages/account_management/AccountContent.vue'
 import TempAuthEditor from '@/pages/account_management/TempAuthEditor.vue'
 // import Visualization from './pages/area_visualization/App.vue'
 import DeviceManagement from '@/pages/equipment_management/Equipment_management.vue'
 import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
 import TotalSalary from './pages/employee_management/TotalSalary.vue'
+import CashFlow from '@/pages/cashflow/cashflow_management.vue'
+import CashFlowOverview from '@/pages/cashflow/CashFlowDashBoard.vue'
+import CashFlowDetails from '@/pages/cashflow/CashFlowDetail.vue'
 
 import Mall from './pages/mall_management/MallManagement.vue'
-import Parking from './pages/parking_management/ParkingManagement.vue'
-import Events from './pages/event_management/EventManagement.vue'
-import Equipment from './pages/equipment_management/EquipmentManagement.vue'
 import ParkingQuery from './pages/parking_query/ParkingQuery.vue'
 import EventQuery from './pages/event_query/EventQuery.vue'
 import StoreStatusRequest from '@/pages/mall_management/StoreStatusRequest.vue';
@@ -28,7 +29,6 @@ import MerchantRentStatisticsReport from '@/pages/mall_management/MerchantRentSt
 import MyRentStatisticsReport from '@/pages/store_management/MyRentStatisticsReport.vue';
 import ParkingManagement from './pages/parking_management/ParkingManagement.vue'
 import EventManagement from './pages/event_management/EventManagement.vue'
-import EquipmentManagement from './pages/equipment_management/EquipmentManagement.vue'
 import VehicleManagement from './pages/parking_management/VehicleManagement.vue'
 import ParkingBilling from './pages/parking_management/ParkingBilling.vue'
 import ParkingReport from './pages/parking_management/ParkingReport.vue'
@@ -191,6 +191,7 @@ const routes = [
     component: ParkingQuery,
     meta: { requiresAuth: true, title: '车位查询', role_need: ['员工', '商户', '游客'] }
   },
+  //账号管理
   {
     path: '/account_management',
     component: AccountContent,
@@ -210,28 +211,53 @@ const routes = [
       }
     ]
   },
-{
-  path: '/equipment_management',
-  component: DeviceManagement,
-  meta: {
-    requiresAuth: true,
-    title: '设备信息',
-    role_need: ['员工']
-  },
-  children: [
-    {
-      path: '',
-      name: 'DeviceList',
-      component: () => import('@/pages/equipment_management/EquipmentList.vue'),
+  {
+    path: '/equipment_management',
+    component: DeviceManagement,
+    meta: {
+      requiresAuth: true,
+      title: '设备信息',
+      role_need: ['员工']
     },
-    {
-      path: ':id',
-      name: 'DeviceDetail',
-      component: () => import('@/pages/equipment_management/EquipmentDetail.vue'),
-      props: true
-    }
-  ]
-},
+    children: [
+      {
+        path: '',
+        name: 'DeviceList',
+        component: () => import('@/pages/equipment_management/EquipmentList.vue'),
+      },
+      {
+        path: ':id',
+        name: 'DeviceDetail',
+        component: () => import('@/pages/equipment_management/EquipmentDetail.vue'),
+        props: true
+      }
+    ]
+  },
+  {
+    path: '/cashflow',
+    component: CashFlow,  
+    meta: {
+      requiresAuth: true,
+      title: '现金流信息',
+      role_need: ['员工'],
+      accessAuth: 2
+    },
+    children: [
+      {
+        path: '',
+        name: 'CashFlowOverview',  
+        component: CashFlowOverview,
+        meta: { title: '现金流总览' }
+      },
+      {
+        path: 'detail/:module',
+        name: 'CashFlowDetail',    
+        component: CashFlowDetails,
+        meta: { title: '详情页' },
+        props: true
+      }
+    ]
+  },
 ]
 
 const router = createRouter({
