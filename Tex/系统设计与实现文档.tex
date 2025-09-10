@@ -43,6 +43,15 @@
 % Fix footnotes in tables (requires footnote package)
 \IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{longtable}}{}
 \usepackage{graphicx,grffile}
+% 默认为所有图片自动居中：将 \includegraphics 重定义为在 center 环境中调用原实现。
+% 这是一个简单、低风险的全局修复；如果需要对某些图片保持原位，可手动用
+% \begin{figure}...\centering\includegraphics{...}...\end{figure} 覆盖。
+\makeatletter
+\let\oldincludegraphics\includegraphics
+\renewcommand{\includegraphics}[2][]{%
+  \begin{center}\oldincludegraphics[#1]{#2}\end{center}%
+}
+\makeatother
 % 控制局部行间距
 \usepackage{setspace}
 \makeatletter
@@ -870,146 +879,6 @@ public async Task<IActionResult> GenerateReport(
 
 \includegraphics[width=5.64167in,height=2.86458in]{media/media/image_2-4-8.png}
 
-\hypertarget{ux7528ux4f8b-3}{%
-  \subsection{**用例}\label{ux7528ux4f8b-3}}
-
-\hypertarget{ux5458ux5de5ux7528ux4f8b}{%
-  \subsection{员工用例}\label{ux5458ux5de5ux7528ux4f8b}}
-
-\hypertarget{ux5458ux5de5ux7528ux4f8bux8bbeux8ba1}{%
-  \subsubsection{员工用例设计}\label{ux5458ux5de5ux7528ux4f8bux8bbeux8ba1}}
-
-表格 2‑6 员工功能的动作序列
-
-\begin{longtable}[]{@{}ll@{}}
-  \toprule
-  动作序列         & 描述\tabularnewline
-  \midrule
-  \endhead
-  添加新员工        & 管理员创建员工账号并分配基础权限。\tabularnewline
-  员工权限管理       & 管理人员调整员工的长期权限\tabularnewline
-  员工个人信息修改     &
-  员工修改个人可编辑信息，管理人员可修改下属的更多信息\tabularnewline
-  员工工资管理       & 对员工工资进行管理\tabularnewline
-  员工工资统计报表生成功能 &
-  系统按部门、时间等维度生成员工工资统计报表\tabularnewline
-  员工临时权限管理     & 为员工授予 /
-  收回与特定活动相关的临时权限\tabularnewline
-  \bottomrule
-\end{longtable}
-
-添加员工活动图：
-
-\includegraphics[width=3.10417in,height=3.45694in]{media/media/image8.png}
-
-员工权限管理活动图：
-
-\includegraphics[width=2.95972in,height=3.28333in]{media/media/image9.png}
-
-员工个人信息修改活动图：
-
-\includegraphics[width=3.53194in,height=3.98264in]{media/media/image10.png}
-
-员工工资管理活动图：
-
-\includegraphics[width=3.02917in,height=3.51458in]{media/media/image11.png}
-
-员工工资统计报表生成活动图：
-
-\includegraphics[width=2.90764in,height=2.41597in]{media/media/image12.png}
-
-员工临时权限管理活动图：
-
-\includegraphics[width=3.075in,height=2.66458in]{media/media/image13.png}
-
-\hypertarget{ux5458ux5de5ux7528ux4f8bux5b9eux73b0}{%
-  \subsubsection{员工用例实现}\label{ux5458ux5de5ux7528ux4f8bux5b9eux73b0}}
-
-1. 主要类及其关系：
-
-\includegraphics[width=6.23958in,height=7.50903in]{media/media/image14.png}
-
-2. 方法设计与实现：
-
-添加员工：
-\begin{verbatim}
-public class StaffDto
-{
-    [Required(ErrorMessage = "员工姓名是必填项")]
-    [StringLength(50, ErrorMessage = "名称长度不能超过50个字符")]
-    public string STAFF_NAME { get; set; }
-    [StringLength(10, ErrorMessage = "性别长度不能超过10个字符")]
-    public string STAFF_SEX { get; set; }
-    [Required(ErrorMessage = "员工部门是必填项")]
-    [StringLength(50, ErrorMessage = "部门长度不能超过50个字符")]
-    public string STAFF_APARTMENT { get; set; }
-    [Required(ErrorMessage = "员工职位是必填项")]
-    [StringLength(50, ErrorMessage = "职位长度不能超过50个字符")]
-    public string STAFF_POSITION { get; set; }
-    [Required(ErrorMessage = "员工薪资是必填项")]
-    [Range(0, 9999999999.99, ErrorMessage = "薪资必须大于等于0，且不能超过10位整数和2位小数")]
-    public double STAFF_SALARY { get; set; }
-}
-
-[HttpPost("AddStaff")]
-public async Task<IActionResult> AddStaff(
-    [FromQuery, Required] string operatorAccount,
-    [FromBody] StaffDto dto)
-{
-\end{verbatim}
-
-\includegraphics[width=6.27778in,height=7.20903in]{media/media/image15.png}
-
-员工权限管理：
-\begin{verbatim}
-[HttpPatch("ModifyStaffAuthority")]
-public async Task<IActionResult> ModifyStaffAuthority(
-    [FromQuery, Required] string operatorAccount,
-    [FromQuery] int staffId,
-    [FromQuery] int newAuthority)
-\end{verbatim}
-
-\includegraphics[width=5.98403in,height=9.26389in]{media/media/image16.png}
-
-员工修改信息：
-\begin{verbatim}
-[HttpPatch("ModifyStaffInfo")]
-public async Task<IActionResult> UpdateStaff(
-    [FromQuery, Required] int staffId,
-    [FromQuery, Required] string operatorAccount,
-    [FromBody] StaffDto dto)
-\end{verbatim}
-
-\includegraphics[width=6.20625in,height=6.7625in]{media/media/image17.png}
-
-员工工资管理：
-\begin{verbatim}
-[HttpPost("StaffSalaryManagement")]
-public async Task<IActionResult> ManageStaffSalary(
-    [FromQuery, Required] string operatorAccount,
-    [FromQuery, Required] int staffId,
-    [FromQuery] DateTime monthTime, // 格式 如 2008-11
-    [FromBody] SalaryDto dto)
-\end{verbatim}
-
-\includegraphics[width=6.32153in,height=8.45556in]{media/media/image18.png}
-
-临时权限管理：
-\begin{verbatim}
-[HttpPost("temporary_authority")]
-public async Task<IActionResult> ManageTemporaryAuthority(
-    [FromQuery, Required] string operatorAccount,
-    [FromBody, Required] TempAuthorityDto dto)
-
-[HttpDelete("revoke_temporary_authority")]
-public async Task<IActionResult> RevokeTemporaryAuthority(
-    [FromQuery, Required] string operatorAccount,
-    [FromQuery, Required] string staffAccount,
-    [FromQuery, Required] int eventId)
-\end{verbatim}
-
-\includegraphics[width=6.28194in,height=7.52361in]{media/media/image19.png}
-
 \hypertarget{ux6d3bux52a8ux7528ux4f8b}{%
 \subsection{活动用例}\label{ux6d3bux52a8ux7528ux4f8b}}
 
@@ -1032,16 +901,16 @@ public async Task<IActionResult> RevokeTemporaryAuthority(
 \end{longtable}
 
 场地活动预约活动图：
-\includegraphics{media/media/image12.png}
+\includegraphics{media/2.5/image12.png}
 
 场地活动管理活动图：
-\includegraphics{media/media/image13.png}
+\includegraphics{media/2.5/image13.png}
 
 场地活动结算收费活动图：
-\includegraphics{media/media/image14.png}
+\includegraphics{media/2.5/image14.png}
 
 场地活动统计报表生成活动图：
-\includegraphics{media/media/image15.png}
+\includegraphics{media/2.5/image15.png}
 
 \subsubsection{促销活动}
 
@@ -1058,13 +927,13 @@ public async Task<IActionResult> RevokeTemporaryAuthority(
 \end{longtable}
 
 新增促销活动活动图：
-\includegraphics{media/media/image16.png}
+\includegraphics{media/2.5/image16.png}
 
 促销活动管理活动图：
-\includegraphics{media/media/image17.png}
+\includegraphics{media/2.5/image17.png}
 
 促销活动统计报表生成活动图：
-\includegraphics{media/media/image18.png}
+\includegraphics{media/2.5/image18.png}
 
 
 \hypertarget{ux6d3bux52a8ux7528ux4f8bux5b9eux73b0}{%
@@ -1074,8 +943,8 @@ public async Task<IActionResult> RevokeTemporaryAuthority(
 
 1. 主要类及其关系：
 
-\includegraphics[width=6.2in,height=4.5in]{media/media/image1.png} % Placeholder for Venue Event Class Diagram
-\textit{注意：此为类图占位符，需手动替换为实际的UML图。图中应包含VenueEventController、VenueEvent、VenueEventDetail、EventArea、Collaboration等核心类及其关系。}
+% 原占位图（保留以备参考）:
+\includegraphics[width=6.2in,height=4.5in]{media/2.5/uml1.jpg} % Placeholder for Venue Event Class Diagram
 
 2. 方法设计与实现：
 
@@ -1418,8 +1287,7 @@ public async Task<IActionResult> GenerateReport([FromQuery] VenueEventReportRequ
 
 1. 主要类及其关系：
 
-\includegraphics[width=6.2in,height=4.5in]{media/media/image1.png} % Placeholder for Sale Event Class Diagram
-\textit{注意：此为类图占位符，需手动替换为实际的UML图。图中应包含SaleEventController、SaleEventService、SaleEvent、PartStore、Store等核心类及其关系。}
+\includegraphics[width=6.2in,height=4.5in]{media/2.5/uml2.jpg} % Placeholder for Sale Event Class Diagram
 
 2. 方法设计与实现：
 
@@ -1499,6 +1367,145 @@ public async Task<SaleEventReport> GenerateSaleEventReportAsync(int eventId)
 \end{verbatim}
 此方法同样在 \texttt{SaleEventService} 中实现，用于生成单个促销活动的效果报告。它首先获取活动的基本信息，然后通过一个模拟的 \texttt{FetchSalesDataFromExternalSystem} 方法来获取与活动相关的销售数据（如销售增量、优惠券核销率）。最后，它会基于成本和销售增量计算投资回报率（ROI），并将所有统计数据封装在 \texttt{SaleEventReport} 对象中返回。
 
+
+\hypertarget{ux5458ux5de5ux7528ux4f8b}{%
+  \subsection{员工用例}\label{ux5458ux5de5ux7528ux4f8b}}
+
+\hypertarget{ux5458ux5de5ux7528ux4f8bux8bbeux8ba1}{%
+  \subsubsection{员工用例设计}\label{ux5458ux5de5ux7528ux4f8bux8bbeux8ba1}}
+
+表格 2‑6 员工功能的动作序列
+
+\begin{longtable}[]{@{}ll@{}}
+  \toprule
+  动作序列         & 描述\tabularnewline
+  \midrule
+  \endhead
+  添加新员工        & 管理员创建员工账号并分配基础权限。\tabularnewline
+  员工权限管理       & 管理人员调整员工的长期权限\tabularnewline
+  员工个人信息修改     &
+  员工修改个人可编辑信息，管理人员可修改下属的更多信息\tabularnewline
+  员工工资管理       & 对员工工资进行管理\tabularnewline
+  员工工资统计报表生成功能 &
+  系统按部门、时间等维度生成员工工资统计报表\tabularnewline
+  员工临时权限管理     & 为员工授予 /
+  收回与特定活动相关的临时权限\tabularnewline
+  \bottomrule
+\end{longtable}
+
+添加员工活动图：
+
+\includegraphics[width=3.10417in,height=3.45694in]{media/media/image8.png}
+
+员工权限管理活动图：
+
+\includegraphics[width=2.95972in,height=3.28333in]{media/media/image9.png}
+
+员工个人信息修改活动图：
+
+\includegraphics[width=3.53194in,height=3.98264in]{media/media/image10.png}
+
+员工工资管理活动图：
+
+\includegraphics[width=3.02917in,height=3.51458in]{media/media/image11.png}
+
+员工工资统计报表生成活动图：
+
+\includegraphics[width=2.90764in,height=2.41597in]{media/media/image12.png}
+
+员工临时权限管理活动图：
+
+\includegraphics[width=3.075in,height=2.66458in]{media/media/image13.png}
+
+\hypertarget{ux5458ux5de5ux7528ux4f8bux5b9eux73b0}{%
+  \subsubsection{员工用例实现}\label{ux5458ux5de5ux7528ux4f8bux5b9eux73b0}}
+
+1. 主要类及其关系：
+
+\includegraphics[width=6.23958in,height=7.50903in]{media/media/image14.png}
+
+2. 方法设计与实现：
+
+添加员工：
+\begin{verbatim}
+public class StaffDto
+{
+    [Required(ErrorMessage = "员工姓名是必填项")]
+    [StringLength(50, ErrorMessage = "名称长度不能超过50个字符")]
+    public string STAFF_NAME { get; set; }
+    [StringLength(10, ErrorMessage = "性别长度不能超过10个字符")]
+    public string STAFF_SEX { get; set; }
+    [Required(ErrorMessage = "员工部门是必填项")]
+    [StringLength(50, ErrorMessage = "部门长度不能超过50个字符")]
+    public string STAFF_APARTMENT { get; set; }
+    [Required(ErrorMessage = "员工职位是必填项")]
+    [StringLength(50, ErrorMessage = "职位长度不能超过50个字符")]
+    public string STAFF_POSITION { get; set; }
+    [Required(ErrorMessage = "员工薪资是必填项")]
+    [Range(0, 9999999999.99, ErrorMessage = "薪资必须大于等于0，且不能超过10位整数和2位小数")]
+    public double STAFF_SALARY { get; set; }
+}
+
+[HttpPost("AddStaff")]
+public async Task<IActionResult> AddStaff(
+    [FromQuery, Required] string operatorAccount,
+    [FromBody] StaffDto dto)
+{
+\end{verbatim}
+
+\includegraphics[width=6.27778in,height=7.20903in]{media/media/image15.png}
+
+员工权限管理：
+\begin{verbatim}
+[HttpPatch("ModifyStaffAuthority")]
+public async Task<IActionResult> ModifyStaffAuthority(
+    [FromQuery, Required] string operatorAccount,
+    [FromQuery] int staffId,
+    [FromQuery] int newAuthority)
+\end{verbatim}
+
+\includegraphics[width=5.98403in,height=9.26389in]{media/media/image16.png}
+
+员工修改信息：
+\begin{verbatim}
+[HttpPatch("ModifyStaffInfo")]
+public async Task<IActionResult> UpdateStaff(
+    [FromQuery, Required] int staffId,
+    [FromQuery, Required] string operatorAccount,
+    [FromBody] StaffDto dto)
+\end{verbatim}
+
+\includegraphics[width=6.20625in,height=6.7625in]{media/media/image17.png}
+
+员工工资管理：
+\begin{verbatim}
+[HttpPost("StaffSalaryManagement")]
+public async Task<IActionResult> ManageStaffSalary(
+    [FromQuery, Required] string operatorAccount,
+    [FromQuery, Required] int staffId,
+    [FromQuery] DateTime monthTime, // 格式 如 2008-11
+    [FromBody] SalaryDto dto)
+\end{verbatim}
+
+\includegraphics[width=6.32153in,height=8.45556in]{media/media/image18.png}
+
+临时权限管理：
+\begin{verbatim}
+[HttpPost("temporary_authority")]
+public async Task<IActionResult> ManageTemporaryAuthority(
+    [FromQuery, Required] string operatorAccount,
+    [FromBody, Required] TempAuthorityDto dto)
+
+[HttpDelete("revoke_temporary_authority")]
+public async Task<IActionResult> RevokeTemporaryAuthority(
+    [FromQuery, Required] string operatorAccount,
+    [FromQuery, Required] string staffAccount,
+    [FromQuery, Required] int eventId)
+\end{verbatim}
+
+\includegraphics[width=6.28194in,height=7.52361in]{media/media/image19.png}
+
+
 \hypertarget{ux5546ux6237ux7528ux4f8b}{%
 \subsection{商户用例}\label{ux5546ux6237ux7528ux4f8b}}
 
@@ -1524,33 +1531,32 @@ public async Task<SaleEventReport> GenerateSaleEventReportAsync(int eventId)
 \textit{注意：由于空间限制，此处的活动图均使用占位符，实际文档中需替换为对应的图表。}
 
 新增商户活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.7/image26.png}
 
 商户信息管理活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.7/image27.png}
 
 新增店面活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.7/image28.png}
 
 店面状态管理活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.7/image29.png}
 
 商户信息统计报表活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.7/image30.png}
 
 商户租金收取活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.7/image31.png}
 
 商户租金统计报表活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.7/image32.png}
 
 \hypertarget{ux5546ux6237ux7528ux4f8bux5b9eux73b0}{%
 \subsubsection{商户用例实现}\label{ux5546ux6237ux7528ux4f8bux5b9eux73b0}}
 
 1. 主要类及其关系：
 
-\includegraphics[width=6.2in,height=4.5in]{media/media/image1.png} % Placeholder for Merchant Module Class Diagram
-\textit{注意：此为类图占位符，需手动替换为实际的UML图。图中应包含StoreController、Store、RetailArea、RentStore、StoreAccount等核心类及其关系。}
+\includegraphics[width=6.2in,height=4.5in]{media/2.7/uml.jpg} % Placeholder for Merchant Module Class Diagram
 
 2. 方法设计与实现：
 
@@ -2012,26 +2018,26 @@ public async Task<IActionResult> GetRentStatisticsReport([FromQuery] string star
 \textit{注意：由于空间限制，此处的活动图均使用占位符，实际文档中需替换为对应的图表。}
 
 停车场信息管理活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.8/image33.png}
 
 停车场车位状态查询活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.8/image34.png}
 
 停车场出入车计费活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.8/image35.png}
 
 停车场内车辆状态查询活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.8/image36.png}
 
 停车场信息统计报表活动图：
-\includegraphics{media/media/image1.png}
+\includegraphics{media/2.8/image37.png}
 
 \hypertarget{ux505cux8f66ux573aux7528ux4f8bux5b9eux73b0}{%
 \subsubsection{停车场用例实现}\label{ux505cux8f66ux573aux7528ux4f8bux5b9eux73b0}}
 
 1. 主要类及其关系：
 
-\includegraphics[width=6.2in,height=4.5in]{media/media/image1.png} % Placeholder for Parking Module Class Diagram
+\includegraphics[width=6.2in,height=4.5in]{media/2.8/uml.jpg} % Placeholder for Parking Module Class Diagram
 \textit{注意：此为类图占位符，需手动替换为实际的UML图。图中应包含ParkingController、ParkingContext、ParkingLot、ParkingSpace、Park、Car等核心类及其关系。}
 
 2. 方法设计与实现：
