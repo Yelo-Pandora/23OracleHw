@@ -1,6 +1,11 @@
 <template>
   <div class="cashflow-detail">
-    <h2>{{ criteria.ModuleType }} 现金流详情</h2>
+
+    <div class="detail-header">
+      <h2>{{ criteria.ModuleType }} 现金流详情</h2>
+      <button class="back-overview-btn" @click="goBackOverview">← 返回总览</button>
+    </div>
+
     <p>时间范围：{{ criteria.StartDate }} ~ {{ criteria.EndDate }}</p>
 
     <table class="detail-table">
@@ -74,6 +79,7 @@
 <script setup lang="ts">
   import { ref, reactive, computed, watch, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
+  import { useRouter } from 'vue-router'
   import axios from 'axios'
   import { useUserStore } from '@/user/user'
   //导入工资弹窗组件
@@ -86,6 +92,10 @@
   const endDate = ref(route.query.endDate || '2025-12-31')
   const timeGranularity = ref(route.query.timeGranularity || 'month')
 
+  const router = useRouter()
+  const goBackOverview = () => {
+    router.push({ name: 'CashFlowOverview' })
+  }
   //请求参数
   const criteria = reactive({
     StartDate: startDate.value,
@@ -289,6 +299,29 @@
 </script>
 
 <style scoped>
+ .detail-header{
+     display:flex;
+     justify-content:space-between;
+     align-items:center;
+     margin-bottom:10px;
+ }
+  .back-overview-btn {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #4caf50;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.18s;
+  }
+  .back-overview-btn:hover {
+    background: #45a049;
+    transform: scale(1.05);
+  }
+  .back-overview-btn:active {
+    transform: scale(0.95);
+  }
   .cashflow-detail {
     padding: 24px;
     background: #fff;
