@@ -293,8 +293,8 @@ namespace oracle_backend.Controllers
 
         private async Task<bool> HasActiveEvents(int collaborationId)
         {
-            // 实现检查逻辑
             var query = _context.VenueEventDetails.Where(v => v.COLLABORATION_ID == collaborationId && v.STATUS == "ACTIVE");
+            // 实现检查逻辑
             return await query.CountAsync() > 0;
         }
     }
