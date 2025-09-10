@@ -13,8 +13,8 @@ import DeviceManagement from '@/pages/equipment_management/Equipment_management.
 import EmployeeManagement from './pages/employee_management/EmployeeManagement.vue'
 import TotalSalary from './pages/employee_management/TotalSalary.vue'
 import CashFlow from '@/pages/cashflow/cashflow_management.vue'
-import CashFlowOverview from '@/pages/cashflow/CashflowDashBoard.vue'
-import CashFlowDetails from '@/pages/cashflow/Cashflowdetail.vue'
+import CashFlowOverview from '@/pages/cashflow/CashFlowDashBoard.vue'
+import CashFlowDetails from '@/pages/cashflow/CashFlowDetail.vue'
 
 // import Events from './pages/events_management/App.vue'
 // import Mall from './pages/mall_management/App.vue'
