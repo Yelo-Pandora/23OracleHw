@@ -69,10 +69,6 @@ function viewDetail(item) {
   showDetailModal.value = true;
 }
 
-const refreshSalaryData = async () => {
-  await fetchMonthSalaryCosts();
-};
-
 onMounted(async () => {
   await fetchMonthSalaryCosts();
 });
