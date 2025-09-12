@@ -706,7 +706,7 @@ const filteredEvents = computed(() => {
 })
 
 // API配置
-const API_BASE = 'http://localhost:8081/api'
+const API_BASE = '/api'
 
 // 工具方法
 const formatDate = (dateString) => {

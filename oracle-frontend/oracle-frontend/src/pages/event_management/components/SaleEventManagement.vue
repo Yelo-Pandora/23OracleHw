@@ -230,7 +230,7 @@ const filteredEvents = computed(() => {
 })
 
 // API配置
-const API_BASE = 'http://localhost:8081/api'
+const API_BASE = '/api'
 
 // 方法定义
 const formatDate = (dateString) => {
