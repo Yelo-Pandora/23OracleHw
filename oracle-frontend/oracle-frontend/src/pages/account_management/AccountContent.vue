@@ -186,15 +186,15 @@
                     临时权限
                   </button>
 
-                  <!-- 关联账号按钮 (仅当 StaffInfo 不存在时显示) -->
-                  <button v-if="!account.StaffInfo"
+                  <!-- 关联账号按钮 (仅当 StoreInfo 不存在时显示) -->
+                  <button v-if="!account.StoreInfo"
                           class="row-action-button"
                           @click="openLinkModal(account)">
                     关联账号
                   </button>
 
-                  <!-- 取消关联按钮 (仅当 StaffInfo 存在时显示) -->
-                  <button v-if="account.StaffInfo"
+                  <!-- 取消关联按钮 (仅当 StoreInfo 存在时显示) -->
+                  <button v-if="account.StoreInfo"
                           class="row-action-button row-action-button--danger"
                           @click="unlinkAccount(account)">
                     取消关联
