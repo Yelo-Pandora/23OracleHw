@@ -41,7 +41,14 @@ export const useTempAuthStore = defineStore('tempAuth', {
       try {
         const [eventsRes, tempAuthsRes] = await Promise.all([
           axios.get('/api/Accounts/events'), // 获取所有活动
-          axios.get('/api/Staff/AllTempAuthorities') // 获取所有临时权限
+          axios.get('/api/Staff/AllTempAuthorities').catch(error => {
+            // 如果错误是404 Not Found，只是表明没找到临时权限，视为一个有效的空状态
+            if (error.response && error.response.status === 404) {
+              return { data: [] };
+            }
+            // 对于其他错误，则让外层catch处理
+            throw error;
+          }) // 获取所有临时权限
         ]);
         this.allEvents = eventsRes.data;
         this.tempAuthorities = tempAuthsRes.data;
