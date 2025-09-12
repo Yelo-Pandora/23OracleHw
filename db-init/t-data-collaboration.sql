@@ -1,305 +1,713 @@
-INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES
-  (2429, '隆桦股份有限公司', '严芸豪', '18599271160', 'c4VSBjv6@yahoo.com'),
-  (2386, '凯铭股份有限公司', '陈怡秀', '15623506343', 'PW1aHsoH5Z@gmail.com'),
-  (2692, '世青股份有限公司', '陈宛韵', '13518712973', 'EmxutOE@outlook.com'),
-  (2353, '佳仁股份有限公司', '张莉海', '18051848989', '0vQGGXk2@outlook.com'),
-  (2817, '锦泰股份有限公司', '黄映雅', '18811822473', '6SyT5ha3F@outlook.com'),
-  (2002, '衡基股份有限公司', '郑华中', '13287515651', '4dY9b@163.com'),
-  (2826, '奇渝股份有限公司', '蓝裕中', '17678348025', 'vELZoaGP@outlook.com'),
-  (2197, '艾拓股份有限公司', '杨智嘉', '13461962230', 'IhiLPmV5@gmail.com'),
-  (2611, '龙楚股份有限公司', '李淑纬', '13847435876', 'ok4I2@qq.com'),
-  (2663, '启艾股份有限公司', '丁昆来', '15891614045', 'E3xp1kSf0@outlook.com'),
-  (2471, '智喜股份有限公司', '吴盈甄', '13947880440', 'sIfrxOiAX@yahoo.com'),
-  (2588, '鑫益股份有限公司', '冯宇翔', '13219785636', 'pzwFPPm@gmail.com'),
-  (2377, '鹏文股份有限公司', '陈志文', '17739233960', '9wkvwW2G@qq.com'),
-  (2446, '慕鸣股份有限公司', '张富茹', '15787017419', '4wbwI@qq.com'),
-  (2272, '茂奇股份有限公司', '刘孟颖', '18390112988', 'p82qggb@yahoo.com'),
-  (2840, '达佰股份有限公司', '颜建辉', '18483619150', '2Qer9o6huk@163.com'),
-  (2822, '伦悦股份有限公司', '张水英', '18831732196', 'glNu4@gmail.com'),
-  (2251, '伦滨股份有限公司', '骆怡婷', '15018287724', 'aktFBLN@qq.com'),
-  (2721, '勇先股份有限公司', '简少霞', '13925051770', 'ZSV3n@outlook.com'),
-  (2634, '勤新股份有限公司', '陈怡哲', '18266248062', '3QPXPlXl1R@qq.com'),
-  (2741, '荣林股份有限公司', '徐梦财', '13131640179', 'b7bKxTW@qq.com'),
-  (2653, '镇羲股份有限公司', '陈君宪', '13361019229', 'IUyzCsio@outlook.com'),
-  (2470, '达圣股份有限公司', '许佑诚', '18442440030', 'iqDTVsxL7@qq.com'),
-  (2541, '亿诚股份有限公司', '洪玮伦', '18481674731', 'VvJbFkGE@qq.com'),
-  (2935, '亿铭股份有限公司', '张哲绿', '15074817357', 'KurBp@qq.com'),
-  (2733, '尊若股份有限公司', '谢海尧', '13570055930', 'FedjEpp3R3@outlook.com'),
-  (2576, '丰广股份有限公司', '吴宜真', '13151599169', '7JXY8v@gmail.com'),
-  (2483, '千虎股份有限公司', '刘任玮', '15716210143', 'F68qMIq@yahoo.com'),
-  (2816, '云驰股份有限公司', '杜宇福', '13255827199', 'GeOk1M6Xk@qq.com'),
-  (2688, '艾泰股份有限公司', '赵宛乔', '13661646115', 'YTCyoRdqK@gmail.com'),
-  (2778, '先诚股份有限公司', '冯奕英', '15525967957', 'gRtKuKnCa@outlook.com'),
-  (2242, '杉德股份有限公司', '吴岳淳', '18883926733', 'x99rgf@163.com'),
-  (2551, '蓝熙股份有限公司', '刘怡阳', '17070506469', 'sya4dty3rI@qq.com'),
-  (2472, '光蓝股份有限公司', '林勋洁', '15558505070', 'bMB5gg3bUF@qq.com'),
-  (2577, '鸣诚股份有限公司', '陈俊筠', '17073264428', 'iHMoh9i@qq.com'),
-  (2298, '成彩股份有限公司', '毛淑玲', '18745037144', 'VHOap@outlook.com'),
-  (2460, '心晨股份有限公司', '郭均冰', '15961681559', 'tOOoPfu22x@163.com'),
-  (2531, '杭朗股份有限公司', '钟可欣', '18736088453', 'hqfVnyh6Fn@yahoo.com'),
-  (2731, '众宁股份有限公司', '杨舒原', '15720330193', 'VQmt4Ys@gmail.com'),
-  (2453, '敬悦股份有限公司', '王成茹', '13414095252', '77aqHOR@gmail.com'),
-  (2235, '坤亚股份有限公司', '李珮喜', '13466818635', 'gngfW@yahoo.com'),
-  (2713, '河泰股份有限公司', '杨予季', '13667063678', 'wuFDeKg@gmail.com'),
-  (2178, '琛承股份有限公司', '林以合', '13538880033', 'vDX327@qq.com'),
-  (2651, '永恒股份有限公司', '李圣英', '13242105005', 'ZXstCPZ7@163.com'),
-  (2179, '利宇股份有限公司', '李珮君', '13988407445', 'OXb1rFvvM@163.com'),
-  (2958, '龙诚股份有限公司', '李政新', '18468767415', 'bgK1UsIHbr@yahoo.com'),
-  (2726, '盛烽股份有限公司', '林奕蓁', '13291426624', '7FftX7uQpH@qq.com'),
-  (2283, '途正股份有限公司', '郑玲德', '17026927603', 'HM6GbC@gmail.com'),
-  (2437, '腾腾股份有限公司', '王美泉', '13867057553', 'sZtYcs@gmail.com'),
-  (2324, '明迅股份有限公司', '林政群', '15136729854', 'AI68T@yahoo.com'),
-  (2321, '拓誉股份有限公司', '陈孟菁', '13086865209', 'ac7Jmk@gmail.com'),
-  (2724, '华彩股份有限公司', '丁静怡', '15077582984', 'qD22E@qq.com'),
-  (2366, '升桦股份有限公司', '黄名伦', '18164782615', 'TqwDtyKmY@yahoo.com'),
-  (2948, '艾琛股份有限公司', '苏乔麟', '15330086698', 'VI35oBJD@yahoo.com'),
-  (2507, '久恩股份有限公司', '毛蕙行', '13144572379', '94KPIH@qq.com'),
-  (2528, '格诺股份有限公司', '刘慧娟', '13439781652', 'VFvDkiT@outlook.com'),
-  (2038, '益森股份有限公司', '李雅惠', '15895013585', 'jMAq0k@gmail.com'),
-  (2991, '桦鼎股份有限公司', '杨万帆', '17785594762', 'RLpx3C1f@163.com'),
-  (2831, '亿咏股份有限公司', '王昱宏', '18441619820', 'OjyT3@qq.com'),
-  (2177, '虎龙股份有限公司', '黄子友', '13187374719', 'qibljlMZGz@yahoo.com'),
-  (2099, '丰鸣股份有限公司', '蔡育菁', '1509452805', 'xMHxyyrVpy@outlook.com'),
-  (2490, '炫豪股份有限公司', '曾彦斌', '17026789744', 'oVxBT@163.com'),
-  (2657, '格翔股份有限公司', '邱欣怡', '1572996923', '9XDLLnfhUw@outlook.com'),
-  (2854, '生星股份有限公司', '陈志嘉', '13920079471', 'Tzlw5sZ@gmail.com'),
-  (2019, '裕祥股份有限公司', '陈伟辉', '13469752821', 'JA9rHbkY7@qq.com'),
-  (2216, '东善股份有限公司', '刘怡辰', '1383720948', 'ZrM8wso1S@yahoo.com'),
-  (2792, '航骏股份有限公司', '张怡君', '13938581179', 'ybANwD9@gmail.com'),
-  (2474, '西辉股份有限公司', '邓芸鸿', '15859472178', 'jB3qvMVlbF@yahoo.com'),
-  (2572, '田智股份有限公司', '吴梅育', '18759788246', 'wbHGi@163.com'),
-  (2750, '领华股份有限公司', '李威亚', '15722252026', 'H0LiX9@yahoo.com'),
-  (2067, '荣耀股份有限公司', '庾皓治', '13635430130', '5SDWuZZs2D@gmail.com'),
-  (2105, '荣安股份有限公司', '谢佳宏', '18126912745', 'U9ljfwos3I@gmail.com'),
-  (2365, '群辰股份有限公司', '吴佳琬', '18937795956', 'BNs7NmM@gmail.com'),
-  (2603, '盛旭股份有限公司', '李采霖', '13197305966', 'Ya9iV7naac@163.com'),
-  (2069, '义江股份有限公司', '郭绿豪', '18322549002', 'JUJ6i31Gvg@yahoo.com'),
-  (2413, '特霖股份有限公司', '甯国华', '15230179145', 'IwKU5Tvru@gmail.com'),
-  (2723, '禾儒股份有限公司', '周定升', '18289260230', 'qEGD55lZ4W@163.com'),
-  (2487, '鼎润股份有限公司', '王天芬', '15231161774', 'YYbxv@yahoo.com'),
-  (2041, '泓思股份有限公司', '徐雅惠', '18552732858', 'VhSv4XOac3@163.com'),
-  (2675, '东凯股份有限公司', '吴柏云', '13826983486', 'giRK6fB@qq.com'),
-  (2860, '浩金股份有限公司', '李如勋', '15938009770', 'vS5ar5@outlook.com'),
-  (2964, '敬鼎股份有限公司', '林佩玲', '18910302118', 'VW1l0@163.com'),
-  (2658, '彬喜股份有限公司', '邱淑惠', '13797590899', 'l4GvohDO8u@gmail.com'),
-  (2967, '熙仁股份有限公司', '陈建苹', '15128992070', '2tlXbux@yahoo.com'),
-  (2145, '尊烽股份有限公司', '刘秀娟', '13799382561', '2Y3neojXfs@163.com'),
-  (2087, '明星股份有限公司', '王志杰', '15627904845', '8XvFzNyOc@yahoo.com'),
-  (2023, '太启股份有限公司', '罗翔欣', '15199854778', 'zLs4dBrBC9@qq.com'),
-  (2091, '恩昌股份有限公司', '张博琇', '15569351269', '8iGWz@yahoo.com'),
-  (2776, '力启股份有限公司', '吕伟诚', '15072202190', 'lY3TL5WBol@yahoo.com'),
-  (2828, '彦优股份有限公司', '黄怡祯', '18244770800', 'K0BMD@qq.com'),
-  (2116, '伦玮股份有限公司', '连俊明', '13891758834', 'bTUxAH44e@163.com'),
-  (2456, '森卓股份有限公司', '陈品梅', '18893963664', 'cQonq@163.com'),
-  (2466, '安骏股份有限公司', '吴宣一', '15358360426', 'r6BxfsM@qq.com'),
-  (2848, '心峰股份有限公司', '宋维哲', '18758269946', 'YmrgIs17qz@qq.com'),
-  (2951, '腾栋股份有限公司', '李威珮', '17611699801', 'inru8Jcc0@163.com'),
-  (2361, '域途股份有限公司', '张思扬', '18183219455', 'tNEauIGEUr@outlook.com'),
-  (2697, '领骏股份有限公司', '李伟伦', '13973307451', 'pbUq5uVzby@gmail.com'),
-  (2884, '盛锦股份有限公司', '李宜俊', '18365586253', '6rpcN1Q@yahoo.com'),
-  (2649, '嘉峰股份有限公司', '罗思洁', '17067425768', '4fNkYScJ5@gmail.com'),
-  (2632, '衡峻股份有限公司', '王妙睿', '17090705875', 'RXLLJySJ@outlook.com'),
-  (2318, '瀚世股份有限公司', '和钰谕', '15248588157', 'j2yyt@outlook.com'),
-  (2814, '烽浩股份有限公司', '王木盛', '15150187791', 'wFN6J@yahoo.com'),
-  (2722, '达逸股份有限公司', '柳博易', '13784651260', 'fpidycCKm@qq.com'),
-  (2012, '志坤股份有限公司', '庾思婷', '18034463520', '2u6CuSKmbd@outlook.com'),
-  (2229, '豪虎股份有限公司', '刘玉娟', '17076406715', 'FPfGSap@outlook.com'),
-  (2933, '心锦股份有限公司', '刘志轩', '15595257322', 'f1XebppE@qq.com'),
-  (2527, '聪文股份有限公司', '文诗香', '18194637722', '8Yw3vqlZ@gmail.com'),
-  (2871, '雨霖股份有限公司', '马志文', '13630925002', 'Spmq6Wm@gmail.com'),
-  (2542, '德辉股份有限公司', '陈素智', '15852903825', 'Xa0oCbUQtv@gmail.com'),
-  (2714, '众宏股份有限公司', '陈思宪', '18544745270', 'aTF3j@qq.com'),
-  (2030, '生超股份有限公司', '李明治', '18090356190', 'cRNoc8k@yahoo.com'),
-  (2225, '炎铭股份有限公司', '许善云', '18414272468', 'KiNAUl4@outlook.com'),
-  (2340, '鹏仁股份有限公司', '蔡秉孝', '15832842200', 'YCk76hFpU@yahoo.com'),
-  (2223, '俊聪股份有限公司', '林雅齐', '18268943441', '68KWGFfgJ@qq.com'),
-  (2259, '达拓股份有限公司', '洪晋凯', '18346477544', 'mxonOdJAU@qq.com'),
-  (2813, '群百股份有限公司', '陈宛嘉', '18074815945', 'gwlKQTkcvu@163.com'),
-  (2395, '瑞千股份有限公司', '卢美舜', '17791183492', 'aIR30pw8@gmail.com'),
-  (2708, '明勤股份有限公司', '苏俊谚', '13442229384', 'XfgDSBJ@gmail.com'),
-  (2348, '金云股份有限公司', '杨琬翰', '15783121846', 'ycgfp0k@yahoo.com'),
-  (2696, '善邦股份有限公司', '郭冠翰', '18314574922', 'HMBM2H@yahoo.com'),
-  (2569, '宏迅股份有限公司', '张文达', '13940889053', 'EHLOuuz@outlook.com'),
-  (2241, '邦维股份有限公司', '李之升', '18520274938', 'qSpcg@gmail.com'),
-  (2998, '域心股份有限公司', '陈昱诚', '15964654268', 'x6mJg2NTaj@gmail.com'),
-  (2875, '栋格股份有限公司', '张士哲', '18575623238', '1quPv@163.com'),
-  (2888, '安领股份有限公司', '常雅玮', '13223241282', '8jgTc4CIq@gmail.com'),
-  (2461, '荣飞股份有限公司', '刘建均', '17895853223', 'b5NIPPiw@gmail.com'),
-  (2400, '同谦股份有限公司', '袁力全', '18445528110', 'tRV2BB@yahoo.com'),
-  (2493, '云腾股份有限公司', '李彦志', '17768003818', 'hM9TM9FYc@qq.com'),
-  (2276, '雨茂股份有限公司', '黎馨仪', '13958340399', 'aZDUu@outlook.com'),
-  (2058, '骏诚股份有限公司', '林财洁', '13819966663', 'Mm6MEh5kx@qq.com'),
-  (2227, '烽盛股份有限公司', '王信来', '15788133009', 'K4arc@163.com'),
-  (2698, '诚杰股份有限公司', '郭勇尧', '17078730256', '9pwGV5tG@outlook.com'),
-  (2233, '勤田股份有限公司', '强琳任', '18055318624', '8iEqT1P6Z@gmail.com'),
-  (2166, '金达股份有限公司', '李冠杰', '15146994965', 'ZF5PgsYck@qq.com'),
-  (2479, '景震股份有限公司', '何怡君', '15089869573', 'Zvp93s@qq.com'),
-  (2524, '升润股份有限公司', '陈嘉祥', '15890083590', '8DpagX@qq.com'),
-  (2818, '众峰股份有限公司', '丁建中', '13391088710', '2lXvxaefut@gmail.com'),
-  (2032, '建信股份有限公司', '刘左娇', '13624794424', 'M3k9js@gmail.com'),
-  (2920, '炎海股份有限公司', '吴宗妃', '17642358872', 'IWn7KQip@gmail.com'),
-  (2811, '兴宸股份有限公司', '李佳学', '15096081235', 'wzwmKC@163.com'),
-  (2007, '谦祥股份有限公司', '许清筠', '17792712940', 'rzxtuOS@yahoo.com'),
-  (2054, '楚基股份有限公司', '林佩雯', '17760037345', '7Dcxo2Ybx@yahoo.com'),
-  (2214, '群恒股份有限公司', '袁子杰', '18497896304', 'dTS8a@qq.com'),
-  (2645, '途德股份有限公司', '吴婉菁', '13918176814', 'nScqx3r@yahoo.com'),
-  (2594, '鸣领股份有限公司', '童明辉', '17676686819', '2IGB3@yahoo.com'),
-  (2047, '佳虎股份有限公司', '陈淑玲', '18117581215', 'DW3q3GwlJ@gmail.com'),
-  (2220, '盛安股份有限公司', '周小珮', '18668177634', 'OdIHRKb@qq.com'),
-  (2255, '诺文股份有限公司', '王钰竹', '13474071850', 'wjwN8AF7d@gmail.com'),
-  (2764, '凯先股份有限公司', '黄山蓁', '18830072193', 'xcnQTu@gmail.com'),
-  (2049, '阳峻股份有限公司', '李志文', '18437410700', 'KU65nOWm@gmail.com'),
-  (2333, '万家股份有限公司', '王素玟', '13652013850', 'Yb50xGNA@gmail.com'),
-  (2901, '金健股份有限公司', '张水蓉', '15273255174', 'EAm3xNoYdO@outlook.com'),
-  (2476, '灿百股份有限公司', '王嘉睿', '15512196976', 'Ig5MrmFfn@outlook.com'),
-  (2561, '维尊股份有限公司', '廖永芬', '13233077420', 'YGrZO@outlook.com'),
-  (2294, '华伦股份有限公司', '廖宏达', '18753306271', 'tRKQXF2j@outlook.com'),
-  (2010, '圣铭股份有限公司', '李慧君', '15147783421', 'y3UmyKKjA@outlook.com'),
-  (2297, '烽杭股份有限公司', '郭真发', '18653530624', 'ex8e9JJBz@yahoo.com'),
-  (2191, '锋振股份有限公司', '潘意书', '15387709464', 'yg5C26lFU1@outlook.com'),
-  (2354, '盛圣股份有限公司', '刘上启', '18713978889', 'oOx8FvTgo@qq.com'),
-  (2108, '圣达股份有限公司', '蔡明幸', '17063991540', 'CCtxr@outlook.com'),
-  (2118, '尊鑫股份有限公司', '吴美宇', '17680922934', 'wf1xMZa@yahoo.com'),
-  (2432, '力楚股份有限公司', '沈芝齐', '18674327543', 'TcvSobq@outlook.com'),
-  (2545, '景奥股份有限公司', '陈文宏', '15079350442', 'ArYfvj@qq.com'),
-  (2088, '乐滨股份有限公司', '葛彦廷', '13341067220', 'l7VXheZi5e@yahoo.com'),
-  (2045, '新佑股份有限公司', '黄健铭', '15654472688', 'Z0roaqS@gmail.com'),
-  (2249, '同滨股份有限公司', '李雅文', '17609524290', 'tCsGiXlV@yahoo.com'),
-  (2040, '源虹股份有限公司', '王培霞', '15620981802', '7UJm9@163.com'),
-  (2296, '宁基股份有限公司', '蓝绍良', '18366902990', 'JsNywnVH8@qq.com'),
-  (2945, '维灿股份有限公司', '张良合', '13562740219', 'JSakZoJ@gmail.com'),
-  (2462, '诚岳股份有限公司', '赖明儒', '17075571915', 'XUJ4G@outlook.com'),
-  (2417, '立彩股份有限公司', '叶鸿娇', '15777787479', 'BdXZFecB@qq.com'),
-  (2660, '霆普股份有限公司', '林俊雅', '13172555392', 'silvy5B@yahoo.com'),
-  (2735, '君岳股份有限公司', '林宜顺', '18362964635', 'GmSRWr7@gmail.com'),
-  (2194, '秦岩股份有限公司', '黄秀慧', '13010626263', 'dncc0Xin@yahoo.com'),
-  (2307, '领聪股份有限公司', '黄钰婷', '15674175680', 'K18g3H0vwa@qq.com'),
-  (2562, '善圣股份有限公司', '颜芳瑜', '13887302743', 'idk3A6Nd@163.com'),
-  (2796, '鸣晟股份有限公司', '蔡明恭', '15042321035', '01VyK@163.com'),
-  (2278, '霖百股份有限公司', '李威文', '18950563615', 'oS2JQF2vp@outlook.com'),
-  (2693, '瑞禾股份有限公司', '张文贤', '15341832051', 'A1aGGA@outlook.com'),
-  (2763, '旭祥股份有限公司', '杨雅旺', '18911727974', '4RAx26Q@outlook.com'),
-  (2706, '慕祥股份有限公司', '李彦霖', '18654110760', '94pEw7@qq.com'),
-  (2173, '岳宏股份有限公司', '蔡宥木', '13113674114', 'mwNIb2zdP@yahoo.com'),
-  (2516, '鸿顺股份有限公司', '洪贞仪', '18809543800', 'WTktve6pb3@qq.com'),
-  (2808, '益恒股份有限公司', '张俊玮', '13550499242', '08kxH@gmail.com'),
-  (2554, '桦文股份有限公司', '刘爱惠', '18883037126', '5t9Lq@gmail.com'),
-  (2052, '悦瀚股份有限公司', '陈惠珮', '18052846924', '9sL9MY14pS@qq.com'),
-  (2894, '扬丰股份有限公司', '杨雅茹', '15996988895', 'Ga4DzbBFk@yahoo.com'),
-  (2930, '飞成股份有限公司', '林秀佳', '18421047989', 'UOyBU2@outlook.com'),
-  (2943, '阳杭股份有限公司', '韦姵君', '15941171152', 'vVjhDAd@163.com'),
-  (2707, '喜洋股份有限公司', '林志颖', '17653826391', 'gPPvGYFffD@qq.com'),
-  (2405, '喜伦股份有限公司', '陈瑞昀', '18585065752', 'ZUIxyJnhYS@gmail.com'),
-  (2961, '义荣股份有限公司', '李怡慈', '15390123194', '1ZgmCj@outlook.com'),
-  (2469, '义沃股份有限公司', '陈志玉', '15310287447', 'PBURWyg@163.com'),
-  (2942, '万文股份有限公司', '李玮婷', '13781391670', 'F8zKReEJ@outlook.com'),
-  (2804, '炫恩股份有限公司', '吴筱芸', '13019583404', 'nkckf7dt@yahoo.com'),
-  (2165, '诚风股份有限公司', '林冠廷', '15579770418', '92C2BS@gmail.com'),
-  (2960, '康振股份有限公司', '刘意霖', '15141643453', 'ZXZ7z3T@163.com'),
-  (2358, '雨辰股份有限公司', '孙家伟', '15395465408', 'flkf63j0bS@yahoo.com'),
-  (2973, '纳鼎股份有限公司', '许以宜', '18745814402', 'jtDRtdkBXK@gmail.com'),
-  (2205, '驰洋股份有限公司', '刘依婷', '18134023650', 'Ni8EYk@yahoo.com'),
-  (2659, '恒天股份有限公司', '萧朝嘉', '17051434887', 'Ada6Xs7m@yahoo.com'),
-  (2761, '枫海股份有限公司', '樊泰妹', '18596857520', 'JY9P61@yahoo.com'),
-  (2910, '卓合股份有限公司', '宋威宇', '18498720589', '9AREyN9TeI@qq.com'),
-  (2515, '利卓股份有限公司', '阮朝昌', '13431922987', '36lkjU1PFp@gmail.com'),
-  (2206, '嘉润股份有限公司', '李建廷', '13794056658', 'ttJTJ9bp1o@qq.com'),
-  (2566, '嘉太股份有限公司', '吴佩桦', '13411543134', 'EdZtx@gmail.com'),
-  (2590, '景灿股份有限公司', '黄伟智', '15019405220', 'QqH8aM@qq.com'),
-  (2965, '逸佰股份有限公司', '林美威', '13547574043', 'e2CaL1@outlook.com'),
-  (2424, '百梦股份有限公司', '林建坚', '18670590449', 'wPWhZOeNM@qq.com'),
-  (2026, '圣若股份有限公司', '刘尚均', '15686003338', 'OsJZZ8Dh@163.com'),
-  (2266, '隆东股份有限公司', '杨登盛', '13651081252', 'NwklKU@yahoo.com'),
-  (2832, '基熙股份有限公司', '姚兰妤', '17053566477', 'EGgicGgwic@yahoo.com'),
-  (2389, '诺承股份有限公司', '李映宁', '13396392392', 'QdG9Ow@qq.com'),
-  (2285, '虹思股份有限公司', '吴佳士', '18247191283', 'YZBRry@qq.com'),
-  (2051, '骏泰股份有限公司', '谢欣洁', '13096878443', 'wugJa@qq.com'),
-  (2917, '伦渝股份有限公司', '陈怡雯', '15698989249', 'pOQgo@gmail.com'),
-  (2631, '言震股份有限公司', '张怡桦', '17846595412', 'yqclJK@163.com'),
-  (2937, '华锋股份有限公司', '林上盈', '13359218926', 'Kd8jDq4h@yahoo.com'),
-  (2492, '智润股份有限公司', '林士法', '15335189099', 'D2SElWGM5@qq.com'),
-  (2984, '盛祥股份有限公司', '黎志杰', '15371298324', 'trnfm1AA@gmail.com'),
-  (2747, '威禾股份有限公司', '陈茂尧', '17778158182', 'UfVKG@163.com'),
-  (2853, '林建股份有限公司', '张登如', '18064557138', 'TY8fS@qq.com'),
-  (2100, '阳金股份有限公司', '杨舒东', '13086464705', 'eroeJc@outlook.com'),
-  (2758, '彬茂股份有限公司', '刘力靖', '15059234100', 'FZ28oG@gmail.com'),
-  (2899, '景桦股份有限公司', '古馨文', '17636001321', 'sn4ZISlpz@163.com'),
-  (2062, '艾泓股份有限公司', '梁淑娟', '15176361020', 'qZM2Oz@yahoo.com'),
-  (2754, '琛泽股份有限公司', '陈怡萱', '13353859943', 'NF9Ir2X@yahoo.com'),
-  (2677, '耀德股份有限公司', '张崇维', '18574822726', 'R9j7j4Q@qq.com'),
-  (2447, '滨佳股份有限公司', '赵兰紫', '15163594056', 'BA9Y8E@qq.com'),
-  (2575, '博志股份有限公司', '钱俊宏', '18648246228', 'x85iscZEU6@outlook.com'),
-  (2700, '广航股份有限公司', '刘竣柔', '13792746212', 'VdrIboq@gmail.com'),
-  (2440, '熙炫股份有限公司', '叶尚霖', '15373890916', 'w58c2fXB8Q@163.com'),
-  (2210, '东玮股份有限公司', '黄海娇', '15063230829', 'wdKnQqvF@qq.com'),
-  (2394, '雨佰股份有限公司', '林诗宁', '13237465298', 'iXzwupMEDw@qq.com'),
-  (2392, '茂宸股份有限公司', '陈建海', '13669959015', 'RGaokx@yahoo.com'),
-  (2684, '嘉勤股份有限公司', '黄清宜', '13616051932', 'NifhFaPTm5@163.com'),
-  (2766, '岳诚股份有限公司', '苏士铭', '15876669681', '1R4BlRCQF@outlook.com'),
-  (2305, '扬衡股份有限公司', '倪协菁', '18391250215', 'y6dNQhd7J@yahoo.com'),
-  (2892, '太冠股份有限公司', '邱力俊', '18857026430', 'lm4Ml9@163.com'),
-  (2254, '华喜股份有限公司', '王意木', '13538409618', 'cS5yvKQFN@qq.com'),
-  (2357, '嘉途股份有限公司', '司俊宏', '18039936865', 'VmDdD1@qq.com'),
-  (2546, '文驰股份有限公司', '陈美淳', '15348940363', 'zqdi7MMpjY@qq.com'),
-  (2190, '羲伦股份有限公司', '江慈舜', '15307287340', 'qPXVZPH@gmail.com'),
-  (2557, '坤裕股份有限公司', '陈宛臻', '13215613466', 'vaAW4Xe4@qq.com'),
-  (2112, '新秋股份有限公司', '金宗翰', '15015690165', 'AmfkH@yahoo.com'),
-  (2084, '洋铭股份有限公司', '林玉桦', '15177519436', 'GJ81PxyEh@163.com'),
-  (2752, '特佰股份有限公司', '朱欣怡', '18624819180', 'nrPFZbsb@163.com'),
-  (2639, '博拓股份有限公司', '蔡昱一', '15999955654', '4N4GOCZ@gmail.com'),
-  (2834, '海涛股份有限公司', '程柏儒', '13161856028', 'anaWkbfJi@gmail.com'),
-  (2004, '祥圣股份有限公司', '马姿吟', '17759301443', 'OnVyr@yahoo.com'),
-  (2370, '辉嘉股份有限公司', '萧冠中', '13317053794', 'jix2zc0@outlook.com'),
-  (2441, '骏瑞股份有限公司', '陈雅如', '18032550956', 'zUuGiG8@qq.com'),
-  (2842, '汉昌股份有限公司', '陈芝凡', '13366412522', '1tYgfL@qq.com'),
-  (2944, '安喜股份有限公司', '林承江', '17094755796', 'ZlHSAhBS@yahoo.com'),
-  (2120, '杉鸿股份有限公司', '陈美君', '18897145400', 'OsMuF0@outlook.com'),
-  (2609, '玮杉股份有限公司', '吴雅慧', '13271771523', 'AY6i9@163.com'),
-  (2788, '悦辰股份有限公司', '罗振玮', '18783710001', 'RWl1v6xZhe@yahoo.com'),
-  (2350, '晏晟股份有限公司', '黄雅如', '18372362416', 'b6wVXb9QaN@163.com'),
-  (2339, '梦合股份有限公司', '朱嘉玲', '13842830796', 'dhzYwMb@qq.com'),
-  (2372, '利彬股份有限公司', '陈柏德', '18974686616', 'DK1n4jymje@yahoo.com'),
-  (2146, '宏力股份有限公司', '李昀绍', '18314301757', 'sGnrW@yahoo.com'),
-  (2927, '朗鸣股份有限公司', '张信韦', '17093294817', 'JRP9TW@yahoo.com'),
-  (2175, '宇恒股份有限公司', '王恭吟', '13257216855', 'daHZqTj@163.com'),
-  (2478, '健茂股份有限公司', '杨辰霞', '18336547416', 'X25rHs3rNI@yahoo.com'),
-  (2851, '杭兆股份有限公司', '蔡欣成', '18981815765', '6nf1D@163.com'),
-  (2239, '启龙股份有限公司', '韩行仁', '18856067861', 'peTW8z@outlook.com'),
-  (2028, '腾瑄股份有限公司', '吴雅芬', '18784059036', 'PVk45zH@outlook.com'),
-  (2443, '江柏股份有限公司', '杨羽福', '15924040450', '2DkP4zujMe@qq.com'),
-  (2785, '晟桦股份有限公司', '陈郁雯', '15917735307', '3pJbSiy@yahoo.com'),
-  (2061, '力泰股份有限公司', '阮呈信', '18670358325', 'ktpTYew@gmail.com'),
-  (2039, '奥杭股份有限公司', '颜丽辉', '18655834696', 'aeqojJObA@gmail.com'),
-  (2820, '佳康股份有限公司', '陈伟杰', '17897347247', 'dyLwaNV69K@yahoo.com'),
-  (2618, '瑄信股份有限公司', '王怡松', '15967239016', 'UrjLjrrn06@qq.com'),
-  (2923, '炫佳股份有限公司', '陈玉翰', '17797883384', 'elmSQD@yahoo.com'),
-  (2185, '霆峰股份有限公司', '林忠翰', '18565712731', 'ROsxabi6@outlook.com'),
-  (2096, '平升股份有限公司', '杜俊贤', '13959019810', 'RqOfVg@gmail.com'),
-  (2262, '德盛股份有限公司', '蔡倩亚', '13597135236', 'XH0JzjS6@yahoo.com'),
-  (2130, '杰弘股份有限公司', '周怡如', '13271978294', 'rOVXkt@outlook.com'),
-  (2671, '震君股份有限公司', '柳昌凯', '18438165857', 'HrnwzBorVC@163.com'),
-  (2128, '成田股份有限公司', '林崇东', '15357077150', 'QDpSxfzsH1@163.com'),
-  (2435, '森健股份有限公司', '张美淑', '15841170575', '9a1mOJ4@163.com'),
-  (2174, '荣丰股份有限公司', '璩美惠', '15268684510', 'onUpGM@qq.com'),
-  (2219, '兴浩股份有限公司', '杨玉华', '18076817710', 'w5S43E1OV@gmail.com'),
-  (2861, '祥光股份有限公司', '黄娇旭', '13527890078', 'sHog8xbsO@163.com'),
-  (2151, '驰诚股份有限公司', '蔡姿婷', '13783589342', 'WNbvKFEUNX@163.com'),
-  (2791, '卓天股份有限公司', '艾美娟', '17885419342', 'ZJLnjsw6V@163.com'),
-  (2423, '华元股份有限公司', '杨映维', '18543762718', '8jE8g2TI@outlook.com'),
-  (2072, '飞楚股份有限公司', '黄敬富', '18559248224', 'wgdDSV@163.com'),
-  (2987, '翔天股份有限公司', '林君均', '13663409865', 'Bdbj9WVS@outlook.com'),
-  (2595, '虎青股份有限公司', '许毅雪', '18734240774', '8fCORIOl@outlook.com'),
-  (2504, '柏凯股份有限公司', '吴家弘', '13162718268', 'xWZihJx@163.com'),
-  (2427, '腾达股份有限公司', '吴正欢', '13033490777', 'xchXeR@163.com'),
-  (2035, '骏琛股份有限公司', '吴静吟', '18121780009', '8K017E5I@yahoo.com'),
-  (2213, '悦裕股份有限公司', '陈义成', '15235000660', 'ziUFqxvGZq@gmail.com'),
-  (2218, '瀚海股份有限公司', '吴芳云', '18098393274', 'qW7Vp1V5@outlook.com'),
-  (2805, '虹世股份有限公司', '张维梅', '15162033957', '8G42pOi@qq.com'),
-  (2310, '伟若股份有限公司', '陈蓉育', '15263409025', 'dyl24@yahoo.com'),
-  (2501, '石丰股份有限公司', '郭怡安', '13047286638', 'OjW64qGKPw@gmail.com'),
-  (2003, '利慕股份有限公司', '李碧沛', '18652051402', 'cPHJdYAch@qq.com'),
-  (2275, '恒益股份有限公司', '单伶紫', '18137135619', 'l4tOp@gmail.com');
+-- 切换当前会话的容器
+ALTER SESSION SET CONTAINER = XEPDB1;
+
+-- 切换用户
+ALTER SESSION SET CURRENT_SCHEMA = ORACLEDBA;
+
+INSERT INTO AREA (AREA_ID, ISEMPTY, AREA_SIZE, CATEGORY) VALUES (5003, 1, 500, 'EVENT');
+INSERT INTO EVENT_AREA (AREA_ID, CAPACITY, AREA_FEE) VALUES (5003, 300, 8000);
+
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2736, '昌新股份有限公司', '张家芷', '1323396297', 'ie9zM@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2108, '尊若股份有限公司', '林华山', '13966273757', 'PqQ1Kxl@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2914, '景震股份有限公司', '郭冠翰', '13210694658', 'QdiMT@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2396, '岳宏股份有限公司', '钱雯升', '18849161358', 'Vd5NMYkTvn@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2857, '达佰股份有限公司', '毛蕙行', '1591436887', 'rrYyoQ@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2256, '飞楚股份有限公司', '谢心湖', '13649543615', '1U6WUToo9i@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2655, '晏晟股份有限公司', '李彦芷', '17070006014', 'adfJ7@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2060, '熙仁股份有限公司', '林玉贵', '13817194236', 'xBxBYBpo7e@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2806, '勇先股份有限公司', '姚兰妤', '13249258419', 'oIIR9zTm6i@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2671, '宁基股份有限公司', '张安宇', '18359143106', 'lgOj2xGxte@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2955, '恒益股份有限公司', '黄启靖', '13434105203', '7tfGK3t@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2599, '艾琛股份有限公司', '许善云', '18596292502', '2lCfete8Hi@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2614, '太启股份有限公司', '王惠雯', '18090747512', 'ILKOD@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2791, '光蓝股份有限公司', '苗惠文', '1765616327', 'BQsuHNi@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2043, '伟若股份有限公司', '赵乃乔', '15124958430', 'nzpEXKszj@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2503, '龙翔股份有限公司', '邱雅筑', '18542732338', 'L8N2HNhEra@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2323, '逸亿股份有限公司', '刘建均', '13223610154', 'F5GCVT@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2074, '升桦股份有限公司', '黄山蓁', '18259246297', '2DaSezr4cF@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2288, '炫豪股份有限公司', '陈佳燕', '13340623581', 'KfUSV2OGB@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2125, '震君股份有限公司', '陈宛韵', '1584291349', 'oc0YeDz@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2035, '祥光股份有限公司', '黄淑英', '18310824044', 'xTUXX4AZ@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2593, '伦渝股份有限公司', '韦姵君', '15796141861', 'RwK9SYY5@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2926, '豪虎股份有限公司', '王子柏', '15813186287', 'uAOch@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2086, '龙诚股份有限公司', '苏建添', '15844558563', 'fRmzaZL7H@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2439, '明星股份有限公司', '谢文祥', '18150083482', 'qhTbG8iMPY@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2219, '嘉途股份有限公司', '张美淑', '13592106689', '6wMAfMwU8@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2456, '兴浩股份有限公司', '陈怡侑', '13739526726', 'rVA94YP3VL@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2547, '利格股份有限公司', '林佩雯', '15251855138', 'nIF8yJ@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2718, '梦鹏股份有限公司', '陈信志', '15986580059', 'mKJr5@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2724, '羲伦股份有限公司', '廖永芬', '15214473281', 'h8KYQ@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2320, '利慕股份有限公司', '袁宛臻', '15036178823', 'pJ3IrtPa4@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2260, '群辰股份有限公司', '张良合', '15287046146', 'FY3dOc@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2971, '海涛股份有限公司', '黄圣梦', '17820732369', 'Rid4BNTX@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2087, '领聪股份有限公司', '陈柏青', '1353027393', '2L8nI@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2341, '金达股份有限公司', '郭启娇', '15519748345', 'QD7aK91pY@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2602, '智润股份有限公司', '张雅萍', '13320418917', 'aB9p5n@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2844, '途茂股份有限公司', '简少霞', '18737574795', 'XmbdtevL@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2194, '景灿股份有限公司', '林湘桦', '17028304613', 'juWVZTrlSl@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2676, '拓誉股份有限公司', '陈美君', '17838435924', 'vlPuE9zwDy@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2012, '平升股份有限公司', '褚智文', '13126813293', 'ZIAVBT13hI@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2403, '立彩股份有限公司', '钱杰意', '15749899192', 'gKG1X1M6EL@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2892, '锦明股份有限公司', '李馨名', '13196520310', 'ojQ7laZp@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2375, '鹏仁股份有限公司', '钟雅雯', '1883006883', 'bdPlfmY5@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2056, '烽盛股份有限公司', '黄美慧', '15095065321', 'nf4CNyMXX@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2590, '炎铭股份有限公司', '敬世驹', '13941084790', 'F5nXo@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2450, '奇渝股份有限公司', '李雅晴', '13013491811', 'FKB3feKkG@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2596, '宇恒股份有限公司', '徐梦财', '15527238974', '8YLvb@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2389, '河文股份有限公司', '吴岳淳', '13582428662', 'TFQ1J1ASN@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2240, '亿咏股份有限公司', '黄桂雪', '1781731376', 'kwu48M8@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2669, '骏泰股份有限公司', '张珊和', '13058019627', 'VbL38TeT6H@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2562, '敬鼎股份有限公司', '林重伯', '15640591802', 'QrBotu2Tv@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2762, '盛江股份有限公司', '刘钰雯', '18084872077', 'm2PJPP7Y@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2646, '宏力股份有限公司', '林宜欣', '13814815647', 'K0hTe@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2987, '博风股份有限公司', '林崇东', '1872427533', 'l4S6IQO@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2278, '栋格股份有限公司', '赖春辉', '15626384487', 'ql17PEHa5O@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2690, '隆桦股份有限公司', '黄育玮', '13035852169', 'VNEcGL@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2313, '启龙股份有限公司', '陈永贤', '15877340559', 'nO4At@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2583, '文驰股份有限公司', '李雅惠', '1779155880', 'r7cxY5@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2441, '众峰股份有限公司', '陈志文', '13696831383', 'XR0bUy2jc@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2302, '腾达股份有限公司', '陆世伟', '18276097124', 'k9Y4E@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2735, '华元股份有限公司', '王隆凯', '17844124418', '3mRtwSLf@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2794, '东凯股份有限公司', '谢佳嘉', '18181432012', 'z8mGDKxSOs@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2883, '圣达股份有限公司', '张怡白', '15394808001', 'M04usr@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2734, '楚晟股份有限公司', '任莉婷', '18787429879', 'XD6jMyI2ZN@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2641, '鸣晟股份有限公司', '王珍俐', '13135047706', 'SGPEYWGoCj@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2103, '虹世股份有限公司', '郑念宝', '17688355166', 'xQM1hf@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2248, '诚优股份有限公司', '陈民盈', '13314398164', 'zD5rO@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2919, '安言股份有限公司', '陈千惠', '1306888147', '3V7CN@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2021, '德星股份有限公司', '陈柏霖', '13097136604', 'aGxGjEDzz0@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2640, '鹏文股份有限公司', '罗力惟', '13954559850', '8G1jxv9qN1@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2862, '骏瑞股份有限公司', '陈芝凡', '18665878031', 'ThnQy9@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2507, '涛维股份有限公司', '李淑梅', '17041239788', 'nf0Th@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2463, '金特股份有限公司', '郑洁娟', '18061570617', 'Li1a15@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2019, '圣若股份有限公司', '陈萱翰', '15560954508', 'DOK3J@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2097, '威禾股份有限公司', '陈惠珮', '18066191320', 'VLpR7C@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2742, '凯泰股份有限公司', '陈睿虹', '1898204919', 'oSDX1d983@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2360, '逸新股份有限公司', '郭孟涵', '17648526023', 'qRchr4zfHs@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2354, '诚风股份有限公司', '黄海娇', '1344190334', 'UijpNm5Q@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2986, '悦辰股份有限公司', '徐家靖', '18996750658', 'ATjWo0@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2237, '河铭股份有限公司', '程柏儒', '17729352721', 'WBG9hUHv@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2493, '朗龙股份有限公司', '蔡明恭', '15532497569', 'c7o57Kq66y@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2283, '德辉股份有限公司', '林馨仪', '15050828840', '4JJGTu@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2751, '安领股份有限公司', '宋雅茹', '15152957292', 'tYmfYi0PZo@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2871, '盛祥股份有限公司', '张真心', '13888163964', 'Y8urR0@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2608, '永恒股份有限公司', '蔡惠雯', '15690930309', '6jugClOKF@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2658, '凯先股份有限公司', '王培霞', '18810837609', 'Kuc07@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2247, '彬茂股份有限公司', '郑文松', '13766627981', 'C9T9ZnYo@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2773, '荣耀股份有限公司', '陈品旺', '13454969482', '55asRoii5@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2336, '恒天股份有限公司', '许彦儒', '15035190012', 'LRmpgxPERT@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2726, '秦岩股份有限公司', '杨舒东', '18440063837', 'zW73J@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2623, '力楚股份有限公司', '崔巧娟', '1362605556', 'SEdHmO@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2860, '基熙股份有限公司', '郑宇秀', '15852138126', 'mazze@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2775, '广航股份有限公司', '黄凯婷', '18425161675', 'nGH2pTP8vX@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2254, '众宏股份有限公司', '赵文欣', '17882765199', 'e8WJtw@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2119, '乐梦股份有限公司', '严胜佳', '18877637043', 'PTr31@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2448, '心锦股份有限公司', '涂彦均', '18154098576', 'Y9rH3U@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2723, '兴宸股份有限公司', '黄美斌', '13215886253', 'Hhv4J4b@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2351, '万家股份有限公司', '刘玉娟', '18420400612', 'Xfu8jDj@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2721, '盛圣股份有限公司', '陈茂吟', '18771079746', 'wSqJkCLp@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2823, '久恩股份有限公司', '赵俊嘉', '13134665303', 'visfE@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2523, '林建股份有限公司', '蔡倩亚', '1354184957', 'Fbzt6wh4gH@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2263, '桦鼎股份有限公司', '黄士豪', '13547989600', 'cMh7cbua5@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2667, '烽浩股份有限公司', '唐信宏', '15745470709', 'BjH8bUB@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2213, '君岳股份有限公司', '郭绿豪', '17840607896', 'fTYToOwdn0@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2400, '源虹股份有限公司', '林凡洁', '1834029654', 'OEJnauog@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2617, '梦合股份有限公司', '陈伟辉', '13613456722', 'Sbo6pDyaYD@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2018, '晏烽股份有限公司', '张玉宣', '17888443137', 'jLxlN@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2214, '田荣股份有限公司', '陈淑君', '15086163919', 'MFqCM@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2758, '恩昌股份有限公司', '黄靖卿', '1764747268', 'vsh6u2Z@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2481, '途正股份有限公司', '黄娇旭', '15984626930', 'x7E6Y@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2760, '新秋股份有限公司', '欧俊宏', '17017323097', 'Qov8LidYg@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2580, '誉滨股份有限公司', '林宜顺', '17024504991', 'jnp5fIo4R@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2904, '阳峻股份有限公司', '杨育菱', '13072298904', 'c3F5IaCWd@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2946, '雨鑫股份有限公司', '林洁慈', '15015423205', '87JTqFa@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2594, '千虎股份有限公司', '李采威', '1305663075', 'V7VIpsXr@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2989, '心晨股份有限公司', '刘佳雯', '18396494674', 'qKdcbXY@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2544, '维灿股份有限公司', '杨俊安', '18010380938', '93ZLCQaZg@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2164, '龙楚股份有限公司', '蔡明均', '1312335451', 'NSRQbji@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2876, '楚基股份有限公司', '王雅萍', '15586521928', 'f41RclFogG@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2422, '博志股份有限公司', '林乔齐', '17070795716', 'OdBHnsJW@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2232, '荣安股份有限公司', '吴柏云', '18972730763', 'RBnome@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2894, '晟桦股份有限公司', '陈伟诚', '18333778492', 'DguE9K0@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2785, '扬丰股份有限公司', '卢美舜', '18947729206', '7Fj0o@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2343, '达逸股份有限公司', '陈映汉', '17093608032', 'RwLBDEK@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2674, '建信股份有限公司', '谢玲伶', '13175478245', 'lD4J4zYob1@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2591, '佳仁股份有限公司', '钱惠雯', '1819903491', 'q9TrvGAXhd@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2845, '尊鑫股份有限公司', '李伟伦', '1502548231', 'ojNuQ@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2489, '仁文股份有限公司', '林国舜', '15262746788', 'TtMBH15@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2413, '坤亚股份有限公司', '陈伟伦', '15582353973', 'kNVEOI@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2624, '飞成股份有限公司', '王丽仲', '17817406285', 'sIH6gv@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2796, '坤浩股份有限公司', '赵奕君', '17845700280', 'nLO7y3I2AM@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2515, '骏诚股份有限公司', '吴秋扬', '15555585419', 'f0l1W@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2571, '勇明股份有限公司', '蔡秉孝', '13142803618', 'DtRNZE@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2820, '彦佰股份有限公司', '李佳学', '18010907830', 'cyq7s@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2991, '心祥股份有限公司', '黄健铭', '18934803594', 'nBHSa1X9F@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2581, '明迅股份有限公司', '王志纬', '15783683947', 'QHY79b6V@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2743, '嘉润股份有限公司', '施纬原', '1379659432', 'A11MYRdJY@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2790, '嘉峰股份有限公司', '林建光', '13581745928', '99gVvWtX@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2099, '航骏股份有限公司', '赵明慧', '13733823223', 'K4cYB@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2244, '利卓股份有限公司', '柳昌凯', '15266646032', 'by5yZGES@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2836, '群恒股份有限公司', '邓明薇', '1376978060', 'Siy3lKbkn@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2061, '谦祥股份有限公司', '林财洁', '13159090075', 'D5MtUJD6J@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2870, '利彬股份有限公司', '陈育以', '17871903174', 'Hvzz2TY@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2326, '慕祥股份有限公司', '王丽芬', '17885119851', 'XWSvFR@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2133, '成田股份有限公司', '林坚岳', '1591812725', 's4mQUlpm0@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2466, '康振股份有限公司', '许佑诚', '13960461600', 'ZnXuCIMh@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2378, '浩东股份有限公司', '黎逸书', '17749181667', 'a6UsGSNVe@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2929, '彬喜股份有限公司', '张怡君', '18035946966', 'mNASuL76t@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2534, '海君股份有限公司', '林君均', '1358853086', 'MhN9CZAPRx@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2187, '金健股份有限公司', '高芳轩', '18694535662', 'XlkuVVyqsN@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2042, '茂宸股份有限公司', '林士法', '13288980166', 'H80D0hXs@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2964, '腾腾股份有限公司', '张毓依', '18639276795', '07mTsDY4g@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2104, '同滨股份有限公司', '张朝志', '17770108102', 'oL3a2TQP8a@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2269, '炫佳股份有限公司', '陈志玉', '18228921441', 'wicKu@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2881, '阳杭股份有限公司', '陈怡秀', '13727123811', 'YAQjQWbC@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2548, '雨佰股份有限公司', '朱欣怡', '15011351833', 'lVtMk@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2327, '聪文股份有限公司', '苏志铭', '13497969398', 'Kf3BP3tK5b@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2152, '奥杭股份有限公司', '周慧桦', '15294033838', '2xoeJU6QF@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2692, '思域股份有限公司', '刘依婷', '17067645466', 'NGFKmk@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2828, '悦兴股份有限公司', '谢冠宇', '17863168485', 'Si0VHmvjn@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2854, '镇羲股份有限公司', '叶尚霖', '13397518615', 'xGsozEU9ud@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2092, '弘基股份有限公司', '陈允钰', '13885700238', 'kkSb6kFb@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2431, '腾瑄股份有限公司', '李之升', '1874662729', '2mllZPKF@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2792, '太冠股份有限公司', '郑宗璇', '13982384544', 'HW5W08zs@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2442, '汉昌股份有限公司', '黄明心', '13427811052', 'R6TXOl2x@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2916, '泓博股份有限公司', '邱冠儒', '15160860644', 'RUMFsOBKgz@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2066, '茂奇股份有限公司', '杜伟来', '18737984958', 'qkZTI1N@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2784, '特佰股份有限公司', '林志颖', '15228542051', 'mx7mjcTNf@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2049, '纳鼎股份有限公司', '谢佩祯', '1371613052', 'xOe2hcB@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2272, '伦悦股份有限公司', '朱琳苹', '18757340179', 'LOKJNSW@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2488, '华伦股份有限公司', '蔡政娥', '18585055375', 'IpNDj9@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2318, '逸佰股份有限公司', '郭康芝', '15634073914', '99pMp@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2462, '梦洋股份有限公司', '王家良', '18913228291', 'n7a8mMkrIM@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2201, '田智股份有限公司', '李威亚', '15229399345', 'RbTd0L@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2497, '悦裕股份有限公司', '陈郁雯', '18487245343', 'McNjk@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2606, '特霖股份有限公司', '傅国妃', '13119093715', 'cCtTGl3G1@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2427, '杰弘股份有限公司', '陈瑞昀', '13160015620', 'Oqnulxg5@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2763, '石丰股份有限公司', '谢丽君', '13310422437', 'YEqQM@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2982, '艾泰股份有限公司', '吴威德', '15255894314', 'JPa7Ip@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2717, '奥烽股份有限公司', '林威友', '17059703048', 'PzxsrU@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2188, '西辉股份有限公司', '徐其桦', '15755326074', 'gSMpDU@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2340, '荣丰股份有限公司', '王志劭', '18754198680', 'sdp2gSJt0@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2095, '虎龙股份有限公司', '林瑞妃', '15569563883', 'feIyobJwo@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2476, '华喜股份有限公司', '刘尚均', '1851120179', 'Rkq7N1@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2516, '诚杰股份有限公司', '王意木', '13563297373', 'RSg5e59@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2076, '瑄信股份有限公司', '杨舒原', '15777244263', 'MzWNVI@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2576, '瀚世股份有限公司', '蔡宥木', '13112050985', 'h2y6OQQ@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2660, '坤裕股份有限公司', '周志嘉', '1397689962', 'sc7hF@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2425, '嘉勤股份有限公司', '张淑梦', '15573691730', 'miekZGHH80@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2275, '亮辰股份有限公司', '刘健毓', '13930498585', '3xh21gM@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2851, '千乐股份有限公司', '刘彦莲', '15298217198', 'WtIx7UnD@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2306, '久庆股份有限公司', '杜力玮', '13489628491', 'Dig97bOYG@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2537, '驰智股份有限公司', '林玮真', '18411043221', '0osfjm@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2639, '玮杉股份有限公司', '刘志轩', '17042964447', '1OJUt@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2116, '艾彬股份有限公司', '吴懿珮', '18282245587', 'rHVdt44@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2710, '盛锦股份有限公司', '郑宜礼', '15543469350', '1AdtCa@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2151, '鸣诚股份有限公司', '陈志平', '18987980763', 'ZeaLKg0ok@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2600, '新佑股份有限公司', '苏乔麟', '13524895107', '8JkOQYggnD@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2120, '盛烽股份有限公司', '袁子杰', '17642507551', 'sKHjw4@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2909, '裕祥股份有限公司', '彭俊宏', '15016013328', 'G6RH4dCNb@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2199, '群百股份有限公司', '黄士杰', '15126885085', 'vnhpdD@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2526, '炎海股份有限公司', '张彦翔', '17070890666', 'zecatR6bB@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2652, '域途股份有限公司', '柳博易', '15314666281', 'UcmCg9re@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2498, '健皓股份有限公司', '林晓霖', '18722005489', 'phE9N0o@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2611, '金邦股份有限公司', '郭智强', '13689941906', 'j3vqV@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2473, '利宇股份有限公司', '陈珍亦', '15524511255', 'SWhDq@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2017, '达拓股份有限公司', '邱欣怡', '18641210260', 'qhT8Knyq@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2841, '杉德股份有限公司', '李玮婷', '13673290388', '4LjZS8X@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2632, '禾儒股份有限公司', '陈蓉育', '17046878560', 'jmFU9A6@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2628, '润烽股份有限公司', '陈之映', '18622575968', 'wUrrA@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2455, '蓝熙股份有限公司', '林佩玲', '15045836976', 'kuz2P8h@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2418, '凯生股份有限公司', '柯嘉鸿', '17662328076', 'Yz42Z@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2193, '隆东股份有限公司', '王成茹', '15149547962', 'UZqUxFQT@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2331, '茂茂股份有限公司', '周桂荣', '18033154230', 'a0nfg@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2121, '霖百股份有限公司', '姜懿书', '15315070963', 'ZMsvzF54@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2316, '霆普股份有限公司', '张信韦', '18292616531', 'vQbpGaaBC@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2601, '启艾股份有限公司', '张嘉雯', '1578095382', 'i5jPd@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2943, '艾泓股份有限公司', '林诗宁', '13152424928', '5mKww@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2912, '安喜股份有限公司', '黄冠士', '15841925132', 'fGtbiVWLP@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2877, '云驰股份有限公司', '王昭莹', '15535696225', 'xHImula@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2678, '雨佑股份有限公司', '王嘉睿', '15019683630', 'w31hqlmW@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2622, '洋铭股份有限公司', '葛彦廷', '18569601221', 'pR0hj8@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2218, '麟森股份有限公司', '吴政紫', '13726554749', 'gl3Gwq@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2903, '宏诚股份有限公司', '吴静吟', '13066681987', 'xCPce9@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2553, '森卓股份有限公司', '高俊逸', '1833146927', 'aKofSC5FGo@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2782, '伦玮股份有限公司', '李雅玲', '1560136664', '0w3Wg@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2013, '诚炫股份有限公司', '陈盈花', '15128411767', 'qRO8XPHa8@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2663, '凯铭股份有限公司', '吴俊定', '13343317726', 'y0KHW62@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2539, '永凯股份有限公司', '杨智嘉', '18128750129', '92jdNiK@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2975, '锦德股份有限公司', '王韵如', '15640594717', 'egDrUS@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2379, '域心股份有限公司', '邱淑惠', '1539599813', '47SKvbS@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2654, '悦瀚股份有限公司', '李莉婷', '15584275688', 'HEbWtXQYtW@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2566, '扬衡股份有限公司', '杨晋仲', '13098800366', 'wZEG9l@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2966, '勤田股份有限公司', '杨予季', '18215017049', 'ls4k66K@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2772, '驰洋股份有限公司', '李政新', '15712040351', 'm0OCkC5aK@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2592, '鑫江股份有限公司', '钟可欣', '13131349683', 'cxjpU@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2923, '亿铭股份有限公司', '陈雅如', '13471602598', 'ulX2B@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2063, '河泰股份有限公司', '傅欣怡', '15911354605', 'nyK8vM2@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2822, '桦文股份有限公司', '姚宗达', '18821230204', 'JpuzFz@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2296, '智驰股份有限公司', '李冠杰', '13776643772', 'qeB4B@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2114, '清炫股份有限公司', '李旭清', '1303521848', 'j8KKk@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2802, '杉鸿股份有限公司', '林子元', '1804353370', 'c2VCgpR1@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2165, '博拓股份有限公司', '赵怡伶', '18956562392', 'oCiP82Dal@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2533, '杭朗股份有限公司', '谢秀娟', '18797090979', 'jZoEEx@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2382, '宏迅股份有限公司', '陈玉翰', '15976734309', 'kttdUkx1xJ@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2517, '鸣圣股份有限公司', '童明辉', '13528693540', 'ABBUYJ@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2174, '滨佳股份有限公司', '鲁俊贤', '18910759560', '8TRqG290k@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2833, '鼎润股份有限公司', '倪昌萍', '13121520137', 'hGfODTpO6Y@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2004, '百梦股份有限公司', '郭玟旺', '18929733792', 'luqBRY@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2069, '力泰股份有限公司', '黄志平', '18532164029', 'ZHT8bA@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2169, '阳金股份有限公司', '叶政菁', '13276396962', 'yOGZw1@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2761, '卓天股份有限公司', '邓富勋', '18799132504', 'b33pgumuz@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2350, '彦优股份有限公司', '陈左绮', '17681379878', 'qt3jTniEXX@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2677, '诚岳股份有限公司', '连俊明', '1379437554', 'JBPGm7@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2025, '健茂股份有限公司', '黄山颖', '18636606973', 'V0GI7rbN@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2154, '格诺股份有限公司', '吕伟诚', '13742762767', 'mhYsC@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2479, '楚承股份有限公司', '吴筱芸', '1584088898', 'xzDCM@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2702, '驰诚股份有限公司', '蔡馨伟', '18336737764', '75GdRt2Hr9@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2475, '衡基股份有限公司', '袁力全', '13316574125', 'Jt9MYXRbXK@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2404, '霖禾股份有限公司', '蔡雅筠', '1599534025', 'EGHNuCxEJ@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2477, '喜洋股份有限公司', '吴智强', '15012722095', 'FR84XgkwWY@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2033, '达圣股份有限公司', '张淑宣', '1763380833', 'rWQov67H0@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2595, '圣铭股份有限公司', '张志文', '18028515575', 'qCUX97i@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2733, '诺文股份有限公司', '赖怡君', '15547723459', '9hbhMHq@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2297, '艾拓股份有限公司', '林左祥', '1528322448', 'DWNHOjND@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2293, '瑞禾股份有限公司', '林勇意', '18155850957', 'SX8wdKX9O@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2776, '鸿顺股份有限公司', '李希茹', '1332277903', 'dHU8X7@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2338, '景奥股份有限公司', '张懿辰', '15533606724', '8FX1FN8@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2545, '耀德股份有限公司', '李建廷', '13419366867', 'oOzkLInlL@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2112, '江柏股份有限公司', '许美玲', '18271493860', 'lx0RnO6Rq@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2333, '力启股份有限公司', '黄世豪', '18784487471', 'xYWLvv6W@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2085, '众宁股份有限公司', '苏俊谚', '17066019652', 'UfMwKduKV@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2555, '炎恒股份有限公司', '吴琼慧', '18812293395', 'CEwz8@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2131, '鸣兴股份有限公司', '邱行云', '13541923431', 'wvxCZLFpP@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2756, '俊聪股份有限公司', '璩美惠', '1882260105', 'PrPHCw@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2156, '炫龙股份有限公司', '罗宜珊', '17026528053', 'nxuykAI@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2037, '敬悦股份有限公司', '林彦海', '15142226673', 'jZxXDp@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2685, '志坤股份有限公司', '王欣宜', '15912509796', '6KH8Zm@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2271, '嘉太股份有限公司', '罗翔欣', '13755461918', 'UoXz18h8VR@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2011, '生星股份有限公司', '白家慧', '13446198875', 'OJV4SZ6@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2869, '炫恩股份有限公司', '赵兰紫', '13448307067', 'c6LGjeaYQV@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2198, '朗鸣股份有限公司', '张诗哲', '15131053386', 'erimEd@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2387, '炎诺股份有限公司', '廖宏达', '13768722913', 'clqfxVomkm@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2855, '勤良股份有限公司', '林钧娇', '13675589652', 'fbvMhf9I@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2020, '翔天股份有限公司', '边倩季', '18822565356', 'GYDcxhr@163.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2729, '瑞千股份有限公司', '刘上荣', '15322573000', '0MqmjFfj@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2627, '亿诚股份有限公司', '冯茹琬', '1767230051', 'yzp48o@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2981, '心峰股份有限公司', '王恭吟', '17095234612', 'jq9d9QVMMG@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2867, '琛泽股份有限公司', '蒋志成', '18864804746', 'cS6BSL@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2732, '森健股份有限公司', '陈怡萱', '18579765057', 'DwTMEcR@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2546, '益恒股份有限公司', '刘竣柔', '18094106479', 'iPr94nia@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2356, '雨茂股份有限公司', '云右盈', '13510612181', 'DtlxzJNgTH@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2901, '家飞股份有限公司', '陈盈韦', '15210651493', '122O3YBXK@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2837, '盛安股份有限公司', '陈晓纶', '13715154132', 'TbNpU@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2082, '盛旭股份有限公司', '方文杰', '18568912047', 'VVkAbgwnVw@qq.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2780, '丰广股份有限公司', '林忠翰', '18715619156', 'nUtNcJG@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2514, '云震股份有限公司', '杨登盛', '18648585648', 'UzBvUbF@outlook.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2694, '锋振股份有限公司', '王志翔', '1762514410', 'wXudEZW83L@yahoo.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2401, '裕清股份有限公司', '王怡君', '13627388678', 'zuUaK@gmail.com');
+INSERT INTO "COLLABORATION" ("COLLABORATION_ID", "COLLABORATION_NAME", "CONTACTOR", "PHONE_NUMBER", "EMAIL") VALUES (2613, '亚佰股份有限公司', '李庭俊', '18989190678', 'AFtyjmQGw@yahoo.com');
+
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (114517, '围棋段位赛', TO_TIMESTAMP('2025-02-26 15:18:49', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-06 06:31:07', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (170306, '美妆护肤体验课', TO_TIMESTAMP('2025-06-14 07:03:51', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-22 18:21:12', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (174079, '海鲜品鉴盛宴', TO_TIMESTAMP('2025-03-29 07:42:54', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-10 08:22:15', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (196010, '建军节军事体验营', TO_TIMESTAMP('2025-09-03 10:32:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-05 08:46:13', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (176407, '披萨 DIY 亲子课', TO_TIMESTAMP('2025-02-07 05:28:02', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-29 04:37:21', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (147515, '冬季保暖服饰特卖', TO_TIMESTAMP('2025-02-03 17:00:18', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-09 14:36:50', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (104613, '电脑促销优惠活动', TO_TIMESTAMP('2025-08-10 06:11:33', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-31 12:03:51', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (112163, '暑假少儿绘画班', TO_TIMESTAMP('2025-02-01 03:14:43', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-26 02:05:35', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (128006, '建材团购优惠日', TO_TIMESTAMP('2025-07-07 21:52:07', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-16 06:29:41', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (148811, '瑜伽户外公开课', TO_TIMESTAMP('2025-07-08 23:32:11', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-09 07:24:24', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (144755, '教师节感恩义卖', TO_TIMESTAMP('2025-04-13 08:25:45', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-16 07:00:19', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (136872, '跨境商品展销会', TO_TIMESTAMP('2025-03-19 04:10:52', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-19 23:57:11', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (184839, '秋日银杏摄影展', TO_TIMESTAMP('2025-01-07 08:14:18', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-24 01:50:32', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (125969, '企业员工运动会', TO_TIMESTAMP('2025-01-20 02:51:26', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-11 17:20:59', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (112740, '重阳登高活动', TO_TIMESTAMP('2025-06-11 22:21:21', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-31 05:28:02', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (109801, '元旦倒数嘉年华', TO_TIMESTAMP('2025-06-17 19:22:54', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-23 08:36:47', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (177064, '双 12 年终特惠', TO_TIMESTAMP('2025-04-24 19:58:49', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-16 05:46:46', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (127035, '插花艺术工作坊', TO_TIMESTAMP('2025-01-18 22:33:04', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-22 07:14:42', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (105356, '环保手工创意大赛', TO_TIMESTAMP('2025-04-25 15:04:08', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-10 01:25:51', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (159771, '咖啡制作工艺沙龙', TO_TIMESTAMP('2025-01-10 15:30:33', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-21 02:54:55', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (185394, '面包烘焙教学课', TO_TIMESTAMP('2025-05-16 23:14:51', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-26 15:19:59', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (101831, '民谣歌手弹唱会', TO_TIMESTAMP('2025-01-12 03:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-06 06:58:48', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (196450, '元宵灯会', TO_TIMESTAMP('2025-02-19 18:35:43', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-25 03:13:44', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (153295, '儿童玩具折扣活动', TO_TIMESTAMP('2025-06-02 07:33:41', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-28 13:48:42', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (140493, '户外用品展销会', TO_TIMESTAMP('2025-03-21 02:57:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-10 09:42:51', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (113341, '现代舞表演秀', TO_TIMESTAMP('2025-05-06 04:25:16', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-05 14:49:27', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (182315, '香水品鉴沙龙', TO_TIMESTAMP('2025-02-11 14:10:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-24 13:53:05', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (133670, '甜品嘉年华', TO_TIMESTAMP('2025-03-24 08:27:36', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-12 07:11:33', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (146218, '美甲 DIY 工作坊', TO_TIMESTAMP('2025-09-03 19:45:17', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-09 14:44:12', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (125824, '羽毛球团体赛', TO_TIMESTAMP('2025-04-07 15:23:37', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-08 00:06:50', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (103537, '足球少年训练营', TO_TIMESTAMP('2025-01-27 17:41:59', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-09 08:34:31', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (199481, '毕业季纪念册定制', TO_TIMESTAMP('2025-04-11 04:41:09', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-27 09:49:32', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (181441, '火锅美食节', TO_TIMESTAMP('2025-04-19 20:22:35', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-21 19:04:31', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (116295, '特色小吃美食街', TO_TIMESTAMP('2025-09-09 12:35:45', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-09 16:18:02', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (172121, '冬季冰雪嘉年华', TO_TIMESTAMP('2025-06-25 09:27:40', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-04 19:00:11', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (123260, '冬日温泉体验日', TO_TIMESTAMP('2025-06-20 08:33:46', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-28 01:46:58', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (178693, '助农水果直销会', TO_TIMESTAMP('2025-05-15 09:50:27', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-28 19:31:16', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (143078, '建党节主题展览', TO_TIMESTAMP('2025-01-23 09:58:31', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-03 20:22:09', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (101628, '夏日露天电影节', TO_TIMESTAMP('2025-05-16 05:54:44', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-02 12:49:23', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (131283, '篮球邀请赛', TO_TIMESTAMP('2025-04-30 09:00:57', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-08 10:58:32', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (147252, '春节年货大集', TO_TIMESTAMP('2025-06-27 10:48:24', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-06 03:44:52', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (145402, '老年用品关爱促销', TO_TIMESTAMP('2025-01-24 17:48:28', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-07 12:23:09', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (123152, '家具清样特卖会', TO_TIMESTAMP('2025-06-20 15:52:23', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-29 02:20:31', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (112258, '烧烤派对夜', TO_TIMESTAMP('2025-02-23 10:40:33', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-10 04:13:23', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (151795, '除夕守岁直播', TO_TIMESTAMP('2025-01-19 18:03:05', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-01-21 06:52:11', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (189004, '茶叶知识讲座', TO_TIMESTAMP('2025-07-27 23:24:18', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-12 14:53:02', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (108581, '宠物领养公益活动', TO_TIMESTAMP('2025-03-30 22:15:54', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-15 17:23:31', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (137311, '手机新品体验会', TO_TIMESTAMP('2025-05-23 11:15:46', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-18 06:17:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (167362, '公益植树造林活动', TO_TIMESTAMP('2025-02-17 04:37:42', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-15 10:53:19', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (111373, '夏季水上乐园日', TO_TIMESTAMP('2025-05-01 09:19:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-06 03:57:22', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (191737, '社区邻里美食节', TO_TIMESTAMP('2025-02-04 03:51:13', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-05 08:01:20', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (116267, '秋季家装团购会', TO_TIMESTAMP('2025-02-25 16:56:17', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-24 09:45:38', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (128996, '周末户外露营夜', TO_TIMESTAMP('2025-03-09 18:06:26', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-21 22:14:11', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (173600, '双 11 购物狂欢节', TO_TIMESTAMP('2025-06-30 13:02:06', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-27 01:22:34', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (115639, '六一亲子游园会', TO_TIMESTAMP('2025-08-21 18:57:32', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-07 07:37:05', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (130739, '国庆节红歌汇演', TO_TIMESTAMP('2025-02-13 18:39:12', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-04 10:01:13', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (170085, '寿司制作体验活动', TO_TIMESTAMP('2025-01-01 20:39:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-12 02:52:03', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (189153, '旧衣物捐赠市集', TO_TIMESTAMP('2025-05-17 23:49:05', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-31 08:29:03', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (158255, '父亲节手工木作课', TO_TIMESTAMP('2025-03-31 14:46:08', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-01 02:39:06', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (119240, '绘画艺术展', TO_TIMESTAMP('2025-05-09 21:58:55', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-17 06:18:05', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (195230, '运动装备特惠日', TO_TIMESTAMP('2025-03-05 17:18:16', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-24 01:59:21', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (194086, '中秋赏月晚会', TO_TIMESTAMP('2025-06-17 21:03:13', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-01 20:33:01', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (117709, '月末图书跳蚤市场', TO_TIMESTAMP('2025-04-29 17:31:12', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-27 10:58:16', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (184917, '交响乐演奏会', TO_TIMESTAMP('2025-01-26 07:40:41', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-20 09:24:10', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (176049, '小年扫尘讲座', TO_TIMESTAMP('2025-03-21 04:50:08', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-09 15:33:08', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (176026, '家电以旧换新活动', TO_TIMESTAMP('2025-07-21 10:34:26', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-11 21:16:50', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (147913, '摄影作品评选展', TO_TIMESTAMP('2025-01-27 01:57:36', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-07 22:53:35', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (117576, '亲子烘焙体验课', TO_TIMESTAMP('2025-09-11 01:57:55', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-11 19:19:36', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (117865, '文创产品展销会', TO_TIMESTAMP('2025-07-01 16:55:43', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-18 14:41:29', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (157080, '母婴用品特卖会', TO_TIMESTAMP('2025-06-29 14:32:12', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-16 11:56:53', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (174231, '象棋争霸赛', TO_TIMESTAMP('2025-01-17 12:44:41', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-26 07:22:12', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (199889, '春季新品发布会', TO_TIMESTAMP('2025-06-12 04:17:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-18 10:20:14', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (128101, '腊八节赠粥活动', TO_TIMESTAMP('2025-07-03 16:37:23', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-25 11:14:36', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (196488, '夏季清凉饮品品鉴', TO_TIMESTAMP('2025-04-21 18:40:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-26 06:24:55', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (195529, '春日风筝 DIY 活动', TO_TIMESTAMP('2025-03-23 05:15:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-06 10:44:21', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (198947, '美发造型体验活动', TO_TIMESTAMP('2025-05-05 08:20:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-06 04:41:07', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (114294, '古风市集游园会', TO_TIMESTAMP('2025-03-11 11:11:17', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-11 03:53:55', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (125962, '蛋糕装饰体验课', TO_TIMESTAMP('2025-09-10 22:43:55', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-11 11:38:02', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (167534, '红酒品鉴会', TO_TIMESTAMP('2025-04-18 10:52:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-02 18:17:03', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (143445, '素食文化节', TO_TIMESTAMP('2025-08-25 02:28:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-25 03:28:54', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (145008, '寒假滑雪培训营', TO_TIMESTAMP('2025-01-23 19:27:49', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-24 15:19:01', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (182475, '汉服文化体验日', TO_TIMESTAMP('2025-03-06 23:58:47', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-01 13:01:01', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (171304, '七夕情侣市集', TO_TIMESTAMP('2025-01-24 04:38:37', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-02-04 18:08:49', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (182150, '母亲节花艺沙龙', TO_TIMESTAMP('2025-08-01 05:35:17', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-26 21:46:39', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (110081, '校园歌手大赛', TO_TIMESTAMP('2025-02-19 20:50:13', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-02-21 01:34:54', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (152746, '春季赏花摄影赛', TO_TIMESTAMP('2025-08-14 00:58:51', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-05 23:10:46', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (194658, '618 年中促销', TO_TIMESTAMP('2025-02-03 23:30:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-23 20:11:49', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (182449, '街舞挑战赛', TO_TIMESTAMP('2025-05-27 17:27:49', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-13 07:18:20', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (138228, '乒乓球友谊赛', TO_TIMESTAMP('2025-03-29 04:35:21', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-01 03:59:06', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (112292, '清明踏青徒步', TO_TIMESTAMP('2025-08-04 06:19:57', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-17 23:31:06', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (142598, '普拉提体验课', TO_TIMESTAMP('2025-05-28 18:56:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-21 23:33:09', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (101443, '马拉松迷你赛', TO_TIMESTAMP('2025-07-25 20:16:45', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-11 00:26:55', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (158932, '关爱留守儿童公益行', TO_TIMESTAMP('2025-07-20 14:03:18', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-01 21:07:03', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (169821, '端午龙舟赛', TO_TIMESTAMP('2025-03-24 00:07:34', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-18 11:59:08', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (191068, '手账素材集市', TO_TIMESTAMP('2025-05-07 06:46:51', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-03 19:35:40', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (183798, '秋季丰收采摘节', TO_TIMESTAMP('2025-05-30 06:46:46', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-12 13:43:58', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (106233, '陶艺拉坯体验活动', TO_TIMESTAMP('2025-08-16 08:47:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-30 01:19:13', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (160291, '开学季文具促销', TO_TIMESTAMP('2025-06-24 04:46:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-09 17:06:14', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (165404, '书法作品展览', TO_TIMESTAMP('2025-08-07 23:58:24', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-20 12:55:38', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO "EVENT" ("EVENT_ID", "EVENT_NAME", "EVENT_START", "EVENT_END") VALUES (171057, '情人节烛光晚餐', TO_TIMESTAMP('2025-07-04 10:20:35', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-25 12:00:58', 'YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (191737, 882, 998622.34, 9062, 7023603.56);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (111373, 386, 449150.2, 3331, 7981797.99);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (104613, 849, 550047.67, 9243, 870062.22);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (130739, 284, 724570.25, 5329, 1562202.7);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (125962, 1283, 816887.83, 5880, 4551931);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (173600, 682, 136027.08, 4584, 6142881.28);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (171057, 426, 385671.31, 9545, 8082472.5);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (147913, 822, 381100.38, 8107, 4809610.67);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (152746, 786, 441363.64, 3340, 4457199.73);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (137311, 1912, 598451.52, 9809, 3366623.76);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (131283, 1864, 291218.96, 278, 9870278.37);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (182150, 1106, 789041.21, 3513, 6154916.81);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (113341, 1272, 557102.22, 9860, 9027643.2);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (127035, 849, 376408.43, 2679, 3421668.49);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (191068, 1048, 912579.46, 7487, 3005269.76);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (114517, 491, 118284.96, 2694, 4282667.12);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (123260, 1918, 365687.13, 3568, 5790385.07);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (194086, 1140, 721818.14, 2878, 5382768.11);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (143078, 570, 745389.16, 5958, 7672061.33);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (112292, 493, 180529.12, 9828, 4796842.73);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (167534, 1046, 952578.54, 3106, 7082688.17);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (184917, 1105, 194115.39, 9451, 7843008.2);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (185394, 482, 134628.61, 8285, 8051332.68);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (181441, 1823, 519415.06, 4395, 5214770.04);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (128006, 1057, 231856.62, 582, 6356854.96);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (189153, 1768, 391566.44, 1952, 616453.7);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (183798, 981, 133441.39, 2295, 4226305.46);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (144755, 441, 495560.49, 7472, 7824914.79);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (117576, 1268, 737858.56, 7246, 7003029.61);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (148811, 1602, 88388.83, 2859, 7929203.84);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (195529, 1117, 46926.01, 8802, 3951916.25);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (116267, 355, 898901.75, 4205, 2111710.15);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (101628, 774, 486431.04, 8704, 1786794.14);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (146218, 812, 464688.74, 1963, 1040458.62);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (171304, 1438, 920342.06, 6393, 8777245.65);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (103537, 1248, 757243.66, 435, 9608116.47);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (147515, 1896, 354701.7, 7505, 5437005.27);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (176407, 1043, 701287.3, 6591, 9008905.99);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (115639, 1170, 536670.16, 8893, 3380048.82);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (140493, 1053, 741413.17, 2544, 8766330.71);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (105356, 1180, 457737.69, 5133, 7471059.14);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (158255, 461, 791023.17, 3896, 8770087.9);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (108581, 1109, 781792.54, 171, 2986543.36);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (143445, 621, 701150.34, 4560, 7191944.32);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (145402, 1658, 414027.07, 9135, 4650661.18);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (109801, 813, 335507.2, 2053, 7901646.48);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (167362, 729, 752257.01, 9591, 2577994.68);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (198947, 992, 296435.3, 1642, 953624.18);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (196010, 938, 799558.67, 9200, 4976089.6);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (117865, 1578, 681604.27, 7167, 229286.87);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (151795, 1918, 529915.38, 8195, 4261846.64);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (128996, 216, 477394.42, 4676, 6107879.24);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (106233, 868, 166262.33, 1867, 70808.8);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (112258, 1706, 695597.85, 8163, 1782382.66);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (170306, 1079, 751193.47, 6223, 8367267.65);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (174079, 332, 543908.75, 1703, 3890018.21);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (136872, 1104, 717309.28, 1877, 7856949.16);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (158932, 740, 267905.27, 9766, 6906513.44);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (125824, 756, 136066.17, 6590, 801461.72);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (159771, 327, 136450.65, 9161, 6489634.26);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (176026, 707, 787972.98, 5202, 1588844.69);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (199889, 1800, 381602.01, 9526, 1911205.2);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (142598, 1930, 788754.46, 4320, 3036700.98);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (101443, 1658, 807707.91, 3046, 7494965.3);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (117709, 1633, 688497.77, 7613, 8870252.5);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (176049, 242, 290832, 1911, 2684024.27);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (160291, 1040, 38657.65, 5164, 2322092.35);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (157080, 1739, 103323.51, 9783, 7579410.71);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (195230, 1595, 340766.16, 659, 356578.95);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (196450, 1142, 305184.67, 7725, 7947658.82);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (194658, 1055, 93933.97, 1277, 6963916.86);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (138228, 1444, 724123.88, 7588, 1210006.03);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (123152, 1125, 819960.14, 3726, 8048874.69);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (128101, 796, 301906.32, 6274, 7635390.11);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (170085, 1505, 699434.29, 3819, 7354718.99);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (147252, 451, 439749.67, 1780, 7209124.86);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (145008, 1343, 619256.16, 8008, 8868229.33);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (119240, 947, 649538.12, 4326, 9035402.63);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (133670, 1583, 215618.91, 9458, 5437720.87);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (174231, 200, 85460.1, 7439, 7843325.35);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (116295, 1968, 477562.58, 5591, 1531670.07);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (110081, 1617, 839868.52, 7824, 6722764.21);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (114294, 1983, 457297.66, 4353, 3423172.59);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (153295, 1667, 523499.54, 4444, 2878391.93);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (184839, 205, 682155.44, 9941, 2081765.75);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (189004, 1548, 537594.2, 998, 1135466.48);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (182475, 354, 968130.72, 2954, 6309894.8);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (169821, 1226, 250129.68, 4671, 6680972.1);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (182449, 1705, 106804.86, 2374, 2024375.83);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (177064, 274, 365184.56, 1401, 1616235.34);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (182315, 312, 102435.19, 9306, 4053439.44);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (196488, 632, 823526.63, 4708, 3156371.1);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (172121, 1494, 714993.29, 1385, 4472195.07);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (199481, 578, 539201.32, 7316, 7699830.8);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (178693, 636, 145997.68, 4891, 384097.08);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (112163, 463, 203352.12, 5610, 4320175.28);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (125969, 1018, 77455.3, 7168, 1880011.81);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (101831, 1609, 761531.95, 8555, 8764928.53);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (112740, 1915, 449564.87, 5429, 5596312.13);
+INSERT INTO "VENUE_EVENT" ("EVENT_ID", "HEADCOUNT", "FEE", "CAPACITY", "EXPENSE") VALUES (165404, 748, 543663.35, 3746, 8985788.52);
 
 
--- 提交事务
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (177064, 5003, 2035, TO_TIMESTAMP('2025-01-10 04:47:07', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-02 00:18:31', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 392484.39);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (176049, 5003, 2729, TO_TIMESTAMP('2025-06-11 20:11:09', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-05 18:09:12', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 33951.49);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (115639, 5003, 2201, TO_TIMESTAMP('2025-04-18 07:02:42', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-13 05:43:11', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 274381.79);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (145402, 5003, 2791, TO_TIMESTAMP('2025-05-14 22:01:31', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-16 11:43:17', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 607016.4);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (195230, 5003, 2729, TO_TIMESTAMP('2025-02-04 21:08:15', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-28 05:40:06', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 324933.49);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (144755, 5003, 2729, TO_TIMESTAMP('2025-02-08 09:12:23', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-25 14:21:01', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 971990.7);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (117709, 5003, 2035, TO_TIMESTAMP('2025-06-14 16:08:29', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-23 08:30:58', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 758713.64);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (196450, 5003, 2035, TO_TIMESTAMP('2025-05-05 17:56:42', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-27 14:51:31', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 644365.08);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (152746, 5003, 2599, TO_TIMESTAMP('2025-03-07 12:02:35', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-23 12:34:05', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 626281.78);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (128006, 5003, 2729, TO_TIMESTAMP('2025-03-10 02:32:09', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-13 22:38:22', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 158700.53);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (191068, 5003, 2201, TO_TIMESTAMP('2025-03-23 01:57:18', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-26 22:56:07', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 679206.27);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (101443, 5003, 2791, TO_TIMESTAMP('2025-04-27 23:02:56', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-10 21:10:18', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 580919.74);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (112292, 5003, 2729, TO_TIMESTAMP('2025-03-17 11:35:06', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-15 15:54:30', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 985484.41);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (183798, 5003, 2791, TO_TIMESTAMP('2025-01-26 07:25:59', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-15 04:17:13', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 130341.71);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (103537, 5003, 2901, TO_TIMESTAMP('2025-06-12 02:09:48', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-28 01:57:43', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 68311.88);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (133670, 5003, 2201, TO_TIMESTAMP('2025-04-02 22:53:02', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-30 05:13:42', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 438824.26);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (145008, 5003, 2599, TO_TIMESTAMP('2025-08-28 23:43:10', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-03 02:49:23', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 667503.91);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (169821, 5003, 2035, TO_TIMESTAMP('2025-04-04 03:45:06', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-13 15:12:11', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 288543.96);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (125969, 5003, 2599, TO_TIMESTAMP('2025-05-27 06:46:18', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-11 18:32:38', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 537981.88);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (171304, 5003, 2791, TO_TIMESTAMP('2025-08-22 15:45:01', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-25 08:38:45', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 954054.83);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (176407, 5003, 2729, TO_TIMESTAMP('2025-01-16 07:28:23', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-14 21:04:27', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 121028.57);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (147252, 5003, 2599, TO_TIMESTAMP('2025-05-06 08:26:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-31 11:52:48', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 494099.83);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (113341, 5003, 2035, TO_TIMESTAMP('2025-05-26 23:08:04', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-30 06:13:37', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 367574.69);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (138228, 5003, 2791, TO_TIMESTAMP('2025-07-02 16:09:05', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-30 12:44:00', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 68333.64);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (123260, 5003, 2201, TO_TIMESTAMP('2025-05-06 19:16:15', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-07 18:16:51', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 900006.87);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (147515, 5003, 2901, TO_TIMESTAMP('2025-01-25 17:50:40', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-05 02:40:09', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 740717.83);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (184917, 5003, 2035, TO_TIMESTAMP('2025-09-11 02:24:03', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-11 03:34:55', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 99354.17);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (111373, 5003, 2791, TO_TIMESTAMP('2025-08-15 02:38:42', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-27 20:36:13', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 349295.78);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (117576, 5003, 2599, TO_TIMESTAMP('2025-07-16 15:25:42', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-19 12:26:30', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 547881.49);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (196010, 5003, 2201, TO_TIMESTAMP('2025-07-17 15:41:11', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-10 09:47:29', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 352899.3);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (189004, 5003, 2201, TO_TIMESTAMP('2025-03-06 16:07:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-15 23:29:15', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 610810.68);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (158932, 5003, 2599, TO_TIMESTAMP('2025-09-06 23:17:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-06 23:48:27', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 88330.86);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (195529, 5003, 2599, TO_TIMESTAMP('2025-01-28 13:53:40', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-10 17:55:40', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 15338.45);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (199481, 5003, 2791, TO_TIMESTAMP('2025-04-21 14:54:35', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-04 15:58:51', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 234947.14);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (181441, 5003, 2791, TO_TIMESTAMP('2025-06-29 00:09:43', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-27 07:46:26', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 281256.94);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (148811, 5003, 2729, TO_TIMESTAMP('2025-03-24 10:40:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-05 14:41:16', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 571982.38);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (130739, 5003, 2201, TO_TIMESTAMP('2025-03-05 05:07:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-24 09:21:02', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 153158.27);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (182150, 5003, 2791, TO_TIMESTAMP('2025-02-03 07:22:31', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-23 19:48:53', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 723692);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (116267, 5003, 2035, TO_TIMESTAMP('2025-06-02 06:03:26', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-06 04:49:16', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 623891.18);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (153295, 5003, 2729, TO_TIMESTAMP('2025-06-20 07:22:49', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-07 01:32:48', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 458075.54);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (114294, 5003, 2729, TO_TIMESTAMP('2025-03-01 15:00:52', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-11 10:53:04', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 903276.78);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (117865, 5003, 2599, TO_TIMESTAMP('2025-02-21 12:23:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-14 18:15:21', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 494233.73);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (125824, 5003, 2901, TO_TIMESTAMP('2025-04-30 07:18:47', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-01 10:53:52', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 628085.99);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (128996, 5003, 2035, TO_TIMESTAMP('2025-06-20 20:24:10', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-24 10:01:20', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 33632.28);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (142598, 5003, 2791, TO_TIMESTAMP('2025-04-15 21:01:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-14 03:08:04', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 86179.39);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (140493, 5003, 2201, TO_TIMESTAMP('2025-01-25 11:28:07', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-10 19:49:41', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 12171.91);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (174079, 5003, 2729, TO_TIMESTAMP('2025-05-22 15:21:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-04 21:25:18', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 904855);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (172121, 5003, 2729, TO_TIMESTAMP('2025-04-23 16:54:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-03 21:46:24', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 645019.5);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (176026, 5003, 2791, TO_TIMESTAMP('2025-01-12 00:34:12', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-21 13:35:54', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 689640.44);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (160291, 5003, 2791, TO_TIMESTAMP('2025-01-28 15:50:12', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-21 16:08:05', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 367603.15);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (191737, 5003, 2791, TO_TIMESTAMP('2025-03-16 19:41:57', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-27 20:47:06', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 325326.59);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (125962, 5003, 2791, TO_TIMESTAMP('2025-05-03 01:51:38', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-03 13:20:38', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 957113.37);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (109801, 5003, 2791, TO_TIMESTAMP('2025-02-18 12:14:25', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-05 14:25:00', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 830499.87);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (158255, 5003, 2035, TO_TIMESTAMP('2025-03-13 22:26:25', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-10 18:38:42', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 778845.79);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (196488, 5003, 2901, TO_TIMESTAMP('2025-04-21 20:31:15', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-14 15:05:37', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 359989.93);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (119240, 5003, 2901, TO_TIMESTAMP('2025-04-23 00:42:30', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-19 19:26:52', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 700635.5);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (151795, 5003, 2599, TO_TIMESTAMP('2025-01-10 10:22:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-05 03:42:10', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 654628.35);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (147913, 5003, 2901, TO_TIMESTAMP('2025-04-10 14:23:54', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-08 22:51:10', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 799313.21);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (143445, 5003, 2035, TO_TIMESTAMP('2025-02-08 07:42:27', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-09 17:26:53', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 681561.08);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (108581, 5003, 2035, TO_TIMESTAMP('2025-08-09 07:44:13', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-12 01:19:37', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 72754.83);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (159771, 5003, 2035, TO_TIMESTAMP('2025-07-06 08:05:29', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-11 02:32:22', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 390851.13);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (131283, 5003, 2201, TO_TIMESTAMP('2025-07-29 22:08:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-06 19:18:25', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 943615.82);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (170085, 5003, 2201, TO_TIMESTAMP('2025-05-23 18:29:28', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-29 21:51:02', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 90348.53);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (167362, 5003, 2791, TO_TIMESTAMP('2025-03-05 11:52:59', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-30 23:49:09', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 217306.86);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (199889, 5003, 2035, TO_TIMESTAMP('2025-08-12 07:48:40', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-04 02:28:51', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 360077.39);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (182315, 5003, 2201, TO_TIMESTAMP('2025-08-31 17:27:07', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-04 00:46:21', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 407974.68);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (104613, 5003, 2729, TO_TIMESTAMP('2025-06-18 14:50:28', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-03 22:32:26', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 572208.92);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (116295, 5003, 2791, TO_TIMESTAMP('2025-06-19 15:36:02', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-13 16:05:31', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 986361.15);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (114517, 5003, 2729, TO_TIMESTAMP('2025-06-16 15:58:28', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-14 09:32:03', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 203232.7);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (127035, 5003, 2901, TO_TIMESTAMP('2025-03-10 02:05:29', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-21 00:17:29', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 543119.67);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (178693, 5003, 2729, TO_TIMESTAMP('2025-04-18 04:55:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-03 16:26:32', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 587524.19);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (110081, 5003, 2729, TO_TIMESTAMP('2025-01-29 13:45:59', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-14 23:52:55', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 329800.09);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (143078, 5003, 2599, TO_TIMESTAMP('2025-01-29 11:02:03', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-29 01:58:53', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 13794.83);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (194086, 5003, 2901, TO_TIMESTAMP('2025-07-29 16:19:25', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-15 17:16:23', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 466335.65);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (173600, 5003, 2201, TO_TIMESTAMP('2025-05-31 20:07:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-15 02:29:45', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 41504.36);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (112258, 5003, 2201, TO_TIMESTAMP('2025-07-07 00:07:44', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-05 08:03:02', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 672725.99);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (101831, 5003, 2729, TO_TIMESTAMP('2025-01-13 15:56:28', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-05 16:44:24', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 525093.07);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (167534, 5003, 2035, TO_TIMESTAMP('2025-05-12 18:41:43', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-30 03:05:46', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 917917.39);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (194658, 5003, 2791, TO_TIMESTAMP('2025-08-29 09:37:04', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-06 01:36:56', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 705878.06);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (171057, 5003, 2201, TO_TIMESTAMP('2025-04-27 19:41:22', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-22 15:07:15', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 468748.08);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (128101, 5003, 2901, TO_TIMESTAMP('2025-07-31 05:44:37', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-10 09:20:11', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 176412.44);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (146218, 5003, 2791, TO_TIMESTAMP('2025-06-01 20:51:52', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-08 16:40:23', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 510960.29);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (174231, 5003, 2201, TO_TIMESTAMP('2025-03-28 02:01:52', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-11 20:29:10', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 704965.1);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (165404, 5003, 2729, TO_TIMESTAMP('2025-01-26 10:14:54', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-20 12:17:48', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 921095.84);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (182449, 5003, 2201, TO_TIMESTAMP('2025-02-01 22:34:41', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-11 12:11:08', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 842223.52);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (137311, 5003, 2201, TO_TIMESTAMP('2025-07-11 21:50:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-20 14:10:39', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 268295.33);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (189153, 5003, 2901, TO_TIMESTAMP('2025-02-09 19:32:42', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-19 17:06:24', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 64916.3);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (136872, 5003, 2035, TO_TIMESTAMP('2025-01-02 15:37:17', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-16 05:03:19', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 313095.19);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (101628, 5003, 2201, TO_TIMESTAMP('2025-04-21 14:16:23', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-29 09:37:35', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 131713.1);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (105356, 5003, 2035, TO_TIMESTAMP('2025-07-12 14:47:06', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-13 07:36:49', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 62612.55);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (184839, 5003, 2201, TO_TIMESTAMP('2025-07-30 00:13:57', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-10 10:30:56', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 83193.87);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (106233, 5003, 2901, TO_TIMESTAMP('2025-05-12 18:06:55', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-30 19:27:47', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 116921.51);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (112740, 5003, 2201, TO_TIMESTAMP('2025-04-11 12:58:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-06 20:06:29', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 668601.03);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (112163, 5003, 2035, TO_TIMESTAMP('2025-04-13 06:31:31', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-16 07:41:32', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 349260.02);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (182475, 5003, 2201, TO_TIMESTAMP('2025-04-09 21:36:47', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-18 19:20:14', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 203239.19);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (170306, 5003, 2791, TO_TIMESTAMP('2025-09-09 18:59:48', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-10 01:26:35', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 73264.32);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (198947, 5003, 2035, TO_TIMESTAMP('2025-04-11 08:40:48', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-10 05:37:48', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 577030.28);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (185394, 5003, 2599, TO_TIMESTAMP('2025-08-20 09:59:46', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-08 17:07:40', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 30011.08);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (123152, 5003, 2599, TO_TIMESTAMP('2025-07-06 01:23:40', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-17 01:53:34', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 542370.37);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (152746, 5003, 2199, TO_TIMESTAMP('2025-01-31 02:26:29', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-03 07:08:24', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 803443.38);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (112258, 5003, 2418, TO_TIMESTAMP('2025-08-25 04:53:03', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-08 07:02:30', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 17159.15);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (125824, 5003, 2566, TO_TIMESTAMP('2025-06-09 15:22:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-05 19:24:44', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 739646.59);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (137311, 5003, 2114, TO_TIMESTAMP('2025-05-22 12:15:20', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-27 00:07:26', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 114878.3);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (136872, 5003, 2600, TO_TIMESTAMP('2025-08-05 13:11:08', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-25 12:51:15', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 301285.65);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (148811, 5003, 2455, TO_TIMESTAMP('2025-07-15 04:39:48', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-03 01:51:55', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 645439.41);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (182150, 5003, 2473, TO_TIMESTAMP('2025-07-23 07:55:03', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-07 20:48:24', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 34245.08);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (198947, 5003, 2316, TO_TIMESTAMP('2025-05-04 02:58:47', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-12 10:22:41', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 96178.37);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (111373, 5003, 2678, TO_TIMESTAMP('2025-01-10 11:23:49', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-01-14 05:28:29', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 55761.9);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (159771, 5003, 2600, TO_TIMESTAMP('2025-08-12 19:59:22', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-25 02:12:25', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 624712.43);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (169821, 5003, 2218, TO_TIMESTAMP('2025-02-02 08:32:02', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-12 16:48:53', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 824210.78);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (145008, 5003, 2114, TO_TIMESTAMP('2025-03-09 17:54:22', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-28 09:49:37', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 433873.75);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (128101, 5003, 2663, TO_TIMESTAMP('2025-07-11 23:45:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-01 05:34:50', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 437896);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (103537, 5003, 2903, TO_TIMESTAMP('2025-04-30 05:40:54', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-15 09:22:06', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 128288.73);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (117865, 5003, 2592, TO_TIMESTAMP('2025-06-20 11:20:45', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-27 21:05:59', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 33510.27);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (127035, 5003, 2013, TO_TIMESTAMP('2025-04-17 07:20:10', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-07 16:19:40', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 568798.62);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (113341, 5003, 2121, TO_TIMESTAMP('2025-08-11 03:01:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-08 19:03:51', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 16468.09);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (116295, 5003, 2418, TO_TIMESTAMP('2025-07-20 21:51:23', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-14 05:11:32', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 367323.96);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (119240, 5003, 2678, TO_TIMESTAMP('2025-06-02 14:23:36', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-02 14:41:41', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 329814.23);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (128996, 5003, 2120, TO_TIMESTAMP('2025-01-29 21:39:14', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-19 04:03:51', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 632103.55);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (123152, 5003, 2710, TO_TIMESTAMP('2025-07-06 12:46:16', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-08 17:37:19', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 521176.62);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (151795, 5003, 2120, TO_TIMESTAMP('2025-07-16 14:08:23', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-27 03:25:16', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 976686.51);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (167362, 5003, 2331, TO_TIMESTAMP('2025-09-10 22:31:51', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-11 11:51:27', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 529363.71);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (185394, 5003, 2710, TO_TIMESTAMP('2025-06-17 14:11:29', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-29 14:39:50', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 807827.74);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (182475, 5003, 2539, TO_TIMESTAMP('2025-01-29 13:49:50', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-10 08:09:16', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 714820.95);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (178693, 5003, 2218, TO_TIMESTAMP('2025-05-02 07:04:03', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-25 22:44:58', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 946233.09);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (108581, 5003, 2418, TO_TIMESTAMP('2025-05-31 13:03:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-23 12:24:49', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 443304.11);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (101443, 5003, 2379, TO_TIMESTAMP('2025-06-09 20:02:54', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-01 00:45:01', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 586993.56);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (131283, 5003, 2966, TO_TIMESTAMP('2025-01-20 08:04:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-02-16 06:29:50', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 928193.76);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (194658, 5003, 2923, TO_TIMESTAMP('2025-05-05 23:22:20', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-17 19:41:49', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 703327.2);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (184839, 5003, 2379, TO_TIMESTAMP('2025-02-17 07:45:57', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-25 06:42:35', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 671634.61);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (125962, 5003, 2120, TO_TIMESTAMP('2025-03-24 00:07:08', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-29 05:40:37', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 334384.02);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (144755, 5003, 2975, TO_TIMESTAMP('2025-04-29 05:03:16', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-02 13:07:31', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 128035.49);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (172121, 5003, 2013, TO_TIMESTAMP('2025-07-03 00:46:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-27 22:44:11', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 58158.91);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (142598, 5003, 2912, TO_TIMESTAMP('2025-03-22 10:18:43', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-03 01:24:42', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 365427.76);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (143078, 5003, 2331, TO_TIMESTAMP('2025-05-30 12:47:44', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-23 07:02:40', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 625343.72);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (114517, 5003, 2600, TO_TIMESTAMP('2025-06-28 22:29:30', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-13 05:33:36', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 194232.73);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (194086, 5003, 2418, TO_TIMESTAMP('2025-07-10 14:10:10', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-10 04:06:33', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 155997.71);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (104613, 5003, 2114, TO_TIMESTAMP('2025-08-03 06:40:27', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-14 09:45:21', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 178164.47);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (189153, 5003, 2526, TO_TIMESTAMP('2025-03-06 07:16:14', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-20 08:48:16', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 953246.62);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (147515, 5003, 2966, TO_TIMESTAMP('2025-01-16 03:21:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-23 19:35:48', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 291949.77);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (109801, 5003, 2553, TO_TIMESTAMP('2025-02-27 02:04:20', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-15 18:38:13', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 586952.09);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (130739, 5003, 2316, TO_TIMESTAMP('2025-02-26 01:31:59', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-17 10:29:33', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 960065.79);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (101831, 5003, 2296, TO_TIMESTAMP('2025-03-17 15:52:15', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-13 19:22:11', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 377798.36);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (146218, 5003, 2013, TO_TIMESTAMP('2025-02-28 14:33:11', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-03 13:53:23', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 216838.71);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (117576, 5003, 2553, TO_TIMESTAMP('2025-01-30 04:31:03', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-05 18:26:10', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 452294.07);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (145402, 5003, 2193, TO_TIMESTAMP('2025-06-29 06:00:38', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-08 10:54:22', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 888682.38);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (133670, 5003, 2622, TO_TIMESTAMP('2025-05-15 11:39:16', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-07 18:08:24', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 613273.59);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (171304, 5003, 2611, TO_TIMESTAMP('2025-02-16 06:14:12', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-26 02:50:16', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 671844.47);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (115639, 5003, 2539, TO_TIMESTAMP('2025-07-30 03:33:02', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-23 23:14:08', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 857492.6);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (143445, 5003, 2841, TO_TIMESTAMP('2025-04-30 18:41:41', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-12 17:40:52', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 936784.06);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (167534, 5003, 2652, TO_TIMESTAMP('2025-08-03 13:35:28', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-01 18:42:33', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 395314.94);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (153295, 5003, 2218, TO_TIMESTAMP('2025-06-09 17:56:18', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-17 13:33:36', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 723889.54);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (101628, 5003, 2296, TO_TIMESTAMP('2025-05-07 11:24:59', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-29 22:04:00', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 362183.41);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (125969, 5003, 2912, TO_TIMESTAMP('2025-01-21 17:41:25', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-03-15 16:11:50', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 557458.14);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (177064, 5003, 2455, TO_TIMESTAMP('2025-06-09 07:56:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-21 16:15:33', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 952872.21);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (174231, 5003, 2063, TO_TIMESTAMP('2025-07-06 20:27:12', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-09 10:02:35', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 150957.78);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (183798, 5003, 2622, TO_TIMESTAMP('2025-06-29 03:53:21', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-13 01:50:54', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 930072.54);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (174079, 5003, 2566, TO_TIMESTAMP('2025-06-01 17:37:02', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-26 19:59:53', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 520434.75);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (158255, 5003, 2498, TO_TIMESTAMP('2025-06-19 14:32:05', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-29 10:10:26', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 495230.93);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (105356, 5003, 2526, TO_TIMESTAMP('2025-05-07 00:11:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-19 15:13:47', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 104794.14);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (191737, 5003, 2912, TO_TIMESTAMP('2025-02-24 02:52:06', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-16 23:52:59', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 521106.13);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (160291, 5003, 2418, TO_TIMESTAMP('2025-01-03 07:01:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-02-12 02:10:35', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 798366.43);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (170085, 5003, 2782, TO_TIMESTAMP('2025-06-16 05:28:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-19 20:00:16', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 331002.26);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (116267, 5003, 2600, TO_TIMESTAMP('2025-01-07 00:30:49', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-20 16:50:20', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 512450.94);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (199481, 5003, 2877, TO_TIMESTAMP('2025-07-23 21:03:43', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-31 13:40:05', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 26353.6);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (176407, 5003, 2592, TO_TIMESTAMP('2025-01-26 11:20:53', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-27 17:04:08', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 267285.31);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (114294, 5003, 2218, TO_TIMESTAMP('2025-02-17 10:28:13', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-09 05:45:55', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 830485.65);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (199889, 5003, 2678, TO_TIMESTAMP('2025-04-04 10:43:05', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-08 09:32:23', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 78649.34);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (173600, 5003, 2628, TO_TIMESTAMP('2025-05-15 06:08:17', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-15 20:22:34', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 576090.68);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (196010, 5003, 2782, TO_TIMESTAMP('2025-01-11 07:50:09', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-09 09:44:30', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 521723.03);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (138228, 5003, 2296, TO_TIMESTAMP('2025-05-16 04:07:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-16 17:59:04', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 694219.48);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (176026, 5003, 2654, TO_TIMESTAMP('2025-04-26 04:43:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-17 07:21:11', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 849544.7);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (147913, 5003, 2943, TO_TIMESTAMP('2025-01-02 14:06:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-31 22:39:32', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 212482.31);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (189004, 5003, 2841, TO_TIMESTAMP('2025-04-03 15:25:06', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-21 04:37:36', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 669178.96);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (196450, 5003, 2622, TO_TIMESTAMP('2025-06-15 09:04:43', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-10 15:14:06', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 240802.98);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (171057, 5003, 2654, TO_TIMESTAMP('2025-02-02 11:34:41', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-25 07:46:00', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 770076.57);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (182315, 5003, 2017, TO_TIMESTAMP('2025-07-05 16:38:06', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-14 04:23:24', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 462148.91);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (110081, 5003, 2943, TO_TIMESTAMP('2025-06-04 18:20:31', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-25 21:28:13', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 535239.56);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (117709, 5003, 2652, TO_TIMESTAMP('2025-03-28 03:28:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-18 05:01:44', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 115324.37);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (196488, 5003, 2165, TO_TIMESTAMP('2025-01-12 09:24:26', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-29 09:52:19', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 342673.07);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (123260, 5003, 2296, TO_TIMESTAMP('2025-02-13 00:18:20', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-05-26 17:27:54', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 37104.21);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (106233, 5003, 2379, TO_TIMESTAMP('2025-08-28 02:35:21', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-28 17:49:01', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 678505.31);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (165404, 5003, 2063, TO_TIMESTAMP('2025-07-24 12:22:20', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-27 09:02:04', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 713276.05);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (140493, 5003, 2772, TO_TIMESTAMP('2025-07-28 13:40:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-09 22:10:13', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 695887.14);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (158932, 5003, 2063, TO_TIMESTAMP('2025-03-14 17:20:54', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-26 03:10:41', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 392301.26);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (195529, 5003, 2600, TO_TIMESTAMP('2025-06-23 05:09:37', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-26 16:25:48', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 142453.13);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (112163, 5003, 2802, TO_TIMESTAMP('2025-06-12 16:10:39', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-30 11:35:54', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 646142.84);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (128006, 5003, 2678, TO_TIMESTAMP('2025-07-02 04:11:32', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-21 02:49:35', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 592254.19);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (184917, 5003, 2782, TO_TIMESTAMP('2025-01-25 14:40:15', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-01-27 16:40:40', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 414483.78);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (147252, 5003, 2923, TO_TIMESTAMP('2025-05-05 15:34:15', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-22 07:51:50', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 564213.95);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (112292, 5003, 2114, TO_TIMESTAMP('2025-08-31 23:02:40', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-01 02:59:29', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 858590.48);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (191068, 5003, 2473, TO_TIMESTAMP('2025-04-02 06:41:19', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-04-18 17:58:00', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 566133.99);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (181441, 5003, 2218, TO_TIMESTAMP('2025-07-08 23:53:49', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-08-03 10:14:22', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 785170.99);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (112740, 5003, 2193, TO_TIMESTAMP('2025-09-11 16:03:38', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-11 23:01:51', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 762651.3);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (170306, 5003, 2678, TO_TIMESTAMP('2025-06-13 13:41:12', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-27 13:07:09', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 399814.94);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (157080, 5003, 2296, TO_TIMESTAMP('2025-06-10 11:07:58', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-07-17 17:21:41', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 408086.47);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (195230, 5003, 2912, TO_TIMESTAMP('2025-08-24 01:30:12', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-09-04 11:02:20', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 288442.23);
+INSERT INTO "VENUE_EVENT_DETAIL" ("EVENT_ID", "AREA_ID", "COLLABORATION_ID", "RENT_START", "RENT_END", "STATUS", "FUNDING") VALUES (176049, 5003, 2331, TO_TIMESTAMP('2025-03-17 20:48:34', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2025-06-25 06:54:55', 'YYYY-MM-DD HH24:MI:SS'), '已预定', 448112.03);
+
 COMMIT;
