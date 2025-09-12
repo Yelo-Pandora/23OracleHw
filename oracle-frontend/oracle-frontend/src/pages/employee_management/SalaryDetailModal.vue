@@ -173,7 +173,7 @@ async function onEdit(emp) {
             params: {
                 operatorAccount: props.operatorAccount,
                 staffId: emp.staffId,
-                monthTime: `${props.year}-${props.month}`
+                monthTime: `${props.year}-${props.month}-01`
             }
         });
         // 更新本地数据

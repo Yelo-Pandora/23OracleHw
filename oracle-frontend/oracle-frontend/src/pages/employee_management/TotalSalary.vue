@@ -28,6 +28,7 @@
                        :year="currentYear"
                        :month="currentMonth"
                        :salaryList="currentSalaryList"
+                       :operatorAccount="userStore.userInfo.account"
                        @close="showDetailModal = false" />
     <!-- <SalaryDetailModal
       :show="showDetailModal"
