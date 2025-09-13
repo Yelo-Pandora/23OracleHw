@@ -64,7 +64,7 @@
     }
 
   // 不在侧边栏显示的菜单标题列表（仅影响侧边栏显示，不删除路由）
-  const excludedTitles = ['店铺详情', '商户租金统计报表', '店面状态申请']
+  const excludedTitles = ['店铺详情', '商户租金统计报表', '店面状态申请', '申请租赁店面']
 
 
     const baseList = router.options.routes.filter(route => {
