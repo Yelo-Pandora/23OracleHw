@@ -7,16 +7,7 @@
       </div>
 
       <div class="action-grid">
-        <router-link v-if="role === '商户'" class="action-card" :to="'/mall-management/store-status-request'">
-          <div class="card-icon">
-            <!-- Placeholder for a real icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-          </div>
-          <div class="card-content">
-            <h3>店面状态申请</h3>
-            <p>提交店铺状态变更申请</p>
-          </div>
-        </router-link>
+        <!-- 店面状态申请入口已移至商户的店铺管理（StoreManagement）页 -->
 
         <router-link v-if="role === '商户'" class="action-card" :to="'/store-management'">
           <div class="card-icon">

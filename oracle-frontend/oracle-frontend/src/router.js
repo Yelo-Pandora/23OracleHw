@@ -19,7 +19,7 @@ import CashFlowDetails from '@/pages/cashflow/CashFlowDetail.vue'
 import Mall from './pages/mall_management/MallManagement.vue'
 import ParkingQuery from './pages/parking_query/ParkingQuery.vue'
 import EventQuery from './pages/event_query/EventQuery.vue'
-import StoreStatusRequest from '@/pages/mall_management/StoreStatusRequest.vue';
+import StoreStatusRequest from '@/pages/store_management/StoreStatusRequest.vue';
 import StoreStatusApproval from '@/pages/mall_management/StoreStatusApproval.vue';
 import CreateMerchant from '@/pages/mall_management/CreateMerchant.vue';
 import StoreManagement from '@/pages/store_management/StoreManagement.vue';
@@ -57,16 +57,6 @@ const routes = [
       role_need: ['员工']  // 只有员工角色可以访问
     }
   },
-  //针对商户的已有店面查询页面
-  {
-    path: '/new_area-search',
-    component: () => import('@/pages/new_area_management/AreaSearch.vue'),
-    meta: {
-      requiresAuth: true,
-      title: '已有店面查询',
-      role_need: ['商户']  // 商户角色可以访问
-    }
-  },
   //商场管理页面
   {
     path: '/mall-management',
@@ -77,21 +67,12 @@ const routes = [
       { path: 'create-merchant', component: CreateMerchant, meta: { requiresAuth: true, title: '新增店面', role_need: ['员工'] } },
       { path: 'merchant-statistics-report', component: () => import('@/pages/mall_management/MerchantStatisticsReport.vue'), meta: { requiresAuth: true, title: '商户统计报表', role_need: ['员工'] } },
       { path: 'rent-collection', name: 'RentCollection', component: () => import('@/pages/mall_management/RentCollection.vue'), meta: { requiresAuth: true, title: '租金管理', role_need: ['员工'] } },
-      {
-        path: 'store-status-request',
-        component: StoreStatusRequest,
-        meta: { requiresAuth: true, title: '店面状态申请', role_need: ['商户'] },
-      },
+      // store-status-request moved to store-management routes (see /store-management children)
     //  {
     //    path: 'store-management',
     //    component: StoreManagement,
     //    meta: { requiresAuth: true, title: '我的店铺', role_need: ['商户'] },
     //},
-    {
-    path: '/store-management/get-store',
-    component: GetStore,
-    meta: { requiresAuth: true, title: '申请租赁店面', role_need: ['\u5546\u6237'] }
-    },
     ]
   },
   // 店铺管理页面
@@ -104,6 +85,16 @@ const routes = [
     path: '/store-management/store-detail',
     component: StoreDetail,
   meta: { requiresAuth: true, title: '店铺详情', role_need: ['商户', '员工'] },
+    },
+  {
+    path: '/store-management/get-store',
+    component: GetStore,
+    meta: { requiresAuth: true, title: '申请租赁店面', role_need: ['商户'] }
+  },
+  {
+    path: '/store-management/store-status-request',
+    component: StoreStatusRequest,
+    meta: { requiresAuth: true, title: '店面状态申请', role_need: ['商户'] },
   },
   {
     path: '/store-management/my-rent-bills',

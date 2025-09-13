@@ -1,4 +1,5 @@
 <template>
+    <DashboardLayout>
     <div class="page-container">
       <div class="page-header">
         <h1>申请租赁店面</h1>
@@ -68,6 +69,7 @@
         </form>
       </div>
     </div>
+    </DashboardLayout>
 </template>
 
 <script setup>
@@ -183,6 +185,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.root,
 :root {
   --primary-color: #1abc9c;
   --secondary-color: #7f8c8d;
@@ -194,9 +197,19 @@ onMounted(() => {
 .page-container { display:flex; flex-direction:column; gap:20px; }
 .form-card { background:var(--card-bg); padding:20px; border-radius:var(--border-radius); box-shadow:var(--card-shadow); }
 .page-header h1 { margin:0 0 6px 0 }
-.form-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px; }
+.form-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; align-items:start }
+.form-group { display:flex; flex-direction:column; }
 .form-group label { display:block; font-weight:600; margin-bottom:6px }
-.form-group input, .form-group select { width:100%; padding:8px 10px; border:1px solid var(--input-border-color); border-radius:6px }
+.form-group input, .form-group select {
+  width:100%;
+  max-width:360px; /* 限制控件不要过宽 */
+  padding:6px 10px;
+  border:1px solid var(--input-border-color);
+  border-radius:6px;
+  box-sizing:border-box;
+  display:inline-block;
+}
+.form-group select { appearance: auto }
 .actions { margin-top:16px; display:flex; gap:12px }
 .btn-primary {
   background-color: var(--primary-color);

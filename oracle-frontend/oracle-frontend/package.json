@@ -11,10 +11,10 @@
   },
   "dependencies": {
     "axios": "^1.11.0",
-    "echarts": "^6.0.0",
-    "html2canvas": "^1.4.1",
     "chart.js": "^4.5.0",
+    "echarts": "^6.0.0",
     "element-plus": "^2.11.1",
+    "html2canvas": "^1.4.1",
     "jspdf": "^3.0.2",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",

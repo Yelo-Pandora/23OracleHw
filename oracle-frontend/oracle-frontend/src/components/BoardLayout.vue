@@ -23,7 +23,7 @@
       <!-- 面包屑动态显示当前路由的标题 -->
         <div class="breadcrumb">{{ $route.meta.title }}</div>
         <div class="user-profile">
-          <img class="avatar" src="@/assets/Vue.svg"></img>
+          <img class="avatar" src="@/assets/Vue.svg" />
           <span>{{ userStore.userInfo?.username || '用户' }}</span>
           <button v-if="userStore.token" class="logout-btn" @click="logout">退出</button>
         </div>
@@ -63,8 +63,8 @@
       return roles.includes(userR) || roles.includes(String(userR).toLowerCase()) || roles.includes(normalizedR)
     }
 
-    // 不在侧边栏显示的菜单标题列表（仅影响侧边栏显示，不删除路由）
-    const excludedTitles = ['店铺详情', '商户租金统计报表']
+  // 不在侧边栏显示的菜单标题列表（仅影响侧边栏显示，不删除路由）
+  const excludedTitles = ['店铺详情', '商户租金统计报表', '店面状态申请']
 
 
     const baseList = router.options.routes.filter(route => {

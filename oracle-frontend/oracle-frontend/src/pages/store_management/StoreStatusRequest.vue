@@ -1,4 +1,5 @@
 <template>
+  <DashboardLayout>
     <div class="page-container">
       <div class="page-header">
         <h1>店面状态变更申请</h1>
@@ -57,6 +58,7 @@
         </div>
       </div>
     </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
